@@ -21,11 +21,6 @@
 ;;                                    (default nil for private recitation)
 ;;
 ;; Latin texts that are nil fall back to English automatically.
-;;
-;; Backwards-compatible aliases for the old `canticle-' and
-;; `office-canticle-' names are provided at the bottom of this file so
-;; that existing callers (bcp-1662.el, bcp-1662-test.el,
-;; bible-commentary-preferences.el) continue to work without modification.
 
 ;;; Code:
 

@@ -10,7 +10,7 @@
 ;;
 ;; Load order in init.el:
 ;;   (require 'bible-fetcher)        ; core fetch/parse layer — load first
-(require 'bcp-reader)
+(require 'bcp-notebook)
 ;;   (require 'bcp-1662-calendar)
 ;;   (require 'bcp-1662-data)
 ;;   (require 'bcp-1662-user-feasts)
