@@ -1,0 +1,466 @@
+#+TITLE: BCP — Biblical Commentary and Prayer
+#+SUBTITLE: Development Bible
+#+DATE: 2026-03-22
+#+STARTUP: overview
+
+# HOW TO USE: Paste this entire file at the start of a new Claude session.
+#
+# PROJECT: BCP — Biblical Commentary and Prayer
+#   "BCP" is the project name. Within the codebase, "BCP 1662" refers
+#   specifically to the Book of Common Prayer 1662 Daily Office module.
+#   The package prefix bcp- covers the shared framework.
+#   Domain prefixes: bcp-liturgy-, bcp-reader-, bcp-notebook-
+#
+# Output files: /mnt/user-data/outputs/
+# Key transcript: /mnt/transcripts/2026-03-22-02-04-06-bcp-1662-emacs-office-dev.txt
+# TODO states: SETTLED | OPEN | IN-DEVELOPMENT
+# Tags: :constraint: :world: :science:
+
+* Package Overview :world:
+The BCP — Biblical Commentary and Prayer framework is an Emacs environment
+for liturgical prayer and Bible study. It fetches scripture from Oremus
+Bible Browser or local files, renders Daily Office liturgies, and supports
+annotated Bible study with org-roam cross-references.
+
+** Design Principles :constraint:
+- Rubric texts are NEVER altered — only shown/hidden
+- Prayer/canticle texts are stored constants, never generated
+- Variant forms are separate named constants
+- Buffer is text-mode, read-only, overlays for all styling
+- Spacing normalised post-render by bcp-liturgy--normalise-spacing
+
+* Domain Architecture :world:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+The codebase is divided into four domains. The boundary rule is:
+if a module requires liturgical machinery to make sense, it belongs
+under =bcp-liturgy-=. If it is genuinely reusable outside a liturgical
+context, it belongs under =bcp-=.
+
+** =bcp-= Shared Framework
+Infrastructure with no domain semantics. Serves all other domains.
+- Pure computus (Easter, dominical letter, moveable feasts)
+- Western rank taxonomy
+- Oremus fetch/parse layer
+- Buffer rendering primitives
+- User preferences
+
+** =bcp-liturgy-= Liturgical Office (generic)
+The generic Office machinery shared across all rites.
+Not tied to any specific prayer book edition.
+- Generic ordo walker and renderer
+- Canticle registry (texts only meaningful in an ordo context)
+- Propers protocol (the standard plist shape all rites return)
+- Rite implementations live under their own sub-prefix:
+  - =bcp-1662-=           Book of Common Prayer 1662
+  - =bcp-breviary-=       Breviarium Romanum 1962
+  - =bcp-anglican-breviary-=  Anglican Breviary (1955)
+  - =bcp-lobia-=          Little Office of the BVM
+  - =bcp-divine-worship-= Divine Worship: Daily Office
+
+** =bcp-reader-= Scripture Reader
+Simple, fast text display for study reading.
+Passage navigation, translation management, local file loading.
+No ordo, no appointed texts — just "show me this passage."
+
+** =bcp-notebook-= Annotation and Cross-Reference
+org-roam nodes, marginal note capture, backlink browser,
+contextual views, spanning psalm editor, export.
+Can in principle attach notes to any displayed text —
+Office lessons, collects, reader passages alike.
+
+* Package Prefix Conventions :world:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+| Prefix | Domain | Example files |
+|--------|--------|---------------|
+| =bcp-= | Shared framework | bcp-calendar.el, bcp-fetcher.el, bcp-render.el |
+| =bcp-liturgy-= | Generic Office | bcp-liturgy-render.el, bcp-liturgy-canticles.el |
+| =bcp-1662-= | BCP 1662 implementation | bcp-1662-calendar.el, bcp-1662-ordo.el |
+| =bcp-breviary-= | Breviarium Romanum 1962 | bcp-breviary-calendar.el (future) |
+| =bcp-reader-= | Scripture reader | bcp-reader.el (future) |
+| =bcp-notebook-= | Annotation layer | bcp-notebook.el (future) |
+
+Symbol naming within each domain follows the same pattern:
+- Public API: =(bcp-DOMAIN-function-name ...)=
+- Internal: =(bcp-DOMAIN--function-name ...)= (double dash)
+- Defcustoms: =bcp-DOMAIN-variable-name=
+
+Feast rank symbols: full Western taxonomy in =bcp-calendar.el=.
+BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= → =double=.
+
+
+* File Architecture :world:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+** Load Order :constraint:
+#+begin_src elisp
+;; ── Shared framework ──────────────────────────────────────────────
+(require 'bcp-fetcher)               ; MUST BE FIRST — fetch/parse, no deps
+(require 'bcp-calendar)              ; computus, rank taxonomy
+
+;; ── Liturgy: generic layer ────────────────────────────────────────
+(require 'bcp-liturgy-canticles)     ; canticle registry
+
+;; ── Liturgy: BCP 1662 ─────────────────────────────────────────────
+(require 'bcp-1662-calendar)         ; BCP seasons, feast table
+(require 'bcp-1662-data)             ; lectionary, collects, communion propers
+(require 'bcp-1662-user-feasts)      ; patronal feast config + transfers
+(require 'bcp-1662-ordo)             ; Morning/Evening Prayer ordo plists
+(require 'bcp-1662)                  ; dispatch + renderer
+
+;; ── Reader & Notebook (pending rename) ───────────────────────────
+(require 'bcp-reader)                ; was bible-commentary.el — pending split
+(load "bcp-preferences.el")
+#+end_src
+
+** File Inventory
+| File | Domain | Purpose | State |
+|------|--------|---------|-------|
+| bcp-fetcher.el | bcp- | Oremus fetch, DOM parse, char cleaning, translation config | SETTLED |
+| bcp-calendar.el | bcp- | Computus, rank taxonomy, date utilities | SETTLED |
+| bcp-preferences.el | bcp- | All user config | SETTLED |
+| bcp-liturgy-canticles.el | bcp-liturgy- | Canticle texts + registry (was bcp-canticles.el) | IN-DEVELOPMENT |
+| bcp-liturgy-render.el | bcp-liturgy- | Generic ordo walker + buffer primitives | TODO |
+| bcp-1662-calendar.el | bcp-1662- | BCP seasons/weeks, feast table | SETTLED |
+| bcp-1662-data.el | bcp-1662- | 366-day lectionary, collects, communion propers | SETTLED |
+| bcp-1662-user-feasts.el | bcp-1662- | Patronal feast config + transfers | SETTLED |
+| bcp-1662-ordo.el | bcp-1662- | Morning/Evening Prayer ordo plists | SETTLED |
+| bcp-1662-render.el | bcp-1662- | BCP-specific ordo dispatch | TODO |
+| bcp-1662.el | bcp-1662- | Main dispatch (to be slimmed into bcp-1662-render.el) | SETTLED |
+| bcp-1662-test.el | bcp-1662- | 229 automated tests | SETTLED |
+| bcp-reader.el | bcp-reader- | Scripture reader (pending split from bible-commentary.el) | TODO |
+| bcp-notebook.el | bcp-notebook- | Annotation, org-roam, capture, export (pending split) | TODO |
+
+* bcp-fetcher.el :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Core fetch/parse layer. No dependencies on bible-commentary or bcp-1662.
+Must be required first. Both packages use its symbols directly.
+
+** Public API
+- bcp-fetcher-fetch(passage callback &optional translation)
+  Async. Returns propertized string. Properties PRESERVED.
+  Do NOT clean — would strip wrap-prefix/display properties.
+- bcp-fetcher-fetch-for-commentary(passage translation callback)
+  Async. Applies clean-text. For commentary buffer only.
+- bcp-fetcher-dom-to-text(node book &optional start-psalm)
+  DOM → formatted string with text properties.
+- bcp-fetcher-clean-text(text)
+  Cleans Windows-1252 chars. Strips text properties.
+- bcp-fetcher-fetch-oremus(passage load-fn &optional translation)
+  Async fetch for commentary buffer, calls load-fn(text label).
+- bcp-fetcher-fetch-oremus-context(ref translation load-fn banner-fn)
+  Context-window fetch for omitted verses with footnotes.
+- bcp-fetcher-oremus-process(passage translation load-fn)
+  Core fetch-and-process used by the above.
+- bcp-fetcher-active-translation(ref)
+  Returns correct translation for REF per priority rules.
+- bcp-fetcher-textual-status(ref), bcp-fetcher-textual-header-annotation
+  Textual-critical status for omitted/disputed verses.
+  Cleans Windows-1252 chars. Strips text properties.
+
+** Critical Constraint :constraint:
+bcp-fetcher-clean-text and replace-match strip ALL text properties.
+For Office buffer, DOM results returned DIRECTLY without cleaning.
+In-buffer char cleaning in insert-text-block handles survivors.
+
+** Defcustoms (canonical home — all fetch config lives here)
+- bible-commentary-translation ("KJVA") — default translation
+- bible-commentary-psalm-translation ("Coverdale") — auto-used for Psalms
+- bible-commentary-oremus-base-url, bible-commentary-oremus-context-url
+- bible-commentary-oremus-version-codes, bible-commentary-omitted-verse-context-window
+- bible-commentary-critical-translation-names, bible-commentary-vulgate-translation-names
+- bible-commentary-orthodox-translation ("NRSV") — for LXX-only books
+
+* bcp-calendar.el :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Rite-agnostic calendar engine. No BCP-specific content.
+
+** Computus
+- bcp-easter(year) — Gregorian algorithm
+- bcp-dominical-letter(year) — returns "D" or "GF" for leap years
+- bcp-advent-sunday(year) — nearest Sunday to Nov 30
+- bcp-moveable-feasts(year) — alist of Easter-relative dates
+- bcp-ember-days(year), bcp-rogation-days(year)
+
+** Date utilities
+- bcp-date=(d1 d2), bcp-date-in-list-p, bcp-date+, bcp-date-
+- bcp-day-of-week, bcp-next-weekday, bcp-prev-weekday
+- bcp-days-between, bcp-days-after-easter
+
+** Rank taxonomy :constraint:
+Full pre-1955 Western taxonomy in bcp-rank-order (19 levels,
+highest → lowest): sunday-1cl, double-1cl, octave-1cl, vigil-1cl,
+sunday-2cl, double-2cl, octave-2cl, vigil-2cl, greater-double,
+sunday-common, double, semidouble, octave-3cl, vigil-common,
+feria-privileged, feria-major, simple, feria-minor, commemoration.
+
+Aliases in bcp-rank-aliases map BCP (principal/greater/lesser),
+1962 classes, and OF names to canonical symbols.
+
+Utilities: bcp-rank-value, bcp-rank<, bcp-rank<=, bcp-rank-higher,
+bcp-rank-canonical, bcp-rank-description.
+
+* bcp-1662-calendar.el :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Requires bcp-calendar. Provides BCP-specific layer only.
+All computus functions aliased from bcp-calendar (bcp-1662-easter → bcp-easter, etc.)
+
+** BCP-specific functions
+- bcp-1662-liturgical-season(m d y) → symbol
+- bcp-1662-liturgical-week(m d y) → (SEASON . WEEK-NUMBER)
+Seasons: advent/christmas/epiphany/pre-lent/lent/passiontide/eastertide/trinity
+
+** Trinity Numbering :constraint:
+- Trinity Sunday = (trinity . 0)
+- Sunday Before Advent = ALWAYS (trinity . 25)
+- Surplus (>25) = (trinity . nil) — omitted
+- Epiphany overflow: overflow_start = total_trin - overflow
+  CRITICAL: NOT 25 - overflow
+
+** Rank compatibility shim :constraint:
+bcp-1662--rank-value delegates to bcp-rank-value.
+BCP aliases (principal/greater/lesser) registered in bcp-calendar.el.
+
+* bcp-1662-data.el :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+- bcp-1662-propers-year — 366-entry daily lectionary
+- bcp-1662-propers-sunday — Sunday propers
+  Keys: after-trinity-N, after-epiphany-N, lent-N, advent-N, etc.
+- bcp-1662-communion-propers — Epistle + Gospel
+- bcp-1662-collects — 106 collects
+
+** Sunday Lesson Nil Fallback :constraint:
+When Sunday proper returns :lesson2 nil, fall back to calendar.
+Lesson omitted only when BOTH proper AND calendar return nil.
+
+* bcp-1662-user-feasts.el :world:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Five patronal feasts (all elevated to at least greater):
+| luke | St Luke | parish |
+| conversion-st-paul | Conversion of St Paul | secondary parish |
+| augustine-hippo | St Augustine of Hippo | personal |
+| chair-of-st-peter | Chair of St Peter | diocese |
+| st-william-of-york | St William of York | employer |
+
+Transfers: chair-of-st-peter + Ash Wed → Friday after;
+st-william-of-york + Whitsuntide → Tuesday after Trinity.
+
+* bcp-liturgy-canticles.el :science:
+(was bcp-canticles.el — pending rename)
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Ordo-agnostic. No BCP references.
+Canticles: venite, te-deum, benedicite, benedictus, jubilate-deo,
+magnificat, cantate-domino, nunc-dimittis, deus-misereatur, gloria-patri
+All BCP pointed English (: = mediant, * = flex). Latin = nil → English.
+
+** Key Fix :constraint:
+bcp-canticle-get uses (intern (format ":%s" lang)) to convert symbol
+to keyword before plist-get. Plist keys are :english/:latin.
+(Note: old canticle-gloria-text had a latent bug here; fixed in rename.)
+
+** Defcustoms
+- bcp-liturgy-canticle-language ('english)   [was bcp-canticle-language]
+- bcp-liturgy-canticle-overrides (nil)
+- bcp-liturgy-canticle-append-gloria (nil — off for private recitation)
+
+* bcp-1662-ordo.el :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Step types: :rubric :text :versicles :canticle :alternatives
+            :psalm :lesson :collect :prayer :anthem
+
+** Notable Steps :constraint:
+- Absolution rubric has :name absolution key
+- "No priest" rubric has :alt-collect key
+- Venite has :exception-easter t and :exception-day-of-month 19
+- Lesson step uses plain symbol: (:lesson second :testament new)
+
+Stored texts as defconsts:
+- bcp-1662-text-general-confession — standard
+- bcp-1662-text-general-confession-variant — "apart from thy grace"
+
+* bcp-1662.el — Rendering :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Buffer: text-mode, read-only-mode 1, visual-line-mode 1, overlays only.
+Heading faces: bcp-1662-heading-1 (bold 1.4x underline),
+               bcp-1662-heading-2 (bold 1.15x), bcp-1662-heading-3 (bold)
+
+** Spacing Model :constraint:
+- Each insert fn emits content + \n only
+- Walk loop inserts \n after each step with output
+- normalise-spacing collapses 3+ newlines → 2
+- insert-rubric: self-checks, adds leading \n if needed, emits \n\n after
+- insert-text-block: NO leading blank — heading flows directly to text
+
+** insert-text-block Post-Processing
+1. Strip display text properties (verse marker alignment)
+2. Clean Windows-1252 chars in-buffer
+3. Set wrap-prefix per line (verse: measured; canticle: "   ")
+
+** insert-canticle-text
+Prepends "   " before insert-text-block. Aligns first verse
+(col 0 in stored text) with subsequent verses (start \n   ).
+
+** Versicles use ℣ (U+2123) and ℟ (U+211F).
+
+* bcp-1662.el — Rubrical Options :world:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+| Defcustom | Default | Notes |
+|-----------|---------|-------|
+| office-officiant | 'lay | 'lay/'deacon/'priest/'bishop |
+| bcp-1662-omit-penitential-intro | nil | Weekday omission |
+| bcp-1662-use-seasonal-sentences | t | Texts nil until supplied |
+| bcp-1662-bidding-form | 'full | 'full/'brief/'omit |
+| bcp-1662-general-confession-form | nil | nil/'omit/'variant |
+| bcp-1662-omit-venite-passiontide | nil | Vv.8-11 omission |
+| bcp-1662-easter-anthems-throughout-eastertide | nil | All Eastertide |
+| bcp-1662-additional-prayers | nil | After state prayers |
+| bcp-1662-show-communion-propers | t | |
+| bcp-1662-rubric-style | 'red | 'red/'comment |
+
+** Absolution Flow :constraint:
+Ordo: rubric(absolution) → rubric(no-priest :alt-collect) → text(absolution)
+Priest/bishop: rubric shown → absolution text
+Lay/deacon: rubric suppressed; no-priest rubric found via cl-find-if
+and rendered BEFORE Trinity 21 collect. Key = 'trinity-21.
+(NOT 'after-trinity-21 — that is a Sunday propers key)
+
+** Confession Variant :constraint:
+Replaces prayer TEXT only (not rubric).
+Both forms are named defconsts.
+
+* bcp-1662.el — Lesson Fetching :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+** Cross-Chapter References :constraint:
+((Book CH1 V1 nil) (Book CH2)) = "CH1:V1 to end of CH2"
+Oremus cannot parse "CH1:V1-CH2" (ambiguous).
+Fix: format as "Book CH1:V1-CH2:200" — sentinel 200 = end of chapter.
+26 such refs in lectionary.
+
+* Symbol Conventions :constraint:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+- Trinity Sunday = trinity-sunday
+- Sunday Before Advent = sunday-before-advent (trinity-25 alias)
+- Sunday propers keys: after-trinity-N, after-epiphany-N
+- Collect key Trinity 21 = 'trinity-21 (NOT 'after-trinity-21)
+- Feast ranks: 'principal, 'greater, 'lesser (aliases to bcp-rank taxonomy)
+
+* Test Suite
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+229 tests, 19 sections. M-x bcp-1662-run-tests. All passing 2026-03-22.
+Sections: Load, Easter, Advent, Dominical, Seasons, Week (overflow),
+Feasts, Feast lookup, Vigils, Collects, Seasonal collects, Office lessons,
+Communion propers, Full dispatch, User feasts, Ref conversion,
+Psalm passages, Canticles, Rubrical options.
+
+* Pending Items
+:PROPERTIES:
+:STATUS: OPEN
+:END:
+
+** TODO Rename: bcp-canticles.el → bcp-liturgy-canticles.el
+Update all callers (bcp-1662.el, bcp-1662-test.el, bcp-preferences.el).
+Update bcp-canticle- symbol prefix → bcp-liturgy-canticle-.
+
+** TODO Rename: bible-commentary.el → split into bcp-reader.el + bcp-notebook.el
+bcp-reader-: passage display, navigation, translation management, local file loading.
+bcp-notebook-: org-roam, capture, backlinks, contextual view, spanning psalms, export.
+Shared: bcp-fetcher.el already owns translation defcustoms.
+
+** TODO Create bcp-liturgy-render.el
+Extract rite-agnostic rendering primitives from bcp-1662.el:
+insert-rubric, insert-versicles, insert-text-block, insert-canticle-text,
+normalise-spacing, buffer setup, heading faces, day-identity display block.
+
+** TODO Create bcp-1662-render.el
+Extract BCP-specific ordo walker from bcp-1662.el:
+render-office, step-type dispatch cond, rubrical option logic.
+Depends on bcp-liturgy-render.el.
+
+** TODO BCP Rule 1 Transfers for Standard Greater Feasts
+Only user patronal feasts currently have transfer logic.
+Standard greater feasts (e.g. Annunciation in Holy Week) not yet transferred.
+
+** TODO Seasonal Sentences
+bcp-1662-seasonal-sentences alist exists; all values nil.
+
+** TODO Latin Canticle Texts
+All nil in bcp-liturgy-canticles.el.
+
+** TODO Brief Bidding Form
+bcp-1662-bidding-brief is nil.
+
+** TODO Generic Ordo Renderer (bcp-office-render.el)
+Extract rendering engine from bcp-1662.el into a rite-agnostic module.
+Target functions: insert-rubric, insert-versicles, insert-text-block,
+insert-canticle-text, normalise-spacing, render-office.
+
+** DEFERRED Chapter Heading Blank Lines in Lessons
+[Chapter N]\n from dom-to-text causes blank line at chapter
+boundaries. Multiple fix attempts broke verse numbering.
+Accepted as known cosmetic issue.
+
+* Rejected Approaches
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+** REJECTED org-mode Buffer
+Fontification overwrites overlays; marker hiding caused unpredictable
+spacing. → Switched to text-mode.
+
+** REJECTED Drawer-based Fixed Texts
+org-mode folds drawers. → Plain text insertion.
+
+** REJECTED Post-DOM Character Cleaning
+replace-match strips ALL text properties including wrap-prefix.
+→ Clean HTML before DOM parsing; in-buffer for survivors.
+
+** REJECTED include-chapter-headings Parameter in dom-to-text
+Recursive calls didn't propagate parameter, broke verse numbering.
+→ Deferred as known cosmetic issue.
+
+** REJECTED dom-texts for Office Lessons
+Loses all verse number formatting. → Must use bcp-fetcher-dom-to-text.
