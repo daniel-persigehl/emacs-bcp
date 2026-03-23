@@ -634,8 +634,7 @@ Does nothing if the buffer contains no `bcp-verse' properties."
              do
              (overlay-put ov 'bcp-verse-number t)
              (overlay-put ov 'before-string (concat pad disp " "))
-             (overlay-put ov 'wrap-prefix
-                          (propertize "    " 'display '(space :align-to 4))))))
+             (overlay-put ov 'wrap-prefix "     "))))
 
 (defun bcp-reader-toggle-verse-numbers ()
   "Toggle verse-number display in the current buffer."
