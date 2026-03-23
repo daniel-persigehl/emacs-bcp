@@ -640,13 +640,12 @@ Does nothing if the buffer contains no `bcp-verse' properties."
                           (propertize "    " 'display '(space :align-to 4))))))
 
 (defun bcp-reader-toggle-verse-numbers ()
-  "Toggle verse-number display in the current Bible buffer."
+  "Toggle verse-number display in the current buffer."
   (interactive)
-  (with-current-buffer bible-commentary--bible-buffer
-    (if (cl-some (lambda (ov) (overlay-get ov 'bcp-verse-number))
-                 (overlays-in (point-min) (point-max)))
-        (remove-overlays (point-min) (point-max) 'bcp-verse-number t)
-      (bcp-reader--add-verse-number-overlays))))
+  (if (cl-some (lambda (ov) (overlay-get ov 'bcp-verse-number))
+               (overlays-in (point-min) (point-max)))
+      (remove-overlays (point-min) (point-max) 'bcp-verse-number t)
+    (bcp-reader--add-verse-number-overlays)))
 
 (defun bible-commentary--load-local-file (path)
   "Insert plain-text Bible from PATH into the Bible buffer."
