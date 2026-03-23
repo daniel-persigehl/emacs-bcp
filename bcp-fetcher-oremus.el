@@ -102,15 +102,13 @@ START-PSALM is the starting psalm number for multi-psalm BCP fetches."
        ((and (listp child)
              (string-match-p "\\bcc\\b" (or (dom-attr child 'class) "")))
         (let* ((num   (string-trim (dom-texts child "")))
-               (label (if is-psalm
-                          (format "[Psalm %s]" num)
-                        (format "[Chapter %s]" num)))
                (v1    (if is-psalm "1." "1"))
                (pad   (make-string (max 0 (- 4 (length v1))) ?\s))
                (v1-marker (concat "\n" pad v1 " ")))
           (setq result
                 (concat result
-                        "\n\n" label "\n"
+                        (bcp-fetcher--make-chapter-heading
+                         book (string-to-number num))
                         (propertize
                          v1-marker
                          'display
@@ -132,8 +130,8 @@ START-PSALM is the starting psalm number for multi-psalm BCP fetches."
                (marker  (concat "\n" pad display " ")))
           (when (and is-psalm (= num 1) (> prev-verse 1))
             (cl-incf psalm-num)
-            (let ((label (format "[Psalm %d]" psalm-num)))
-              (setq result (concat result "\n\n" label "\n\n"))))
+            (setq result (concat result (bcp-fetcher--make-chapter-heading
+                                         "Psalms" psalm-num))))
           (setq result
                 (concat result
                         (propertize

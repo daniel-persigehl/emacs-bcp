@@ -557,6 +557,7 @@ Implements containment/overlap at every granularity level:
   (with-current-buffer bible-commentary--bible-buffer
     (let ((inhibit-read-only t))
       (erase-buffer)
+      (add-to-invisibility-spec 'bcp-chapter-headings)
       (when label (insert "=== " label " ===\n\n"))
       (insert (bible-commentary--clean-display-text text))
       (goto-char (point-min))

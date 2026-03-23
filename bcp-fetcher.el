@@ -363,6 +363,25 @@ KJV/KJVA.\n\nTo read the surrounding passage, navigate to %s %d:%d-%d."
                           (format "%s  [%s]" passage translation)))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Chapter heading helper
+
+(defun bcp-fetcher--make-chapter-heading (book chapter)
+  "Return a propertized chapter heading string for BOOK chapter CHAPTER.
+The heading is invisible by default (category `bcp-chapter-headings').
+To show headings, call (remove-from-invisibility-spec \\='bcp-chapter-headings).
+Text properties:
+  `invisible'    — \\='bcp-chapter-headings (hidden until spec is removed)
+  `bcp-element'  — \\='chapter-heading
+  `bcp-chapter'  — CHAPTER (integer)"
+  (let ((label (if (equal book "Psalms")
+                   (format "[Psalm %d]" chapter)
+                 (format "[Chapter %d]" chapter))))
+    (propertize (concat "\n\n" label "\n")
+                'bcp-element 'chapter-heading
+                'bcp-chapter chapter
+                'invisible   'bcp-chapter-headings)))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Load default backend
 
 (provide 'bcp-fetcher)                 ; provide before requiring backend to

@@ -184,9 +184,7 @@ Returns nil if the file does not exist."
   (let ((path (bcp-fetcher-ebible--chapter-file book chapter)))
     (when (and path (file-readable-p path))
       (let* ((is-psalm (equal book "Psalms"))
-             (heading  (if is-psalm
-                           (format "\n\n[Psalm %d]\n" chapter)
-                         (format "\n\n[Chapter %d]\n" chapter)))
+             (heading  (bcp-fetcher--make-chapter-heading book chapter))
              (lines    (with-temp-buffer
                          (insert-file-contents path)
                          (split-string (buffer-string) "\n")))
