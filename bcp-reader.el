@@ -560,7 +560,8 @@ Implements containment/overlap at every granularity level:
       (when label (insert "=== " label " ===\n\n"))
       (insert (bible-commentary--clean-display-text text))
       (goto-char (point-min))
-      (set-buffer-modified-p nil))))
+      (set-buffer-modified-p nil))
+    (bcp-reader--add-verse-number-overlays)))
 
 (defun bible-commentary--clean-display-text (text)
   "Clean up TEXT for display in the Bible buffer.
@@ -593,6 +594,59 @@ Handles two encoding issues with raw Oremus text:
       (replace-match "\n\n"))
     (string-trim (buffer-string))))
 
+
+;;;; ──────────────────────────────────────────────────────────────────────
+;;;; Verse number overlays
+
+(defun bcp-reader--add-verse-number-overlays ()
+  "Add verse-number display overlays to the current buffer.
+
+Scans for positions where `bcp-verse' is set (the first character of each
+verse's text), collects them in order, then creates one overlay per verse
+spanning from that position to the start of the next verse (or end of
+buffer).  Each overlay carries:
+  `before-string' — the verse number, right-aligned to column 0
+  `wrap-prefix'   — 4-column indent for continuation lines
+  `bcp-verse-number' — t (used to identify and remove these overlays)
+
+Does nothing if the buffer contains no `bcp-verse' properties."
+  (let (positions)
+    ;; Pass 1 — collect verse-start positions in document order
+    (let ((pos (point-min)))
+      (while (< pos (point-max))
+        (if (get-text-property pos 'bcp-verse)
+            (progn
+              (push pos positions)
+              (setq pos (next-single-property-change pos 'bcp-verse
+                                                     nil (point-max))))
+          (setq pos (next-single-property-change pos 'bcp-verse
+                                                 nil (point-max))))))
+    (setq positions (nreverse positions))
+    ;; Pass 2 — create overlays
+    (cl-loop for (start next) on positions
+             for vnum     = (get-text-property start 'bcp-verse)
+             for book     = (get-text-property start 'bcp-book)
+             for is-psalm = (equal book "Psalms")
+             for end      = (or next (point-max))
+             for disp     = (if is-psalm (format "%d." vnum) (format "%d" vnum))
+             for pad      = (make-string (max 0 (- 4 (length disp))) ?\s)
+             for ov       = (make-overlay start end)
+             do
+             (overlay-put ov 'bcp-verse-number t)
+             (overlay-put ov 'before-string
+                          (propertize (concat pad disp " ")
+                                      'display `(space :align-to 0)))
+             (overlay-put ov 'wrap-prefix
+                          (propertize "    " 'display '(space :align-to 4))))))
+
+(defun bcp-reader-toggle-verse-numbers ()
+  "Toggle verse-number display in the current Bible buffer."
+  (interactive)
+  (with-current-buffer bible-commentary--bible-buffer
+    (if (cl-some (lambda (ov) (overlay-get ov 'bcp-verse-number))
+                 (overlays-in (point-min) (point-max)))
+        (remove-overlays (point-min) (point-max) 'bcp-verse-number t)
+      (bcp-reader--add-verse-number-overlays))))
 
 (defun bible-commentary--load-local-file (path)
   "Insert plain-text Bible from PATH into the Bible buffer."

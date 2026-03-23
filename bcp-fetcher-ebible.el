@@ -157,31 +157,19 @@ CHAPTER is an integer.  Returns nil if BOOK is not in the book table."
 
 (defun bcp-fetcher-ebible--propertize-verse (verse-num verse-text is-psalm
                                               &optional book chapter)
-  "Return a propertized string for VERSE-NUM with VERSE-TEXT.
-IS-PSALM non-nil formats the verse number with a trailing dot (Psalms style).
-When BOOK and CHAPTER are provided and VERSE-NUM is 1, the marker carries
-`bcp-book' and `bcp-chapter' text properties for later chapter-heading display.
-Matches the display format of the Oremus backend."
+  "Return a formatted string for VERSE-NUM with VERSE-TEXT.
+Prepends \\n\\n for verse 1 (chapter start) or \\n for other verses.
+The first character of the verse text carries `bcp-verse' (integer), and
+for verse 1 also `bcp-book' (string) and `bcp-chapter' (integer)."
   (let* ((stripped (string-trim
-                    (replace-regexp-in-string "^¶[ \t]*" "" verse-text)))
-         (display  (if is-psalm
-                       (format "%d." verse-num)
-                     (format "%d" verse-num)))
-         (pad      (make-string (max 0 (- 4 (length display))) ?\s))
-         (marker   (concat "\n" pad display " "))
-         (m        (propertize
-                    marker
-                    'display
-                    (concat "\n"
-                            (propertize (concat pad display " ")
-                                        'display `(space :align-to 0)))
-                    'wrap-prefix
-                    (propertize "    " 'display '(space :align-to 4)))))
-    (when (and (= verse-num 1) book chapter)
-      (add-text-properties 0 (length m)
-                           (list 'bcp-book book 'bcp-chapter chapter)
-                           m))
-    (concat m stripped)))
+                    (replace-regexp-in-string "^¶[ \t]*" "" verse-text))))
+    (unless (string-empty-p stripped)
+      (let ((props (list 'bcp-verse verse-num)))
+        (when (and (= verse-num 1) book chapter)
+          (setq props (nconc props (list 'bcp-chapter chapter 'bcp-book book))))
+        (concat (if (= verse-num 1) "\n\n" "\n")
+                (apply #'propertize (substring stripped 0 1) props)
+                (substring stripped 1))))))
 
 (defun bcp-fetcher-ebible--read-chapter (book chapter vs-from vs-to)
   "Read eBible chapter file for BOOK CHAPTER and return propertized text.

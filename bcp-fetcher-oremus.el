@@ -84,76 +84,82 @@ Returns the decoded string."
      (encode-coding-string raw 'raw-text)
      'windows-1252)))
 
-(defun bcp-fetcher-oremus--dom-to-text (node book &optional start-psalm)
-  "Walk DOM NODE, building a formatted string for BOOK.
+(defun bcp-fetcher-oremus--dom-to-text (node book &optional start-psalm cv cc)
+  "Walk DOM NODE building a formatted string for BOOK.
 
-Returns a string with text properties:
-  `display'      — right-aligns verse numbers to column 0
-  `wrap-prefix'  — indents continuation lines to column 4
+The first character of each verse is propertized with:
+  `bcp-verse'   — verse number (integer)
+  `bcp-book'    — BOOK string (verse 1 of each chapter only)
+  `bcp-chapter' — chapter number (verse 1 of each chapter only)
+Verse separators are plain \\n (\\n\\n for chapter/psalm boundaries).
 
-START-PSALM is the starting psalm number for multi-psalm BCP fetches."
-  (let ((result "")
-        (is-psalm   (equal book "Psalms"))
-        (psalm-num  (or start-psalm 1))
-        (prev-verse 0))
+START-PSALM is the psalm number for multi-psalm BCP fetches.
+CV and CC are current verse/chapter state threaded into recursive calls."
+  (let ((result        "")
+        (is-psalm      (equal book "Psalms"))
+        (psalm-num     (or start-psalm 1))
+        (prev-verse    0)
+        (current-verse cv)
+        (current-chap  cc)
+        (verse-started nil))
     (dolist (child (dom-children node))
       (cond
-       ;; Chapter dropcap (AV) — [Chapter N] heading, then auto-insert verse 1
+       ;; Chapter dropcap (AV) — begins verse 1 of a new chapter
        ((and (listp child)
              (string-match-p "\\bcc\\b" (or (dom-attr child 'class) "")))
-        (let* ((num   (string-trim (dom-texts child "")))
-               (v1    (if is-psalm "1." "1"))
-               (pad   (make-string (max 0 (- 4 (length v1))) ?\s))
-               (v1-marker (concat "\n" pad v1 " ")))
-          (setq result
-                (concat result
-                        (propertize
-                         v1-marker
-                         'display
-                         (concat "\n"
-                                 (propertize (concat pad v1 " ")
-                                             'display `(space :align-to 0)))
-                         'wrap-prefix
-                         (propertize "    " 'display '(space :align-to 4))
-                         'bcp-chapter (string-to-number num)
-                         'bcp-book    book)))
-          (setq prev-verse 1)))
-       ;; Verse number — AV "ww vnumVis" or BCP "cwvnum vnumVis"
+        (let ((num (string-to-number (string-trim (dom-texts child "")))))
+          (unless (string-empty-p result)
+            (setq result (concat result "\n\n")))
+          (setq current-verse 1
+                current-chap  num
+                verse-started nil
+                prev-verse    1)))
+       ;; Verse number — AV "ww" or BCP "cwvnum"
        ((and (listp child)
              (let ((class (or (dom-attr child 'class) "")))
                (or (string-match-p "\\bww\\b" class)
                    (string-match-p "\\bcwvnum\\b" class))))
-        (let* ((num-str (string-trim (dom-texts child "")))
-               (num     (string-to-number num-str))
-               (display (if is-psalm (concat num-str ".") num-str))
-               (pad     (make-string (max 0 (- 4 (length display))) ?\s))
-               (marker  (concat "\n" pad display " ")))
+        (let ((num (string-to-number (string-trim (dom-texts child "")))))
           (when (and is-psalm (= num 1) (> prev-verse 1))
-            (cl-incf psalm-num))
-          (let ((m (propertize
-                    marker
-                    'display
-                    (concat "\n"
-                            (propertize (concat pad display " ")
-                                        'display `(space :align-to 0)))
-                    'wrap-prefix
-                    (propertize "    " 'display '(space :align-to 4)))))
-            (when (= num 1)
-              (add-text-properties 0 (length m)
-                                   (list 'bcp-chapter psalm-num 'bcp-book book)
-                                   m))
-            (setq result (concat result m)))
+            (cl-incf psalm-num)
+            (setq current-chap psalm-num))
+          (unless (string-empty-p result)
+            (setq result (concat result (if (= num 1) "\n\n" "\n"))))
+          (setq current-verse num
+                verse-started  nil)
+          (unless (= num 1) (setq current-chap nil))
           (setq prev-verse num)))
        ;; Suppress <br>
        ((and (listp child) (eq (dom-tag child) 'br)) nil)
        ;; Plain text node
        ((stringp child)
-        (setq result (concat result child)))
-       ;; Recurse
+        (unless (string-empty-p (string-trim child))
+          (cond
+           ((not current-verse)
+            (setq result (concat result child)))
+           (verse-started
+            (setq result (concat result child)))
+           (t
+            (let ((props (list 'bcp-verse current-verse)))
+              (when current-chap
+                (setq props (nconc props
+                                   (list 'bcp-chapter current-chap
+                                         'bcp-book    book)))
+                (setq current-chap nil))
+              (setq result
+                    (concat result
+                            (apply #'propertize (substring child 0 1) props)
+                            (substring child 1)))
+              (setq verse-started t))))))
+       ;; Recurse into inline elements (italic, bold, etc.)
        ((listp child)
-        (setq result
-              (concat result
-                      (bcp-fetcher-oremus--dom-to-text child book psalm-num))))))
+        (let ((inner (bcp-fetcher-oremus--dom-to-text
+                      child book psalm-num current-verse current-chap)))
+          (unless (string-empty-p inner)
+            (when current-verse
+              (setq verse-started t)
+              (setq current-chap nil))
+            (setq result (concat result inner)))))))
     result))
 
 (defun bcp-fetcher-oremus--extract-bibletext (html)
