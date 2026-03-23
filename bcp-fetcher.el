@@ -365,7 +365,6 @@ KJV/KJVA.\n\nTo read the surrounding passage, navigate to %s %d:%d-%d."
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Load default backend
 
-(require 'bcp-fetcher-oremus)
-
-(provide 'bcp-fetcher)
+(provide 'bcp-fetcher)                 ; provide before requiring backend to
+(require 'bcp-fetcher-oremus)          ; avoid circular-require loop
 ;;; bcp-fetcher.el ends here
