@@ -50,6 +50,13 @@ Loaded automatically for Psalms unless the user has called
   "Non-nil: scrolling either buffer proportionally scrolls the other."
   :type 'boolean)
 
+(defcustom bcp-reader-paragraph-mode nil
+  "If non-nil, join verses within a chapter into a single paragraph by default.
+Verses are separated by spaces rather than newlines; chapter boundaries
+are preserved.  Toggle interactively with `bcp-reader-toggle-paragraph-mode'."
+  :type 'boolean
+  :group 'bible-commentary)
+
 ;;;; ──────────────────────────────────────────────────────────────────────
 ;;;; Internal state
 
@@ -561,7 +568,9 @@ Implements containment/overlap at every granularity level:
       (insert (bible-commentary--clean-display-text text))
       (goto-char (point-min))
       (set-buffer-modified-p nil))
-    (bcp-reader--add-verse-number-overlays)))
+    (bcp-reader--add-verse-number-overlays)
+    (when bcp-reader-paragraph-mode
+      (bcp-reader--add-paragraph-overlays))))
 
 (defun bible-commentary--clean-display-text (text)
   "Clean up TEXT for display in the Bible buffer.
@@ -643,6 +652,38 @@ Does nothing if the buffer contains no `bcp-verse' properties."
                (overlays-in (point-min) (point-max)))
       (remove-overlays (point-min) (point-max) 'bcp-verse-number t)
     (bcp-reader--add-verse-number-overlays)))
+
+;;;; ──────────────────────────────────────────────────────────────────────
+;;;; Paragraph mode overlays
+
+(defun bcp-reader--add-paragraph-overlays ()
+  "Join verses within each chapter into a single paragraph.
+Overlays the \\n before each verse ≥ 2 with a space, causing verse text
+to flow continuously.  Chapter boundaries (\\n\\n before verse 1) are
+left intact.  Overlays carry `bcp-paragraph t' for identification."
+  (let ((pos (point-min)))
+    (while (< pos (point-max))
+      (let ((vnum (get-text-property pos 'bcp-verse)))
+        (if (not vnum)
+            (setq pos (next-single-property-change pos 'bcp-verse
+                                                   nil (point-max)))
+          (when (and (> vnum 1)
+                     (> pos (point-min))
+                     (eq (char-before pos) ?\n))
+            (let ((ov (make-overlay (1- pos) pos)))
+              (overlay-put ov 'bcp-paragraph t)
+              (overlay-put ov 'display " ")))
+          (setq pos (next-single-property-change pos 'bcp-verse
+                                                 nil (point-max))))))))
+
+(defun bcp-reader-toggle-paragraph-mode ()
+  "Toggle paragraph mode in the current buffer.
+When on, verses within a chapter flow as a single paragraph."
+  (interactive)
+  (if (cl-some (lambda (ov) (overlay-get ov 'bcp-paragraph))
+               (overlays-in (point-min) (point-max)))
+      (remove-overlays (point-min) (point-max) 'bcp-paragraph t)
+    (bcp-reader--add-paragraph-overlays)))
 
 (defun bible-commentary--load-local-file (path)
   "Insert plain-text Bible from PATH into the Bible buffer."

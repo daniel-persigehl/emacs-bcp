@@ -691,6 +691,9 @@ PSALMS, PSALM-TEXTS, and LESSON-TEXTS."
       ;; ── Finalise ─────────────────────────────────────────────────────
       (when (fboundp 'bcp-reader--add-verse-number-overlays)
         (bcp-reader--add-verse-number-overlays))
+      (when (and (fboundp 'bcp-reader--add-paragraph-overlays)
+                 (bound-and-true-p bcp-reader-paragraph-mode))
+        (bcp-reader--add-paragraph-overlays))
       (bcp-liturgy-render--finalise-buffer)
       (current-buffer))))
 
