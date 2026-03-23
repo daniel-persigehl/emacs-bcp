@@ -20,6 +20,7 @@
 ;;   - bcp-1662--office-label
 ;;
 ;; What does NOT live here:
+;;   - Shared rendering framework (bcp-render.el)
 ;;   - Buffer primitives (bcp-liturgy-render.el)
 ;;   - Ordo plist data (bcp-1662-ordo.el)
 ;;   - Collect/lesson/propers dispatch (bcp-1662.el)
@@ -29,6 +30,7 @@
 
 (require 'cl-lib)
 (require 'calendar)
+(require 'bcp-render)
 (require 'bcp-liturgy-render)
 (require 'bcp-liturgy-canticles)
 (require 'bcp-1662-calendar)
@@ -689,10 +691,8 @@ PSALMS, PSALM-TEXTS, and LESSON-TEXTS."
                               go-label))))))
 
       ;; ── Finalise ─────────────────────────────────────────────────────
-      (when (fboundp 'bcp-reader--add-verse-number-overlays)
-        (bcp-reader--add-verse-number-overlays))
-      (when (and (fboundp 'bcp-reader--add-paragraph-overlays)
-                 (bound-and-true-p bcp-reader-paragraph-mode))
+      (bcp-reader--add-verse-number-overlays)
+      (when bcp-reader-paragraph-mode
         (bcp-reader--add-paragraph-overlays))
       (bcp-liturgy-render--finalise-buffer)
       (current-buffer))))
