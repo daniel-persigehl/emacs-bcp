@@ -608,9 +608,9 @@ Handles two encoding issues with raw Oremus text:
          (status (when (bcp-fetcher-critical-translation-p tr)
                    (bcp-fetcher-textual-status ref))))
     (cond
-     ;; Omitted verse in a critical translation → widen context + fnote=yes
+     ;; Omitted verse in a critical translation → widen context window
      ((and status (eq (plist-get status :status) 'omitted))
-      (bcp-fetcher-fetch-oremus-context
+      (bcp-fetcher-fetch-passage-context
        ref tr
        (lambda (text label)
          (bible-commentary--load-text text label))
@@ -631,9 +631,9 @@ Handles two encoding issues with raw Oremus text:
            (file-exists-p bible-commentary-bible-file))
       (bible-commentary--load-local-file bible-commentary-bible-file)
       (bible-commentary--seek-verse-in-bible-buffer ref))
-     ;; Oremus — normal fetch
+     ;; Network fetch
      (t
-      (bcp-fetcher-fetch-oremus
+      (bcp-fetcher-fetch-passage
        (bible-commentary--ref-to-string ref)
        (lambda (text label) (bible-commentary--load-text text label))
        tr)))))
@@ -690,7 +690,7 @@ TRANSLATION defaults to `bible-commentary-translation' (KJVA)."
            (if (string-empty-p s) nil s))))
   (unless bible-commentary--bible-buffer
     (user-error "Run `bible-commentary-open' first."))
-  (bcp-fetcher-fetch-oremus
+  (bcp-fetcher-fetch-passage
    passage
    (lambda (text label) (bible-commentary--load-text text label))
    (or (and translation (not (string-empty-p translation)) translation)

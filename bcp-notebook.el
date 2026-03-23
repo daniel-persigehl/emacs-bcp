@@ -856,7 +856,7 @@ Keybindings (Bible buffer):
                 '(?l ?o ?e))
           (?l (bible-commentary--load-local-file
                (read-file-name "Plain-text Bible file: ")))
-          (?o (bcp-fetcher-fetch-oremus
+          (?o (bcp-fetcher-fetch-passage
                (read-string "Passage (e.g. Genesis 1): ")
                (lambda (text label) (bible-commentary--load-text text label))
                bible-commentary-translation))

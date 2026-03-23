@@ -1,44 +1,44 @@
-;;; bcp-fetcher.el --- Oremus Bible text fetching and parsing -*- lexical-binding: t -*-
+;;; bcp-fetcher.el --- API-agnostic Bible text fetching -*- lexical-binding: t -*-
 
 ;;; Commentary:
 
-;; Low-level machinery for fetching Bible passages from Oremus Bible Browser
-;; and parsing the HTML response into plain text with verse formatting.
+;; Backend-agnostic fetching layer for the BCP package.  Backends
+;; register themselves via `bcp-fetcher-register-backend'; the active
+;; backend is selected by `bcp-fetcher-backend' (default: `oremus').
 ;;
-;; This library is shared by both bible-commentary.el (study buffer) and
-;; bcp-1662.el (Daily Office renderer).  It has no dependencies on either
-;; and can be used by any package that needs to fetch Bible text.
+;; The Oremus backend is loaded automatically at the bottom of this file
+;; via (require 'bcp-fetcher-oremus).  To use a different backend, load
+;; its file and set `bcp-fetcher-backend' before fetching.
 ;;
 ;; Public API:
-;;   `bcp-fetcher-fetch'                 — async fetch, returns propertized text
-;;   `bcp-fetcher-fetch-for-commentary'  — async fetch, returns cleaned text
-;;   `bcp-fetcher-dom-to-text'           — parse Oremus HTML DOM to formatted string
-;;   `bcp-fetcher-clean-text'            — clean Windows-1252 chars from plain text
+;;   `bcp-fetcher-fetch'                  — async fetch, calls (callback text)
+;;   `bcp-fetcher-fetch-passage'          — async fetch, calls (load-fn text label)
+;;   `bcp-fetcher-fetch-passage-context'  — async context fetch for omitted verses
+;;   `bcp-fetcher-clean-text'             — strip Windows-1252 artefacts from text
+;;   `bcp-fetcher-register-backend'       — register a fetch backend
+;;   `bcp-fetcher-available-translations' — translations for the active backend
 ;;
-;; Configuration defcustoms live in bible-commentary.el (their canonical home):
-;;   `bible-commentary-translation'
-;;   `bible-commentary-psalm-translation'
-;;   `bible-commentary-oremus-base-url'
-;;   `bible-commentary-oremus-version-codes'
+;; Textual-status utilities (translation-agnostic):
+;;   `bcp-fetcher-textual-status'
+;;   `bcp-fetcher-textual-header-annotation'
+;;   `bcp-fetcher-textual-status-property'
+;;   `bcp-fetcher-critical-translation-p'
+;;   `bcp-fetcher-active-translation'
 
 ;;; Code:
 
 (require 'cl-lib)
-(require 'url)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Defgroup
 
 (defgroup bcp-fetcher nil
-  "Oremus Bible text fetching and parsing."
+  "Bible text fetching."
   :prefix "bcp-fetcher-"
   :group 'text)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Translation configuration
-;;
-;; These defcustoms are the canonical home for all Oremus fetch configuration.
-;; bible-commentary.el reads them via (require 'bcp-fetcher).
 
 (defcustom bible-commentary-translation "KJVA"
   "Default translation for the Protestant canon and Catholic deuterocanon.
@@ -51,26 +51,9 @@ Protestant books, so nothing is lost by using KJVA throughout."
 
 (defcustom bible-commentary-psalm-translation "Coverdale"
   "Translation used automatically for Psalms.
-The value is looked up in `bible-commentary-oremus-version-codes' to get
-the Oremus version code.  \"Coverdale\" maps to the BCP 1662 Psalter code
-\"BCP\".  Other psalm-specific options: \"CW\" (Common Worship), \"LP\"
-(Liturgical Psalter/ASB 1980)."
-  :type 'string
-  :group 'bcp-fetcher)
-
-(defcustom bible-commentary-oremus-base-url
-  "https://bible.oremus.org/?passage=%s&version=%s&fnote=no&show_ref=no&omit_cr=no"
-  "Oremus URL template.  First %%s = passage string, second %%s = version code.
-This template suppresses footnotes (fnote=no), which is appropriate for
-normal passages.  For omitted verses, see `bible-commentary-oremus-context-url'."
-  :type 'string
-  :group 'bcp-fetcher)
-
-(defcustom bible-commentary-oremus-context-url
-  "https://bible.oremus.org/?passage=%s&version=%s&fnote=yes&show_ref=yes&omit_cr=no"
-  "Oremus URL template used when fetching context around omitted verses.
-Enables footnotes (fnote=yes) and reference display (show_ref=yes) so that
-the explanatory footnote for an omitted verse is visible in the Bible buffer."
+The value is passed to the active backend.  For the Oremus backend,
+\"Coverdale\" maps to the BCP 1662 Psalter code \"BCP\".  Other
+psalm-specific options depend on the backend in use."
   :type 'string
   :group 'bcp-fetcher)
 
@@ -80,25 +63,6 @@ When navigating to a verse absent from the critical text (e.g. John 5:4 in
 the ESV), the package fetches this many verses on either side so the user
 sees the surrounding passage rather than an empty buffer."
   :type 'integer
-  :group 'bcp-fetcher)
-
-(defcustom bible-commentary-oremus-version-codes
-  '(("KJVA"      . "AV")        ; KJV/KJVA — Oremus code is "AV"
-    ("KJV"       . "AV")
-    ("NRSV"      . "NRSV")      ; New Revised Standard Version (US spelling)
-    ("NRSVAE"    . "NRSVAE")    ; NRSV Anglicized Edition (British spelling)
-    ;; Note: Oremus only officially supports AV, NRSV, NRSVAE.
-    ;; ESV and RSV are included in case Oremus adds them; they
-    ;; will fall back gracefully (Oremus returns an error page).
-    ("ESV"       . "ESV")
-    ("RSV"       . "RSV")
-    ;; Psalm-specific versions (only valid for Psalms passages)
-    ("Coverdale" . "BCP")       ; BCP 1662 Psalter = Miles Coverdale's translation
-    ("BCP"       . "BCP")       ; Alias: Book of Common Prayer 1662
-    ("CW"        . "CW")        ; Common Worship Psalter (Church of England)
-    ("LP"        . "LP"))       ; Liturgical Psalter (ASB 1980)
-  "Alist mapping translation names to Oremus version code strings."
-  :type '(alist :key-type string :value-type string)
   :group 'bcp-fetcher)
 
 (defcustom bible-commentary-critical-translation-names
@@ -133,7 +97,7 @@ name contains any of these strings as a substring."
 This applies to: Psalm 151, 1 Esdras, 2 Esdras (4 Ezra), Prayer of Manasseh,
 3 Maccabees, and 4 Maccabees.  These were never translated into the KJV
 tradition and are not in KJVA.  NRSV is the most complete ecumenical
-translation available on Oremus."
+translation available."
   :type 'string
   :group 'bcp-fetcher)
 
@@ -150,8 +114,7 @@ When non-nil it overrides the Coverdale auto-switch for Psalms.")
 (defconst bcp-fetcher--lxx-only-books
   '("Psalm 151" "3 Maccabees" "4 Maccabees")
   "Books present in Orthodox canons via the LXX but absent from the KJV
-Apocrypha entirely.  Oremus cannot serve these under the AV code;
-they require `bible-commentary-orthodox-translation' (NRSV).")
+Apocrypha entirely.  These require `bible-commentary-orthodox-translation'.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Textual critical data
@@ -260,7 +223,7 @@ Call with an empty string or \\[universal-argument] to restore automatic behavio
   (interactive
    (list (let ((s (completing-read
                    "Translation (blank to reset to automatic): "
-                   (mapcar #'car bible-commentary-oremus-version-codes)
+                   (bcp-fetcher-available-translations)
                    nil nil nil nil "")))
            (if (string-empty-p s) nil s))))
   (setq bible-commentary--session-translation
@@ -269,24 +232,6 @@ Call with an empty string or \\[universal-argument] to restore automatic behavio
                "Translation locked to %s for this session."
              "Translation reset — Coverdale for Psalms, NRSV for Orthodox books, KJVA otherwise.")
            bible-commentary--session-translation))
-
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Internal helpers
-
-(defun bcp-fetcher--oremus-version (translation)
-  "Return the Oremus version code for TRANSLATION."
-  (or (cdr (assoc translation bible-commentary-oremus-version-codes))
-      translation))
-
-(defun bcp-fetcher--decode-response ()
-  "Decode the HTTP response body in current buffer from Windows-1252.
-Returns the decoded string."
-  (goto-char (point-min))
-  (re-search-forward "\r\n\r\n\\|\n\n" nil t)
-  (let ((raw (buffer-substring-no-properties (point) (point-max))))
-    (decode-coding-string
-     (encode-coding-string raw 'raw-text)
-     'windows-1252)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Text cleaning
@@ -314,278 +259,84 @@ Returns the cleaned string with text properties intact."
     (string-trim (buffer-string))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; DOM parsing
+;;;; Backend registry
 
-(defun bcp-fetcher-dom-to-text (node book &optional start-psalm)
-  "Walk DOM NODE, building a formatted string for BOOK.
+(defcustom bcp-fetcher-backend 'oremus
+  "Symbol identifying the active Bible text fetch backend.
+The backend must be registered via `bcp-fetcher-register-backend'."
+  :type 'symbol
+  :group 'bcp-fetcher)
 
-Returns a string with text properties:
-  `display'      — right-aligns verse numbers to column 0
-  `wrap-prefix'  — indents continuation lines to column 4
+(defvar bcp-fetcher--backends nil
+  "Alist mapping backend symbols to their property plists.")
 
-START-PSALM is the starting psalm number for multi-psalm BCP fetches."
-  (let ((result "")
-        (is-psalm   (equal book "Psalms"))
-        (psalm-num  (or start-psalm 1))
-        (prev-verse 0))
-    (dolist (child (dom-children node))
-      (cond
-       ;; Chapter dropcap (AV) — [Chapter N] heading, then auto-insert verse 1
-       ((and (listp child)
-             (string-match-p "\\bcc\\b" (or (dom-attr child 'class) "")))
-        (let* ((num   (string-trim (dom-texts child "")))
-               (label (if is-psalm
-                          (format "[Psalm %s]" num)
-                        (format "[Chapter %s]" num)))
-               (v1    (if is-psalm "1." "1"))
-               (pad   (make-string (max 0 (- 4 (length v1))) ?\s))
-               (v1-marker (concat "\n" pad v1 " ")))
-          (setq result
-                (concat result
-                        "\n\n" label "\n"
-                        (propertize
-                         v1-marker
-                         'display
-                         (concat "\n"
-                                 (propertize (concat pad v1 " ")
-                                             'display `(space :align-to 0)))
-                         'wrap-prefix
-                         (propertize "    " 'display '(space :align-to 4)))))
-          (setq prev-verse 1)))
-       ;; Verse number — AV "ww vnumVis" or BCP "cwvnum vnumVis"
-       ((and (listp child)
-             (let ((class (or (dom-attr child 'class) "")))
-               (or (string-match-p "\\bww\\b" class)
-                   (string-match-p "\\bcwvnum\\b" class))))
-        (let* ((num-str (string-trim (dom-texts child "")))
-               (num     (string-to-number num-str))
-               (display (if is-psalm (concat num-str ".") num-str))
-               (pad     (make-string (max 0 (- 4 (length display))) ?\s))
-               (marker  (concat "\n" pad display " ")))
-          (when (and is-psalm (= num 1) (> prev-verse 1))
-            (cl-incf psalm-num)
-            (let ((label (format "[Psalm %d]" psalm-num)))
-              (setq result (concat result "\n\n" label "\n\n"))))
-          (setq result
-                (concat result
-                        (propertize
-                         marker
-                         'display
-                         (concat "\n"
-                                 (propertize (concat pad display " ")
-                                             'display `(space :align-to 0)))
-                         'wrap-prefix
-                         (propertize "    " 'display '(space :align-to 4)))))
-          (setq prev-verse num)))
-       ;; Suppress <br>
-       ((and (listp child) (eq (dom-tag child) 'br)) nil)
-       ;; Plain text node
-       ((stringp child)
-        (setq result (concat result child)))
-       ;; Recurse
-       ((listp child)
-        (setq result
-              (concat result
-                      (bcp-fetcher-dom-to-text child book psalm-num))))))
-    result))
+(defun bcp-fetcher-register-backend (name &rest plist)
+  "Register a fetch backend named NAME (a symbol) with properties PLIST.
+Required plist keys:
+  :name STRING        — human-readable display name
+  :fetch-fn FUNCTION  — (fn passage translation callback)
+                        async; calls (callback text) with propertized text
+                        or nil on failure
+  :translations LIST  — list of supported translation name strings"
+  (setf (alist-get name bcp-fetcher--backends) plist))
 
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; HTML extraction fallbacks
+(defun bcp-fetcher--active-backend ()
+  "Return the plist of the active backend, or signal an error if missing."
+  (or (alist-get bcp-fetcher-backend bcp-fetcher--backends)
+      (error "bcp-fetcher: no backend registered for `%s'" bcp-fetcher-backend)))
 
-(defun bcp-fetcher--extract-bibletext (html)
-  "Regex fallback: extract bibletext div from HTML, return plain text or nil."
-  (when (string-match
-         "<[^>]*class=[\"']bibletext[\"'][^>]*>\\(\\(?:.\\|\n\\)*?\\)</div>"
-         html)
-    (let ((inner (match-string 1 html)))
-      (with-temp-buffer
-        (insert inner)
-        (goto-char (point-min))
-        (while (re-search-forward "<[^>]+>" nil t) (replace-match ""))
-        (dolist (pair '(("&amp;" . "&") ("&lt;" . "<") ("&gt;" . ">")
-                        ("&nbsp;" . " ") ("&#160;" . " ") ("&copy;" . "©")))
-          (goto-char (point-min))
-          (while (re-search-forward (car pair) nil t) (replace-match (cdr pair))))
-        (goto-char (point-min))
-        (while (re-search-forward "&#\\([0-9]+\\);" nil t)
-          (replace-match (string (string-to-number (match-string 1)))))
-        (goto-char (point-min))
-        (while (search-forward "\r" nil t) (replace-match ""))
-        (goto-char (point-min))
-        (while (re-search-forward "\n\\{3,\\}" nil t) (replace-match "\n\n"))
-        (let ((result (string-trim (buffer-string))))
-          (unless (string-empty-p result) result))))))
+(defun bcp-fetcher-available-translations ()
+  "Return the list of translation name strings for the active backend."
+  (plist-get (bcp-fetcher--active-backend) :translations))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Public fetch API
 
 (defun bcp-fetcher-fetch (passage callback &optional translation)
-  "Fetch PASSAGE from Oremus and call CALLBACK with formatted text.
+  "Fetch PASSAGE using the active backend and call CALLBACK with formatted text.
 
 TRANSLATION defaults to `bible-commentary-translation'.
-CALLBACK is called with a propertized string (verse numbers formatted,
-wrap-prefix set for visual-line-mode) or nil on failure.
+CALLBACK is called as (CALLBACK text) where TEXT is a propertized string
+with verse numbers formatted for visual-line-mode, or nil on failure.
 
-The text properties from `bcp-fetcher-dom-to-text' are preserved —
-do NOT pass the result through `bcp-fetcher-clean-text' as that would
-strip them.  Character cleaning is done before DOM parsing instead."
-  (let* ((tr  (or translation bible-commentary-translation))
-         (ver (bcp-fetcher--oremus-version tr))
-         (url (format bible-commentary-oremus-base-url
-                      (url-hexify-string passage)
-                      (url-hexify-string ver))))
-    (url-retrieve
-     url
-     (lambda (status psg cb)
-       (if (plist-get status :error)
-           (progn
-             (message "bcp-fetcher: fetch failed for %s — %s" psg
-                      (plist-get status :error))
-             (funcall cb nil))
-         (let* ((decoded (bcp-fetcher--decode-response))
-                ;; DOM path: returns propertized string, no further cleaning
-                (dom-result
-                 (when (fboundp 'libxml-parse-html-region)
-                   (ignore-errors
-                     (require 'dom)
-                     (with-temp-buffer
-                       (insert decoded)
-                       (let* ((dom      (libxml-parse-html-region
-                                         (point-min) (point-max)))
-                              (node     (car (dom-by-class dom "bibletext")))
-                              (book     (replace-regexp-in-string " .*" "" psg))
-                              (start-ps (when (string-match "[0-9]+" psg)
-                                          (string-to-number (match-string 0 psg)))))
-                         (when node
-                           (let ((result (bcp-fetcher-dom-to-text
-                                          node book start-ps)))
-                             (unless (string-empty-p (string-trim result))
-                               result))))))))
-                ;; Regex fallback: plain text, safe to clean
-                (text (or dom-result
-                          (let ((fb (bcp-fetcher--extract-bibletext decoded)))
-                            (when fb (bcp-fetcher-clean-text fb))))))
-           (funcall cb text))))
-     (list passage callback)
-     t t)))
+The text properties from the backend are preserved — do NOT pass the result
+through `bcp-fetcher-clean-text' as that would strip them."
+  (let* ((tr (or translation bible-commentary-translation))
+         (fn (plist-get (bcp-fetcher--active-backend) :fetch-fn)))
+    (funcall fn passage tr callback)))
 
-(defun bcp-fetcher-fetch-for-commentary (passage translation callback)
-  "Fetch PASSAGE in TRANSLATION and call CALLBACK with cleaned text.
-
-Like `bcp-fetcher-fetch' but passes the result through
-`bcp-fetcher-clean-text', stripping text properties.  Used by
-`bcp-fetcher-oremus-process' which inserts into its own buffer
-and applies its own formatting."
-  (let* ((ver (bcp-fetcher--oremus-version translation))
-         (url (format bible-commentary-oremus-base-url
-                      (url-hexify-string passage)
-                      (url-hexify-string ver))))
-    (url-retrieve
-     url
-     (lambda (status psg trans cb)
-       (if (plist-get status :error)
-           (progn
-             (message "bcp-fetcher: fetch failed for %s — %s" psg
-                      (plist-get status :error))
-             (funcall cb nil nil))
-         (let* ((decoded (bcp-fetcher--decode-response))
-                (book    (replace-regexp-in-string " .*" "" psg))
-                (text
-                 (when (fboundp 'libxml-parse-html-region)
-                   (ignore-errors
-                     (require 'dom)
-                     (with-temp-buffer
-                       (insert decoded)
-                       (let* ((dom  (libxml-parse-html-region (point-min) (point-max)))
-                              (node (car (dom-by-class dom "bibletext"))))
-                         (when node
-                           (let* ((start-ps (when (string-match "[0-9]+" psg)
-                                              (string-to-number (match-string 0 psg))))
-                                  (result   (bcp-fetcher-dom-to-text
-                                             node book start-ps)))
-                             (unless (string-empty-p (string-trim result))
-                               result)))))))))
-           (funcall cb
-                    (or text
-                        (bcp-fetcher--extract-bibletext decoded)
-                        (bcp-fetcher--oremus-strip-fallback decoded))
-                    trans))))
-     (list passage translation callback)
-     t t)))
-
-(defun bcp-fetcher--oremus-strip-fallback (html)
-  "Last-resort HTML stripper: remove script blocks then all tags."
-  (with-temp-buffer
-    (insert html)
-    (goto-char (point-min))
-    (while (search-forward "\r" nil t) (replace-match ""))
-    (goto-char (point-min))
-    (let ((case-fold-search t))
-      (while (re-search-forward "<script\\b[^>]*>\\(?:.\\|\n\\)*?</script>" nil t)
-        (replace-match "")))
-    (goto-char (point-min))
-    (while (re-search-forward "<[^>]+>" nil t) (replace-match ""))
-    (dolist (pair '(("&amp;" . "&") ("&lt;" . "<") ("&gt;" . ">")
-                    ("&nbsp;" . " ") ("&#160;" . " ") ("&copy;" . "©")))
-      (goto-char (point-min))
-      (while (re-search-forward (car pair) nil t) (replace-match (cdr pair))))
-    (goto-char (point-min))
-    (while (re-search-forward "\n\\{3,\\}" nil t) (replace-match "\n\n"))
-    (string-trim (buffer-string))))
-
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Commentary-facing fetch API
-;;
-;; These functions replace what was bible-commentary--fetch-oremus,
-;; bible-commentary--fetch-oremus-context, and bible-commentary--oremus-process.
-;; They are called by bible-commentary.el but live here because they are
-;; pure fetch-layer concerns.
-
-(defun bcp-fetcher-oremus-process (passage translation load-fn)
-  "Fetch PASSAGE in TRANSLATION from Oremus and call LOAD-FN with the result.
-
-LOAD-FN is called as (LOAD-FN text label) where TEXT is the cleaned string
-and LABEL is a display string like \"Genesis 1  [KJVA]\".
-
-This replaces the old bible-commentary--oremus-process."
-  (bcp-fetcher-fetch-for-commentary
-   passage translation
-   (lambda (text trans)
-     (funcall load-fn text (format "%s  [%s]" passage trans)))))
-
-(defun bcp-fetcher-fetch-oremus (passage load-fn &optional translation)
-  "Fetch PASSAGE from Oremus asynchronously and call LOAD-FN with the result.
+(defun bcp-fetcher-fetch-passage (passage load-fn &optional translation)
+  "Fetch PASSAGE using the active backend and call LOAD-FN with (text label).
 
 TRANSLATION defaults to `bible-commentary-translation'.
-LOAD-FN is called as (LOAD-FN text label).
+LOAD-FN is called as (LOAD-FN text label) where:
+  TEXT  — propertized passage string (or nil on failure)
+  LABEL — display string, e.g. \"Genesis 1  [KJVA]\""
+  (let* ((tr (or translation bible-commentary-translation))
+         (fn (plist-get (bcp-fetcher--active-backend) :fetch-fn)))
+    (message "Fetching %s [%s]…" passage tr)
+    (funcall fn passage tr
+             (lambda (text)
+               (funcall load-fn text (format "%s  [%s]" passage tr))))))
 
-This replaces the old bible-commentary--fetch-oremus."
-  (let ((tr (or translation bible-commentary-translation)))
-    (message "Fetching %s [%s] from Oremus…" passage tr)
-    (bcp-fetcher-oremus-process passage tr load-fn)))
+(defun bcp-fetcher-fetch-passage-context (ref translation load-fn banner-fn)
+  "Fetch a context window around REF and call LOAD-FN with (text label).
 
-(defun bcp-fetcher-fetch-oremus-context (ref translation load-fn banner-fn)
-  "Fetch a context window around REF from Oremus with footnotes enabled.
+Used for omitted or disputed verses where fetching the bare verse number
+returns empty content.  Fetches `bible-commentary-omitted-verse-context-window'
+verses on each side.
 
-Used for omitted verses where fetching the bare verse number returns empty
-content.  Fetches `bible-commentary-omitted-verse-context-window' verses on
-each side with fnote=yes so the explanatory footnote is visible.
-
-LOAD-FN is called as (LOAD-FN text label) on success or failure fallback.
-BANNER-FN is called as (BANNER-FN banner-string) after a successful fetch,
-or nil to skip the banner.  The caller is responsible for inserting the
-banner into the appropriate buffer."
+LOAD-FN is called as (LOAD-FN text label).  If the backend returns nil (fetch
+failed), a fallback explanatory text is used.
+BANNER-FN is called as (BANNER-FN banner-string) before the fetch if a
+textual-status banner is available; pass nil to skip the banner."
   (let* ((ch      (plist-get ref :chapter))
          (vs      (plist-get ref :verse-start))
+         (book    (plist-get ref :book))
          (window  bible-commentary-omitted-verse-context-window)
          (vs-from (max 1 (- vs window)))
          (vs-to   (+ vs window))
-         (book    (plist-get ref :book))
          (passage (format "%s %d:%d-%d" book ch vs-from vs-to))
-         (ver     (bcp-fetcher--oremus-version translation))
-         (url     (format bible-commentary-oremus-context-url
-                          (url-hexify-string passage)
-                          (url-hexify-string ver)))
          (status  (bcp-fetcher-textual-status ref))
          (banner  (when status
                     (pcase (plist-get status :status)
@@ -596,24 +347,25 @@ banner into the appropriate buffer."
                        (format "┄┄ Context: %s [⚠ %s] ┄┄"
                                passage (plist-get status :label)))))))
     (message "Fetching context around %s %d:%d [%s]…" book ch vs translation)
-    (url-retrieve
-     url
-     (lambda (fetch-status passage-str trans-str banner-str lfn bfn)
-       (if (plist-get fetch-status :error)
-           (funcall lfn
-                    (format "Verse %s is absent from the critical text.\n\n\
-This verse number does not appear in the earliest Greek manuscripts \
-and is omitted in the %s.  It is present in the Textus Receptus \
-and therefore in the KJV/KJVA.\n\nTo read the surrounding passage, \
-navigate to %s %d:%d-%d."
-                            passage-str trans-str book ch
-                            (max 1 (- vs window)) (+ vs window))
-                    (format "%s  [%s]" passage-str trans-str))
-         (bcp-fetcher-oremus-process passage-str trans-str lfn)
-         (when (and banner-str bfn)
-           (funcall bfn banner-str))))
-     (list passage translation banner load-fn banner-fn)
-     t t)))
+    (when (and banner banner-fn)
+      (funcall banner-fn banner))
+    (let ((fn (plist-get (bcp-fetcher--active-backend) :fetch-fn)))
+      (funcall fn passage translation
+               (lambda (text)
+                 (funcall load-fn
+                          (or text
+                              (format
+                               "Verse %s %d:%d is absent from the critical text.\n\n\
+This verse number does not appear in the earliest Greek manuscripts and is \
+omitted in %s.  It is present in the Textus Receptus and therefore in the \
+KJV/KJVA.\n\nTo read the surrounding passage, navigate to %s %d:%d-%d."
+                               book ch vs translation book ch vs-from vs-to))
+                          (format "%s  [%s]" passage translation)))))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Load default backend
+
+(require 'bcp-fetcher-oremus)
 
 (provide 'bcp-fetcher)
 ;;; bcp-fetcher.el ends here

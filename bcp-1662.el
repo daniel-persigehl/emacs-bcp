@@ -146,7 +146,10 @@ Coverdale Psalter."
              (capitalize (symbol-name office))
              day
              label)
-    (bible-commentary--fetch-oremus passage "Coverdale")))
+    (bcp-fetcher-fetch-passage
+     passage
+     (lambda (text label) (bible-commentary--load-text text label))
+     "Coverdale")))
 
 (defun bible-commentary-bcp-set-office-date (year month day hour)
   "Set `bible-commentary-office-date' for a specific date and hour.
