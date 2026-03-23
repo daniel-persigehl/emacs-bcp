@@ -155,9 +155,12 @@ CHAPTER is an integer.  Returns nil if BOOK is not in the book table."
              (fname   (format "eng-kjv_%s_%s_%s_read.txt" ordinal code ch-str)))
         (expand-file-name fname bcp-fetcher-ebible-directory)))))
 
-(defun bcp-fetcher-ebible--propertize-verse (verse-num verse-text is-psalm)
+(defun bcp-fetcher-ebible--propertize-verse (verse-num verse-text is-psalm
+                                              &optional book chapter)
   "Return a propertized string for VERSE-NUM with VERSE-TEXT.
 IS-PSALM non-nil formats the verse number with a trailing dot (Psalms style).
+When BOOK and CHAPTER are provided and VERSE-NUM is 1, the marker carries
+`bcp-book' and `bcp-chapter' text properties for later chapter-heading display.
 Matches the display format of the Oremus backend."
   (let* ((stripped (string-trim
                     (replace-regexp-in-string "^¶[ \t]*" "" verse-text)))
@@ -165,17 +168,20 @@ Matches the display format of the Oremus backend."
                        (format "%d." verse-num)
                      (format "%d" verse-num)))
          (pad      (make-string (max 0 (- 4 (length display))) ?\s))
-         (marker   (concat "\n" pad display " ")))
-    (concat
-     (propertize
-      marker
-      'display
-      (concat "\n"
-              (propertize (concat pad display " ")
-                          'display `(space :align-to 0)))
-      'wrap-prefix
-      (propertize "    " 'display '(space :align-to 4)))
-     stripped)))
+         (marker   (concat "\n" pad display " "))
+         (m        (propertize
+                    marker
+                    'display
+                    (concat "\n"
+                            (propertize (concat pad display " ")
+                                        'display `(space :align-to 0)))
+                    'wrap-prefix
+                    (propertize "    " 'display '(space :align-to 4)))))
+    (when (and (= verse-num 1) book chapter)
+      (add-text-properties 0 (length m)
+                           (list 'bcp-book book 'bcp-chapter chapter)
+                           m))
+    (concat m stripped)))
 
 (defun bcp-fetcher-ebible--read-chapter (book chapter vs-from vs-to)
   "Read eBible chapter file for BOOK CHAPTER and return propertized text.
@@ -184,13 +190,12 @@ Returns nil if the file does not exist."
   (let ((path (bcp-fetcher-ebible--chapter-file book chapter)))
     (when (and path (file-readable-p path))
       (let* ((is-psalm (equal book "Psalms"))
-             (heading  (bcp-fetcher--make-chapter-heading book chapter))
              (lines    (with-temp-buffer
                          (insert-file-contents path)
                          (split-string (buffer-string) "\n")))
              ;; Lines 0 and 1 are book title and "Chapter N." — skip them
              (verse-lines (cddr lines))
-             (result heading))
+             (result ""))
         (let ((verse-num 0))
           (dolist (line verse-lines)
             (unless (string-empty-p (string-trim line))
@@ -202,7 +207,7 @@ Returns nil if the file does not exist."
                 (setq result
                       (concat result
                               (bcp-fetcher-ebible--propertize-verse
-                               verse-num line is-psalm)))))))
+                               verse-num line is-psalm book chapter)))))))
         result))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

@@ -107,8 +107,6 @@ START-PSALM is the starting psalm number for multi-psalm BCP fetches."
                (v1-marker (concat "\n" pad v1 " ")))
           (setq result
                 (concat result
-                        (bcp-fetcher--make-chapter-heading
-                         book (string-to-number num))
                         (propertize
                          v1-marker
                          'display
@@ -116,7 +114,9 @@ START-PSALM is the starting psalm number for multi-psalm BCP fetches."
                                  (propertize (concat pad v1 " ")
                                              'display `(space :align-to 0)))
                          'wrap-prefix
-                         (propertize "    " 'display '(space :align-to 4)))))
+                         (propertize "    " 'display '(space :align-to 4))
+                         'bcp-chapter (string-to-number num)
+                         'bcp-book    book)))
           (setq prev-verse 1)))
        ;; Verse number — AV "ww vnumVis" or BCP "cwvnum vnumVis"
        ((and (listp child)
@@ -129,19 +129,20 @@ START-PSALM is the starting psalm number for multi-psalm BCP fetches."
                (pad     (make-string (max 0 (- 4 (length display))) ?\s))
                (marker  (concat "\n" pad display " ")))
           (when (and is-psalm (= num 1) (> prev-verse 1))
-            (cl-incf psalm-num)
-            (setq result (concat result (bcp-fetcher--make-chapter-heading
-                                         "Psalms" psalm-num))))
-          (setq result
-                (concat result
-                        (propertize
-                         marker
-                         'display
-                         (concat "\n"
-                                 (propertize (concat pad display " ")
-                                             'display `(space :align-to 0)))
-                         'wrap-prefix
-                         (propertize "    " 'display '(space :align-to 4)))))
+            (cl-incf psalm-num))
+          (let ((m (propertize
+                    marker
+                    'display
+                    (concat "\n"
+                            (propertize (concat pad display " ")
+                                        'display `(space :align-to 0)))
+                    'wrap-prefix
+                    (propertize "    " 'display '(space :align-to 4)))))
+            (when (= num 1)
+              (add-text-properties 0 (length m)
+                                   (list 'bcp-chapter psalm-num 'bcp-book book)
+                                   m))
+            (setq result (concat result m)))
           (setq prev-verse num)))
        ;; Suppress <br>
        ((and (listp child) (eq (dom-tag child) 'br)) nil)
