@@ -547,7 +547,7 @@ Implements containment/overlap at every granularity level:
                         (let ((nav-ve  (or (plist-get nav  :verse-end) nav-vs))
                               (note-ve (or (plist-get note :verse-end) note-vs)))
                           (and (<= nav-vs note-ve)
-                               (<= note-vs nav-ve)))))))))))
+                               (<= note-vs nav-ve))))))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────
 ;;;; Bible text loading & Oremus fetch
