@@ -633,9 +633,7 @@ Does nothing if the buffer contains no `bcp-verse' properties."
              for ov       = (make-overlay start end)
              do
              (overlay-put ov 'bcp-verse-number t)
-             (overlay-put ov 'before-string
-                          (propertize (concat pad disp " ")
-                                      'display `(space :align-to 0)))
+             (overlay-put ov 'before-string (concat pad disp " "))
              (overlay-put ov 'wrap-prefix
                           (propertize "    " 'display '(space :align-to 4))))))
 
