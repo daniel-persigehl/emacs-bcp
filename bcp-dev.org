@@ -18,9 +18,9 @@
 
 * Package Overview :world:
 The BCP — Biblical Commentary and Prayer framework is an Emacs environment
-for liturgical prayer and Bible study. It fetches scripture from Oremus
-Bible Browser or local files, renders Daily Office liturgies, and supports
-annotated Bible study with org-roam cross-references.
+for liturgical prayer and Bible study. It fetches scripture from configurable
+backends (default: Oremus Bible Browser) or local files, renders Daily Office
+liturgies, and supports annotated Bible study with org-roam cross-references.
 
 ** Design Principles :constraint:
 - Rubric texts are NEVER altered — only shown/hidden
@@ -43,7 +43,7 @@ context, it belongs under =bcp-=.
 Infrastructure with no domain semantics. Serves all other domains.
 - Pure computus (Easter, dominical letter, moveable feasts)
 - Western rank taxonomy
-- Oremus fetch/parse layer
+- API-agnostic fetch layer (backends register via bcp-fetcher-register-backend)
 - Buffer rendering primitives
 - User preferences
 
@@ -102,7 +102,8 @@ BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= 
 ** Load Order :constraint:
 #+begin_src elisp
 ;; ── Shared framework ──────────────────────────────────────────────
-(require 'bcp-fetcher)               ; MUST BE FIRST — fetch/parse, no deps
+(require 'bcp-fetcher)               ; MUST BE FIRST — backend dispatch, no deps
+                                     ; auto-loads bcp-fetcher-oremus (default backend)
 (require 'bcp-calendar)              ; computus, rank taxonomy
 
 ;; ── Liturgy: generic layer ────────────────────────────────────────
@@ -115,71 +116,97 @@ BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= 
 (require 'bcp-1662-ordo)             ; Morning/Evening Prayer ordo plists
 (require 'bcp-1662)                  ; dispatch + renderer
 
-;; ── Reader & Notebook (pending rename) ───────────────────────────
-(require 'bcp-reader)                ; was bible-commentary.el — pending split
+;; ── Reader & Notebook ─────────────────────────────────────────────
+(require 'bcp-reader)                ; scripture reader (standalone, no org deps)
+(require 'bcp-notebook)              ; annotation, org-roam, capture, export
 (load "bcp-preferences.el")
 #+end_src
 
 ** File Inventory
 | File | Domain | Purpose | State |
 |------|--------|---------|-------|
-| bcp-fetcher.el | bcp- | Oremus fetch, DOM parse, char cleaning, translation config | SETTLED |
+| bcp-fetcher.el | bcp- | API-agnostic fetch dispatch, backend registry, translation config, textual-status | SETTLED |
+| bcp-fetcher-oremus.el | bcp- | Oremus backend — URL config, DOM parse, char clean; registers as 'oremus | SETTLED |
 | bcp-calendar.el | bcp- | Computus, rank taxonomy, date utilities | SETTLED |
 | bcp-preferences.el | bcp- | All user config | SETTLED |
-| bcp-liturgy-canticles.el | bcp-liturgy- | Canticle texts + registry (was bcp-canticles.el) | IN-DEVELOPMENT |
-| bcp-liturgy-render.el | bcp-liturgy- | Generic ordo walker + buffer primitives | TODO |
+| bcp-liturgy-canticles.el | bcp-liturgy- | Canticle texts + registry (was bcp-canticles.el) | SETTLED |
+| bcp-liturgy-render.el | bcp-liturgy- | Generic ordo walker + buffer primitives | SETTLED |
 | bcp-1662-calendar.el | bcp-1662- | BCP seasons/weeks, feast table | SETTLED |
 | bcp-1662-data.el | bcp-1662- | 366-day lectionary, collects, communion propers | SETTLED |
 | bcp-1662-user-feasts.el | bcp-1662- | Patronal feast config + transfers | SETTLED |
 | bcp-1662-ordo.el | bcp-1662- | Morning/Evening Prayer ordo plists | SETTLED |
-| bcp-1662-render.el | bcp-1662- | BCP-specific ordo dispatch | TODO |
+| bcp-1662-render.el | bcp-1662- | BCP-specific ordo dispatch | SETTLED |
 | bcp-1662.el | bcp-1662- | Main dispatch (to be slimmed into bcp-1662-render.el) | SETTLED |
 | bcp-1662-test.el | bcp-1662- | 229 automated tests | SETTLED |
-| bcp-reader.el | bcp-reader- | Scripture reader (pending split from bible-commentary.el) | TODO |
-| bcp-notebook.el | bcp-notebook- | Annotation, org-roam, capture, export (pending split) | TODO |
+| bcp-reader.el | bcp-reader- | Scripture reader: passage display, navigation, psalm schemes, local files | SETTLED |
+| bcp-notebook.el | bcp-notebook- | Annotation, org-roam, capture, spanning psalms, contextual view, export | SETTLED |
 
 * bcp-fetcher.el :science:
 :PROPERTIES:
 :STATUS: SETTLED
 :END:
 
-Core fetch/parse layer. No dependencies on bible-commentary or bcp-1662.
-Must be required first. Both packages use its symbols directly.
+API-agnostic fetch dispatch layer. No dependencies on bible-commentary or bcp-1662.
+Must be required first. Auto-loads bcp-fetcher-oremus at the bottom.
+Backends register themselves via bcp-fetcher-register-backend; active backend
+is selected by the defcustom bcp-fetcher-backend (default: 'oremus).
+
+** Backend Protocol
+A backend is registered as:
+  (bcp-fetcher-register-backend 'NAME
+    :name "Display Name"
+    :fetch-fn #'my-backend--fetch     ; (fn passage translation callback)
+    :translations '("KJVA" "NRSV" …)) ; for completing-read
+
+The :fetch-fn must call (callback text) where text is a propertized string
+(verse numbers formatted for visual-line-mode) or nil on failure.
 
 ** Public API
 - bcp-fetcher-fetch(passage callback &optional translation)
-  Async. Returns propertized string. Properties PRESERVED.
-  Do NOT clean — would strip wrap-prefix/display properties.
-- bcp-fetcher-fetch-for-commentary(passage translation callback)
-  Async. Applies clean-text. For commentary buffer only.
-- bcp-fetcher-dom-to-text(node book &optional start-psalm)
-  DOM → formatted string with text properties.
+  Async. Dispatches to active backend. PRESERVES text properties.
+  Do NOT clean result — would strip wrap-prefix/display properties.
+- bcp-fetcher-fetch-passage(passage load-fn &optional translation)
+  Async. Calls load-fn(text label). Used by bcp-reader / bcp-notebook.
+- bcp-fetcher-fetch-passage-context(ref translation load-fn banner-fn)
+  Context-window fetch for omitted/disputed verses. Banner-fn called
+  immediately with status string; load-fn called with text + label.
 - bcp-fetcher-clean-text(text)
-  Cleans Windows-1252 chars. Strips text properties.
-- bcp-fetcher-fetch-oremus(passage load-fn &optional translation)
-  Async fetch for commentary buffer, calls load-fn(text label).
-- bcp-fetcher-fetch-oremus-context(ref translation load-fn banner-fn)
-  Context-window fetch for omitted verses with footnotes.
-- bcp-fetcher-oremus-process(passage translation load-fn)
-  Core fetch-and-process used by the above.
+  Cleans Windows-1252 C1 chars and nbsp. Text properties preserved.
+- bcp-fetcher-register-backend(name &rest plist)
+  Register a fetch backend. See Backend Protocol above.
+- bcp-fetcher-available-translations()
+  Returns translation list from the active backend (for completing-read).
 - bcp-fetcher-active-translation(ref)
   Returns correct translation for REF per priority rules.
 - bcp-fetcher-textual-status(ref), bcp-fetcher-textual-header-annotation
   Textual-critical status for omitted/disputed verses.
-  Cleans Windows-1252 chars. Strips text properties.
 
 ** Critical Constraint :constraint:
 bcp-fetcher-clean-text and replace-match strip ALL text properties.
 For Office buffer, DOM results returned DIRECTLY without cleaning.
 In-buffer char cleaning in insert-text-block handles survivors.
 
-** Defcustoms (canonical home — all fetch config lives here)
+** Defcustoms (canonical home — translation config lives here)
+- bcp-fetcher-backend ('oremus) — active backend symbol
 - bible-commentary-translation ("KJVA") — default translation
 - bible-commentary-psalm-translation ("Coverdale") — auto-used for Psalms
-- bible-commentary-oremus-base-url, bible-commentary-oremus-context-url
-- bible-commentary-oremus-version-codes, bible-commentary-omitted-verse-context-window
-- bible-commentary-critical-translation-names, bible-commentary-vulgate-translation-names
+- bible-commentary-omitted-verse-context-window (2) — context verses for omissions
+- bible-commentary-critical-translation-names — triggers textual-status warnings
+- bible-commentary-vulgate-translation-names — triggers Vg psalm numbering
 - bible-commentary-orthodox-translation ("NRSV") — for LXX-only books
+
+Oremus-specific defcustoms have moved to bcp-fetcher-oremus.el:
+- bible-commentary-oremus-base-url, bible-commentary-oremus-context-url
+- bible-commentary-oremus-version-codes
+
+** bcp-fetcher-oremus.el
+Oremus backend. Loaded automatically by bcp-fetcher.el.
+Owns: URL templates, version code mapping, HTML DOM parsing,
+bcp-fetcher-oremus--dom-to-text, extract-bibletext, strip-fallback.
+Registers as 'oremus backend on load.
+
+To add a new backend, create bcp-fetcher-PROVIDER.el, implement the
+:fetch-fn protocol, and call bcp-fetcher-register-backend at load time.
 
 * bcp-calendar.el :science:
 :PROPERTIES:
@@ -400,24 +427,27 @@ Psalm passages, Canticles, Rubrical options.
 :STATUS: OPEN
 :END:
 
-** TODO Rename: bcp-canticles.el → bcp-liturgy-canticles.el
-Update all callers (bcp-1662.el, bcp-1662-test.el, bcp-preferences.el).
-Update bcp-canticle- symbol prefix → bcp-liturgy-canticle-.
+** DONE Rename: bcp-canticles.el → bcp-liturgy-canticles.el
+Deleted bcp-canticles.el (no live callers). bcp-liturgy-canticles.el
+already had full bcp-liturgy-canticle- prefix throughout.
 
-** TODO Rename: bible-commentary.el → split into bcp-reader.el + bcp-notebook.el
-bcp-reader-: passage display, navigation, translation management, local file loading.
-bcp-notebook-: org-roam, capture, backlinks, contextual view, spanning psalms, export.
-Shared: bcp-fetcher.el already owns translation defcustoms.
+** DONE Split bible-commentary.el → bcp-reader.el + bcp-notebook.el
+bcp-reader.el: passage display, navigation, psalm schemes, local file loading.
+  No org/org-roam/capture/export dependencies.
+bcp-notebook.el: org-roam, capture, spanning psalms, contextual view, export,
+  buffer/window setup, keymaps, entry point (bible-commentary-open).
+bcp-preferences.el updated to require bcp-notebook.
 
-** TODO Create bcp-liturgy-render.el
-Extract rite-agnostic rendering primitives from bcp-1662.el:
-insert-rubric, insert-versicles, insert-text-block, insert-canticle-text,
-normalise-spacing, buffer setup, heading faces, day-identity display block.
+** DONE bcp-liturgy-render.el — already complete
+** DONE bcp-1662-render.el — already complete
 
-** TODO Create bcp-1662-render.el
-Extract BCP-specific ordo walker from bcp-1662.el:
-render-office, step-type dispatch cond, rubrical option logic.
-Depends on bcp-liturgy-render.el.
+** TODO Migrate BCP Psalter Generator to bcp-fetcher-oremus.el
+bible-commentary-generate-bcp-psalter (and helpers --bcp-parse-psalm,
+--bcp-collect-verses, --bcp-clean-verse) live in bcp-reader.el but are
+Oremus-specific HTML parsing — the same domain as bcp-fetcher-oremus.el.
+They are one-time utilities (fetch all 150 psalms, write SWORD plain-text
+files) and currently orphaned from the rest of the Oremus parsing code.
+Low priority; no functional impact.
 
 ** TODO BCP Rule 1 Transfers for Standard Greater Feasts
 Only user patronal feasts currently have transfer logic.
@@ -431,6 +461,9 @@ All nil in bcp-liturgy-canticles.el.
 
 ** TODO Brief Bidding Form
 bcp-1662-bidding-brief is nil.
+
+** DONE bible-commentary-migrate-canonical-units — deleted
+Migration was run; function removed from bcp-reader.el.
 
 ** TODO Generic Ordo Renderer (bcp-office-render.el)
 Extract rendering engine from bcp-1662.el into a rite-agnostic module.

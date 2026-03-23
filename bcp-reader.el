@@ -716,29 +716,6 @@ or \\='vg (Vulgate/LXX).  Result is shown in the minibuffer."
             (message "Vg Psalm %d  — same in both systems" psalm-num)
           (message "Vg Psalm %d  =  MT Psalm %s" psalm-num mt-str))))))
 
-(defun bible-commentary-migrate-canonical-units ()
-  "Fix :CANONICAL_UNIT: properties written by older versions of this package.
-Run this once after upgrading if you see \"void-variable 116a\" errors."
-  (interactive)
-  (with-current-buffer (find-file-noselect bible-commentary-file)
-    (save-excursion
-      (goto-char (point-min))
-      (let ((count 0))
-        (while (re-search-forward
-                "^\\([ \t]*:CANONICAL_UNIT:[ \t]+\\)\\([0-9][0-9]*[ab]?\\)[ \t]*$"
-                nil t)
-          (let ((prefix (match-string 1))
-                (value  (match-string 2)))
-            (unless (string-prefix-p "unit-" value)
-              (replace-match (concat prefix "unit-" value))
-              (cl-incf count))))
-        (if (> count 0)
-            (progn (save-buffer)
-                   (message "Migrated %d :CANONICAL_UNIT: propert%s in %s"
-                            count (if (= count 1) "y" "ies")
-                            bible-commentary-file))
-          (message "No migration needed — all :CANONICAL_UNIT: values already correct."))))))
-
 ;;;; ──────────────────────────────────────────────────────────────────────
 ;;;; BCP Psalter generation — one-time utility
 
