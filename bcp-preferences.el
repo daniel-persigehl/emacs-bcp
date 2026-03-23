@@ -154,5 +154,35 @@
 ;; their own cutoffs in their respective configuration variables.
 (setq bcp-1662-morning-prayer-hour-limit 12)
 
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Reload utility
+
+(defun bcp-reload ()
+  "Reload all BCP package files in dependency order.
+Run this after pulling updates to pick up any changed files without
+restarting Emacs."
+  (interactive)
+  (let ((dir (file-name-directory (or load-file-name buffer-file-name)))
+        (files '("bcp-fetcher.el"
+                 "bcp-fetcher-oremus.el"
+                 "bcp-fetcher-ebible.el"
+                 "bcp-calendar.el"
+                 "bcp-liturgy-canticles.el"
+                 "bcp-liturgy-render.el"
+                 "bcp-1662-calendar.el"
+                 "bcp-1662-data.el"
+                 "bcp-1662-user-feasts.el"
+                 "bcp-1662-ordo.el"
+                 "bcp-1662-render.el"
+                 "bcp-1662.el"
+                 "bcp-reader.el"
+                 "bcp-notebook.el")))
+    (dolist (file files)
+      (let ((path (expand-file-name file dir)))
+        (when (file-readable-p path)
+          (load path nil t))))
+    (load (expand-file-name "bcp-preferences.el" dir) nil t)
+    (message "BCP reloaded.")))
+
 (provide 'bcp-preferences)
 ;;; bcp-preferences.el ends here
