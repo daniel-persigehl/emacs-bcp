@@ -157,12 +157,16 @@
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Reload utility
 
+(defvar bcp--package-directory
+  (file-name-directory (or load-file-name buffer-file-name))
+  "Directory containing the BCP package files.  Set at load time.")
+
 (defun bcp-reload ()
   "Reload all BCP package files in dependency order.
 Run this after pulling updates to pick up any changed files without
 restarting Emacs."
   (interactive)
-  (let ((dir (file-name-directory (or load-file-name buffer-file-name)))
+  (let ((dir bcp--package-directory)
         (files '("bcp-fetcher.el"
                  "bcp-fetcher-oremus.el"
                  "bcp-fetcher-ebible.el"
