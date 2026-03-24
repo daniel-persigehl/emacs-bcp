@@ -38,6 +38,32 @@
 (require 'bcp-1662-ordo)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Lesson label helpers
+
+(defun bcp-1662--last-verse-in-text (text)
+  "Return the last `bcp-verse' property value found in TEXT, or nil."
+  (let ((pos 0) (len (length text)) (last nil))
+    (while (< pos len)
+      (let ((v (get-text-property pos 'bcp-verse text)))
+        (when v (setq last v)))
+      (setq pos (next-single-property-change pos 'bcp-verse text len)))
+    last))
+
+(defun bcp-1662--ref-label-with-text (ref text)
+  "Return a display label for REF, replacing \"end\" with the actual last verse.
+When REF specifies a start verse > 1 with no explicit end, scans TEXT for the
+highest `bcp-verse' property value and substitutes it for the \"end\" placeholder."
+  (let* ((label (bcp-1662--ref-label ref))
+         (v1    (and (listp ref) (stringp (car ref)) (caddr ref)))
+         (v2    (and (listp ref) (stringp (car ref)) (cadddr ref))))
+    (if (and text v1 (> v1 1) (null v2))
+        (let ((last (bcp-1662--last-verse-in-text text)))
+          (if last
+              (replace-regexp-in-string "-end\\>" (format "-%d" last) label)
+            label))
+      label)))
+
+;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Rubric face
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
@@ -474,7 +500,7 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
                                               :lesson2 :lesson1)))
               (text    (cdr (assoc key lesson-texts))))
          (when ref
-           (let ((label (bcp-1662--ref-label ref)))
+           (let ((label (bcp-1662--ref-label-with-text ref text)))
              (bcp-1662--insert-heading 3
                (format "%s Lesson: %s"
                        (if (eq which 'second) "Second" "First")

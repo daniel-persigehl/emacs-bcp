@@ -866,7 +866,11 @@ Handles all ref formats from bcp-1662-propers-year.el:
           (v2   (cadddr ref)))
       (cond
        ((null v1)  (format "%s %d" book ch))
-       ((null v2)  (format "%s %d:%d" book ch v1))
+       ;; Single start verse with no explicit end: if not verse 1, read to
+       ;; end of chapter (sentinel 200 — Oremus returns through last verse).
+       ((null v2)  (if (> v1 1)
+                       (format "%s %d:%d-%d" book ch v1 200)
+                     (format "%s %d:%d" book ch v1)))
        ((eq v2 'nil) (format "%s %d:%d" book ch v1))
        (t          (format "%s %d:%d-%d" book ch v1 v2)))))
    (t (format "%s" ref))))
@@ -894,7 +898,9 @@ Handles all ref formats from bcp-1662-propers-year.el:
           (v2 (cadddr ref)))
       (cond
        ((null v1)    (format "%s %d" bk ch))
-       ((null v2)    (format "%s %d:%d" bk ch v1))
+       ((null v2)    (if (> v1 1)
+                         (format "%s %d:%d-end" bk ch v1)
+                       (format "%s %d:%d" bk ch v1)))
        ((eq v2 'nil) (format "%s %d:%d" bk ch v1))
        (t            (format "%s %d:%d-%d" bk ch v1 v2)))))
    (t (format "%s" ref))))
@@ -1036,7 +1042,9 @@ With a prefix argument ARG, prompts for date and office."
                       (+ (length psalm-passages) (length lesson-passages))))
       (read-only-mode 1))
     (pop-to-buffer bcp-1662-office-buffer-name)
-    (message "Fetching Office texts from Oremus…")
+    (message "Fetching Office texts [psalms: %s, lessons: %s]…"
+             (symbol-name bcp-fetcher-backend)
+             (symbol-name (or bcp-fetcher-fallback-backend bcp-fetcher-backend)))
     ;; Fetch psalms first, then lessons, then render
     (bcp-1662--fetch-all
      psalm-passages

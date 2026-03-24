@@ -28,6 +28,13 @@
   :prefix "bible-commentary-oremus-"
   :group 'bcp-fetcher)
 
+(defcustom bcp-fetcher-oremus-timeout 15
+  "Seconds to wait for an Oremus response before giving up.
+When the timeout expires the fetch is abandoned and the callback is
+called with nil, allowing the rest of the office to render normally."
+  :type 'integer
+  :group 'bcp-fetcher-oremus)
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Defcustoms
 
@@ -152,9 +159,15 @@ CV and CC are current verse/chapter state threaded into recursive calls."
                             (substring child 1)))
               (setq verse-started t))))))
        ;; Recurse into inline elements (italic, bold, etc.)
+       ;; If the verse is already started, pass nil for cv/cc so the inner
+       ;; call treats the text as plain content and does not re-propertize
+       ;; the first character (which would create false verse boundaries at
+       ;; every inline span, e.g. <span class=sc>Lord</span>).
        ((listp child)
         (let ((inner (bcp-fetcher-oremus--dom-to-text
-                      child book psalm-num current-verse current-chap)))
+                      child book psalm-num
+                      (unless verse-started current-verse)
+                      (unless verse-started current-chap))))
           (unless (string-empty-p inner)
             (when current-verse
               (setq verse-started t)
@@ -213,43 +226,71 @@ CV and CC are current verse/chapter state threaded into recursive calls."
   "Fetch PASSAGE in TRANSLATION from Oremus and call CALLBACK with text.
 CALLBACK is called as (CALLBACK text) where TEXT is a propertized string
 with verse numbers formatted for visual-line-mode, or nil on failure.
-Implements the bcp-fetcher backend :fetch-fn protocol."
-  (let* ((ver (bcp-fetcher-oremus--version translation))
-         (url (format bible-commentary-oremus-base-url
-                      (url-hexify-string passage)
-                      (url-hexify-string ver))))
-    (url-retrieve
-     url
-     (lambda (status psg cb)
-       (if (plist-get status :error)
-           (progn
-             (message "bcp-fetcher-oremus: fetch failed for %s — %s" psg
-                      (plist-get status :error))
-             (funcall cb nil))
-         (let* ((decoded (bcp-fetcher-oremus--decode-response))
-                (dom-result
-                 (when (fboundp 'libxml-parse-html-region)
-                   (ignore-errors
-                     (require 'dom)
-                     (with-temp-buffer
-                       (insert decoded)
-                       (let* ((dom      (libxml-parse-html-region
-                                         (point-min) (point-max)))
-                              (node     (car (dom-by-class dom "bibletext")))
-                              (book     (replace-regexp-in-string " .*" "" psg))
-                              (start-ps (when (string-match "[0-9]+" psg)
-                                          (string-to-number (match-string 0 psg)))))
-                         (when node
-                           (let ((result (bcp-fetcher-oremus--dom-to-text
-                                          node book start-ps)))
-                             (unless (string-empty-p (string-trim result))
-                               result))))))))
-                (text (or dom-result
-                          (let ((fb (bcp-fetcher-oremus--extract-bibletext decoded)))
-                            (when fb (bcp-fetcher-clean-text fb))))))
-           (funcall cb text))))
-     (list passage callback)
-     t t)))
+Implements the bcp-fetcher backend :fetch-fn protocol.
+
+A timer is started for `bcp-fetcher-oremus-timeout' seconds; if the
+response has not arrived by then, the fetch is abandoned and CALLBACK
+is called with nil.  A `done' flag prevents CALLBACK from being called
+twice if both the timer and the response arrive nearly simultaneously."
+  (let* ((ver  (bcp-fetcher-oremus--version translation))
+         (url  (format bible-commentary-oremus-base-url
+                       (url-hexify-string passage)
+                       (url-hexify-string ver)))
+         (done (list nil)))          ; guard against double callback invocation
+    (let ((buf
+           (condition-case err
+               (url-retrieve
+                url
+                (lambda (status psg cb d)
+                  (unless (car d)
+                    (setcar d t)
+                    (if (plist-get status :error)
+                        (progn
+                          (message "bcp-fetcher-oremus: fetch failed for %s — %s" psg
+                                   (plist-get status :error))
+                          (funcall cb nil))
+                      (let* ((decoded (bcp-fetcher-oremus--decode-response))
+                             (dom-result
+                              (when (fboundp 'libxml-parse-html-region)
+                                (ignore-errors
+                                  (require 'dom)
+                                  (with-temp-buffer
+                                    (insert decoded)
+                                    (let* ((dom      (libxml-parse-html-region
+                                                      (point-min) (point-max)))
+                                           (node     (car (dom-by-class dom "bibletext")))
+                                           (book     (replace-regexp-in-string " .*" "" psg))
+                                           (start-ps (when (string-match "[0-9]+" psg)
+                                                       (string-to-number (match-string 0 psg)))))
+                                      (when node
+                                        (let ((result (bcp-fetcher-oremus--dom-to-text
+                                                       node book start-ps)))
+                                          (unless (string-empty-p (string-trim result))
+                                            result))))))))
+                             (text (or dom-result
+                                       (let ((fb (bcp-fetcher-oremus--extract-bibletext decoded)))
+                                         (when fb (bcp-fetcher-clean-text fb))))))
+                        (funcall cb text)))))
+                (list passage callback done)
+                t t)
+             (error
+              (message "bcp-fetcher-oremus: error starting fetch for %s — %s" passage err)
+              nil))))
+      (if buf
+          ;; Start timeout timer to abandon the fetch if it hangs
+          (run-with-timer
+           bcp-fetcher-oremus-timeout nil
+           (lambda (b d cb psg)
+             (unless (car d)
+               (setcar d t)
+               (when (buffer-live-p b) (kill-buffer b))
+               (message "bcp-fetcher-oremus: timed out fetching %s" psg)
+               (funcall cb nil)))
+           buf done callback passage)
+        ;; url-retrieve failed immediately — fire callback now if not already done
+        (unless (car done)
+          (setcar done t)
+          (funcall callback nil))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Backend registration

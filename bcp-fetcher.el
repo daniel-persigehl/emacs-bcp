@@ -11,12 +11,19 @@
 ;; its file and set `bcp-fetcher-backend' before fetching.
 ;;
 ;; Public API:
-;;   `bcp-fetcher-fetch'                  — async fetch, calls (callback text)
+;;   `bcp-fetcher-fetch'                  — async fetch with full fallback chain
 ;;   `bcp-fetcher-fetch-passage'          — async fetch, calls (load-fn text label)
 ;;   `bcp-fetcher-fetch-passage-context'  — async context fetch for omitted verses
 ;;   `bcp-fetcher-clean-text'             — strip Windows-1252 artefacts from text
 ;;   `bcp-fetcher-register-backend'       — register a fetch backend
 ;;   `bcp-fetcher-available-translations' — translations for the active backend
+;;   `bcp-fetcher-clear-cache'            — clear the in-memory passage cache
+;;
+;; Fallback chain (attempted in order, first success wins):
+;;   1. Primary backend, preferred translation
+;;   2. Primary backend, `bcp-fetcher-fallback-translation' (default: KJVA)
+;;   3. `bcp-fetcher-fallback-backend' (e.g. ebible), preferred translation
+;;   → nil → render shows scriptural citation only
 ;;
 ;; Textual-status utilities (translation-agnostic):
 ;;   `bcp-fetcher-textual-status'
@@ -261,11 +268,54 @@ Returns the cleaned string with text properties intact."
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Backend registry
 
-(defcustom bcp-fetcher-backend 'oremus
+(defcustom bcp-fetcher-backend 'coverdale
   "Symbol identifying the active Bible text fetch backend.
+Defaults to \\='coverdale, which serves the Psalter from the local
+`bcp-fetcher-coverdale-file' and returns nil for all other passages,
+allowing the fallback backend to handle them.
 The backend must be registered via `bcp-fetcher-register-backend'."
   :type 'symbol
   :group 'bcp-fetcher)
+
+(defcustom bcp-fetcher-fallback-backend 'oremus
+  "Symbol identifying a fallback backend to try when the primary fails.
+When the primary backend returns nil (fetch failed, timed out, or the
+passage is outside its scope), this backend is tried next.  Defaults
+to \\='oremus so non-Psalms passages pass through transparently when
+the primary is \\='coverdale.  Nil means no fallback."
+  :type '(choice (const :tag "None" nil) symbol)
+  :group 'bcp-fetcher)
+
+(defcustom bcp-fetcher-fallback-translation "KJVA"
+  "Translation to try when the preferred translation fetch fails.
+When a fetch returns nil (e.g. Coverdale unavailable or a network error),
+this translation is tried with the primary backend before attempting the
+fallback backend.  Nil disables translation fallback.
+Defaults to \\\"KJVA\\\" — KJV with Apocrypha, reliably available on Oremus."
+  :type '(choice string (const :tag "None" nil))
+  :group 'bcp-fetcher)
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; In-memory passage cache
+
+(defcustom bcp-fetcher-cache-enable t
+  "When non-nil, cache successfully fetched passages for the session.
+Repeated fetches of the same passage and translation (e.g. on successive
+office openings) are served from cache without a network round-trip.
+Cache is per-session only; it is cleared when Emacs restarts or when
+`bcp-fetcher-clear-cache' is called."
+  :type 'boolean
+  :group 'bcp-fetcher)
+
+(defvar bcp-fetcher--cache (make-hash-table :test 'equal)
+  "In-memory cache mapping (PASSAGE . TRANSLATION) keys to text strings.")
+
+(defun bcp-fetcher-clear-cache ()
+  "Clear the in-memory passage cache and reset the Coverdale psalter."
+  (interactive)
+  (clrhash bcp-fetcher--cache)
+  (setq bcp-fetcher--coverdale-psalms nil)
+  (message "bcp-fetcher: passage cache cleared."))
 
 (defvar bcp-fetcher--backends nil
   "Alist mapping backend symbols to their property plists.")
@@ -292,19 +342,62 @@ Required plist keys:
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Public fetch API
 
+(defun bcp-fetcher--try-attempts (passage attempts callback)
+  "Try each (FETCH-FN . TRANSLATION) pair in ATTEMPTS in order.
+For each attempt, check the cache first.  On success, store in cache and
+call CALLBACK with the text.  On failure, try the next attempt.
+If all attempts are exhausted, call CALLBACK with nil."
+  (if (null attempts)
+      (funcall callback nil)
+    (let* ((attempt  (car attempts))
+           (fetch-fn (car attempt))
+           (tr       (cdr attempt))
+           (key      (cons passage tr))
+           (cached   (and bcp-fetcher-cache-enable
+                          (gethash key bcp-fetcher--cache))))
+      (if cached
+          (funcall callback cached)
+        (funcall fetch-fn passage tr
+                 (lambda (text)
+                   (if text
+                       (progn
+                         (when bcp-fetcher-cache-enable
+                           (puthash key text bcp-fetcher--cache))
+                         (funcall callback text))
+                     (bcp-fetcher--try-attempts
+                      passage (cdr attempts) callback))))))))
+
 (defun bcp-fetcher-fetch (passage callback &optional translation)
   "Fetch PASSAGE using the active backend and call CALLBACK with formatted text.
 
 TRANSLATION defaults to `bible-commentary-translation'.
 CALLBACK is called as (CALLBACK text) where TEXT is a propertized string
-with verse numbers formatted for visual-line-mode, or nil on failure.
+with verse numbers formatted for visual-line-mode, or nil if every
+attempt in the fallback chain fails.
 
 The text properties from the backend are preserved — do NOT pass the result
-through `bcp-fetcher-clean-text' as that would strip them."
-  (let* ((tr (or translation bible-commentary-translation))
-         (fn (plist-get (bcp-fetcher--active-backend) :fetch-fn)))
-    (funcall fn passage tr callback)))
+through `bcp-fetcher-clean-text' as that would strip them.
 
+Fallback chain (each step tried in order until one succeeds):
+  1. Primary backend, preferred translation
+  2. Primary backend, `bcp-fetcher-fallback-translation' (default: KJVA)
+  3. Fallback backend (`bcp-fetcher-fallback-backend'), preferred translation
+Results are cached when `bcp-fetcher-cache-enable' is non-nil; the cache
+is checked at each step before issuing a network fetch."
+  (let* ((tr         (or translation bible-commentary-translation))
+         (primary-fn (plist-get (bcp-fetcher--active-backend) :fetch-fn))
+         (fb-tr      (and bcp-fetcher-fallback-translation
+                          (not (equal tr bcp-fetcher-fallback-translation))
+                          bcp-fetcher-fallback-translation))
+         (fb-fn      (let ((fb (and bcp-fetcher-fallback-backend
+                                    (alist-get bcp-fetcher-fallback-backend
+                                               bcp-fetcher--backends))))
+                       (when fb (plist-get fb :fetch-fn))))
+         (attempts   (delq nil
+                           (list (cons primary-fn tr)
+                                 (when fb-tr (cons primary-fn fb-tr))
+                                 (when fb-fn (cons fb-fn tr))))))
+    (bcp-fetcher--try-attempts passage attempts callback)))
 (defun bcp-fetcher-fetch-passage (passage load-fn &optional translation)
   "Fetch PASSAGE using the active backend and call LOAD-FN with (text label).
 
@@ -361,6 +454,136 @@ omitted in %s.  It is present in the Textus Receptus and therefore in the \
 KJV/KJVA.\n\nTo read the surrounding passage, navigate to %s %d:%d-%d."
                                book ch vs translation book ch vs-from vs-to))
                           (format "%s  [%s]" passage translation)))))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Coverdale Psalter local backend
+
+(defcustom bcp-fetcher-coverdale-file
+  (expand-file-name "bcp-liturgy-psalter-coverdale.txt"
+                    (file-name-directory
+                     (or load-file-name buffer-file-name default-directory)))
+  "Path to the local Coverdale Psalter text file.
+Generated by `bcp-coverdale-download-collate' and shipped with the BCP
+package.  Format: psalm headers (\"Psalm N\") followed by tab-separated
+verse lines (\"N\\tverse text\")."
+  :type 'file
+  :group 'bcp-fetcher)
+
+(defvar bcp-fetcher--coverdale-psalms nil
+  "Hash table mapping psalm numbers (integers) to verse vectors.
+Populated lazily on first access by `bcp-fetcher--coverdale-load'.
+Each vector element is a verse string (1-indexed: element 0 = verse 1).")
+
+(defun bcp-fetcher--coverdale-load ()
+  "Parse `bcp-fetcher-coverdale-file' into `bcp-fetcher--coverdale-psalms'.
+Returns the hash table, or sets the variable to \\='unavailable and
+signals an error if the file is missing."
+  (unless (file-exists-p bcp-fetcher-coverdale-file)
+    (setq bcp-fetcher--coverdale-psalms 'unavailable)
+    (error "bcp-fetcher: Coverdale psalter file not found: %s"
+           bcp-fetcher-coverdale-file))
+  (let ((table  (make-hash-table :test 'eql))
+        (psalm  nil)
+        (verses nil))
+    (with-temp-buffer
+      (insert-file-contents bcp-fetcher-coverdale-file)
+      (goto-char (point-min))
+      (while (not (eobp))
+        (let ((line (buffer-substring-no-properties
+                     (line-beginning-position) (line-end-position))))
+          (cond
+           ((string-match "^Psalm \\([0-9]+\\)$" line)
+            (when psalm
+              (puthash psalm (vconcat (nreverse verses)) table))
+            (setq psalm  (string-to-number (match-string 1 line))
+                  verses nil))
+           ((string-match "^[0-9]+\t\\(.*\\)$" line)
+            (push (match-string 1 line) verses))))
+        (forward-line 1))
+      (when psalm
+        (puthash psalm (vconcat (nreverse verses)) table)))
+    (setq bcp-fetcher--coverdale-psalms table)))
+
+(defun bcp-fetcher--coverdale-psalms ()
+  "Return the Coverdale psalms hash table, loading it if not yet loaded.
+Returns nil if the file was previously found to be unavailable."
+  (cond
+   ((eq bcp-fetcher--coverdale-psalms 'unavailable) nil)
+   (bcp-fetcher--coverdale-psalms)
+   (t (bcp-fetcher--coverdale-load))))
+
+(defun bcp-fetcher--coverdale-render-psalm (n verses v-from v-to)
+  "Render psalm N verse vector VERSES from V-FROM to V-TO as propertized text.
+V-TO nil means render to end of psalm."
+  (let* ((len   (length verses))
+         (start (1- (max 1 (or v-from 1))))
+         (end   (min len (or v-to len)))
+         (result ""))
+    (cl-loop for i from start below end
+             for vnum = (1+ i)
+             for text = (aref verses i)
+             when (> (length text) 0) do
+             (unless (string-empty-p result)
+               (setq result (concat result "\n")))
+             (let ((props (list 'bcp-verse vnum 'bcp-book "Psalms")))
+               (when (= vnum 1)
+                 (setq props (nconc props (list 'bcp-chapter n))))
+               (setq result
+                     (concat result
+                             (apply #'propertize (substring text 0 1) props)
+                             (substring text 1)))))
+    (unless (string-empty-p result) result)))
+
+(defun bcp-fetcher--coverdale-render (passage psalms)
+  "Render PASSAGE from PSALMS hash table as propertized text, or nil."
+  (cond
+   ;; "Psalms N-M" — range of whole psalms
+   ((string-match "^Psalms? \\([0-9]+\\)-\\([0-9]+\\)$" passage)
+    (let ((from  (string-to-number (match-string 1 passage)))
+          (to    (string-to-number (match-string 2 passage)))
+          (parts nil))
+      (cl-loop for n from from to to
+               for verses = (gethash n psalms)
+               when verses do
+               (let ((rendered (bcp-fetcher--coverdale-render-psalm n verses 1 nil)))
+                 (when rendered (push rendered parts))))
+      (when parts
+        (mapconcat #'identity (nreverse parts) "\n\n"))))
+   ;; "Psalms N:V1-V2" or "Psalms N:V"
+   ((string-match "^Psalms? \\([0-9]+\\):\\([0-9]+\\)\\(?:-\\([0-9]+\\)\\)?$" passage)
+    (let* ((n      (string-to-number (match-string 1 passage)))
+           (v1     (string-to-number (match-string 2 passage)))
+           (v2     (when (match-string 3 passage)
+                     (string-to-number (match-string 3 passage))))
+           (verses (gethash n psalms)))
+      (when verses
+        (bcp-fetcher--coverdale-render-psalm n verses v1 v2))))
+   ;; "Psalms N" — whole psalm
+   ((string-match "^Psalms? \\([0-9]+\\)$" passage)
+    (let* ((n      (string-to-number (match-string 1 passage)))
+           (verses (gethash n psalms)))
+      (when verses
+        (bcp-fetcher--coverdale-render-psalm n verses 1 nil))))
+   ;; Not a Psalms passage — let the fallback chain handle it
+   (t nil)))
+
+(defun bcp-fetcher--coverdale-fetch (passage _translation callback)
+  "Serve PASSAGE from the local Coverdale psalter and call CALLBACK with text.
+Returns nil for non-Psalms passages so the fallback chain continues."
+  (let ((text (condition-case err
+                  (bcp-fetcher--coverdale-render passage (bcp-fetcher--coverdale-psalms))
+                (error
+                 (message "bcp-fetcher-coverdale: %s" (error-message-string err))
+                 nil))))
+    (when text
+      (message "bcp-fetcher: %s served from local Coverdale psalter." passage))
+    (funcall callback text)))
+
+(bcp-fetcher-register-backend
+ 'coverdale
+ :name         "Coverdale Psalter (local)"
+ :fetch-fn     #'bcp-fetcher--coverdale-fetch
+ :translations '("Coverdale" "BCP"))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Load default backend

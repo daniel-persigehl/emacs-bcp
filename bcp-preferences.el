@@ -43,15 +43,19 @@
 (setq bible-commentary-psalm-translation "Coverdale")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Local file paths (optional — Oremus used as fallback if nil)
+;;;; Backend configuration
 
-;; Path to a local plain-text Bible file (KJVA recommended).
-;; If nil, all passages are fetched from Oremus.
-(setq bible-commentary-bible-file nil)
+;; The Coverdale backend serves psalms from the local
+;; bcp-liturgy-psalter-coverdale.txt, with Oremus as the fallback for
+;; everything else.  To fetch psalms from Oremus instead, change to:
+;; (setq bcp-fetcher-backend 'oremus
+;;       bcp-fetcher-fallback-backend nil)
+(setq bcp-fetcher-backend 'coverdale
+      bcp-fetcher-fallback-backend 'oremus)
 
-;; Path to a local plain-text Coverdale Psalter.
-;; If nil, psalms are fetched from Oremus using bible-commentary-psalm-translation.
-(setq bible-commentary-coverdale-file nil)
+;; Path to the local Coverdale Psalter file (auto-detected by default).
+;; Override only if you keep the file in a non-standard location:
+;; (setq bcp-fetcher-coverdale-file "/path/to/bcp-liturgy-psalter-coverdale.txt")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Commentary file
