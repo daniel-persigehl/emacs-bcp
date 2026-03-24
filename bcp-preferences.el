@@ -120,9 +120,16 @@
 ;; on weekdays.  Off by default.
 (setq bcp-1662-omit-penitential-intro nil)
 
-;; Prepend a seasonal sentence before the penitential sentences.
-;; On by default; seasonal texts are nil until supplied.
-(setq bcp-1662-use-seasonal-sentences t)
+;; Opening sentence selection mode:
+;;   'auto — engine picks one sentence appropriate to the day (default)
+;;   'all  — all sentences in the active corpus are read
+(setq bcp-1662-opening-sentence-selection 'auto)
+
+;; Opening sentence corpus:
+;;   '1662     — only the eleven penitential sentences from the BCP 1662 (default)
+;;   'extended — prefer a seasonal sentence when one is defined in
+;;               `bcp-1662-seasonal-sentences'; fall back to the 1662 sentences
+(setq bcp-1662-opening-sentence-corpus '1662)
 
 ;; Form of the General Confession:
 ;; nil (default) — standard 1662 text

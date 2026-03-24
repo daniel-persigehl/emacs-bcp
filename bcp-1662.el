@@ -630,12 +630,22 @@ or principal feasts."
   :type  'boolean
   :group 'bcp-1662)
 
-(defcustom bcp-1662-use-seasonal-sentences t
-  "Whether to prepend a seasonal sentence before the penitential sentences.
-When non-nil and a seasonal sentence is available for the current season,
-it is inserted before the ordinary penitential sentences.
-Seasonal sentence texts are in `bcp-1662-seasonal-sentences'."
-  :type  'boolean
+(defcustom bcp-1662-opening-sentence-selection 'auto
+  "How many opening sentences to display at Morning and Evening Prayer.
+`auto' — the engine selects one sentence appropriate to the day.
+`all'  — all sentences in the active corpus are displayed."
+  :type  '(choice (const :tag "One (auto-selected)" auto)
+                  (const :tag "All" all))
+  :group 'bcp-1662)
+
+(defcustom bcp-1662-opening-sentence-corpus '1662
+  "Which corpus of opening sentences to draw from.
+`1662'     — only the eleven penitential sentences from the BCP 1662.
+`extended' — prefer a seasonal sentence for the current season (from
+             `bcp-1662-seasonal-sentences'); fall back to the 1662
+             sentences when no seasonal sentence is defined."
+  :type  '(choice (const :tag "BCP 1662 only" 1662)
+                  (const :tag "Extended (other BCP editions)" extended))
   :group 'bcp-1662)
 
 (defcustom bcp-1662-bidding-form 'full
@@ -669,9 +679,9 @@ These are appended after the Prayer of St Chrysostom and before the Grace."
   :type  '(repeat (choice string symbol))
   :group 'bcp-1662)
 
-;;── Seasonal sentences ──────────────────────────────────────────────────────
+;;── Seasonal sentences (extended corpus) ────────────────────────────────────
 
-(defconst bcp-1662-seasonal-sentences
+(defcustom bcp-1662-seasonal-sentences
   '((advent      . nil)
     (christmas   . nil)
     (epiphany    . nil)
@@ -681,17 +691,52 @@ These are appended after the Prayer of St Chrysostom and before the Grace."
     (eastertide  . nil)
     (trinity     . nil))
   "Alist of (SEASON . SENTENCE-TEXT) for seasonal opening sentences.
-Nil entries mean no seasonal sentence is available for that season yet.
-Texts should be supplied as plain strings.")
+Used when `bcp-1662-opening-sentence-corpus' is `extended'.
+Nil entries mean no seasonal sentence is available for that season.
+Texts should be supplied as plain strings."
+  :type  '(alist :key-type symbol :value-type (choice string (const nil)))
+  :group 'bcp-1662)
 
 (defconst bcp-1662-bidding-brief
   nil
   "Abbreviated form of the Bidding (exhortation).
 Nil until supplied.  Should be a plain string.")
 
-(defun bcp-1662--seasonal-sentence (season)
-  "Return the seasonal sentence text for SEASON, or nil."
-  (cdr (assq season bcp-1662-seasonal-sentences)))
+(defconst bcp-1662--fallback-sentence
+  '("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
+    ("1 John" 1 8 9))
+  "Fallback opening sentence used when normal sentence selection yields nothing.
+This is the last of the 1662 sentences (1 John 1:8-9), chosen for its
+direct relevance to the penitential introduction that follows.")
+
+(defun bcp-1662--select-opening-sentences (season date)
+  "Return the list of opening sentences to display for SEASON on DATE.
+DATE is a Gregorian calendar date (MONTH DAY YEAR).
+
+Each element is either a (TEXT CITATION) pair from
+`bcp-1662-opening-sentences' (general pool), or a plain string
+(seasonal sentence from `bcp-1662-seasonal-sentences').
+
+Respects `bcp-1662-opening-sentence-corpus' and
+`bcp-1662-opening-sentence-selection'.  Falls back to
+`bcp-1662--fallback-sentence' if the result would otherwise be empty."
+  (let* ((seasonal (when (eq bcp-1662-opening-sentence-corpus 'extended)
+                     (cdr (assq season bcp-1662-seasonal-sentences))))
+         (pool     bcp-1662-opening-sentences)
+         (result
+          (cond
+           ;; Extended corpus with a seasonal sentence available
+           (seasonal
+            (list seasonal))
+           ;; General pool (1662 only, or extended with no seasonal sentence defined)
+           ((eq bcp-1662-opening-sentence-selection 'all)
+            pool)
+           (t
+            (when pool
+              (list (nth (mod (calendar-absolute-from-gregorian date)
+                              (length pool))
+                         pool)))))))
+    (or result (list bcp-1662--fallback-sentence))))
 
 ;;;; Ref conversion
 

@@ -314,6 +314,24 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
        (when-let* ((text (plist-get step :rubric)))
          (bcp-1662--insert-rubric text)))
 
+      ;; ── Opening sentences ───────────────────────────────────────────────
+      (:sentences
+       (let ((sents (bcp-1662--select-opening-sentences
+                     (plist-get propers :season)
+                     (plist-get propers :date))))
+         (dolist (sent sents)
+           (if (stringp sent)
+               ;; Plain string — seasonal sentence, no citation
+               (bcp-1662--insert-text-block sent)
+             ;; (TEXT CITATION) pair from the general pool
+             (let* ((text  (car sent))
+                    (cit   (cadr sent))
+                    (label (if (and (listp cit) (listp (car cit)))
+                               (mapconcat #'bcp-1662--ref-label cit " / ")
+                             (bcp-1662--ref-label cit))))
+               (bcp-1662--insert-text-block
+                (concat text " — " label)))))))
+
       ;; ── Fixed text ─────────────────────────────────────────────────────
       (:text
        (let ((name (plist-get step :text))
@@ -554,19 +572,14 @@ PSALMS, PSALM-TEXTS, and LESSON-TEXTS."
              (show-penit (not (and bcp-1662-omit-penitential-intro is-weekday)))
              (past-venite nil))
 
-        ;; Optional seasonal sentence before penitential intro
-        (when (and bcp-1662-use-seasonal-sentences show-penit)
-          (when-let* ((sent (bcp-1662--seasonal-sentence season)))
-            (insert sent "\n")))
-
         (dolist (step ordo)
           (let ((type       (car step))
                 (pos-before (point)))
             (cond
-             ;; Penitential intro omission: skip rubrics and fixed texts
-             ;; before the opening versicles
+             ;; Penitential intro omission: skip rubrics, sentences, and
+             ;; fixed texts before the opening versicles
              ((and (not show-penit) (not past-venite)
-                   (memq type '(:rubric :text)))
+                   (memq type '(:rubric :sentences :text)))
               nil)
              ;; Opening versicles end the penitential section
              ((and (not show-penit) (not past-venite)

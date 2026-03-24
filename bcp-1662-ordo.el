@@ -168,6 +168,7 @@ The minister reads one or more of these at the opening of the service.")
 (defconst bcp-1662-ordo-morning
   '((:rubric "At the beginning of Morning Prayer the Minister shall read with a loud voice some one or more of these Sentences of the Scriptures that follow. And then he shall say that which is written after the said Sentences."
      :ref bcp-1662-opening-sentences)
+    (:sentences)
 
     (:text exhortation
      :ref bcp-1662-text-exhortation)
@@ -305,6 +306,7 @@ Steps are tagged plists; see file commentary for type descriptions.")
 (defconst bcp-1662-ordo-evening
   '((:rubric "At the beginning of Evening Prayer the Minister shall read with a loud voice some one or more of these Sentences of the Scriptures that follow. And then he shall say that which is written after the said Sentences."
      :ref bcp-1662-opening-sentences)
+    (:sentences)
 
     (:text exhortation
      :ref bcp-1662-text-exhortation)
