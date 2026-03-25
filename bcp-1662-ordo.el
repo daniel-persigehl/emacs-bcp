@@ -90,6 +90,125 @@
 Each entry: (TEXT CITATION) where CITATION is a lesson ref or list of refs.
 The minister reads one or more of these at the opening of the service.")
 
+(defconst bcp-1662-opening-sentences-1928
+  '(;; General — suitable at any time
+    ("The Lord is in his holy temple: let all the earth keep silence before him."
+     ("Hab" 2 20))
+    ("I was glad when they said unto me, We will go into the house of the Lord."
+     ("Ps" 122 1))
+    ("Let the words of my mouth, and the meditation of my heart, be alway acceptable in thy sight, O Lord, my strength and my redeemer."
+     ("Ps" 19 14))
+    ("O send out thy light and thy truth, that they may lead me, and bring me unto thy holy hill, and to thy dwelling."
+     ("Ps" 43 3))
+    ("Thus saith the high and lofty One that inhabiteth eternity, whose name is Holy; I dwell in the high and holy place, with him also that is of a contrite and humble spirit, to revive the spirit of the humble, and to revive the heart of the contrite ones."
+     ("Isa" 57 15))
+    ("The hour cometh, and now is, when the true worshippers shall worship the Father in spirit and in truth: for the Father seeketh such to worship him."
+     ("John" 4 23))
+    ("Grace be unto you, and peace, from God our Father, and from the Lord Jesus Christ."
+     ("Phil" 1 2))
+    ;; Advent
+    ("Repent ye, for the Kingdom of heaven is at hand."
+     ("Matt" 3 2))
+    ("Prepare ye the way of the Lord, make straight in the desert a highway for our God."
+     ("Isa" 40 3))
+    ;; Christmas
+    ("Behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord."
+     ("Luke" 2 10 11))
+    ;; Epiphany
+    ("From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
+     ("Mal" 1 11))
+    ("Awake, awake; put on thy strength, O Zion; put on thy beautiful garments, O Jerusalem."
+     ("Isa" 52 1))
+    ;; Lent
+    ("Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
+     ("Joel" 2 13))
+    ("The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise."
+     ("Ps" 51 17))
+    ("I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, and am no more worthy to be called thy son."
+     ("Luke" 15 18 19))
+    ;; Passiontide
+    ("Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
+     ("Lam" 1 12))
+    ("In whom we have redemption through his blood, the forgiveness of sins, according to the riches of his grace."
+     ("Eph" 1 7))
+    ;; Easter
+    ("He is risen. The Lord is risen indeed."
+     (("Mark" 16 6) ("Luke" 24 34)))
+    ("This is the day which the Lord hath made; we will rejoice and be glad in it."
+     ("Ps" 118 24))
+    ;; Ascension (within Eastertide)
+    ("Seeing that we have a great High Priest, that is passed into the heavens, Jesus the Son of God, let us come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need."
+     ("Heb" 4 14 16))
+    ;; Whitsunday (within Eastertide)
+    ("Ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth."
+     ("Acts" 1 8))
+    ("Because ye are sons, God hath sent forth the Spirit of his Son into your hearts, crying, Abba, Father."
+     ("Gal" 4 6))
+    ;; Trinity
+    ("Holy, holy, holy, Lord God Almighty, which was, and is, and is to come."
+     ("Rev" 4 8))
+    ;; Thanksgiving Day (occasion, not a liturgical season)
+    ("Honour the Lord with thy substance, and with the first-fruits of all thine increase: so shall thy barns be filled with plenty, and thy presses shall burst out with new wine."
+     ("Prov" 3 9 10))
+    ("The Lord by wisdom hath founded the earth; by understanding hath he established the heavens. By his knowledge the depths are broken up, and the clouds drop down the dew."
+     ("Prov" 3 19 20)))
+  "Opening sentences from the 1928 American BCP Morning Prayer.
+Each entry: (TEXT CITATION) where CITATION is a lesson ref or list of refs.
+Can be used as an alternative pool by setting `bcp-1662-opening-sentences'
+to this constant, or the seasonal entries are drawn from it in
+`bcp-1662-seasonal-sentences'.")
+
+(defconst bcp-1662-opening-sentences-1928-evensong
+  '(;; General — suitable at any time
+    ("The Lord is in his holy temple: let all the earth keep silence before him."
+     ("Hab" 2 20))
+    ("Lord, I have loved the habitation of thy house, and the place where thine honour dwelleth."
+     ("Ps" 26 8))
+    ("Let my prayer be set forth in thy sight as the incense; and let the lifting up of my hands be an evening sacrifice."
+     ("Ps" 141 2))
+    ("O worship the Lord in the beauty of holiness; let the whole earth stand in awe of him."
+     ("Ps" 96 9))
+    ("Let the words of my mouth, and the meditation of my heart, be alway acceptable in thy sight, O Lord, my strength and my redeemer."
+     ("Ps" 19 14 15))
+    ;; Advent
+    ("Watch ye, for ye know not when the master of the house cometh, at even, or at midnight, or at the cock-crowing, or in the morning: lest coming suddenly he find you sleeping."
+     ("Mark" 13 35 36))
+    ;; Christmas
+    ("Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God."
+     ("Rev" 21 3))
+    ;; Epiphany
+    ("And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
+     ("Isa" 60 3))
+    ;; Lent
+    ("I acknowledge my transgressions: and my sin is ever before me."
+     ("Ps" 51 3))
+    ("To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
+     (("Dan" 9 9) ("Dan" 9 10)))
+    ("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
+     ("1 John" 1 8 9))
+    ;; Passiontide
+    ("All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."
+     ("Isa" 53 6))
+    ;; Easter
+    ("Thanks be to God, which giveth us the victory through our Lord Jesus Christ."
+     ("1 Cor" 15 57))
+    ("If ye then be risen with Christ, seek those things which are above, where Christ sitteth on the right hand of God."
+     ("Col" 3 1))
+    ;; Ascension (within Eastertide)
+    ("Christ is not entered into the holy places made with hands, which are the figures of the true; but into heaven itself, now to appear in the presence of God for us."
+     ("Heb" 9 24))
+    ;; Whitsunday (within Eastertide)
+    ("There is a river, the streams whereof shall make glad the city of God, the holy place of the tabernacles of the Most High."
+     ("Ps" 46 4))
+    ("The Spirit and the bride say, Come. And let him that heareth say, Come. And let him that is athirst come. And whosoever will, let him take the water of life freely."
+     ("Rev" 22 17))
+    ;; Trinity
+    ("Holy, holy, holy, is the Lord of hosts: the whole earth is full of his glory."
+     ("Isa" 6 3)))
+  "Opening sentences from the 1928 American BCP Evening Prayer.
+Each entry: (TEXT CITATION) where CITATION is a lesson ref or list of refs.
+Seasonal entries are drawn from this in `bcp-1662-seasonal-sentences-evensong'.")
+
 ;;;; ──────────────────────────────────────────────────────────────────────
 ;;;; Fixed Texts
 

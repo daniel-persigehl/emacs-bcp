@@ -50,18 +50,17 @@
     last))
 
 (defun bcp-1662--ref-label-with-text (ref text)
-  "Return a display label for REF, replacing \"end\" with the actual last verse.
+  "Return a display label for REF, appending the actual last verse when known.
 When REF specifies a start verse > 1 with no explicit end, scans TEXT for the
-highest `bcp-verse' property value and substitutes it for the \"end\" placeholder."
-  (let* ((label (bcp-1662--ref-label ref))
-         (v1    (and (listp ref) (stringp (car ref)) (caddr ref)))
-         (v2    (and (listp ref) (stringp (car ref)) (cadddr ref))))
+highest `bcp-verse' property value and appends it as the end of the range."
+  (let* ((v1 (and (listp ref) (stringp (car ref)) (caddr ref)))
+         (v2 (and (listp ref) (stringp (car ref)) (cadddr ref))))
     (if (and text v1 (> v1 1) (null v2))
         (let ((last (bcp-1662--last-verse-in-text text)))
           (if last
-              (replace-regexp-in-string "-end\\>" (format "-%d" last) label)
-            label))
-      label)))
+              (format "%s-%d" (bcp-1662--ref-label ref) last)
+            (bcp-1662--ref-label ref)))
+      (bcp-1662--ref-label ref))))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Rubric face
@@ -344,7 +343,8 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
       (:sentences
        (let ((sents (bcp-1662--select-opening-sentences
                      (plist-get propers :season)
-                     (plist-get propers :date))))
+                     (plist-get propers :date)
+                     (plist-get propers :office))))
          (dolist (sent sents)
            (if (stringp sent)
                ;; Plain string — seasonal sentence, no citation

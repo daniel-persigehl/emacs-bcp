@@ -142,7 +142,7 @@
 (setq bcp-1662-general-confession-form nil)
 
 ;; Form of the Bidding (exhortation "Dearly beloved brethren..."):
-;; 'full (default), 'brief (abbreviated text, nil until supplied), 'omit
+;; 'full (default), 'brief ("Let us humbly confess..." — 1928 BCP alternate rubric), 'omit
 (setq bcp-1662-bidding-form 'full)
 
 ;; Omit Venite verses 8-11 ("To day if ye will hear his voice...")

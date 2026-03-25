@@ -259,6 +259,64 @@ Precedence: principal > greater (patronal-elevated > standard) > lesser."
     (_          3)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Rule 1 transfer helpers
+
+(defun bcp-1662--sunday-displaced-p (month day year)
+  "Return feast sym if a principal/greater feast displaces Sunday (M D Y), else nil.
+A Sunday is displaced when it coincides with a feast of rank principal or
+greater, which takes precedence for its own collect, epistle, and gospel,
+causing the Sunday propers to be transferred to the following Sunday (Rule 1)."
+  (when (= (calendar-day-of-week (list month day year)) 0)
+    (let* ((feast-sym  (bcp-1662--best-feast-for-date month day year))
+           (feast-data (when feast-sym (bcp-1662-feast-data feast-sym)))
+           (rank       (when feast-data (plist-get feast-data :rank)))
+           (eff-rank   (when feast-sym
+                         (bcp-1662-effective-feast-rank feast-sym (or rank 'lesser)))))
+      (when (memq eff-rank '(principal greater))
+        feast-sym))))
+
+(defun bcp-1662--week-collect-sym (month day year)
+  "Return the liturgical-week collect symbol for Sunday (M D Y), ignoring feasts.
+This is the collect the Sunday WOULD have had absent any feast, used to
+determine what is transferred to the following Sunday under Rule 1."
+  (let* ((feasts   (bcp-1662-moveable-feasts year))
+         (abs      (calendar-absolute-from-gregorian (list month day year)))
+         (easter   (calendar-absolute-from-gregorian (cdr (assq 'easter feasts))))
+         (moveable (cond
+                    ((= abs (calendar-absolute-from-gregorian
+                             (cdr (assq 'passion-sunday feasts)))) 'lent-5)
+                    ((= abs (calendar-absolute-from-gregorian
+                             (cdr (assq 'palm-sunday feasts))))    'palm-sunday)
+                    ((= abs easter)                                'easter)
+                    ((= abs (+ easter 7))                          'easter-1)
+                    ((= abs (+ easter 49))                         'whitsunday)
+                    ((= abs (+ easter 56))                         'trinity-sunday)
+                    (t nil))))
+    (or moveable
+        (let* ((week   (bcp-1662-liturgical-week month day year))
+               (season (car week))
+               (num    (cdr week))
+               (sym    (when num
+                         (cond
+                          ((and (eq season 'trinity) (= num 0))  'trinity-sunday)
+                          ((and (eq season 'trinity) (= num 25)) 'sunday-before-advent)
+                          (t (intern (format "%s-%d" season num)))))))
+          (when (and sym (bcp-1662-collect sym)) sym)))))
+
+(defun bcp-1662--week-proper-sym (month day year)
+  "Return the liturgical-week communion proper symbol for Sunday (M D Y), ignoring feasts.
+Used for Rule 1 transfer of the epistle and gospel to the following Sunday."
+  (let* ((week   (bcp-1662-liturgical-week month day year))
+         (season (car week))
+         (num    (cdr week)))
+    (when num
+      (let ((sym (cond
+                  ((and (eq season 'trinity) (= num 0))  'trinity-sunday)
+                  ((and (eq season 'trinity) (= num 25)) 'sunday-before-advent)
+                  (t (intern (format "%s-%d" season num))))))
+        (when (and sym (bcp-1662-communion-propers sym)) sym)))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Seasonal collect
 
 (defun bcp-1662-seasonal-collect (month day year)
@@ -304,8 +362,18 @@ implementing the BCP rule that the Sunday collect serves all week."
          (day-sym (or moveable-sym feast-sym)))
     (if (and day-sym (bcp-1662-collect day-sym))
         day-sym
-      ;; Fall back to preceding Sunday's collect
-      (let* ((sun   (bcp-1662--preceding-sunday month day year))
+      ;; Rule 1 transfer: if today is a Sunday and the previous Sunday was
+      ;; displaced by a principal/greater feast, use that Sunday's collect.
+      (let* ((is-sunday (= (calendar-day-of-week (list month day year)) 0))
+             (rule1-collect
+              (when is-sunday
+                (let* ((prev (calendar-gregorian-from-absolute (- abs 7)))
+                       (pm (car prev)) (pd (cadr prev)) (py (caddr prev)))
+                  (when (bcp-1662--sunday-displaced-p pm pd py)
+                    (bcp-1662--week-collect-sym pm pd py))))))
+        (or rule1-collect
+            ;; Fall back to preceding Sunday's collect
+            (let* ((sun   (bcp-1662--preceding-sunday month day year))
              (sm    (car sun))
              (sd    (cadr sun))
              (sy    (caddr sun))
@@ -346,7 +414,7 @@ implementing the BCP rule that the Sunday collect serves all week."
                               (or (and sun-feast (bcp-1662-collect sun-feast) sun-feast)
                                   week-sym
                                   sun-feast))))))
-        sun-sym))))
+        sun-sym))))))  ; end rule1-collect / or
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Office lessons
@@ -473,17 +541,24 @@ Checks fixed feasts first, then moveable feasts and Sunday propers."
       ((= abs (+ easter 51))                          'whit-tuesday)
       ((= abs (+ easter 56))                          'trinity-sunday)
       (t
-       ;; Sunday proper
+       ;; Sunday proper — check Rule 1 transfer first
        (when (= (calendar-day-of-week (list month day year)) 0)
-         (let* ((week   (bcp-1662-liturgical-week month day year))
-                (season (car week))
-                (num    (cdr week)))
-           (when num
-             (let ((sym (cond
-                          ((and (eq season 'trinity) (= num 0))  'trinity-sunday)
-                          ((and (eq season 'trinity) (= num 25)) 'sunday-before-advent)
-                          (t (intern (format "%s-%d" season num))))))
-               (when (bcp-1662-communion-propers sym) sym))))))))))
+         (or
+          ;; Rule 1: if the previous Sunday was displaced, use its proper
+          (let* ((prev (calendar-gregorian-from-absolute (- abs 7)))
+                 (pm (car prev)) (pd (cadr prev)) (py (caddr prev)))
+            (when (bcp-1662--sunday-displaced-p pm pd py)
+              (bcp-1662--week-proper-sym pm pd py)))
+          ;; Normal Sunday proper
+          (let* ((week   (bcp-1662-liturgical-week month day year))
+                 (season (car week))
+                 (num    (cdr week)))
+            (when num
+              (let ((sym (cond
+                           ((and (eq season 'trinity) (= num 0))  'trinity-sunday)
+                           ((and (eq season 'trinity) (= num 25)) 'sunday-before-advent)
+                           (t (intern (format "%s-%d" season num))))))
+                (when (bcp-1662-communion-propers sym) sym)))))))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Top-level dispatch
@@ -682,25 +757,58 @@ These are appended after the Prayer of St Chrysostom and before the Grace."
 ;;── Seasonal sentences (extended corpus) ────────────────────────────────────
 
 (defcustom bcp-1662-seasonal-sentences
-  '((advent      . nil)
-    (christmas   . nil)
-    (epiphany    . nil)
+  '((advent      . ("Prepare ye the way of the Lord, make straight in the desert a highway for our God."
+                    ("Isa" 40 3)))
+    (christmas   . ("Behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord."
+                    ("Luke" 2 10 11)))
+    (epiphany    . ("From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
+                    ("Mal" 1 11)))
     (pre-lent    . nil)
-    (lent        . nil)
-    (passiontide . nil)
-    (eastertide  . nil)
-    (trinity     . nil))
-  "Alist of (SEASON . SENTENCE-TEXT) for seasonal opening sentences.
+    (lent        . ("Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
+                    ("Joel" 2 13)))
+    (passiontide . ("Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
+                    ("Lam" 1 12)))
+    (eastertide  . ("He is risen. The Lord is risen indeed."
+                    (("Mark" 16 6) ("Luke" 24 34))))
+    (trinity     . ("Holy, holy, holy, Lord God Almighty, which was, and is, and is to come."
+                    ("Rev" 4 8))))
+  "Alist of (SEASON . ENTRY) for seasonal opening sentences.
 Used when `bcp-1662-opening-sentence-corpus' is `extended'.
-Nil entries mean no seasonal sentence is available for that season.
-Texts should be supplied as plain strings."
-  :type  '(alist :key-type symbol :value-type (choice string (const nil)))
+Each ENTRY is either nil (no seasonal sentence for that season),
+a plain string, or a (TEXT CITATION) pair as in `bcp-1662-opening-sentences'.
+Default texts are drawn from the 1928 American BCP Morning Prayer."
+  :type  '(alist :key-type symbol
+                 :value-type (choice (const nil) string (list string sexp)))
+  :group 'bcp-1662)
+
+(defcustom bcp-1662-seasonal-sentences-evensong
+  '((advent      . ("Watch ye, for ye know not when the master of the house cometh, at even, or at midnight, or at the cock-crowing, or in the morning: lest coming suddenly he find you sleeping."
+                    ("Mark" 13 35 36)))
+    (christmas   . ("Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God."
+                    ("Rev" 21 3)))
+    (epiphany    . ("And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
+                    ("Isa" 60 3)))
+    (pre-lent    . nil)
+    (lent        . ("I acknowledge my transgressions: and my sin is ever before me."
+                    ("Ps" 51 3)))
+    (passiontide . ("All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."
+                    ("Isa" 53 6)))
+    (eastertide  . ("Thanks be to God, which giveth us the victory through our Lord Jesus Christ."
+                    ("1 Cor" 15 57)))
+    (trinity     . ("Holy, holy, holy, is the Lord of hosts: the whole earth is full of his glory."
+                    ("Isa" 6 3))))
+  "Alist of (SEASON . ENTRY) for seasonal opening sentences at Evening Prayer.
+Used when `bcp-1662-opening-sentence-corpus' is `extended'.
+Each ENTRY is either nil, a plain string, or a (TEXT CITATION) pair.
+Default texts are drawn from the 1928 American BCP Evening Prayer."
+  :type  '(alist :key-type symbol
+                 :value-type (choice (const nil) string (list string sexp)))
   :group 'bcp-1662)
 
 (defconst bcp-1662-bidding-brief
-  nil
+  "Let us humbly confess our sins unto Almighty God."
   "Abbreviated form of the Bidding (exhortation).
-Nil until supplied.  Should be a plain string.")
+Text from the 1928 American BCP alternate rubric.  Should be a plain string.")
 
 (defconst bcp-1662--fallback-sentence
   '("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
@@ -709,9 +817,10 @@ Nil until supplied.  Should be a plain string.")
 This is the last of the 1662 sentences (1 John 1:8-9), chosen for its
 direct relevance to the penitential introduction that follows.")
 
-(defun bcp-1662--select-opening-sentences (season date)
+(defun bcp-1662--select-opening-sentences (season date &optional office)
   "Return the list of opening sentences to display for SEASON on DATE.
 DATE is a Gregorian calendar date (MONTH DAY YEAR).
+OFFICE is \\='mattins or \\='evensong; defaults to \\='mattins.
 
 Each element is either a (TEXT CITATION) pair from
 `bcp-1662-opening-sentences' (general pool), or a plain string
@@ -720,8 +829,11 @@ Each element is either a (TEXT CITATION) pair from
 Respects `bcp-1662-opening-sentence-corpus' and
 `bcp-1662-opening-sentence-selection'.  Falls back to
 `bcp-1662--fallback-sentence' if the result would otherwise be empty."
-  (let* ((seasonal (when (eq bcp-1662-opening-sentence-corpus 'extended)
-                     (cdr (assq season bcp-1662-seasonal-sentences))))
+  (let* ((seasonal-alist (if (eq office 'evensong)
+                             bcp-1662-seasonal-sentences-evensong
+                           bcp-1662-seasonal-sentences))
+         (seasonal (when (eq bcp-1662-opening-sentence-corpus 'extended)
+                     (cdr (assq season seasonal-alist))))
          (pool     bcp-1662-opening-sentences)
          (result
           (cond
@@ -898,9 +1010,7 @@ Handles all ref formats from bcp-1662-propers-year.el:
           (v2 (cadddr ref)))
       (cond
        ((null v1)    (format "%s %d" bk ch))
-       ((null v2)    (if (> v1 1)
-                         (format "%s %d:%d-end" bk ch v1)
-                       (format "%s %d:%d" bk ch v1)))
+       ((null v2)    (format "%s %d:%d" bk ch v1))
        ((eq v2 'nil) (format "%s %d:%d" bk ch v1))
        (t            (format "%s %d:%d-%d" bk ch v1 v2)))))
    (t (format "%s" ref))))
@@ -1035,6 +1145,7 @@ With a prefix argument ARG, prompts for date and office."
     ;; Show buffer immediately with a loading message
     (with-current-buffer (get-buffer-create bcp-1662-office-buffer-name)
       (read-only-mode -1)
+      (remove-overlays)
       (erase-buffer)
       (insert (format "Loading %s — %s…\n\nFetching %d passage(s) from Oremus.\n"
                       (bcp-1662--office-label office)
