@@ -107,6 +107,7 @@ highest `bcp-verse' property value and appends it as the end of the range."
   "Insert the Lord's Prayer placeholder."
   (bcp-liturgy-render--insert-lords-prayer))
 
+
 (defun bcp-1662--insert-fixed-text (name text)
   "Insert fixed TEXT identified by NAME."
   (bcp-liturgy-render--insert-fixed-text name text))
@@ -360,17 +361,28 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
 
       ;; ── Fixed text ─────────────────────────────────────────────────────
       (:text
-       (let ((name (plist-get step :text))
-             (ref  (plist-get step :ref)))
+       (let ((name      (plist-get step :text))
+             (ref       (plist-get step :ref))
+             (alt-creed (plist-get step :alt-creed)))
          (cond
-          ((memq name '(lords-prayer lords-prayer-short))
+          ((eq name 'lords-prayer)
            (bcp-1662--insert-lords-prayer))
+          ;; Creed: swap to Nicene when bcp-liturgy-creed says so and an
+          ;; alt-creed ref is present on the step.
+          ((and (eq name 'apostles-creed)
+                alt-creed
+                (eq bcp-liturgy-creed 'nicene))
+           (let ((text (symbol-value alt-creed)))
+             (bcp-1662--insert-fixed-text
+              'nicene-creed
+              (if (stringp text) text
+                (or (bcp-common-prayers-text text) "")))))
           (ref
            (let ((text (symbol-value ref)))
              (bcp-1662--insert-fixed-text
               (or name (intern (symbol-name ref)))
               (if (stringp text) text
-                (or (plist-get text :text) "")))))
+                (or (bcp-common-prayers-text text) "")))))
           (t nil))))
 
       ;; ── Versicles ──────────────────────────────────────────────────────
@@ -535,7 +547,7 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
           (ref
            (let* ((data  (symbol-value ref))
                   (title (plist-get data :title))
-                  (text  (plist-get data :text)))
+                  (text  (bcp-common-prayers-text data)))
              (bcp-1662--insert-heading 3 (or title "Collect"))
              (when text (insert text "\n")))))))
 
@@ -550,12 +562,30 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
        (let* ((ref   (plist-get step :ref))
               (data  (when ref (symbol-value ref)))
               (title (when data (plist-get data :title)))
-              (text  (when data (plist-get data :text))))
+              (text  (when data (bcp-common-prayers-text data))))
          (bcp-1662--insert-heading 3 (or title "Prayer"))
          (when text
            (bcp-1662--insert-fixed-text
             (or (plist-get step :prayer) (intern (symbol-name ref)))
             text))))
+
+      ;; ── State versicle (region-resolved) ───────────────────────────────
+      (:state-versicles
+       (let ((tradition (plist-get step :tradition)))
+         (bcp-1662--insert-versicles
+          (list (bcp-liturgy-state-versicles tradition)))))
+
+      ;; ── State prayers (region-resolved) ────────────────────────────────
+      (:state-prayers
+       (let ((tradition (plist-get step :tradition)))
+         (dolist (prayer (bcp-liturgy-state-prayers tradition))
+           (let* ((title (plist-get prayer :title))
+                  (text  (bcp-common-prayers-text prayer)))
+             (bcp-1662--insert-heading 3 (or title "Prayer"))
+             (when text
+               (bcp-1662--insert-fixed-text
+                (or (plist-get prayer :name) 'state-prayer)
+                text))))))
 
       ;; ── Unknown — ignore silently ───────────────────────────────────────
       (_ nil))))

@@ -362,7 +362,7 @@
                     (bcp-1662--lectionary-ref-to-string '("Isa" 40 1 nil)))
     (bcp-1662-check "Ecclus = Sirach"       "Sirach 44:1-15"
                     (bcp-1662--lectionary-ref-to-string '("Ecclus" 44 1 15)))
-    (bcp-1662-check "Joined lesson Isa 52-53" "Isaiah 52:13-53"
+    (bcp-1662-check "Joined lesson Isa 52-53" "Isaiah 52:13-53:200"
                     (bcp-1662--lectionary-ref-to-string '(("Isa" 52 13 nil) ("Isa" 53))))
     (bcp-1662-check "Label uses abbrev"     "Deut 11:1-18"
                     (bcp-1662--ref-label '("Deut" 11 1 18))))
@@ -383,54 +383,58 @@
   ;; ── 18. Canticles ──────────────────────────────────────────────────────
   (bcp-1662-test-section "18. Canticles"
     ;; Basic retrieval
-    (bcp-1662-check-t   "Te Deum has English text"        (canticle-get 'te-deum 'english))
-    (bcp-1662-check-t   "Venite has English text"          (canticle-get 'venite 'english))
-    (bcp-1662-check-t   "Magnificat has English text"      (canticle-get 'magnificat 'english))
-    (bcp-1662-check-t   "Benedictus has English text"      (canticle-get 'benedictus 'english))
-    (bcp-1662-check-t   "Nunc Dimittis has English text"   (canticle-get 'nunc-dimittis 'english))
-    (bcp-1662-check-t   "Cantate Domino has English text"  (canticle-get 'cantate-domino 'english))
-    (bcp-1662-check-t   "Benedicite has English text"      (canticle-get 'benedicite 'english))
-    (bcp-1662-check-t   "Jubilate Deo has English text"    (canticle-get 'jubilate-deo 'english))
-    (bcp-1662-check-t   "Deus Misereatur has English text" (canticle-get 'deus-misereatur 'english))
-    (bcp-1662-check-t   "Gloria Patri has English text"    (canticle-get 'gloria-patri 'english))
+    (bcp-1662-check-t   "Te Deum has English text"        (bcp-liturgy-canticle-get 'te-deum 'english))
+    (bcp-1662-check-t   "Venite has English text"          (bcp-liturgy-canticle-get 'venite 'english))
+    (bcp-1662-check-t   "Magnificat has English text"      (bcp-liturgy-canticle-get 'magnificat 'english))
+    (bcp-1662-check-t   "Benedictus has English text"      (bcp-liturgy-canticle-get 'benedictus 'english))
+    (bcp-1662-check-t   "Nunc Dimittis has English text"   (bcp-liturgy-canticle-get 'nunc-dimittis 'english))
+    (bcp-1662-check-t   "Cantate Domino has English text"  (bcp-liturgy-canticle-get 'cantate-domino 'english))
+    (bcp-1662-check-t   "Benedicite has English text"      (bcp-liturgy-canticle-get 'benedicite 'english))
+    (bcp-1662-check-t   "Jubilate Deo has English text"    (bcp-liturgy-canticle-get 'jubilate-deo 'english))
+    (bcp-1662-check-t   "Deus Misereatur has English text" (bcp-liturgy-canticle-get 'deus-misereatur 'english))
+    (bcp-1662-check-t   "Gloria Patri has English text"    (bcp-liturgy-canticle-get 'gloria-patri 'english))
     ;; Latin falls back to English when nil
-    (bcp-1662-check-t   "Te Deum Latin falls back to English" (canticle-get 'te-deum 'latin))
-    (bcp-1662-check-t   "Magnificat Latin falls back to English" (canticle-get 'magnificat 'latin))
+    (bcp-1662-check-t   "Te Deum Latin falls back to English" (bcp-liturgy-canticle-get 'te-deum 'latin))
+    (bcp-1662-check-t   "Magnificat Latin falls back to English" (bcp-liturgy-canticle-get 'magnificat 'latin))
     ;; Gloria flags
-    (bcp-1662-check-t   "Venite has Gloria flag"           (canticle-gloria-p 'venite))
-    (bcp-1662-check-t   "Magnificat has Gloria flag"       (canticle-gloria-p 'magnificat))
-    (bcp-1662-check-nil "Te Deum has no Gloria flag"       (canticle-gloria-p 'te-deum))
-    (bcp-1662-check-nil "Gloria Patri has no Gloria flag"  (canticle-gloria-p 'gloria-patri))
+    (bcp-1662-check-t   "Venite has Gloria flag"           (bcp-liturgy-canticle-gloria-p 'venite))
+    (bcp-1662-check-t   "Magnificat has Gloria flag"       (bcp-liturgy-canticle-gloria-p 'magnificat))
+    (bcp-1662-check-nil "Te Deum has no Gloria flag"       (bcp-liturgy-canticle-gloria-p 'te-deum))
+    (bcp-1662-check-nil "Gloria Patri has no Gloria flag"  (bcp-liturgy-canticle-gloria-p 'gloria-patri))
     ;; Titles
-    (bcp-1662-check "Te Deum title"     "Te Deum Laudamus"  (canticle-title 'te-deum))
-    (bcp-1662-check "Magnificat title"  "Magnificat"        (canticle-title 'magnificat))
-    (bcp-1662-check "Nunc Dimittis title" "Nunc Dimittis"   (canticle-title 'nunc-dimittis))
+    (bcp-1662-check "Te Deum title"     "Te Deum Laudamus"  (bcp-liturgy-canticle-title 'te-deum))
+    (bcp-1662-check "Magnificat title"  "Magnificat"        (bcp-liturgy-canticle-title 'magnificat))
+    (bcp-1662-check "Nunc Dimittis title" "Nunc Dimittis"   (bcp-liturgy-canticle-title 'nunc-dimittis))
     ;; Language override
-    (let ((canticle-overrides '((te-deum . latin))))
+    (let ((bcp-liturgy-canticle-overrides '((te-deum . latin))))
       (bcp-1662-check "Override: te-deum effective lang = latin" 'latin
-                      (canticle-effective-language 'te-deum))
+                      (bcp-liturgy-canticle-effective-language 'te-deum))
       (bcp-1662-check "Override: venite effective lang = english" 'english
-                      (canticle-effective-language 'venite)))
+                      (bcp-liturgy-canticle-effective-language 'venite)))
     ;; Venite verse stripping
     (bcp-1662-check-t   "Venite full text contains verse 8"
                         (string-match-p "To day if ye will hear"
-                                        (canticle-get 'venite)))
+                                        (bcp-liturgy-canticle-get 'venite)))
     (bcp-1662-check-nil "Venite stripped text omits verse 8"
                         (string-match-p "To day if ye will hear"
                                         (bcp-1662--venite-strip-verses-8-11
-                                         (canticle-get 'venite))))
+                                         (bcp-liturgy-canticle-get 'venite))))
     (bcp-1662-check-t   "Venite stripped text retains verse 12"
                         (string-match-p "Unto whom I sware"
                                         (bcp-1662--venite-strip-verses-8-11
-                                         (canticle-get 'venite)))))
+                                         (bcp-liturgy-canticle-get 'venite)))))
 
   ;; ── 19. Rubrical options ───────────────────────────────────────────────
   (bcp-1662-test-section "19. Rubrical options"
-    ;; Seasonal sentence lookup — nil until supplied
-    (bcp-1662-check-nil "Advent seasonal sentence = nil (not yet supplied)"
-                        (bcp-1662--seasonal-sentence 'advent))
-    (bcp-1662-check-nil "Easter seasonal sentence = nil (not yet supplied)"
-                        (bcp-1662--seasonal-sentence 'eastertide))
+    ;; Seasonal sentence alists — 1928 extended corpus
+    (bcp-1662-check-t "Advent has a morning seasonal sentence"
+                      (assq 'advent bcp-1662-seasonal-sentences))
+    (bcp-1662-check-t "Eastertide has a morning seasonal sentence"
+                      (assq 'eastertide bcp-1662-seasonal-sentences))
+    (bcp-1662-check-t "Advent has an evening seasonal sentence"
+                      (assq 'advent bcp-1662-seasonal-sentences-evensong))
+    (bcp-1662-check-t "Eastertide has an evening seasonal sentence"
+                      (assq 'eastertide bcp-1662-seasonal-sentences-evensong))
     ;; Officiant defaults
     (bcp-1662-check "Default officiant = lay" 'lay office-officiant)
     ;; Lay absolution: Trinity 21 collect should exist
@@ -440,10 +444,10 @@
     (bcp-1662-check-nil "Venite strip: nil input returns nil"
                         (bcp-1662--venite-strip-verses-8-11 nil))
     ;; Canticle config defaults
-    (bcp-1662-check "canticle-language default = english" 'english canticle-language)
-    (bcp-1662-check-nil "canticle-overrides default = nil" canticle-overrides)
-    (bcp-1662-check-nil "office-canticle-append-gloria default = nil"
-                        office-canticle-append-gloria)))
+    (bcp-1662-check "bcp-liturgy-canticle-language default = english" 'english bcp-liturgy-canticle-language)
+    (bcp-1662-check-nil "bcp-liturgy-canticle-overrides default = nil" bcp-liturgy-canticle-overrides)
+    (bcp-1662-check-nil "bcp-liturgy-canticle-append-gloria default = nil"
+                        bcp-liturgy-canticle-append-gloria)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Results reporting

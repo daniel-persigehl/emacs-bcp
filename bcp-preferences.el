@@ -79,6 +79,11 @@
 (setq bible-commentary-capture-key "B")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Daily Office — tradition
+
+;; Anglican rubrics to use when opening the Office via bcp-anglican-open-office.
+(setq bcp-anglican-rubrics '1662)
+
 ;;;; Daily Office — general
 
 ;; Non-nil: include Communion propers (OT lesson, Epistle, Gospel)
@@ -95,6 +100,10 @@
 ;; Disabled by default for private recitation.
 (setq bcp-liturgy-canticle-append-gloria nil)
 
+;; Creed used at Morning and Evening Prayer.
+;; 'apostles (default) or 'nicene (1928 rubrical option; no effect on 1662 BCP)
+(setq bcp-liturgy-creed 'apostles)
+
 ;; Default language for canticles: 'english or 'latin
 ;; (Latin texts are nil until supplied; falls back to English automatically)
 (setq bcp-liturgy-canticle-language 'english)
@@ -108,6 +117,15 @@
 ;;             indian red on dark themes)
 ;; `comment' — inherits font-lock-comment-face (muted grey, fully theme-aware)
 (setq bcp-1662-rubric-style 'red)
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Daily Office — region
+
+;; Region for state prayer selection.
+;; 'monarchy  — pray for the King and Royal Family (default; BCP 1662 / Commonwealth)
+;; 'us        — pray for the President (uses 1928 American BCP wording)
+;; 'republic  — generic prayer for civil authority (other republics)
+(setq bcp-liturgy-region 'us)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Daily Office — officiant
@@ -160,10 +178,10 @@
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Daily Office — 1662 BCP specific
 
-;; Hour (0-23) at which Morning Prayer gives way to Evening Prayer.
-;; The 1662 BCP has two offices only; other traditions may define
-;; their own cutoffs in their respective configuration variables.
-(setq bcp-1662-morning-prayer-hour-limit 12)
+;; Office selection uses the canonical hours framework by default.
+;; Hours matins–none map to Morning Prayer; vespers and compline to Evening Prayer.
+;; To revert to the legacy noon cutoff, uncomment:
+;; (setq bcp-1662-morning-prayer-hour-limit 12)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Reload utility
@@ -182,7 +200,11 @@ restarting Emacs."
                  "bcp-fetcher-oremus.el"
                  "bcp-fetcher-ebible.el"
                  "bcp-calendar.el"
+                 "bcp-liturgy-hours.el"
                  "bcp-liturgy-canticles.el"
+                 "bcp-liturgy-dispatch.el"
+                 "bcp-common-prayers.el"
+                 "bcp-common-anglican.el"
                  "bcp-liturgy-render.el"
                  "bcp-render.el"
                  "bcp-1662-calendar.el"
@@ -191,6 +213,10 @@ restarting Emacs."
                  "bcp-1662-ordo.el"
                  "bcp-1662-render.el"
                  "bcp-1662.el"
+                 "bcp-anglican-1928-ordo.el"
+                 "bcp-anglican-1928.el"
+                 "bcp-anglican.el"
+                 "bcp-roman.el"
                  "bcp-reader.el"
                  "bcp-notebook.el")))
     (dolist (file files)

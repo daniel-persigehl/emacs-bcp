@@ -29,6 +29,47 @@
 (require 'cl-lib)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Parent defgroup
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+(defgroup bcp-liturgy nil
+  "BCP liturgical framework."
+  :prefix "bcp-liturgy-"
+  :group 'applications)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Region
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+(defcustom bcp-liturgy-region 'monarchy
+  "Region used for selecting state prayers at Morning and Evening Prayer.
+
+  `monarchy'  — pray for the King (or Queen) and the Royal Family
+                (default; correct for England, Scotland, and Commonwealth nations)
+  `us'        — pray for the President of the United States and civil authority
+                (uses the 1928 American BCP form)
+  `republic'  — pray for civil authority in generic terms
+                (suitable for republics other than the United States)"
+  :type  '(choice (const :tag "Monarchy (King/Royal Family)" monarchy)
+                  (const :tag "United States (President)" us)
+                  (const :tag "Republic (civil authority)" republic))
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Creed
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+(defcustom bcp-liturgy-creed 'apostles
+  "Creed to use at Morning and Evening Prayer.
+
+  `apostles' — Apostles' Creed (default; required by 1662 rubric)
+  `nicene'   — Nicene Creed (optional alternative in the 1928 American BCP;
+               ignored by ordos that do not carry an :alt-creed step key)"
+  :type  '(choice (const :tag "Apostles' Creed" apostles)
+                  (const :tag "Nicene Creed" nicene))
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Defgroup and shared rendering defcustoms
 ;;;; ══════════════════════════════════════════════════════════════════════════
 

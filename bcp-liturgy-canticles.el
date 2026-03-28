@@ -338,6 +338,26 @@ and God, even our own God, shall give us his blessing.\n\
    God shall bless us : and all the ends of the world shall fear him."
      :latin   nil)
 
+    ;;──── Benedictus es Domine ───────────────────────────────────────────────
+
+    (benedictus-es-domine
+     :title   "Benedictus es, Domine"
+     :source  "Song of the Three Young Men (Dan 3:52-56 Vulg.)"
+     :gloria  t
+     :english "BLESSED art thou, O Lord God of our fathers : \
+praised and exalted above all for ever.\n\
+   Blessed art thou for the Name of thy Majesty : \
+praised and exalted above all for ever.\n\
+   Blessed art thou in the temple of thy holiness : \
+praised and exalted above all for ever.\n\
+   Blessed art thou that beholdest the depths, and dwellest between the Cherubim : \
+praised and exalted above all for ever.\n\
+   Blessed art thou on the glorious throne of thy Kingdom : \
+praised and exalted above all for ever.\n\
+   Blessed art thou in the firmament of heaven : \
+praised and exalted above all for ever."
+     :latin   nil)
+
     ;;──── Gloria Patri ───────────────────────────────────────────────────────
 
     (gloria-patri

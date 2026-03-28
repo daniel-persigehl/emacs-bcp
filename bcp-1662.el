@@ -30,6 +30,9 @@
 (require 'bcp-1662-ordo)
 (require 'bcp-1662-render)
 (require 'bcp-liturgy-canticles)
+(require 'bcp-common-prayers)
+(require 'bcp-common-anglican)
+(require 'bcp-liturgy-hours)
 
 
 ;;;; ──────────────────────────────────────────────────────────────────────
@@ -659,11 +662,31 @@ If nil, uses the current date and time."
   :type  '(choice (const nil) (repeat integer))
   :group 'bcp-1662)
 
-(defcustom bcp-1662-morning-prayer-hour-limit 12
-  "Hour (0-23) before which Morning Prayer is used; at or after = Evening Prayer.
-The 1662 BCP has two offices only.  Other traditions should define their
-own cutoff variables in their respective modules."
-  :type  'integer
+(defcustom bcp-1662-morning-prayer-hour-limit nil
+  "Legacy cutoff hour (0-23) for Morning Prayer, or nil to use canonical hours.
+When non-nil, Morning Prayer is used before this hour and Evening Prayer at
+or after it.  When nil (the default), `bcp-1662--office-from-time' consults
+`bcp-canonical-hours' and `bcp-1662-canonical-hour-grouping' instead."
+  :type  '(choice (const nil) integer)
+  :group 'bcp-1662)
+
+(defcustom bcp-1662-canonical-hour-grouping
+  '((matins   . mattins)
+    (lauds    . mattins)
+    (prime    . mattins)
+    (terce    . mattins)
+    (sext     . evensong)
+    (none     . evensong)
+    (vespers  . evensong)
+    (compline . evensong))
+  "Alist mapping canonical hour symbols to BCP 1662 office symbols.
+Keys are canonical hour symbols from `bcp-canonical-hours'.
+Values are \\='mattins or \\='evensong.
+The 1662 BCP has only two offices, so all eight hours map to one or
+the other.  Traditions that support additional offices (e.g. 1979 BCP
+Midday Prayer, Compline) may define their own analogous alist."
+  :type  '(alist :key-type symbol
+                 :value-type (choice (const mattins) (const evensong)))
   :group 'bcp-1662)
 
 (defcustom bcp-1662-rubric-style 'red
@@ -1035,15 +1058,24 @@ Delegates to `bible-commentary-bcp-psalm-ref-to-string'."
 
 (defun bcp-1662--current-time ()
   "Return the effective time for the Office.
-Uses `bcp-1662-office-date' if set, otherwise current time."
-  (or bcp-1662-office-date (decode-time)))
+Checks `bcp-office-nav--override-time' first (set dynamically by navigation
+commands), then `bcp-1662-office-date', then the current time."
+  (or (and (boundp 'bcp-office-nav--override-time) bcp-office-nav--override-time)
+      bcp-1662-office-date
+      (decode-time)))
 
 (defun bcp-1662--office-from-time (time)
   "Return \\='mattins or \\='evensong based on HOUR in TIME.
-Uses `bcp-1662-morning-prayer-hour-limit' as the cutoff."
-  (if (< (nth 2 time) bcp-1662-morning-prayer-hour-limit)
-      'mattins
-    'evensong))
+When `bcp-1662-morning-prayer-hour-limit' is non-nil, uses that as a simple
+cutoff (legacy behaviour).  When nil, maps the clock hour through
+`bcp-canonical-hour-from-time' and then through
+`bcp-1662-canonical-hour-grouping'."
+  (let ((hour (nth 2 time)))
+    (if bcp-1662-morning-prayer-hour-limit
+        (if (< hour bcp-1662-morning-prayer-hour-limit) 'mattins 'evensong)
+      (let ((canonical (bcp-canonical-hour-from-time hour)))
+        (or (cdr (assq canonical bcp-1662-canonical-hour-grouping))
+            'mattins)))))
 
 (defun bcp-1662--date-from-time (time)
   "Return (MONTH DAY YEAR) from a decoded-time list."
@@ -1165,6 +1197,8 @@ With a prefix argument ARG, prompts for date and office."
         (lambda (lesson-texts)
           (bcp-1662--render-office
            propers psalms psalm-texts date-str lesson-texts)
+          (with-current-buffer (get-buffer bcp-1662-office-buffer-name)
+            (bcp-office-nav-init time 'bcp-1662 #'bcp-1662-open-office))
           (message "%s — %s"
                    (bcp-1662--office-label office)
                    date-str)))))))
@@ -1202,6 +1236,15 @@ Call with \\[universal-argument] to reset to automatic (current date/time)."
              (if (< hour 12) "Morning" "Evening")
              year month day)))
 
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Dispatcher and navigation registration
+
+(require 'bcp-liturgy-dispatch)
+(bcp-liturgy-register-tradition 'anglican '1662 #'bcp-1662-open-office)
+
+(require 'bcp-office-nav)
+(bcp-liturgy-register-hour-grouping 'bcp-1662 bcp-1662-canonical-hour-grouping)
 
 (provide 'bcp-1662)
 ;;; bcp-1662.el ends here
