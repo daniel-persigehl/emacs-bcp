@@ -158,9 +158,12 @@ Returns nil if the date cannot be classified."
     (cond
 
      ;; ── Advent ────────────────────────────────────────────────────────────
-     ((and (>= abs advent-next-abs)
-           (< abs (+ advent-next-abs (* 7 4))))
-      (let ((n (1+ (/ (- last-sun advent-next-abs) 7))))
+     ;; Advent runs from Advent Sunday (advent-abs) through Christmas Eve.
+     ;; Note: advent-abs = bcp-advent-sunday(ey-1), which is the correct
+     ;; start of the Advent season for the church year whose Easter falls in ey.
+     ((and (>= abs advent-abs)
+           (< abs christmas-abs))
+      (let ((n (1+ (/ (- last-sun advent-abs) 7))))
         (cons (intern (format "advent-%d" n)) dow)))
 
      ;; ── Christmas octave (Dec 25 – Dec 31) ───────────────────────────────

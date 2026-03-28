@@ -193,10 +193,11 @@
      :name "Thursday before Easter (Maundy Thursday)"
      :text "ALMIGHTY Father, whose dear Son, on the night before he suffered, did institute the Sacrament of his Body and Blood; Mercifully grant that we may thankfully receive the same in remembrance of him, who in these holy mysteries giveth us a pledge of life eternal; the same thy Son Jesus Christ our Lord, who now liveth and reigneth with thee and the Holy Spirit ever, one God, world without end. Amen.")
 
-    ;; Good Friday has three collects in the 1928 BCP; all three are provided
-    ;; here under separate keys so the renderer can present them in sequence.
-    (good-friday-1
-     :name "Good Friday (First Collect)"
+    ;; Good Friday has three collects in the 1928 BCP.  The canonical key used
+    ;; by the dispatch layer is `good-friday'; the additional collects are keyed
+    ;; `good-friday-2' and `good-friday-3' for optional use by the renderer.
+    (good-friday
+     :name "Good Friday"
      :text "ALMIGHTY God, we beseech thee graciously to behold this thy family, for which our Lord Jesus Christ was contented to be betrayed and given up into the hands of wicked men, and to suffer death upon the cross; who now liveth and reigneth with thee and the Holy Ghost ever, one God, world without end. Amen.")
 
     (good-friday-2
@@ -1201,6 +1202,45 @@ Returns a plist of the form (:name STRING :text STRING)."
 (defun bcp-1928-collect-text (symbol)
   "Return the collect text string for SYMBOL, or nil."
   (plist-get (bcp-1928-collect symbol) :text))
+
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Season derivation from week-key
+;;;; ──────────────────────────────────────────────────────────────────────────
+
+(defun bcp-1928--week-key-season (week-key)
+  "Return the liturgical season symbol for WEEK-KEY.
+This is a shared utility used by both the dispatch layer and the renderer."
+  (let ((n (symbol-name week-key)))
+    (cond
+     ((string-match-p "^advent" n)          'advent)
+     ((memq week-key
+            '(christmas st-stephen st-john-evangelist holy-innocents
+              december-29 december-30 december-31
+              after-christmas-1 after-christmas-2
+              circumcision january-2 january-3 january-4 january-5 epiphany))
+      'christmas)
+     ((string-match-p "^after-epiphany" n)  'epiphany)
+     ((memq week-key '(septuagesima sexagesima quinquagesima)) 'pre-lent)
+     ((or (eq week-key 'ash-wednesday)
+          (string-match-p "^lent" n))        'lent)
+     ((memq week-key
+            '(palm-sunday holy-monday holy-tuesday holy-wednesday
+              maundy-thursday good-friday easter-even))
+      'passiontide)
+     ((memq week-key
+            '(after-ascension))
+      'ascensiontide)
+     ((or (memq week-key
+                '(easter easter-monday easter-tuesday
+                  ascension whitsunday whit-monday whit-tuesday))
+          (string-match-p "^after-easter" n))
+      'eastertide)
+     ((or (eq week-key 'trinity-sunday)
+          (string-match-p "^after-trinity" n)
+          (eq week-key 'sunday-before-advent))
+      'trinity)
+     (t 'saints))))
 
 
 (provide 'bcp-anglican-1928-data)
