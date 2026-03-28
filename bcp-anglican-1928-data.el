@@ -578,11 +578,26 @@
      :name "Thanksgiving Day"
      :text "O MOST merciful Father, who hast blessed the labours of the husbandman in the returns of the fruits of the earth; We give thee humble and hearty thanks for this thy bounty; beseeching thee to continue thy loving-kindness to us, that our land may still yield her increase, to thy glory and our comfort; through Jesus Christ our Lord. Amen.")
 
+
+    ;;;; ── OCCASIONAL OFFICES ─────────────────────────────────────────────────
+
+    (matrimony
+     :name "At a Marriage"
+     :text "O ETERNAL God, we humbly beseech thee, favourably to behold these thy servants now (or about to be) joined in wedlock according to thy holy ordinance; and grant that they, seeking first thy kingdom and thy righteousness, may obtain the manifold blessings of thy grace; through Jesus Christ our Lord. Amen.")
+
+    ;; Two alternative collects are provided for the Burial of the Dead.
+    (burial-1
+     :name "At the Burial of the Dead (First Collect)"
+     :text "O ETERNAL Lord God, who holdest all souls in life; Vouchsafe, we beseech thee, to thy whole Church in paradise and on earth, thy light and thy peace; and grant that we, following the good examples of those who have served thee here and are now at rest, may at the last enter with them into thine unending joy; through Jesus Christ our Lord. Amen.")
+
+    (burial-2
+     :name "At the Burial of the Dead (Second Collect)"
+     :text "O GOD, whose mercies cannot be numbered; Accept our prayers on behalf of the soul of thy servant departed, and grant him an entrance into the land of light and joy, in the fellowship of thy saints; through Jesus Christ our Lord. Amen.")
+
     )
   "Collect table for the 1928 American Book of Common Prayer.
 Each entry is (KEY :name STRING [:rubric STRING] :text STRING).
-Epistles and Gospels (Communion propers) are out of scope.
-Marriage and Burial collects are omitted (outside Daily Office scope).")
+Epistles and Gospels (Communion propers) are out of scope.")
 
 
 (defun bcp-1928-collect (symbol)
