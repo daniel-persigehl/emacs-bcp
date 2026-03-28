@@ -4,12 +4,13 @@
 
 ;;; Commentary:
 
-;; This file contains the Sunday and seasonal collect table for the
+;; This file contains the collect and communion proper tables for the
 ;; 1928 American Book of Common Prayer.
 ;;
-;; Scope: Daily Office and scripture study only.  Epistles and Gospels
-;; (Communion propers) are deliberately omitted; they are out of scope
-;; for the Daily Office implementation.
+;; Contents:
+;;   `bcp-1928-collects'           — collect for every Sunday, feast, and occasion
+;;   `bcp-1928-communion-propers'  — Epistle and Gospel for every Sunday, feast,
+;;                                   saints' day, and special occasion
 ;;
 ;; Text variants: where the 1928 edition diverges from earlier American
 ;; BCPs (1789/1892), the 1928 text is used throughout.  See inline
@@ -598,6 +599,598 @@
   "Collect table for the 1928 American Book of Common Prayer.
 Each entry is (KEY :name STRING [:rubric STRING] :text STRING).
 Epistles and Gospels (Communion propers) are out of scope.")
+
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Communion Propers: Epistle and Gospel
+;;;; ──────────────────────────────────────────────────────────────────────────
+
+;; Ref format: (BOOK CHAPTER START END) or (BOOK CHAPTER) for a whole chapter,
+;; or ((BOOK CH1 V1 V2) (BOOK CH2 V1 V2)) for a reading that spans chapters.
+;; END may be nil to mean "to end of chapter".
+;; Book abbreviations follow Roman-numeral style matching bcp-anglican-1928-lectionary.el.
+;;
+;; Changes vs. the 1662 BCP:
+;;   Ascension:       Gospel Mark 16:14-20  → Luke 24:49-53
+;;   St Thomas:       Epistle Eph 2:19-22   → Heb 10:35-11:1
+;;   SS Simon & Jude: Epistle Jude 1:1-8    → Eph 2:19-22
+;;   Trinity 9:       Gospel  Luke 16:1-9   → Luke 15:11-32 (Prodigal Son)
+;;
+;; Entries with no 1662 equivalent (new in 1928):
+;;   christmas-second, after-christmas-2 (rare second Sunday after Christmas),
+;;   whitsunday-second, transfiguration, independence-day, thanksgiving-day,
+;;   common-of-saints, dedication-of-church, ember-days, rogation-days,
+;;   matrimony, burial.
+
+(defconst bcp-1928-communion-propers
+  '(
+
+    ;;;; ── ADVENT ─────────────────────────────────────────────────────────────
+
+    (advent-1
+     :name    "First Sunday in Advent"
+     :epistle ("Rom" 13 8 14)
+     :gospel  ("Matt" 21 1 13))
+
+    (advent-2
+     :name    "Second Sunday in Advent"
+     :epistle ("Rom" 15 4 13)
+     :gospel  ("Luke" 21 25 33))
+
+    (advent-3
+     :name    "Third Sunday in Advent"
+     :epistle ("I Cor" 4 1 5)
+     :gospel  ("Matt" 11 2 10))
+
+    (advent-4
+     :name    "Fourth Sunday in Advent"
+     :epistle ("Phil" 4 4 7)
+     :gospel  ("John" 1 19 28))
+
+    ;;;; ── CHRISTMAS ───────────────────────────────────────────────────────────
+
+    (christmas
+     :name    "Christmas Day"
+     :epistle ("Heb" 1 1 12)
+     :gospel  ("John" 1 1 14))
+
+    ;; 1928 provides a second Christmas service with different propers.
+    (christmas-second
+     :name    "Christmas Day (Second Service)"
+     :epistle ("Tit" 3 4 7)
+     :gospel  ("Luke" 2 1 14))
+
+    (st-stephen
+     :name    "St Stephen's Day"
+     :epistle ("Acts" 7 55 60)
+     :gospel  ("Matt" 23 34 39))
+
+    (st-john-evangelist
+     :name    "St John the Evangelist"
+     :epistle ("I John" 1)
+     :gospel  ("John" 21 19 25))
+
+    (holy-innocents
+     :name    "Holy Innocents"
+     :epistle ("Rev" 14 1 5)
+     :gospel  ("Matt" 2 13 18))
+
+    (sunday-after-christmas
+     :name    "Sunday after Christmas Day"
+     :epistle ("Gal" 4 1 7)
+     :gospel  ("Matt" 1 18 25))
+
+    ;; Second Sunday after Christmas (rare; occurs when Christmas falls on a
+    ;; Thursday or earlier and Jan 1 is not Sunday).
+    (after-christmas-2
+     :name    "Second Sunday after Christmas Day"
+     :epistle ("I Pet" 2 1 10)
+     :gospel  ("John" 1 1 18))
+
+    (circumcision
+     :name    "Circumcision of Christ"
+     :epistle ("Rom" 4 8 14)
+     :gospel  ("Luke" 2 15 21))
+
+    ;;;; ── EPIPHANY ────────────────────────────────────────────────────────────
+
+    (epiphany
+     :name    "Epiphany"
+     :epistle ("Eph" 3 1 12)
+     :gospel  ("Matt" 2 1 12))
+
+    (after-epiphany-1
+     :name    "First Sunday after Epiphany"
+     :epistle ("Rom" 12 1 5)
+     :gospel  ("Luke" 2 41 52))
+
+    (after-epiphany-2
+     :name    "Second Sunday after Epiphany"
+     :epistle ("Rom" 12 6 16)
+     :gospel  ("John" 2 1 11))
+
+    (after-epiphany-3
+     :name    "Third Sunday after Epiphany"
+     :epistle ("Rom" 12 16 21)
+     :gospel  ("Matt" 8 1 13))
+
+    (after-epiphany-4
+     :name    "Fourth Sunday after Epiphany"
+     :epistle ("Rom" 13 1 7)
+     :gospel  ("Matt" 8 23 34))
+
+    (after-epiphany-5
+     :name    "Fifth Sunday after Epiphany"
+     :epistle ("Col" 3 12 17)
+     :gospel  ("Matt" 13 24 30))
+
+    (after-epiphany-6
+     :name    "Sixth Sunday after Epiphany"
+     :epistle ("I John" 3 1 8)
+     :gospel  ("Matt" 24 23 31))
+
+    ;;;; ── PRE-LENT ────────────────────────────────────────────────────────────
+
+    (septuagesima
+     :name    "Septuagesima Sunday"
+     :epistle ("I Cor" 9 24 27)
+     :gospel  ("Matt" 20 1 16))
+
+    (sexagesima
+     :name    "Sexagesima Sunday"
+     :epistle ("II Cor" 11 19 31)
+     :gospel  ("Luke" 8 4 15))
+
+    (quinquagesima
+     :name    "Quinquagesima Sunday"
+     :epistle ("I Cor" 13)
+     :gospel  ("Luke" 18 31 43))
+
+    ;;;; ── LENT ───────────────────────────────────────────────────────────────
+
+    (ash-wednesday
+     :name    "Ash Wednesday"
+     :epistle ("Joel" 2 12 17)
+     :gospel  ("Matt" 6 16 21))
+
+    (lent-1
+     :name    "First Sunday in Lent"
+     :epistle ("II Cor" 6 1 10)
+     :gospel  ("Matt" 4 1 11))
+
+    (lent-2
+     :name    "Second Sunday in Lent"
+     :epistle ("I Thess" 4 1 8)
+     :gospel  ("Matt" 15 21 28))
+
+    (lent-3
+     :name    "Third Sunday in Lent"
+     :epistle ("Eph" 5 1 14)
+     :gospel  ("Luke" 11 14 28))
+
+    (lent-4
+     :name    "Fourth Sunday in Lent"
+     :epistle ("Gal" 4 21 31)
+     :gospel  ("John" 6 1 14))
+
+    (lent-5
+     :name    "Fifth Sunday in Lent (Passion Sunday)"
+     :epistle ("Heb" 9 11 15)
+     :gospel  ("John" 8 46 59))
+
+    ;;;; ── HOLY WEEK ──────────────────────────────────────────────────────────
+
+    (palm-sunday
+     :name    "Sunday next before Easter (Palm Sunday)"
+     :epistle ("Phil" 2 5 11)
+     :gospel  ("Matt" 27 1 54))
+
+    (holy-monday
+     :name    "Monday in Holy Week"
+     :epistle ("Isa" 63)
+     :gospel  ("Mark" 14))
+
+    (holy-tuesday
+     :name    "Tuesday in Holy Week"
+     :epistle ("Isa" 50 5 11)
+     :gospel  ("Mark" 15 1 39))
+
+    (holy-wednesday
+     :name    "Wednesday in Holy Week"
+     :epistle ("Heb" 9 16 28)
+     :gospel  ("Luke" 22))
+
+    (maundy-thursday
+     :name    "Thursday in Holy Week (Maundy Thursday)"
+     :epistle ("I Cor" 11 17 34)
+     :gospel  ("Luke" 23 1 49))
+
+    (good-friday
+     :name    "Good Friday"
+     :epistle ("Heb" 10 1 25)
+     :gospel  ("John" 19 1 37))
+
+    (easter-even
+     :name    "Easter Even"
+     :epistle ("I Pet" 3 17 22)
+     :gospel  ("Matt" 27 57 66))
+
+    ;;;; ── EASTER ─────────────────────────────────────────────────────────────
+
+    (easter
+     :name    "Easter Day"
+     :epistle ("Col" 3 1 7)
+     :gospel  ("John" 20 1 10))
+
+    (easter-monday
+     :name    "Monday in Easter Week"
+     :epistle ("Acts" 10 34 43)
+     :gospel  ("Luke" 24 13 35))
+
+    (easter-tuesday
+     :name    "Tuesday in Easter Week"
+     :epistle ("Acts" 13 26 41)
+     :gospel  ("Luke" 24 36 48))
+
+    (after-easter-1
+     :name    "First Sunday after Easter"
+     :epistle ("I John" 5 4 12)
+     :gospel  ("John" 20 19 23))
+
+    (after-easter-2
+     :name    "Second Sunday after Easter"
+     :epistle ("I Pet" 2 19 25)
+     :gospel  ("John" 10 11 16))
+
+    (after-easter-3
+     :name    "Third Sunday after Easter"
+     :epistle ("I Pet" 2 11 17)
+     :gospel  ("John" 16 16 22))
+
+    (after-easter-4
+     :name    "Fourth Sunday after Easter"
+     :epistle ("Jas" 1 17 21)
+     :gospel  ("John" 16 5 15))
+
+    (after-easter-5
+     :name    "Fifth Sunday after Easter (Rogation Sunday)"
+     :epistle ("Jas" 1 22 27)
+     :gospel  ("John" 16 23 33))
+
+    ;;;; ── ASCENSIONTIDE ──────────────────────────────────────────────────────
+
+    ;; 1928: gospel Luke 24:49-53 (1662: Mark 16:14-20).
+    (ascension
+     :name    "Ascension Day"
+     :epistle ("Acts" 1 1 11)
+     :gospel  ("Luke" 24 49 53))
+
+    (after-ascension
+     :name    "Sunday after Ascension"
+     :epistle ("I Pet" 4 7 11)
+     :gospel  (("John" 15 26 nil) ("John" 16 1 4)))
+
+    ;;;; ── WHITSUNTIDE ────────────────────────────────────────────────────────
+
+    (whitsunday
+     :name    "Whitsunday"
+     :epistle ("Acts" 2 1 11)
+     :gospel  ("John" 14 15 31))
+
+    ;; 1928 appoints alternative propers for a second Whitsunday service.
+    (whitsunday-second
+     :name    "Whitsunday (Second Service)"
+     :epistle ("I Cor" 12 4 11)
+     :gospel  ("Luke" 11 9 13))
+
+    (whit-monday
+     :name    "Monday in Whitsun Week"
+     :epistle ("Acts" 10 34 48)
+     :gospel  ("John" 3 16 21))
+
+    (whit-tuesday
+     :name    "Tuesday in Whitsun Week"
+     :epistle ("Acts" 8 14 17)
+     :gospel  ("John" 10 1 10))
+
+    ;;;; ── TRINITY ────────────────────────────────────────────────────────────
+
+    (trinity-sunday
+     :name    "Trinity Sunday"
+     :epistle ("Rev" 4)
+     :gospel  ("John" 3 1 15))
+
+    (after-trinity-1
+     :name    "First Sunday after Trinity"
+     :epistle ("I John" 4 7 21)
+     :gospel  ("Luke" 16 19 31))
+
+    (after-trinity-2
+     :name    "Second Sunday after Trinity"
+     :epistle ("I John" 3 13 24)
+     :gospel  ("Luke" 14 16 24))
+
+    (after-trinity-3
+     :name    "Third Sunday after Trinity"
+     :epistle ("I Pet" 5 5 11)
+     :gospel  ("Luke" 15 1 10))
+
+    (after-trinity-4
+     :name    "Fourth Sunday after Trinity"
+     :epistle ("Rom" 8 18 23)
+     :gospel  ("Luke" 6 36 42))
+
+    (after-trinity-5
+     :name    "Fifth Sunday after Trinity"
+     :epistle ("I Pet" 3 8 15)
+     :gospel  ("Luke" 5 1 11))
+
+    (after-trinity-6
+     :name    "Sixth Sunday after Trinity"
+     :epistle ("Rom" 6 3 11)
+     :gospel  ("Matt" 5 20 26))
+
+    (after-trinity-7
+     :name    "Seventh Sunday after Trinity"
+     :epistle ("Rom" 6 19 23)
+     :gospel  ("Mark" 8 1 9))
+
+    (after-trinity-8
+     :name    "Eighth Sunday after Trinity"
+     :epistle ("Rom" 8 12 17)
+     :gospel  ("Matt" 7 15 21))
+
+    ;; 1928: gospel Luke 15:11-32 (Prodigal Son) (1662: Luke 16:1-9).
+    (after-trinity-9
+     :name    "Ninth Sunday after Trinity"
+     :epistle ("I Cor" 10 1 13)
+     :gospel  ("Luke" 15 11 32))
+
+    (after-trinity-10
+     :name    "Tenth Sunday after Trinity"
+     :epistle ("I Cor" 12 1 11)
+     :gospel  ("Luke" 19 41 47))
+
+    (after-trinity-11
+     :name    "Eleventh Sunday after Trinity"
+     :epistle ("I Cor" 15 1 11)
+     :gospel  ("Luke" 18 9 14))
+
+    (after-trinity-12
+     :name    "Twelfth Sunday after Trinity"
+     :epistle ("II Cor" 3 4 9)
+     :gospel  ("Mark" 7 31 37))
+
+    (after-trinity-13
+     :name    "Thirteenth Sunday after Trinity"
+     :epistle ("Gal" 3 16 22)
+     :gospel  ("Luke" 10 23 37))
+
+    (after-trinity-14
+     :name    "Fourteenth Sunday after Trinity"
+     :epistle ("Gal" 5 16 24)
+     :gospel  ("Luke" 17 11 19))
+
+    (after-trinity-15
+     :name    "Fifteenth Sunday after Trinity"
+     :epistle ("Gal" 6 11 18)
+     :gospel  ("Matt" 6 24 34))
+
+    (after-trinity-16
+     :name    "Sixteenth Sunday after Trinity"
+     :epistle ("Eph" 3 13 21)
+     :gospel  ("Luke" 7 11 17))
+
+    (after-trinity-17
+     :name    "Seventeenth Sunday after Trinity"
+     :epistle ("Eph" 4 1 6)
+     :gospel  ("Luke" 14 1 11))
+
+    (after-trinity-18
+     :name    "Eighteenth Sunday after Trinity"
+     :epistle ("I Cor" 1 4 8)
+     :gospel  ("Matt" 22 34 46))
+
+    (after-trinity-19
+     :name    "Nineteenth Sunday after Trinity"
+     :epistle ("Eph" 4 17 32)
+     :gospel  ("Matt" 9 1 8))
+
+    (after-trinity-20
+     :name    "Twentieth Sunday after Trinity"
+     :epistle ("Eph" 5 15 21)
+     :gospel  ("Matt" 22 1 14))
+
+    (after-trinity-21
+     :name    "Twenty-first Sunday after Trinity"
+     :epistle ("Eph" 6 10 20)
+     :gospel  ("John" 4 46 54))
+
+    (after-trinity-22
+     :name    "Twenty-second Sunday after Trinity"
+     :epistle ("Phil" 1 3 11)
+     :gospel  ("Matt" 18 21 35))
+
+    (after-trinity-23
+     :name    "Twenty-third Sunday after Trinity"
+     :epistle ("Phil" 3 17 21)
+     :gospel  ("Matt" 22 15 22))
+
+    (after-trinity-24
+     :name    "Twenty-fourth Sunday after Trinity"
+     :epistle ("Col" 1 3 12)
+     :gospel  ("Matt" 9 18 26))
+
+    (after-trinity-25
+     :name    "Sunday next before Advent (Twenty-fifth Sunday after Trinity)"
+     :epistle ("Jer" 23 5 8)
+     :gospel  ("John" 6 5 14))
+
+    ;;;; ── SAINTS' DAYS ───────────────────────────────────────────────────────
+
+    (st-andrew
+     :name    "St Andrew the Apostle (November 30)"
+     :epistle ("Rom" 10 9 21)
+     :gospel  ("Matt" 4 18 22))
+
+    ;; 1928: epistle Heb 10:35-11:1 (1662: Eph 2:19-22).
+    (st-thomas
+     :name    "St Thomas the Apostle (December 21)"
+     :epistle (("Heb" 10 35 nil) ("Heb" 11 1 1))
+     :gospel  ("John" 20 24 31))
+
+    (conversion-of-st-paul
+     :name    "Conversion of St Paul (January 25)"
+     :epistle ("Acts" 9 1 22)
+     :gospel  ("Matt" 19 27 30))
+
+    (purification
+     :name    "Purification of the Blessed Virgin Mary (February 2)"
+     :epistle ("Mal" 3 1 5)
+     :gospel  ("Luke" 2 22 40))
+
+    (st-matthias
+     :name    "St Matthias the Apostle (February 24)"
+     :epistle ("Acts" 1 15 26)
+     :gospel  ("Matt" 11 25 30))
+
+    (annunciation
+     :name    "Annunciation of the Blessed Virgin Mary (March 25)"
+     :epistle ("Isa" 7 10 15)
+     :gospel  ("Luke" 1 26 38))
+
+    (st-mark
+     :name    "St Mark the Evangelist (April 25)"
+     :epistle ("Eph" 4 7 16)
+     :gospel  ("John" 15 1 11))
+
+    (ss-philip-and-james
+     :name    "St Philip and St James, Apostles (May 1)"
+     :epistle ("Jas" 1 1 12)
+     :gospel  ("John" 14 1 14))
+
+    (st-barnabas
+     :name    "St Barnabas the Apostle (June 11)"
+     :epistle ("Acts" 11 22 30)
+     :gospel  ("John" 15 12 16))
+
+    (st-john-baptist
+     :name    "Nativity of St John the Baptist (June 24)"
+     :epistle ("Isa" 40 1 11)
+     :gospel  ("Luke" 1 57 80))
+
+    (st-peter
+     :name    "St Peter the Apostle (June 29)"
+     :epistle ("Acts" 12 1 11)
+     :gospel  ("Matt" 16 13 19))
+
+    (st-james
+     :name    "St James the Apostle (July 25)"
+     :epistle (("Acts" 11 27 nil) ("Acts" 12 1 3))
+     :gospel  ("Matt" 20 20 28))
+
+    (transfiguration
+     :name    "Transfiguration of our Lord (August 6)"
+     :epistle ("II Pet" 1 13 18)
+     :gospel  ("Luke" 9 28 36))
+
+    (st-bartholomew
+     :name    "St Bartholomew the Apostle (August 24)"
+     :epistle ("Acts" 5 12 16)
+     :gospel  ("Luke" 22 24 30))
+
+    (st-matthew
+     :name    "St Matthew the Apostle (September 21)"
+     :epistle ("II Cor" 4 1 6)
+     :gospel  ("Matt" 9 9 13))
+
+    (st-michael-and-all-angels
+     :name    "St Michael and All Angels (September 29)"
+     :epistle ("Rev" 12 7 12)
+     :gospel  ("Matt" 18 1 10))
+
+    (st-luke
+     :name    "St Luke the Evangelist (October 18)"
+     :epistle ("II Tim" 4 5 15)
+     :gospel  ("Luke" 10 1 7))
+
+    ;; 1928: epistle Eph 2:19-22 (1662: Jude 1:1-8).
+    (ss-simon-and-jude
+     :name    "St Simon and St Jude, Apostles (October 28)"
+     :epistle ("Eph" 2 19 22)
+     :gospel  ("John" 15 17 27))
+
+    (all-saints
+     :name    "All Saints' Day (November 1)"
+     :epistle ("Rev" 7 2 12)
+     :gospel  ("Matt" 5 1 12))
+
+    ;;;; ── COMMONS AND SPECIAL OCCASIONS ─────────────────────────────────────
+
+    (common-of-saints
+     :name    "A Saint's Day (Common)"
+     :epistle ("Heb" 12 1 2)
+     :gospel  ("Matt" 25 31 40))
+
+    (dedication-of-church
+     :name    "Dedication of a Church"
+     :epistle ("I Pet" 2 1 5)
+     :gospel  ("Matt" 21 12 16))
+
+    ;; General Ember Day propers; specific seasons (Advent, Lent, Whitsun,
+    ;; Holy Cross) use the same E&G in the 1928 BCP.
+    (ember-days
+     :name    "Ember Days"
+     :epistle ("Acts" 13 44 49)
+     :gospel  ("Luke" 4 16 21))
+
+    (rogation-days
+     :name    "Rogation Days"
+     :epistle ("Ezek" 34 25 31)
+     :gospel  ("Luke" 11 5 13))
+
+    (independence-day
+     :name    "Independence Day (July 4)"
+     :epistle ("Deut" 10 17 21)
+     :gospel  ("Matt" 5 43 48))
+
+    (thanksgiving-day
+     :name    "Thanksgiving Day"
+     :epistle ("Jas" 1 16 27)
+     :gospel  ("Matt" 6 25 34))
+
+    ;;;; ── OCCASIONAL OFFICES ─────────────────────────────────────────────────
+
+    (matrimony
+     :name    "At a Marriage"
+     :epistle ("Eph" 5 20 33)
+     :gospel  ("Matt" 19 4 6))
+
+    (burial
+     :name    "At the Burial of the Dead"
+     :epistle ("I Thess" 4 13 18)
+     :gospel  ("John" 6 37 40))
+
+  )
+  "Communion propers (Epistle and Gospel) for the 1928 American BCP.
+Each entry is (KEY :name STRING :epistle REF :gospel REF).
+REF is (BOOK CHAPTER START END), (BOOK CHAPTER) for a whole chapter, or
+a list of such refs for readings spanning chapter boundaries.
+END may be nil to mean end-of-chapter.")
+
+
+(defun bcp-1928-communion-proper (symbol)
+  "Return the communion proper plist for SYMBOL, or nil.
+Returns (:name STRING :epistle REF :gospel REF)."
+  (cdr (assq symbol bcp-1928-communion-propers)))
+
+(defun bcp-1928-epistle (symbol)
+  "Return the Epistle ref for SYMBOL, or nil."
+  (plist-get (bcp-1928-communion-proper symbol) :epistle))
+
+(defun bcp-1928-gospel (symbol)
+  "Return the Gospel ref for SYMBOL, or nil."
+  (plist-get (bcp-1928-communion-proper symbol) :gospel))
 
 
 (defun bcp-1928-collect (symbol)
