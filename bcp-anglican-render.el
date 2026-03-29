@@ -60,6 +60,9 @@
 ;;   :venite-filter-fn            (raw-text season) → text
 ;;                                  tradition-specific Venite rubric (e.g. strip verses
 ;;                                  8–11 in ordinary time); nil means use raw-text as-is
+;;   :invitatory-fn               (propers) → string | nil
+;;                                  seasonal invitatory antiphon, or nil on ordinary days;
+;;                                  rendered before the Venite heading when non-nil
 ;;
 ;; Rubrical state (resolved from defcustoms at ctx-build time):
 ;;   :officiant                   'priest | 'bishop | 'lay | 'deacon
@@ -142,6 +145,7 @@ CTX is the tradition context plist."
          (psalm-pass-fn    (plist-get ctx :psalm-to-passage-fn))
          (sentences-fn     (plist-get ctx :opening-sentences-fn))
          (venite-filter-fn (plist-get ctx :venite-filter-fn))
+         (invitatory-fn    (plist-get ctx :invitatory-fn))
          (ea-p-fn          (plist-get ctx :easter-anthems-p-fn)))
     (cl-flet
         ((rubric!   (text)
@@ -240,6 +244,10 @@ CTX is the tradition context plist."
                                   (funcall venite-filter-fn raw-text
                                            (plist-get propers :season))
                                 raw-text)))
+               (when (and (eq name 'venite) invitatory-fn)
+                 (when-let* ((inv (funcall invitatory-fn propers)))
+                   (canticle! inv)
+                   (insert "\n")))
                (heading! 3 title)
                (insert "\n")
                (if txt

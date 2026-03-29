@@ -498,6 +498,58 @@ Wraps `bcp-1928--select-opening-sentence' in a single-element list."
                                 (funcall ref-str-fn go) go-label))))
             (insert "\n")))))))
 
+(defun bcp-1928--invitatory (propers)
+  "Return the seasonal invitatory antiphon for PROPERS, or nil.
+Called from the Anglican render layer before the Venite heading.
+Returns nil on ordinary weekdays and Sundays after Trinity."
+  (require 'bcp-common-anglican)
+  (let* ((week  (plist-get propers :week))
+         (date  (plist-get propers :date))
+         (feast (plist-get propers :feast))
+         (rank  (or (plist-get propers :feast-rank) 0))
+         (dow   (when date (calendar-day-of-week date)))
+         (month (when date (car date)))
+         (day   (when date (cadr date))))
+    (cond
+     ;; Sundays in Advent (advent-1 through advent-4)
+     ((and (memq week '(advent-1 advent-2 advent-3 advent-4))
+           (eql dow 0))
+      bcp-common-anglican-invitatory-advent-sundays)
+     ;; Christmas Day until the Epiphany (Dec 25 – Jan 5)
+     ((or (and (eql month 12) (>= day 25))
+          (and (eql month 1) (<= day 5)))
+      bcp-common-anglican-invitatory-christmas)
+     ;; Epiphany and seven days after (Jan 6–13), and Transfiguration
+     ((or (and (eql month 1) (>= day 6) (<= day 13))
+          (eq feast 'transfiguration))
+      bcp-common-anglican-invitatory-epiphany)
+     ;; Monday in Easter Week until Ascension Day
+     ;; Easter Day itself uses Easter Anthems (excluded upstream).
+     ;; Resolved keys: easter (Wed-Sat), easter-monday, easter-tuesday,
+     ;; after-easter-1 … after-easter-5.
+     ((or (memq week '(easter-monday easter-tuesday))
+          (and (eq week 'easter) (not (eql dow 0)))
+          (and week (string-match-p "\\`after-easter-" (symbol-name week))))
+      bcp-common-anglican-invitatory-easter)
+     ;; Ascension Day until Whitsunday
+     ;; Resolved: ascension, after-ascension (from sunday-after-ascension)
+     ((memq week '(ascension after-ascension))
+      bcp-common-anglican-invitatory-ascension)
+     ;; Whitsunday and six days after
+     ;; Resolved: whitsunday (Sun, Wed-Sat), whit-monday, whit-tuesday
+     ((memq week '(whitsunday whit-monday whit-tuesday))
+      bcp-common-anglican-invitatory-whitsun)
+     ;; Trinity Sunday (resolved from 'trinity to 'trinity-sunday)
+     ((eq week 'trinity-sunday)
+      bcp-common-anglican-invitatory-trinity)
+     ;; Purification (Feb 2) and Annunciation (Mar 25)
+     ((memq feast '(purification annunciation))
+      bcp-common-anglican-invitatory-incarnation)
+     ;; Other festivals with proper Epistle and Gospel (tier 2 rank)
+     ((and feast (>= rank 2))
+      bcp-common-anglican-invitatory-saints)
+     (t nil))))
+
 (defun bcp-1928--venite-filter (text season)
   "Apply Venite vv.8–11 handling for the 1928 tradition.
 Delegates to `bcp-anglican--venite-filter' with `bcp-1928-venite-lent-verses'
@@ -513,11 +565,20 @@ walk by `bcp-1928--step-override' and re-emitted before the substitute collect."
   (when-let* ((step (cl-find-if (lambda (s) (plist-get s :alt-collect)) ordo)))
     (plist-get step :rubric)))
 
-(defun bcp-1928--step-override (step _propers)
+(defun bcp-1928--step-override (step propers)
   "Handle 1928-specific rubrical options for STEP.
 Returns :skip, :handled, or nil (shared handling)."
-  (when (and (eq (car step) :rubric) (plist-get step :alt-collect))
-    :skip))
+  (cond
+   ;; No-priest rubric: suppress the conditional rubric from the main ordo walk
+   ((and (eq (car step) :rubric) (plist-get step :alt-collect))
+    :skip)
+   ;; Venite omission on Ash Wednesday and Good Friday (rubrical option)
+   ((and bcp-1928-venite-omit-ash-good-friday
+         (eq (car step) :canticle)
+         (eq (plist-get step :canticle) 'venite))
+    (let ((week (plist-get propers :week)))
+      (when (memq week '(ash-wednesday good-friday))
+        :skip)))))
 
 (defun bcp-1928--build-ctx (propers)
   "Build the Anglican render context for the 1928 American BCP.
@@ -534,6 +595,7 @@ Resolves current defcustom values and registers all tradition callbacks."
      :opening-sentences-fn          #'bcp-1928--opening-sentences
      :easter-anthems-p-fn           #'bcp-1928--easter-anthems-p
      :venite-filter-fn              #'bcp-1928--venite-filter
+     :invitatory-fn                 #'bcp-1928--invitatory
      :officiant                     office-officiant
      :show-penitential-intro        (not (and bcp-1928-omit-penitential-intro
                                               (not is-sunday)))

@@ -532,7 +532,160 @@
     (bcp-1928-check "after-trinity-14 → trinity"
                     'trinity      (bcp-1928--week-key-season 'after-trinity-14))
     (bcp-1928-check "sunday-before-advent → trinity"
-                    'trinity      (bcp-1928--week-key-season 'sunday-before-advent))))
+                    'trinity      (bcp-1928--week-key-season 'sunday-before-advent)))
+
+  ;; ── 13. Seasonal invitatories ────────────────────────────────────────────
+  ;; All dates use 2026 (Easter April 5):
+  ;;   Advent Sunday Nov 29 2026 (for the 2026-2027 church year)
+  ;;   Advent 1 (2025-2026): Nov 30 2025
+  ;;   Christmas 2025: Dec 25
+  ;;   Epiphany 2026: Jan 6
+  ;;   Ash Wed: Feb 18 · Good Friday: Apr 3 · Easter: Apr 5
+  ;;   Ascension: May 14 · Whitsunday: May 24 · Trinity: May 31
+  ;;   Purification: Feb 2 · Annunciation: Mar 25
+  ;;   Transfiguration: Aug 6 · St Luke: Oct 18
+
+  (bcp-1928-test-section "13. Invitatory dispatch"
+    ;; Advent Sunday
+    (let ((p (bcp-1928-propers-for-date 11 30 2025 'mattins)))
+      (bcp-1928-check "Advent 1 Sunday"
+                      bcp-common-anglican-invitatory-advent-sundays
+                      (bcp-1928--invitatory p)))
+    ;; Advent weekday — no invitatory
+    (let ((p (bcp-1928-propers-for-date 12 3 2025 'mattins)))
+      (bcp-1928-check-nil "Advent 1 Wednesday: nil"
+                          (bcp-1928--invitatory p)))
+    ;; Christmas Day
+    (let ((p (bcp-1928-propers-for-date 12 25 2025 'mattins)))
+      (bcp-1928-check "Christmas Day"
+                      bcp-common-anglican-invitatory-christmas
+                      (bcp-1928--invitatory p)))
+    ;; Dec 31 (still Christmas → Epiphany)
+    (let ((p (bcp-1928-propers-for-date 12 31 2025 'mattins)))
+      (bcp-1928-check "Dec 31 (Christmas)"
+                      bcp-common-anglican-invitatory-christmas
+                      (bcp-1928--invitatory p)))
+    ;; Jan 5 — last day before Epiphany
+    (let ((p (bcp-1928-propers-for-date 1 5 2026 'mattins)))
+      (bcp-1928-check "Jan 5 (Christmas)"
+                      bcp-common-anglican-invitatory-christmas
+                      (bcp-1928--invitatory p)))
+    ;; Epiphany (Jan 6)
+    (let ((p (bcp-1928-propers-for-date 1 6 2026 'mattins)))
+      (bcp-1928-check "Epiphany Jan 6"
+                      bcp-common-anglican-invitatory-epiphany
+                      (bcp-1928--invitatory p)))
+    ;; Jan 13 — last day of Epiphany octave
+    (let ((p (bcp-1928-propers-for-date 1 13 2026 'mattins)))
+      (bcp-1928-check "Jan 13 (Epiphany octave)"
+                      bcp-common-anglican-invitatory-epiphany
+                      (bcp-1928--invitatory p)))
+    ;; Jan 14 — outside octave, ordinary day
+    (let ((p (bcp-1928-propers-for-date 1 14 2026 'mattins)))
+      (bcp-1928-check-nil "Jan 14: nil (ordinary)"
+                          (bcp-1928--invitatory p)))
+    ;; Transfiguration (Aug 6)
+    (let ((p (bcp-1928-propers-for-date 8 6 2026 'mattins)))
+      (bcp-1928-check "Transfiguration"
+                      bcp-common-anglican-invitatory-epiphany
+                      (bcp-1928--invitatory p)))
+    ;; Easter Monday (Apr 6)
+    (let ((p (bcp-1928-propers-for-date 4 6 2026 'mattins)))
+      (bcp-1928-check "Easter Monday"
+                      bcp-common-anglican-invitatory-easter
+                      (bcp-1928--invitatory p)))
+    ;; Easter Wednesday (Apr 8 — resolved :week = easter, dow ≠ 0)
+    (let ((p (bcp-1928-propers-for-date 4 8 2026 'mattins)))
+      (bcp-1928-check "Easter Wednesday"
+                      bcp-common-anglican-invitatory-easter
+                      (bcp-1928--invitatory p)))
+    ;; After Easter 3 weekday (Apr 29 = Wednesday)
+    (let ((p (bcp-1928-propers-for-date 4 29 2026 'mattins)))
+      (bcp-1928-check "After Easter 3 (Wed)"
+                      bcp-common-anglican-invitatory-easter
+                      (bcp-1928--invitatory p)))
+    ;; Ascension Day (May 14)
+    (let ((p (bcp-1928-propers-for-date 5 14 2026 'mattins)))
+      (bcp-1928-check "Ascension Day"
+                      bcp-common-anglican-invitatory-ascension
+                      (bcp-1928--invitatory p)))
+    ;; Friday after Ascension (May 15)
+    (let ((p (bcp-1928-propers-for-date 5 15 2026 'mattins)))
+      (bcp-1928-check "Fri after Ascension"
+                      bcp-common-anglican-invitatory-ascension
+                      (bcp-1928--invitatory p)))
+    ;; Whitsunday (May 24)
+    (let ((p (bcp-1928-propers-for-date 5 24 2026 'mattins)))
+      (bcp-1928-check "Whitsunday"
+                      bcp-common-anglican-invitatory-whitsun
+                      (bcp-1928--invitatory p)))
+    ;; Whit Monday (May 25)
+    (let ((p (bcp-1928-propers-for-date 5 25 2026 'mattins)))
+      (bcp-1928-check "Whit Monday"
+                      bcp-common-anglican-invitatory-whitsun
+                      (bcp-1928--invitatory p)))
+    ;; Whit Saturday (May 30 — last day)
+    (let ((p (bcp-1928-propers-for-date 5 30 2026 'mattins)))
+      (bcp-1928-check "Whit Saturday"
+                      bcp-common-anglican-invitatory-whitsun
+                      (bcp-1928--invitatory p)))
+    ;; Trinity Sunday (May 31)
+    (let ((p (bcp-1928-propers-for-date 5 31 2026 'mattins)))
+      (bcp-1928-check "Trinity Sunday"
+                      bcp-common-anglican-invitatory-trinity
+                      (bcp-1928--invitatory p)))
+    ;; Trinity 1 weekday — no invitatory
+    (let ((p (bcp-1928-propers-for-date 6 3 2026 'mattins)))
+      (bcp-1928-check-nil "Trinity 1 Wednesday: nil"
+                          (bcp-1928--invitatory p)))
+    ;; Purification (Feb 2)
+    (let ((p (bcp-1928-propers-for-date 2 2 2026 'mattins)))
+      (bcp-1928-check "Purification"
+                      bcp-common-anglican-invitatory-incarnation
+                      (bcp-1928--invitatory p)))
+    ;; Annunciation (Mar 25)
+    (let ((p (bcp-1928-propers-for-date 3 25 2026 'mattins)))
+      (bcp-1928-check "Annunciation"
+                      bcp-common-anglican-invitatory-incarnation
+                      (bcp-1928--invitatory p)))
+    ;; St Luke (Oct 18) — tier 2 feast, generic saints invitatory
+    (let ((p (bcp-1928-propers-for-date 10 18 2026 'mattins)))
+      (bcp-1928-check "St Luke (feast)"
+                      bcp-common-anglican-invitatory-saints
+                      (bcp-1928--invitatory p)))
+    ;; Ordinary Trinity weekday — no invitatory
+    (let ((p (bcp-1928-propers-for-date 7 15 2026 'mattins)))
+      (bcp-1928-check-nil "ordinary weekday: nil"
+                          (bcp-1928--invitatory p))))
+
+  ;; ── 14. Venite omission (Ash Wed / Good Friday) ─────────────────────────
+  (bcp-1928-test-section "14. Venite Ash/GF omission"
+    ;; Default: Venite NOT omitted
+    (let ((bcp-1928-venite-omit-ash-good-friday nil)
+          (step '(:canticle venite :latin "Venite, exultemus Domino.")))
+      (let ((p (bcp-1928-propers-for-date 2 18 2026 'mattins)))
+        (bcp-1928-check-nil "Ash Wed default: not skipped"
+                            (bcp-1928--step-override step p)))
+      (let ((p (bcp-1928-propers-for-date 4 3 2026 'mattins)))
+        (bcp-1928-check-nil "Good Fri default: not skipped"
+                            (bcp-1928--step-override step p))))
+    ;; Enabled: Venite skipped on Ash Wed and Good Friday
+    (let ((bcp-1928-venite-omit-ash-good-friday t)
+          (step '(:canticle venite :latin "Venite, exultemus Domino.")))
+      (let ((p (bcp-1928-propers-for-date 2 18 2026 'mattins)))
+        (bcp-1928-check "Ash Wed omit: skip"
+                        :skip
+                        (bcp-1928--step-override step p)))
+      (let ((p (bcp-1928-propers-for-date 4 3 2026 'mattins)))
+        (bcp-1928-check "Good Fri omit: skip"
+                        :skip
+                        (bcp-1928--step-override step p))))
+    ;; Enabled but not on Ash Wed or Good Friday — no skip
+    (let ((bcp-1928-venite-omit-ash-good-friday t)
+          (step '(:canticle venite :latin "Venite, exultemus Domino.")))
+      (let ((p (bcp-1928-propers-for-date 4 5 2026 'mattins)))
+        (bcp-1928-check-nil "Easter Day: not skipped"
+                            (bcp-1928--step-override step p)))))) ; end of bcp-1928-test--run-all
 
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

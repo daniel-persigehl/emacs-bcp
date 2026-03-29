@@ -536,5 +536,52 @@ per the 1928 American BCP rubric."
                         "\n"
                         (substring text end))))))))))
 
+;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Seasonal invitatory antiphons (1928 American BCP)
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+;; Invitatory sentences appointed in the 1928 BCP rubric before the Venite.
+;; Each sentence is said or sung by the officiant (or choir) before the Venite
+;; is intoned.  The rubric lists nine occasions; ordinary days have none.
+
+(defconst bcp-common-anglican-invitatory-advent-sundays
+  "Our King and Saviour draweth nigh : O come, let us adore him."
+  "Invitatory antiphon for the four Sundays in Advent (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-christmas
+  "Alleluia. Unto us a child is born : O come, let us adore him."
+  "Invitatory antiphon from Christmas Day until the Epiphany (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-epiphany
+  "The Lord hath manifested forth his glory : O come, let us adore him."
+  "Invitatory antiphon for the Epiphany octave (Jan 6–13) and the
+Transfiguration (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-easter
+  "Alleluia. The Lord is risen indeed : O come, let us adore him. Alleluia."
+  "Invitatory antiphon from Monday in Easter Week until Ascension Day (1928
+American BCP).  Easter Day itself uses the Easter Anthems instead of the Venite.")
+
+(defconst bcp-common-anglican-invitatory-ascension
+  "Alleluia. Christ the Lord ascended into heaven : O come, let us adore him. Alleluia."
+  "Invitatory antiphon from Ascension Day until Whitsunday (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-whitsun
+  "Alleluia. The Spirit of the Lord filleth the world : O come, let us adore him. Alleluia."
+  "Invitatory antiphon for Whitsunday and the six days following (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-trinity
+  "Father, Son, and Holy Ghost, One God : O come, let us adore him."
+  "Invitatory antiphon for Trinity Sunday (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-incarnation
+  "The Word was made flesh : O come, let us adore him."
+  "Invitatory antiphon for the Purification and the Annunciation (1928 American BCP).")
+
+(defconst bcp-common-anglican-invitatory-saints
+  "The Lord is glorious in his saints : O come, let us adore him."
+  "Invitatory antiphon for other festivals with a proper Epistle and Gospel (1928
+American BCP).  Used when no more specific invitatory is appointed.")
+
 (provide 'bcp-common-anglican)
 ;;; bcp-common-anglican.el ends here

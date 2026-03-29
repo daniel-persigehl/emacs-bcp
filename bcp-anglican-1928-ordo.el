@@ -101,10 +101,12 @@ also kneeling and repeating it with him.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
-    (:rubric "Then shall be said or sung the following Anthem; except that from \
-Easter Day through the Sundays after Pentecost, the Easter Anthems may be used \
-in place thereof; and on the nineteenth day of every month it is not to be read \
-here, but in the ordinary course of the Psalms.")
+    (:rubric "Then shall be said or sung the following Canticle; except on those \
+days for which other Canticles are appointed; and except also, that Psalm 95 may \
+be used in this place. But Note, That on Ash Wednesday and Good Friday the Venite \
+may be omitted. And on the nineteenth day of every month it is not to be read here, \
+but in the ordinary course of the Psalms. On the days hereafter named, here may be \
+sung or said the appointed Invitatory.")
     (:canticle venite
      :latin "Venite, exultemus Domino."
      :ref ("Ps" 95)

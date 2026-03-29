@@ -51,6 +51,7 @@
 (defvar bcp-1662-venite-ps96-substitute)
 (defvar bcp-1928-venite-lent-verses)
 (defvar bcp-1928-venite-ps96-substitute)
+(defvar bcp-1928-venite-omit-ash-good-friday)
 (defvar bcp-1662-lectionary)
 (defvar bcp-1662-rubric-style)
 (defvar bcp-1662-omit-penitential-intro)
@@ -312,6 +313,17 @@ Comparison uses `equal'; wraps around after the last choice."
   (interactive)
   (setq bcp-1928-venite-ps96-substitute (not bcp-1928-venite-ps96-substitute)))
 
+(transient-define-suffix bcp--set-1928-venite-omit-penitential ()
+  "Toggle Venite omission on Ash Wednesday and Good Friday (1928 office)."
+  :description (lambda ()
+    (if bcp-1928-venite-omit-ash-good-friday
+        "Omit Venite Ash/GF: yes"
+      "Omit Venite Ash/GF: no"))
+  :transient t
+  (interactive)
+  (setq bcp-1928-venite-omit-ash-good-friday
+        (not bcp-1928-venite-omit-ash-good-friday)))
+
 (transient-define-suffix bcp--set-1662-easter-anthems ()
   "Toggle Easter Anthems throughout Eastertide vs. Easter Day only."
   :description (lambda ()
@@ -420,6 +432,7 @@ Comparison uses `equal'; wraps around after the last choice."
    ["Canticles & lessons"
     ("v" bcp--set-1928-venite-lent-verses)
     ("V" bcp--set-1928-venite-ps96)
+    ("a" bcp--set-1928-venite-omit-penitential)
     ("l" bcp--set-1928-lectionary)]
    [""
     ("q" bcp--back-to-settings)]])

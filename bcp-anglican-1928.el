@@ -104,10 +104,16 @@ when Psalm 95 falls in the regular course of psalms."
 (defcustom bcp-1928-venite-ps96-substitute t
   "Whether to substitute Psalm 96 verses for Venite vv.8–11 when they are absent.
 When non-nil and `bcp-1928-venite-lent-verses' causes vv.8–11 to be omitted,
-selected verses from Psalm 96 are inserted in their place, per the 1928
-American BCP rubric.
-Note: the Psalm 96 substitute is not yet implemented; this setting is
-recorded but has no effect until the fetch and insertion logic is added."
+Psalm 96 vv.9 and 13 (Coverdale) are inserted in their place, per the 1928
+American BCP rubric; see `bcp-common-anglican-ps96-venite-substitute'."
+  :type  'boolean
+  :group 'bcp-1928)
+
+(defcustom bcp-1928-venite-omit-ash-good-friday nil
+  "Whether to omit the Venite on Ash Wednesday and Good Friday.
+The 1928 BCP rubric permits (but does not require) the omission of the Venite
+on these two days.  When nil (the default), the Venite is always read.
+When non-nil, the Venite step is skipped entirely on those days."
   :type  'boolean
   :group 'bcp-1928)
 
