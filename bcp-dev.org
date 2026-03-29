@@ -140,6 +140,7 @@ BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= 
 | bcp-1662-test.el | bcp-1662- | 229 automated tests | SETTLED |
 | bcp-reader.el | bcp-reader- | Scripture reader: passage display, navigation, psalm schemes, local files | SETTLED |
 | bcp-notebook.el | bcp-notebook- | Annotation, org-roam, capture, spanning psalms, contextual view, export | SETTLED |
+| bcp-vulgate-collate.el | bcp- | One-time utility: collates 150 DO Latin psalm files into bcp-liturgy-psalter-vulgate.txt | SETTLED |
 
 * bcp-fetcher.el :science:
 :PROPERTIES:
@@ -186,10 +187,39 @@ bcp-fetcher-clean-text and replace-match strip ALL text properties.
 For Office buffer, DOM results returned DIRECTLY without cleaning.
 In-buffer char cleaning in insert-text-block handles survivors.
 
+** Cache Constraint :constraint:
+Passage cache keys are (passage . translation). Changing psalm translation
+or backend via the transient menu must clear the cache (bcp-fetcher-clear-cache)
+to prevent stale results from the fallback chain being served.
+
+** Translation-Aware Routing :constraint:
+bcp-fetcher-fetch checks if the requested translation matches any registered
+backend's :translations list (via bcp-fetcher--backend-for-translation).
+If a match is found and it differs from the primary backend, that backend is
+tried first in the fallback chain. This means setting psalm-translation to
+"Vulgate" automatically routes psalm fetches to the vulgate backend without
+requiring a change to bcp-fetcher-backend.
+
+** Vulgate Backend
+Registered as 'vulgate. Translations: ("Vulgate" "Latin").
+Serves from bcp-liturgy-psalter-vulgate.txt (Vulgate numbering, 150 psalms).
+Applies BCP-to-Vulgate psalm number mapping via bcp-fetcher--bcp-to-vulgate:
+| BCP 1-8 | Vulgate 1-8 (same) |
+| BCP 9 | Vulgate 9 (full, covers BCP 9+10) |
+| BCP 10 | nil (subsumed by Vulgate 9) |
+| BCP 11-113 | Vulgate N-1 |
+| BCP 114 | Vulgate 113 vv.1-8 |
+| BCP 115 | Vulgate 113 vv.9-end |
+| BCP 116 | Vulgate 114 + 115 concatenated |
+| BCP 117-146 | Vulgate N-1 |
+| BCP 147 | Vulgate 146 + 147 concatenated |
+| BCP 148-150 | Vulgate 148-150 (same) |
+Reuses bcp-fetcher--coverdale-render-psalm for propertized text rendering.
+
 ** Defcustoms (canonical home — translation config lives here)
-- bcp-fetcher-backend ('oremus) — active backend symbol
+- bcp-fetcher-backend ('coverdale) — active backend symbol
 - bible-commentary-translation ("KJVA") — default translation
-- bible-commentary-psalm-translation ("Coverdale") — auto-used for Psalms
+- bible-commentary-psalm-translation ("Coverdale") — auto-used for Psalms; "Vulgate"/"Latin" for Latin
 - bible-commentary-omitted-verse-context-window (2) — context verses for omissions
 - bible-commentary-critical-translation-names — triggers textual-status warnings
 - bible-commentary-vulgate-translation-names — triggers Vg psalm numbering
@@ -302,8 +332,11 @@ st-william-of-york + Whitsuntide → Tuesday after Trinity.
 
 Ordo-agnostic. No BCP references.
 Canticles: venite, te-deum, benedicite, benedictus, jubilate-deo,
-magnificat, cantate-domino, nunc-dimittis, deus-misereatur, gloria-patri
-All BCP pointed English (: = mediant, * = flex). Latin = nil → English.
+magnificat, cantate-domino, nunc-dimittis, deus-misereatur, gloria-patri,
+benedictus-es-domine.
+English texts use BCP pointing (: = mediant, * = flex).
+Latin texts use Breviary pointing (* = mediant, † = first flex, ‡ = second flex).
+Sources: Divinum Officium Latin psalm/canticle files.
 
 ** Key Fix :constraint:
 bcp-canticle-get uses (intern (format ":%s" lang)) to convert symbol
@@ -456,11 +489,16 @@ Standard greater feasts (e.g. Annunciation in Holy Week) not yet transferred.
 ** TODO Seasonal Sentences
 bcp-1662-seasonal-sentences alist exists; all values nil.
 
-** TODO Latin Canticle Texts
-All nil in bcp-liturgy-canticles.el.
+** DONE Latin Canticle Texts
+All 11 canticles now have Latin Vulgate texts from Divinum Officium sources.
+Breviary pointing (*, †, ‡) preserved throughout.
 
 ** TODO Brief Bidding Form
 bcp-1662-bidding-brief is nil.
+
+** TODO Psalm Pointing Utility
+Low priority. Create a utility for adding/editing psalm pointing marks
+(*, †, ‡) on psalm text.
 
 ** DONE bible-commentary-migrate-canonical-units — deleted
 Migration was run; function removed from bcp-reader.el.
