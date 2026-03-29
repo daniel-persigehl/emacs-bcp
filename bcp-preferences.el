@@ -28,29 +28,36 @@
 ;;   "KJV"     — King James Version (Protestant canon only)
 ;;   "NRSV"    — New Revised Standard Version (US spelling)
 ;;   "NRSVAE"  — NRSV Anglicized Edition (British spelling)
-(setq bible-commentary-translation "KJVA")
+;; (setq bible-commentary-translation "KJVA")
 
 ;; Translation used for the Psalter.
-;; Supported values (via Oremus):
+;; Local backends (no network required):
 ;;   "Coverdale" — Miles Coverdale's Psalter as in the BCP 1662 (recommended)
 ;;   "BCP"       — Alias for Coverdale
+;;   "Vulgate"   — Latin Vulgate Psalter with Breviary pointing (*, †, ‡)
+;;   "Latin"     — Alias for Vulgate
+;; Via Oremus (network):
 ;;   "KJVA"      — KJV Psalms
 ;;   "CW"        — Common Worship Psalter (Church of England, 2000)
 ;;   "LP"        — Liturgical Psalter (ASB 1980)
 ;;   "NRSV"      — NRSV Psalms
-;; For Latin: add ("Vulgate" . "VUL") to bible-commentary-oremus-version-codes
-;; and set this to "Vulgate" — see Oremus documentation for availability.
-(setq bible-commentary-psalm-translation "Coverdale")
+;; (setq bible-commentary-psalm-translation "Coverdale")
+
+(setq bible-commentary-psalm-translation "Vulgate")
+
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Backend configuration
 
-;; The Coverdale backend serves psalms from the local
-;; bcp-liturgy-psalter-coverdale.txt, with Oremus as the fallback for
-;; everything else.  To fetch psalms from Oremus instead, change to:
-;; (setq bcp-fetcher-backend 'oremus
-;;       bcp-fetcher-fallback-backend nil)
-(setq bcp-fetcher-backend 'coverdale
+;; Primary backend for psalm fetching.  Local backends serve from disk;
+;; Oremus and eBible require network.
+;;   'coverdale — local Coverdale Psalter (English, BCP)
+;;   'vulgate   — local Vulgate Psalter (Latin, Breviary pointing)
+;;   'oremus    — Oremus Bible Browser (network)
+;;   'ebible    — eBible API (network)
+;; For Latin office psalms, set backend to 'vulgate and psalm-translation
+;; to "Vulgate".
+(setq bcp-fetcher-backend 'vulgate
       bcp-fetcher-fallback-backend 'oremus)
 
 ;; Path to the local Coverdale Psalter file (auto-detected by default).

@@ -127,20 +127,23 @@ Comparison uses `equal'; wraps around after the last choice."
     (format "Psalms: %s" bible-commentary-psalm-translation))
   :transient t
   (interactive)
-  (setq bible-commentary-psalm-translation
-        (completing-read "Psalm translation: "
-          '("Coverdale" "BCP" "KJVA" "CW" "LP" "NRSV") nil t
-          bible-commentary-psalm-translation)))
+  (let ((new (completing-read "Psalm translation: "
+               '("Coverdale" "BCP" "Vulgate" "Latin" "KJVA" "CW" "LP" "NRSV") nil t
+               bible-commentary-psalm-translation)))
+    (unless (equal new bible-commentary-psalm-translation)
+      (setq bible-commentary-psalm-translation new)
+      (bcp-fetcher-clear-cache))))
 
 (transient-define-suffix bcp--set-backend ()
-  "Cycle the primary fetch backend: coverdale → oremus → ebible."
+  "Cycle the primary fetch backend: coverdale → vulgate → oremus → ebible."
   :description (lambda ()
     (format "Backend: %s → %s"
       bcp-fetcher-backend
       (or bcp-fetcher-fallback-backend "—")))
   :transient t
   (interactive)
-  (bcp--cycle 'bcp-fetcher-backend '(coverdale oremus ebible)))
+  (bcp--cycle 'bcp-fetcher-backend '(coverdale vulgate oremus ebible))
+  (bcp-fetcher-clear-cache))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; State prayer suffixes

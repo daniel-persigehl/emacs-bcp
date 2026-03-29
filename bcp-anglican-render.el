@@ -146,7 +146,8 @@ CTX is the tradition context plist."
          (sentences-fn     (plist-get ctx :opening-sentences-fn))
          (venite-filter-fn (plist-get ctx :venite-filter-fn))
          (invitatory-fn    (plist-get ctx :invitatory-fn))
-         (ea-p-fn          (plist-get ctx :easter-anthems-p-fn)))
+         (ea-p-fn          (plist-get ctx :easter-anthems-p-fn))
+         (officiant         (plist-get ctx :officiant)))
     (cl-flet
         ((rubric!   (text)
            (bcp-liturgy-render--insert-rubric text rubric-face-fn))

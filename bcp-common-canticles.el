@@ -65,8 +65,9 @@ Passiontide suppression is the responsibility of the ordo or renderer."
   "Gloria Patri in English (BCP pointing).")
 
 (defconst bcp-liturgy-canticle-gloria-patri-latin
-  nil
-  "Gloria Patri in Latin.  Nil until supplied.")
+  "Glória Patri, et Fílio, * et Spirítui Sancto.\n\
+   Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen."
+  "Gloria Patri in Latin (Clementine Vulgate).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Canticle texts
@@ -100,7 +101,24 @@ as in the provocation, and as in the day of temptation in the wilderness;\n\
 It is a people that do err in their hearts, for they have not known my ways.\n\
    Unto whom I sware in my wrath : \
 that they should not enter into my rest."
-     :latin   nil)
+     :latin   "VENÍTE, exsultémus Dómino: * jubilémus Deo salutári nostro.\n\
+   Præoccupémus fáciem ejus in confessióne: * et in psalmis jubilémus ei.\n\
+   Quóniam Deus magnus Dóminus: * et Rex magnus super omnes deos.\n\
+   Quia in manu ejus sunt omnes fines terræ: * et altitúdines móntium ipsíus sunt.\n\
+   Quóniam ipsíus est mare, et ipse fecit illud: * \
+et siccam manus ejus formavérunt.\n\
+   Veníte, adorémus, et procidámus ante Deum: * \
+plorémus coram Dómino, qui fecit nos.\n\
+   Quia ipse est Dóminus Deus noster: * \
+nos autem pópulus páscuæ ejus, et oves manus ejus.\n\
+   Hódie si vocem ejus audiéritis, nolíte obduráre corda vestra: * \
+sicut in irritatióne secúndum diem tentatiónis in desérto;\n\
+   Ubi tentavérunt me patres vestri, * \
+probavérunt me, et vidérunt ópera mea.\n\
+   Quadragínta annis offénsus fui generatióni illi, * \
+et dixi: Semper hi errant corde.\n\
+   Et isti non cognovérunt vias meas, ut jurávi in ira mea: * \
+Si introíbunt in réquiem meam.")
 
     ;;──── Te Deum ────────────────────────────────────────────────────────────
 
@@ -140,7 +158,39 @@ whom thou hast redeemed with thy precious blood.\n\
    O Lord, have mercy upon us : have mercy upon us.\n\
    O Lord, let thy mercy lighten upon us : as our trust is in thee.\n\
    O Lord, in thee have I trusted : let me never be confounded."
-     :latin   nil)
+     :latin   "TE Deum laudámus: * te Dóminum confitémur.\n\
+   Te ætérnum Patrem * omnis terra venerátur.\n\
+   Tibi omnes Ángeli, * tibi Cæli, et univérsæ Potestátes:\n\
+   Tibi Chérubim et Séraphim * incessábili voce proclámant:\n\
+   Sanctus, Sanctus, Sanctus * Dóminus Deus Sábaoth.\n\
+   Pleni sunt cæli et terra * majestátis glóriæ tuæ.\n\
+   Te gloriósus * Apostolórum chorus,\n\
+   Te Prophetárum * laudábilis númerus,\n\
+   Te Mártyrum candidátus * laudat exércitus.\n\
+   Te per orbem terrárum * sancta confitétur Ecclésia,\n\
+   Patrem * imménsæ majestátis;\n\
+   Venerándum tuum verum * et únicum Fílium;\n\
+   Sanctum quoque * Paráclitum Spíritum.\n\
+   Tu Rex glóriæ, * Christe.\n\
+   Tu Patris * sempitérnus es Fílius.\n\
+   Tu, ad liberándum susceptúrus hóminem: * \
+non horruísti Vírginis úterum.\n\
+   Tu, devícto mortis acúleo, * \
+aperuísti credéntibus regna cælórum.\n\
+   Tu ad déxteram Dei sedes, * in glória Patris.\n\
+   Judex créderis * esse ventúrus.\n\
+   Te ergo quǽsumus, tuis fámulis súbveni, * \
+quos pretióso sánguine redemísti.\n\
+   Ætérna fac cum Sanctis tuis * in glória numerári.\n\
+   Salvum fac pópulum tuum, Dómine, * et bénedic hereditáti tuæ.\n\
+   Et rege eos, * et extólle illos usque in ætérnum.\n\
+   Per síngulos dies * benedícimus te.\n\
+   Et laudámus nomen tuum in sǽculum, * et in sǽculum sǽculi.\n\
+   Dignáre, Dómine, die isto * sine peccáto nos custodíre.\n\
+   Miserére nostri, Dómine, * miserére nostri.\n\
+   Fiat misericórdia tua, Dómine, super nos, * \
+quemádmodum sperávimus in te.\n\
+   In te, Dómine, sperávi: * non confúndar in ætérnum.")
 
     ;;──── Benedicite ─────────────────────────────────────────────────────────
 
@@ -209,7 +259,37 @@ praise him, and magnify him for ever.\n\
 praise him, and magnify him for ever.\n\
    O Ananias, Azarias, and Misael, bless ye the Lord : \
 praise him, and magnify him for ever."
-     :latin   nil)
+     :latin   "BENEDÍCITE, ómnia ópera Dómini, Dómino: * \
+laudáte et superexaltáte eum in sǽcula.\n\
+   Benedícite, Ángeli Dómini, Dómino: * benedícite, cæli, Dómino.\n\
+   Benedícite, aquæ omnes, quæ super cælos sunt, Dómino: * \
+benedícite, omnes virtútes Dómini, Dómino.\n\
+   Benedícite, sol et luna, Dómino: * benedícite, stellæ cæli, Dómino.\n\
+   Benedícite, omnis imber et ros, Dómino: * \
+benedícite, omnes spíritus Dei, Dómino.\n\
+   Benedícite, ignis et æstus, Dómino: * \
+benedícite, frigus et æstus, Dómino.\n\
+   Benedícite, rores et pruína, Dómino: * \
+benedícite, gelu et frigus, Dómino.\n\
+   Benedícite, glácies et nives, Dómino: * \
+benedícite, noctes et dies, Dómino.\n\
+   Benedícite, lux et ténebræ, Dómino: * \
+benedícite, fúlgura et nubes, Dómino.\n\
+   Benedícat terra Dóminum: * laudet et superexáltet eum in sǽcula.\n\
+   Benedícite, montes et colles, Dómino: * \
+benedícite, univérsa germinántia in terra, Dómino.\n\
+   Benedícite, fontes, Dómino: * benedícite, mária et flúmina, Dómino.\n\
+   Benedícite, cete, et ómnia, quæ movéntur in aquis, Dómino: * \
+benedícite, omnes vólucres cæli, Dómino.\n\
+   Benedícite, omnes béstiæ et pécora, Dómino: * \
+benedícite, fílii hóminum, Dómino.\n\
+   Benedícat Israël Dóminum: * laudet et superexáltet eum in sǽcula.\n\
+   Benedícite, sacerdótes Dómini, Dómino: * \
+benedícite, servi Dómini, Dómino.\n\
+   Benedícite, spíritus, et ánimæ justórum, Dómino: * \
+benedícite, sancti, et húmiles corde, Dómino.\n\
+   Benedícite, Ananía, Azaría, Mísaël, Dómino: * \
+laudáte et superexaltáte eum in sǽcula.")
 
     ;;──── Benedictus ─────────────────────────────────────────────────────────
 
@@ -240,7 +320,27 @@ for the remission of their sins,\n\
 whereby the day-spring from on high hath visited us;\n\
    To give light to them that sit in darkness, and in the shadow of death : \
 and to guide our feet into the way of peace."
-     :latin   nil)
+     :latin   "BENEDÍCTUS Dóminus, Deus Israël: * \
+quia visitávit, et fecit redemptiónem plebis suæ.\n\
+   Et eréxit cornu salútis nobis: * in domo David, púeri sui.\n\
+   Sicut locútus est per os sanctórum, * \
+qui a sǽculo sunt, prophetárum ejus:\n\
+   Salútem ex inimícis nostris, * et de manu ómnium, qui odérunt nos.\n\
+   Ad faciéndam misericórdiam cum pátribus nostris: * \
+et memorári testaménti sui sancti.\n\
+   Jusjurándum, quod jurávit ad Ábraham patrem nostrum, * \
+datúrum se nobis:\n\
+   Ut sine timóre, de manu inimicórum nostrórum liberáti, * \
+serviámus illi.\n\
+   In sanctitáte, et justítia coram ipso, * ómnibus diébus nostris.\n\
+   Et tu, puer, Prophéta Altíssimi vocáberis: * \
+præíbis enim ante fáciem Dómini, paráre vias ejus:\n\
+   Ad dandam sciéntiam salútis plebi ejus: * \
+in remissiónem peccatórum eórum:\n\
+   Per víscera misericórdiæ Dei nostri: * \
+in quibus visitávit nos, óriens ex alto:\n\
+   Illumináre his, qui in ténebris, et in umbra mortis sedent: * \
+ad dirigéndos pedes nostros in viam pacis.")
 
     ;;──── Jubilate Deo ───────────────────────────────────────────────────────
 
@@ -256,7 +356,14 @@ and not we ourselves : we are his people, and the sheep of his pasture.\n\
 be thankful unto him, and speak good of his Name.\n\
    For the Lord is gracious, his mercy is everlasting : \
 and his truth endureth from generation to generation."
-     :latin   nil)
+     :latin   "JUBILÁTE Deo, omnis terra: * servíte Dómino in lætítia.\n\
+   Introíte in conspéctu ejus, * in exsultatióne.\n\
+   Scitóte quóniam Dóminus ipse est Deus: * ipse fecit nos, et non ipsi nos.\n\
+   Pópulus ejus, et oves páscuæ ejus: ‡ introíte portas ejus in confessióne, * \
+átria ejus in hymnis: confitémini illi.\n\
+   Laudáte nomen ejus: quóniam suávis est Dóminus, † \
+in ætérnum misericórdia ejus, * \
+et usque in generatiónem et generatiónem véritas ejus.")
 
     ;;──── Magnificat ─────────────────────────────────────────────────────────
 
@@ -278,7 +385,18 @@ and hath exalted the humble and meek.\n\
 and the rich he hath sent empty away.\n\
    He remembering his mercy hath holpen his servant Israel : \
 as he promised to our forefathers, Abraham and his seed, for ever."
-     :latin   nil)
+     :latin   "MAGNÍFICAT * ánima mea Dóminum.\n\
+   Et exsultávit spíritus meus: * in Deo, salutári meo.\n\
+   Quia respéxit humilitátem ancíllæ suæ: * \
+ecce enim ex hoc beátam me dicent omnes generatiónes.\n\
+   Quia fecit mihi magna qui potens est: * et sanctum nomen ejus.\n\
+   Et misericórdia ejus, a progénie in progénies: * timéntibus eum.\n\
+   Fecit poténtiam in brácchio suo: * dispérsit supérbos mente cordis sui.\n\
+   Depósuit poténtes de sede: * et exaltávit húmiles.\n\
+   Esuriéntes implévit bonis: * et dívites dimísit inánes.\n\
+   Suscépit Israël púerum suum: * recordátus misericórdiæ suæ.\n\
+   Sicut locútus est ad patres nostros: * \
+Ábraham, et sémini ejus in sǽcula.")
 
     ;;──── Cantate Domino ─────────────────────────────────────────────────────
 
@@ -303,7 +421,20 @@ the round world, and that dwell therein.\n\
    Let the floods clap their hands, and let the hills be joyful together before the Lord : \
 for he cometh to judge the earth.\n\
    With righteousness shall he judge the world : and the peoples with equity."
-     :latin   nil)
+     :latin   "CANTÁTE Dómino cánticum novum: * quia mirabília fecit.\n\
+   Salvávit sibi déxtera ejus: * et brácchium sanctum ejus.\n\
+   Notum fecit Dóminus salutáre suum: * \
+in conspéctu géntium revelávit justítiam suam.\n\
+   Recordátus est misericórdiæ suæ, * et veritátis suæ dómui Israël.\n\
+   Vidérunt omnes términi terræ * salutáre Dei nostri.\n\
+   Jubiláte Deo, omnis terra: * cantáte, et exsultáte, et psállite.\n\
+   Psállite Dómino in cíthara, in cíthara et voce psalmi: * \
+in tubis ductílibus, et voce tubæ córneæ.\n\
+   Jubiláte in conspéctu regis Dómini: * \
+moveátur mare, et plenitúdo ejus: orbis terrárum, et qui hábitant in eo.\n\
+   Flúmina plaudent manu, simul montes exsultábunt a conspéctu Dómini: * \
+quóniam venit judicáre terram.\n\
+   Judicábit orbem terrárum in justítia, * et pópulos in æquitáte.")
 
     ;;──── Nunc Dimittis ──────────────────────────────────────────────────────
 
@@ -317,7 +448,10 @@ according to thy word.\n\
    Which thou hast prepared : before the face of all people;\n\
    To be a light to lighten the Gentiles : \
 and to be the glory of thy people Israel."
-     :latin   nil)
+     :latin   "NUNC dimíttis servum tuum, Dómine, * secúndum verbum tuum in pace:\n\
+   Quia vidérunt óculi mei * salutáre tuum,\n\
+   Quod parásti * ante fáciem ómnium populórum,\n\
+   Lumen ad revelatiónem géntium, * et glóriam plebis tuæ Israël.")
 
     ;;──── Deus Misereatur ────────────────────────────────────────────────────
 
@@ -336,7 +470,16 @@ for thou shalt judge the folk righteously, and govern the nations upon earth.\n\
    Then shall the earth bring forth her increase : \
 and God, even our own God, shall give us his blessing.\n\
    God shall bless us : and all the ends of the world shall fear him."
-     :latin   nil)
+     :latin   "DEUS misereátur nostri, et benedícat nobis: * \
+illúminet vultum suum super nos, et misereátur nostri.\n\
+   Ut cognoscámus in terra viam tuam, * in ómnibus géntibus salutáre tuum.\n\
+   Confiteántur tibi pópuli, Deus: * confiteántur tibi pópuli omnes.\n\
+   Læténtur et exsúltent gentes: * \
+quóniam júdicas pópulos in æquitáte, et gentes in terra dírigis.\n\
+   Confiteántur tibi pópuli, Deus, confiteántur tibi pópuli omnes: * \
+terra dedit fructum suum.\n\
+   Benedícat nos Deus, Deus noster, benedícat nos Deus: * \
+et métuant eum omnes fines terræ.")
 
     ;;──── Benedictus es Domine ───────────────────────────────────────────────
 
@@ -356,7 +499,18 @@ praised and exalted above all for ever.\n\
 praised and exalted above all for ever.\n\
    Blessed art thou in the firmament of heaven : \
 praised and exalted above all for ever."
-     :latin   nil)
+     :latin   "BENEDÍCTUS es, Dómine, Deus patrum nostrórum: * \
+et laudábilis, et gloriósus, et superexaltátus in sǽcula.\n\
+   Et benedíctum nomen glóriæ tuæ sanctum: * \
+et laudábile, et superexaltátum in ómnibus sǽculis.\n\
+   Benedíctus es in templo sancto glóriæ tuæ: * \
+et superlaudábilis, et supergloriósus in sǽcula.\n\
+   Benedíctus es in throno regni tui: * \
+et superlaudábilis, et superexaltátus in sǽcula.\n\
+   Benedíctus es, qui intuéris abýssos, et sedes super Chérubim: * \
+et laudábilis, et superexaltátus in sǽcula.\n\
+   Benedíctus es in firmaménto cæli: * \
+et laudábilis, et gloriósus in sǽcula.")
 
     ;;──── Gloria Patri ───────────────────────────────────────────────────────
 
@@ -367,7 +521,9 @@ praised and exalted above all for ever."
      :english "Glory be to the Father, and to the Son : and to the Holy Ghost;\n\
    As it was in the beginning, is now, and ever shall be : \
 world without end.  Amen."
-     :latin   nil))
+     :latin   "Glória Patri, et Fílio, * et Spirítui Sancto.\n\
+   Sicut erat in princípio, et nunc, et semper, * \
+et in sǽcula sæculórum. Amen."))
 
   "Alist of canticle data keyed by canonical symbol.
 Each entry: (SYMBOL :title STRING :source STRING :gloria BOOL

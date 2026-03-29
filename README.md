@@ -40,7 +40,7 @@ The current implementation covers:
 **BCP 1662 Daily Office:**
 - Complete Morning and Evening Prayer ordos with rubrical options throughout
 - Seasonal opening sentences (1662 pool and extended 1928 BCP corpus)
-- Configurable canticles with optional Latin texts and per-canticle language overrides
+- Configurable canticles with Latin Vulgate texts and per-canticle language overrides
 - Lessons (OT and NT) fetched and inserted inline; Communion propers optionally appended
 - Collects of the Day resolved from the full liturgical calendar
 - Support for user-defined additional prayers and feasts
@@ -64,6 +64,7 @@ The current implementation covers:
 
 **Scripture backends:**
 - `coverdale` — Miles Coverdale's Psalter served locally from a bundled text file; no network required for psalms
+- `vulgate` — Latin Vulgate Psalter with Breviary pointing (*, †, ‡) served locally; collated from Divinum Officium source files with BCP-to-Vulgate psalm number mapping
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
 - `ebible` — local eBible.org plain-text chapter files; fully offline
 
@@ -106,8 +107,11 @@ Fetch requests pass through a fallback chain:
 Available backends:
 
 - `coverdale` — serves psalms from `bcp-liturgy-psalter-coverdale.txt` (local, no network required); returns `nil` for non-psalm passages so the chain continues
+- `vulgate` — serves Latin psalms from `bcp-liturgy-psalter-vulgate.txt` (local, no network required); applies BCP-to-Vulgate psalm number mapping (e.g. BCP 114 → Vulgate 113:1-8, BCP 116 → Vulgate 114+115 concatenated)
 - `oremus` — fetches from [Oremus Bible Browser](https://bible.oremus.org) (online); supports KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions (Coverdale/BCP, Common Worship, Liturgical Psalter)
 - `ebible` — fetches from a local directory of eBible.org plain-text chapter files; fully offline
+
+The fetch layer also supports translation-aware routing: if the requested translation (e.g. "Vulgate") matches a registered backend, that backend is tried first regardless of the primary backend setting.
 
 The default configuration is `coverdale` primary, `oremus` fallback. Psalms are served locally; lessons come from Oremus.
 
@@ -170,6 +174,12 @@ The file `bcp-liturgy-psalter-coverdale.txt` is included in the repository. It c
 
 If you need to regenerate it (e.g. after updating the source files), load `bcp-coverdale-download.el` and call `M-x bcp-coverdale-download-collate`.
 
+### Vulgate Psalter
+
+The file `bcp-liturgy-psalter-vulgate.txt` is included in the repository. It contains all 150 psalms of the Latin Vulgate Psalter under Vulgate numbering, with Breviary pointing marks (*, †, ‡) preserved. Collated from the [Divinum Officium](https://divinumofficium.com/) Latin psalm source files.
+
+To regenerate, load `bcp-vulgate-collate.el` and call `M-x bcp-vulgate-collate`.
+
 ### eBible backend (optional, fully offline)
 
 Download the plain-text KJV chapter files from [eBible.org](https://ebible.org) and set:
@@ -193,7 +203,7 @@ All settings are collected in `bcp-preferences.el`. Copy this file and edit it, 
 (setq bible-commentary-translation "KJVA")   ; KJVA KJV NRSV NRSVAE
 
 ;; Translation for the Psalter
-(setq bible-commentary-psalm-translation "Coverdale")  ; Coverdale BCP KJVA CW LP NRSV
+(setq bible-commentary-psalm-translation "Coverdale")  ; Coverdale BCP Vulgate Latin KJVA CW LP NRSV
 ```
 
 ### Fetch backend
@@ -201,6 +211,10 @@ All settings are collected in `bcp-preferences.el`. Copy this file and edit it, 
 ```elisp
 ;; Default: local Coverdale psalms, Oremus for lessons
 (setq bcp-fetcher-backend 'coverdale
+      bcp-fetcher-fallback-backend 'oremus)
+
+;; Latin Vulgate psalms, Oremus for lessons
+(setq bcp-fetcher-backend 'vulgate
       bcp-fetcher-fallback-backend 'oremus)
 
 ;; Fully online (Oremus only)
@@ -377,4 +391,4 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others in the Anglican tradition who use Emacs may find it useful. Contributions, corrections, and suggestions are welcome.
 
-Planned additions include: the 1979 American BCP, canonical hours framework (Prime, Terce, Sext, None, Compline), multi-language prayer texts (*Liber Precum Publicarum*, Roman Breviary), and a `transient`-based preferences interface.
+Planned additions include: the 1979 American BCP, canonical hours framework (Prime, Terce, Sext, None, Compline), multi-language prayer texts (*Liber Precum Publicarum*, Roman Breviary), and a psalm pointing utility.
