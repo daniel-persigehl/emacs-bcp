@@ -126,6 +126,33 @@ The 1928 BCP uses N. as a rubric placeholder for this name."
   :group 'bcp-liturgy)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Churchmanship
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+(defcustom bcp-liturgy-churchmanship 'catholic
+  "Whether the user worships in a Catholic or Reformed context.
+
+This setting is used by the framework to select between alternative
+forms of prayers and observances where Anglican practice differs along
+Catholic/Reformed lines.  It is also referenced by future features such
+as the collect for the clergy, feast-day calendar entries, and the
+catechism.
+
+  `catholic' — Anglo-Catholic or Catholic orientation.  Favour forms
+               and observances consistent with the Catholic tradition
+               of Anglicanism (e.g. pre-Reformation feasts, the full
+               sanctoral, the absolution form for priests).
+  `reformed' — Evangelical or Reformed orientation.  Favour forms and
+               observances consistent with the Reformed tradition of
+               Anglicanism.
+
+This setting does not correspond to jurisdiction: a communicant of
+the Church of England may set either value."
+  :type  '(choice (const :tag "Catholic" catholic)
+                  (const :tag "Reformed" reformed))
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Creed
 ;;;; ══════════════════════════════════════════════════════════════════════════
 

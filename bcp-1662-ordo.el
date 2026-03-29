@@ -195,14 +195,8 @@ The minister reads one or more of these at the opening of the service.")
      :ref bcp-common-prayers-apostles-creed)
 
     (:rubric "And after that these Prayers following, all devoutly kneeling: the Minister first pronouncing with a loud voice,")
-    ;; TODO: when `office-officiant' is `lay or `deacon (i.e. not a priest),
-    ;; substitute the lay versicle: "Hear my prayer, O Lord." / "And let my
-    ;; cry come unto thee." in place of "The Lord be with you." / "And with
-    ;; thy spirit."
+    (:versicles-preces)
     (:versicles
-     ("The Lord be with you."
-      "And with thy spirit.")
-     ("Let us pray." nil)
      ("Lord, have mercy upon us." nil)
      ("Christ, have mercy upon us." nil)
      ("Lord, have mercy upon us." nil))
@@ -329,13 +323,8 @@ Steps are tagged plists; see file commentary for type descriptions.")
 
     (:rubric "And after that, these Prayers following, all devoutly kneeling: the Minister first pronouncing with a loud voice,")
     ;; TODO: when `office-officiant' is `lay or `deacon (i.e. not a priest),
-    ;; substitute the lay versicle: "Hear my prayer, O Lord." / "And let my
-    ;; cry come unto thee." in place of "The Lord be with you." / "And with
-    ;; thy spirit."
+    (:versicles-preces)
     (:versicles
-     ("The Lord be with you."
-      "And with thy spirit.")
-     ("Let us pray." nil)
      ("Lord, have mercy upon us." nil)
      ("Christ, have mercy upon us." nil)
      ("Lord, have mercy upon us." nil))

@@ -187,9 +187,12 @@
 ;; 'full (default), 'brief ("Let us humbly confess..." — 1928 BCP alternate rubric), 'omit
 (setq bcp-1662-bidding-form 'full)
 
-;; Omit Venite verses 8-11 ("To day if ye will hear his voice...")
-;; outside Lent and Passiontide.  Off by default.
-(setq bcp-1662-omit-venite-passiontide nil)
+;; Venite vv.8-11 ("To day if ye will hear his voice...").
+;; Values: 'always 'lent 'never.  Ps.96 substitute: t or nil.
+(setq bcp-1662-venite-lent-verses 'always)
+(setq bcp-1662-venite-ps96-substitute nil)
+(setq bcp-1928-venite-lent-verses 'lent)
+(setq bcp-1928-venite-ps96-substitute t)
 
 ;; Use Easter Anthems in place of Venite throughout all of Eastertide
 ;; (not just on Easter Day).  Off by default.
@@ -235,20 +238,35 @@ restarting Emacs."
                  "bcp-1662-data.el"
                  "bcp-1662-user-feasts.el"
                  "bcp-1662-ordo.el"
+                 "bcp-common-canticles.el"
+                 "bcp-anglican-render.el"
                  "bcp-1662-render.el"
                  "bcp-1662.el"
+                 "bcp-anglican-1928-calendar.el"
+                 "bcp-anglican-1928-data.el"
+                 "bcp-anglican-1928-lectionary.el"
                  "bcp-anglican-1928-ordo.el"
+                 "bcp-anglican-1928-render.el"
                  "bcp-anglican-1928.el"
                  "bcp-anglican.el"
                  "bcp-roman.el"
                  "bcp-reader.el"
-                 "bcp-notebook.el")))
+                 "bcp-notebook.el"
+                 "bcp-transient.el")))
     (dolist (file files)
       (let ((path (expand-file-name file dir)))
         (when (file-readable-p path)
           (load path nil t))))
     (load (expand-file-name "bcp-preferences.el" dir) nil t)
     (message "BCP reloaded.")))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Transient settings menu
+
+(require 'bcp-transient)
+
+;; Suggested binding — uncomment and adjust as desired:
+;; (global-set-key (kbd "C-c ,") #'bcp-settings)
 
 (provide 'bcp-preferences)
 ;;; bcp-preferences.el ends here

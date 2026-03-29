@@ -25,9 +25,10 @@
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; 1928 fixed texts
 
-(defconst bcp-1928-text-exhortation-brief
-  "Let us humbly confess our sins unto Almighty God."
-  "Brief bidding sentence used in place of the full exhortation (1928 rubrical option).")
+(defconst bcp-1928-text-exhortation-brief bcp-common-anglican-exhortation-brief
+  "Brief bidding sentence used in place of the full exhortation (1928 rubrical option).
+Alias for `bcp-common-anglican-exhortation-brief'; the 1928 BCP provides only
+this abbreviated form rather than the full 1662 exhortation.")
 
 (defconst bcp-1928-text-general-confession
   "Almighty and most merciful Father; We have erred, and strayed from thy ways \
@@ -77,6 +78,8 @@ alone, standing; the people still kneeling."
      :name absolution)
     (:text absolution
      :ref bcp-1928-text-absolution)
+    (:rubric "If no Priest be present, the Minister shall say this Collect."
+     :alt-collect after-trinity-21)
 
     (:rubric "Then the Minister shall kneel and say the Lord's Prayer, the people \
 also kneeling and repeating it with him.")
@@ -152,14 +155,7 @@ people, standing. The Nicene Creed may be used in place of the Apostles' Creed."
      :alt-creed bcp-common-prayers-nicene-creed)
 
     (:rubric "And after that, these Prayers following, all devoutly kneeling.")
-    ;; TODO: when `office-officiant' is `lay' or `deacon', substitute
-    ;; "Hear my prayer, O Lord." / "And let my cry come unto thee." in place
-    ;; of "The Lord be with you." / "And with thy spirit."  Verify exact
-    ;; wording in the 1928 BCP before implementing.
-    (:versicles
-     ("The Lord be with you."
-      "And with thy spirit.")
-     ("Let us pray." nil))
+    (:versicles-preces)
 
     (:rubric "Then the Minister and people shall say the Lord's Prayer.")
     (:text lords-prayer
@@ -227,6 +223,8 @@ alone, standing; the people still kneeling."
      :name absolution)
     (:text absolution
      :ref bcp-1928-text-absolution)
+    (:rubric "If no Priest be present, the Minister shall say this Collect."
+     :alt-collect after-trinity-21)
 
     (:rubric "Then the Minister shall kneel and say the Lord's Prayer, the people \
 also kneeling and repeating it with him.")
@@ -287,14 +285,7 @@ people, standing. The Nicene Creed may be used in place of the Apostles' Creed."
      :alt-creed bcp-common-prayers-nicene-creed)
 
     (:rubric "And after that, these Prayers following, all devoutly kneeling.")
-    ;; TODO: when `office-officiant' is `lay' or `deacon', substitute
-    ;; "Hear my prayer, O Lord." / "And let my cry come unto thee." in place
-    ;; of "The Lord be with you." / "And with thy spirit."  Verify exact
-    ;; wording in the 1928 BCP before implementing.
-    (:versicles
-     ("The Lord be with you."
-      "And with thy spirit.")
-     ("Let us pray." nil))
+    (:versicles-preces)
 
     (:rubric "Then the Minister and people shall say the Lord's Prayer.")
     (:text lords-prayer

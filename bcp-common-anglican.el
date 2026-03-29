@@ -25,6 +25,26 @@
 (require 'bcp-liturgy-render)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Defgroup
+
+(defgroup bcp-anglican nil
+  "Settings shared across Anglican BCP traditions."
+  :prefix "bcp-anglican-"
+  :group 'bcp-liturgy)
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Rubrical options shared across the Anglican BCP family
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Shared liturgical texts
+
+(defconst bcp-common-anglican-exhortation-brief
+  "Let us humbly confess our sins unto Almighty God."
+  "Brief form of the Bidding (exhortation) before the General Confession.
+Text from the 1928 American BCP.  Used in place of the full \"Dearly
+beloved brethren\" exhortation when a shorter form is desired.")
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Fixed office collects  (shared across 1662 and 1928)
 
 (defconst bcp-common-anglican-collect-morning-peace
@@ -441,6 +461,80 @@ Each returned plist has at least :title and :text (or :english) keys."
           (if (eq tradition '1662)
               bcp-common-anglican-prayer-clergy-people
             bcp-common-anglican-prayer-clergy-people-1928)))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Shared Venite helpers
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Preces versicles
+
+(defconst bcp-common-anglican-preces-lord-be-with-you
+  '(("The Lord be with you." "And with thy spirit.")
+    ("Let us pray." nil))
+  "Preces versicles for a priest or bishop officiant.")
+
+(defconst bcp-common-anglican-preces-lay
+  '(("Hear my prayer, O Lord." "And let my cry come unto thee.")
+    ("Let us pray." nil))
+  "Preces versicles substituted when the officiant is a layperson or deacon.")
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Venite
+
+(defconst bcp-common-anglican-ps96-venite-substitute
+  "O worship the Lord in the beauty of holiness;\
+ let the whole earth stand in awe of him.\n\
+For he cometh, for he cometh to judge the earth;\
+ and with righteousness to judge the world,\
+ and the people with his truth."
+  "Psalm 96 verses 9 and 13 in Coverdale's translation.
+Used by the 1928 American BCP in place of Venite vv.8–11 when those
+verses are omitted outside of Lent.")
+
+(defun bcp-anglican--venite-strip-verses-8-11 (text)
+  "Return TEXT with Venite verses 8–11 removed.
+Verses 8–11 begin with \"To day if ye will hear\" and end before verse 12
+\"Unto whom I sware\".  Returns TEXT unchanged if the markers are not found."
+  (if (null text) nil
+    (let ((start (string-match "To day if ye will hear" text)))
+      (if (null start)
+          text
+        (let ((end (string-match "Unto whom I sware" text start)))
+          (if (null end)
+              text
+            (concat (substring text 0 start)
+                    (substring text end))))))))
+
+(defun bcp-anglican--venite-filter (text season verses-setting substitute-p)
+  "Apply Venite vv.8–11 handling to TEXT according to VERSES-SETTING and SEASON.
+VERSES-SETTING is the value of a tradition's venite-lent-verses defcustom:
+  `always' — retain vv.8–11 in all seasons
+  `lent'   — retain in Lent and Passiontide; strip otherwise
+  `never'  — always strip vv.8–11
+When SUBSTITUTE-P is non-nil and vv.8–11 are stripped, verses from Psalm 96
+\(vv.9 and 13 in Coverdale's translation) are inserted in their place,
+per the 1928 American BCP rubric."
+  (let ((strip-p (pcase verses-setting
+                   ('always nil)
+                   ('lent   (not (memq season '(lent passiontide))))
+                   (_       t))))
+    (if (not strip-p)
+        text
+      (if (not substitute-p)
+          (bcp-anglican--venite-strip-verses-8-11 text)
+        ;; 1928 BCP rubric: substitute Ps.96:9,13 for the omitted verses.
+        ;; The strip function removes from "To day if ye will hear" up to
+        ;; "Unto whom I sware"; the Ps.96 text is spliced in at that point.
+        (let ((start (string-match "To day if ye will hear" text)))
+          (if (null start)
+              text
+            (let ((end (string-match "Unto whom I sware" text start)))
+              (if (null end)
+                  text
+                (concat (substring text 0 start)
+                        bcp-common-anglican-ps96-venite-substitute
+                        "\n"
+                        (substring text end))))))))))
 
 (provide 'bcp-common-anglican)
 ;;; bcp-common-anglican.el ends here

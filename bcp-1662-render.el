@@ -248,32 +248,17 @@ Compatibility shim over `bcp-1662--day-identity' for simple use cases."
 ;;;; Venite helpers
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
-(defun bcp-1662--venite-strip-verses-8-11 (text)
-  "Return TEXT with Venite verses 8-11 removed.
-Verses 8-11 begin with \"To day if ye will hear\" and end before
-verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
-  (if (null text) nil
-    (let ((start (string-match "To day if ye will hear" text)))
-      (if (null start)
-          text
-        (let ((end (string-match "Unto whom I sware" text start)))
-          (if (null end)
-              text
-            (concat (substring text 0 start)
-                    (substring text end))))))))
-
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Tradition context helpers
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
 (defun bcp-1662--venite-filter (text season)
-  "Strip Venite verses 8–11 outside Lent and Passiontide when configured.
-The penitential verses are appropriate in Lent but optional in ordinary
-time per `bcp-1662-omit-venite-passiontide'."
-  (if (and bcp-1662-omit-venite-passiontide
-           (not (memq season '(lent passiontide))))
-      (bcp-1662--venite-strip-verses-8-11 text)
-    text))
+  "Apply Venite vv.8–11 handling for the 1662 tradition.
+Delegates to `bcp-anglican--venite-filter' with `bcp-1662-venite-lent-verses'
+and `bcp-1662-venite-ps96-substitute'."
+  (bcp-anglican--venite-filter text season
+    bcp-1662-venite-lent-verses
+    bcp-1662-venite-ps96-substitute))
 
 (defun bcp-1662--seasonal-collect-rubric (sc)
   "Return the rubric string for seasonal collect SC."

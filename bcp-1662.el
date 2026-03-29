@@ -702,6 +702,13 @@ Midday Prayer, Compline) may define their own analogous alist."
   :type  '(choice (const red) (const comment))
   :group 'bcp-1662)
 
+(defcustom bcp-1662-lectionary 'standard
+  "Lectionary to use for the BCP 1662 Daily Office.
+Currently only the standard 1662 lectionary is implemented.
+Additional lectionary options may be added in future."
+  :type  '(choice (const :tag "Standard (BCP 1662)" standard))
+  :group 'bcp-1662)
+
 ;;── Rubrical options ────────────────────────────────────────────────────────
 
 (defcustom office-officiant 'lay
@@ -754,17 +761,39 @@ or principal feasts."
 
 (defcustom bcp-1662-bidding-form 'full
   "Which form of the Bidding (exhortation) to use.
-  `full'   — the full text \"Dearly beloved brethren...\" (default)
-  `brief'  — an abbreviated form (text in `bcp-1662-bidding-brief')
-  `omit'   — omit the bidding entirely"
+  `full'  — the full 1662 text beginning \"Dearly beloved brethren...\"
+            (default; the text appointed in the BCP 1662)
+  `brief' — the abbreviated form \"Let us humbly confess our sins unto
+            Almighty God.\" borrowed from the 1928 American BCP, where it
+            is the only form provided; see `bcp-common-anglican-exhortation-brief'
+  `omit'  — omit the Bidding entirely; this option follows the practice of
+            the 2019 ACNA BCP, which makes the exhortation optional"
   :type  '(choice (const full) (const brief) (const omit))
   :group 'bcp-1662)
 
-(defcustom bcp-1662-omit-venite-passiontide nil
-  "Whether to omit Venite verses 8-11 outside Lent and Passiontide.
-When non-nil, verses 8-11 (\\\"To day if ye will hear his voice...\\\")
-are omitted except during Lent.  Per rubric, they may be omitted
-on any day outside Lent."
+(defcustom bcp-1662-venite-lent-verses 'always
+  "How to handle Venite verses 8–11 (\"To day if ye will hear his voice...\").
+The 1662 BCP contains no rubric permitting the omission of these verses;
+the default retains them in all seasons.  The options follow the practice
+of the American BCP tradition.
+
+  `always' — retain vv.8–11 throughout the year (1662 default)
+  `lent'   — retain in Lent; omit (or substitute) otherwise
+  `never'  — always omit (or substitute) vv.8–11
+
+See also `bcp-1662-venite-ps96-substitute'.
+Note: the Venite is not read at all on the nineteenth day of the month,
+when Psalm 95 falls in the regular course of psalms."
+  :type  '(choice (const :tag "Always" always)
+                  (const :tag "Lent only" lent)
+                  (const :tag "Never" never))
+  :group 'bcp-1662)
+
+(defcustom bcp-1662-venite-ps96-substitute nil
+  "Whether to substitute Psalm 96 verses for Venite vv.8–11 when they are absent.
+When non-nil and `bcp-1662-venite-lent-verses' causes vv.8–11 to be omitted,
+selected verses from Psalm 96 are inserted in their place, following the
+practice of the 1928 American BCP.  This is not rubrical in the 1662 BCP."
   :type  'boolean
   :group 'bcp-1662)
 
@@ -834,10 +863,10 @@ Default texts are drawn from the 1928 American BCP Evening Prayer."
                  :value-type (choice (const nil) string (list string sexp)))
   :group 'bcp-1662)
 
-(defconst bcp-1662-bidding-brief
-  "Let us humbly confess our sins unto Almighty God."
-  "Abbreviated form of the Bidding (exhortation).
-Text from the 1928 American BCP alternate rubric.  Should be a plain string.")
+(defconst bcp-1662-bidding-brief bcp-common-anglican-exhortation-brief
+  "Abbreviated form of the Bidding used when `bcp-1662-bidding-form' is `brief'.
+Alias for `bcp-common-anglican-exhortation-brief'; the text originates in the
+1928 American BCP.")
 
 (defconst bcp-1662--fallback-sentence
   '("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."

@@ -263,18 +263,25 @@ Returns nil if the date cannot be classified."
 
      ;; ── Sundays after Trinity ─────────────────────────────────────────────
      ((and (> abs trinity-abs) (< abs advent-next-abs))
-      (let* ((raw-n         (/ (- last-sun trinity-abs) 7))
-             (sun-bef-adv   (- advent-next-abs 7))
-             (total-trin    (/ (- sun-bef-adv trinity-abs) 7)))
+      (let* ((raw-n       (/ (- last-sun trinity-abs) 7))
+             (sun-bef-adv (- advent-next-abs 7))
+             ;; Last Epiphany Sunday actually observed this church year.
+             ;; Epiphany Sundays n-max-epi+1 … 6 were omitted and are
+             ;; transferred to the end of Trinity (BCP rubric).
+             (n-max-epi   (/ (- septuagesima-abs epiphany-abs) 7)))
         (cond
-         ;; Sunday Before Advent is always the last Sunday; treat as sentinel
+         ;; Sunday Before Advent is always the last Sunday
          ((= last-sun sun-bef-adv)
           (cons 'sunday-before-advent dow))
-         ;; Trinity 25 and 26: overflow — sentinel, use omitted Epiphany lessons
-         ;; TODO: implement overflow — look up which Epiphany Sundays were skipped
-         ;; and serve them here.  For now return a sentinel symbol.
+         ;; Trinity 25+: use the omitted Epiphany propers in order
          ((>= raw-n 25)
-          (cons (if (= raw-n 25) 'trinity-25 'trinity-26) dow))
+          (let* ((overflow-index (- raw-n 24)) ; 1 for Trin-25, 2 for Trin-26…
+                 (epi-n          (+ n-max-epi overflow-index)))
+            (cons (if (<= epi-n 6)
+                      (intern (format "after-epiphany-%d" epi-n))
+                    ;; No overflow propers remain; fall back to Trinity 24
+                    'after-trinity-24)
+                  dow)))
          (t
           (cons (intern (format "after-trinity-%d" raw-n)) dow)))))
 

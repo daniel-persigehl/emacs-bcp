@@ -16,6 +16,8 @@
 ;;   - bcp-1928--opening-sentences — :opening-sentences-fn for the ctx
 ;;   - bcp-1928--post-office       — :post-office-fn (communion propers)
 ;;   - bcp-1928--psalm-label / bcp-1928--psalm-to-passage
+;;   - bcp-1928--no-priest-rubric  — :absolution-no-priest-rubric-fn for the ctx
+;;   - bcp-1928--step-override     — :step-override-fn for the ctx
 ;;   - bcp-1928--build-ctx         — assembles the full tradition context
 ;;   - bcp-1928--render-office     — thin wrapper calling the shared walker
 ;;
@@ -496,6 +498,27 @@ Wraps `bcp-1928--select-opening-sentence' in a single-element list."
                                 (funcall ref-str-fn go) go-label))))
             (insert "\n")))))))
 
+(defun bcp-1928--venite-filter (text season)
+  "Apply Venite vv.8–11 handling for the 1928 tradition.
+Delegates to `bcp-anglican--venite-filter' with `bcp-1928-venite-lent-verses'
+and `bcp-1928-venite-ps96-substitute'."
+  (bcp-anglican--venite-filter text season
+    bcp-1928-venite-lent-verses
+    bcp-1928-venite-ps96-substitute))
+
+(defun bcp-1928--no-priest-rubric (ordo)
+  "Return the 'no priest' rubric text found in ORDO, or nil.
+The rubric step carries :alt-collect; it is suppressed in the main ordo
+walk by `bcp-1928--step-override' and re-emitted before the substitute collect."
+  (when-let* ((step (cl-find-if (lambda (s) (plist-get s :alt-collect)) ordo)))
+    (plist-get step :rubric)))
+
+(defun bcp-1928--step-override (step _propers)
+  "Handle 1928-specific rubrical options for STEP.
+Returns :skip, :handled, or nil (shared handling)."
+  (when (and (eq (car step) :rubric) (plist-get step :alt-collect))
+    :skip))
+
 (defun bcp-1928--build-ctx (propers)
   "Build the Anglican render context for the 1928 American BCP.
 Resolves current defcustom values and registers all tradition callbacks."
@@ -510,19 +533,15 @@ Resolves current defcustom values and registers all tradition callbacks."
      :psalm-to-passage-fn           #'bcp-1928--psalm-to-passage
      :opening-sentences-fn          #'bcp-1928--opening-sentences
      :easter-anthems-p-fn           #'bcp-1928--easter-anthems-p
-     ;; TODO: verify against print copy whether the 1928 retains the 1662
-     ;; rubric for Venite on the 19th day of the month (strip vv. 8-11).
-     ;; If it does, implement bcp-1928--venite-filter analogously to
-     ;; bcp-1662--venite-filter and wire it here.
-     :venite-filter-fn              nil
+     :venite-filter-fn              #'bcp-1928--venite-filter
      :officiant                     office-officiant
      :show-penitential-intro        (not (and bcp-1928-omit-penitential-intro
                                               (not is-sunday)))
      :absolution-substitute-key     'after-trinity-21
-     :absolution-no-priest-rubric-fn nil
+     :absolution-no-priest-rubric-fn #'bcp-1928--no-priest-rubric
      :seasonal-collect-rubric-fn    #'bcp-1928--seasonal-collect-rubric
      :additional-prayers            nil
-     :step-override-fn              nil
+     :step-override-fn              #'bcp-1928--step-override
      :post-office-fn                #'bcp-1928--post-office
      :day-id-fn                     #'bcp-1928--day-identity
      :office-label-fn               #'bcp-anglican-render--office-label

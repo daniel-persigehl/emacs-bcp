@@ -84,6 +84,44 @@ Values are \\='mattins or \\='evensong."
   :type  '(choice (const red) (const comment))
   :group 'bcp-1928)
 
+(defcustom bcp-1928-venite-lent-verses 'lent
+  "How to handle Venite verses 8–11 (\"To day if ye will hear his voice...\").
+The 1928 American BCP omits these penitential verses outside Lent,
+optionally substituting verses from Psalm 96 in their place.
+
+  `always' — retain vv.8–11 throughout the year
+  `lent'   — retain in Lent; omit (or substitute) otherwise (1928 default)
+  `never'  — always omit (or substitute) vv.8–11
+
+See also `bcp-1928-venite-ps96-substitute'.
+Note: the Venite is not read at all on the nineteenth day of the month,
+when Psalm 95 falls in the regular course of psalms."
+  :type  '(choice (const :tag "Always" always)
+                  (const :tag "Lent only" lent)
+                  (const :tag "Never" never))
+  :group 'bcp-1928)
+
+(defcustom bcp-1928-venite-ps96-substitute t
+  "Whether to substitute Psalm 96 verses for Venite vv.8–11 when they are absent.
+When non-nil and `bcp-1928-venite-lent-verses' causes vv.8–11 to be omitted,
+selected verses from Psalm 96 are inserted in their place, per the 1928
+American BCP rubric.
+Note: the Psalm 96 substitute is not yet implemented; this setting is
+recorded but has no effect until the fetch and insertion logic is added."
+  :type  'boolean
+  :group 'bcp-1928)
+
+(defcustom bcp-1928-lectionary 'original-1928
+  "Lectionary to use for the 1928 American BCP Daily Office.
+
+  `original-1928' — the original lectionary as printed in the 1928 edition
+                    (default; currently the only implemented option)
+  `revised-1945'  — the substantially revised lectionary adopted in 1945;
+                    not yet implemented"
+  :type  '(choice (const :tag "Original 1928 edition" original-1928)
+                  (const :tag "Revised 1945 edition (not yet implemented)" revised-1945))
+  :group 'bcp-1928)
+
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Internal: day-key resolution

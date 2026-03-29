@@ -205,6 +205,14 @@ CTX is the tradition context plist."
         (:versicles
          (versicles! (cdr step)))
 
+        ;; ── Preces versicles (officiant-sensitive) ───────────────────────
+        ;; Priest/bishop: "The Lord be with you." / "And with thy spirit."
+        ;; Lay/deacon:    "Hear my prayer, O Lord." / "And let my cry…"
+        (:versicles-preces
+         (versicles! (if (memq officiant '(lay deacon))
+                         bcp-common-anglican-preces-lay
+                       bcp-common-anglican-preces-lord-be-with-you)))
+
         ;; ── Canticle ─────────────────────────────────────────────────────
         (:canticle
          (let* ((name        (plist-get step :canticle))
