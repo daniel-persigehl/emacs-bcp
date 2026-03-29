@@ -13,6 +13,11 @@
 ;;
 ;; Primary entry point: M-x bcp-1662-open-office
 ;;
+;; TODO: rename all bcp-1662- symbols and files to bcp-anglican-1662- to align
+;; with the bcp-anglican-YEAR- naming convention used by the 1928 and later
+;; traditions.  Defer to a dedicated session; requires updating all callers,
+;; the dispatch registration, and the test suite.
+;;
 ;; Load order:
 ;;   (require 'bcp-1662-calendar)
 ;;   (require 'bcp-1662-data)
@@ -27,9 +32,10 @@
 (require 'bcp-reader)
 (require 'bcp-1662-calendar)
 (require 'bcp-1662-data)
+(require 'bcp-1662-user-feasts)
 (require 'bcp-1662-ordo)
 (require 'bcp-1662-render)
-(require 'bcp-liturgy-canticles)
+(require 'bcp-common-canticles)
 (require 'bcp-common-prayers)
 (require 'bcp-common-anglican)
 (require 'bcp-liturgy-hours)
@@ -1180,7 +1186,7 @@ With a prefix argument ARG, prompts for date and office."
       (remove-overlays)
       (erase-buffer)
       (insert (format "Loading %s — %s…\n\nFetching %d passage(s) from Oremus.\n"
-                      (bcp-1662--office-label office)
+                      (bcp-anglican-render--office-label office)
                       date-str
                       (+ (length psalm-passages) (length lesson-passages))))
       (read-only-mode 1))
@@ -1200,7 +1206,7 @@ With a prefix argument ARG, prompts for date and office."
           (with-current-buffer (get-buffer bcp-1662-office-buffer-name)
             (bcp-office-nav-init time 'bcp-1662 #'bcp-1662-open-office))
           (message "%s — %s"
-                   (bcp-1662--office-label office)
+                   (bcp-anglican-render--office-label office)
                    date-str)))))))
 
 (defun bcp-1662--prompt-office-time ()

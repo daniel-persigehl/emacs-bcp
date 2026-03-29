@@ -1,4 +1,4 @@
-;;; bcp-liturgy-canticles.el --- Liturgical canticle texts -*- lexical-binding: t -*-
+;;; bcp-common-canticles.el --- Liturgical canticle texts -*- lexical-binding: t -*-
 
 ;;; Commentary:
 
@@ -425,5 +425,5 @@ Returns a string or nil."
         (plist-get (bcp-liturgy-canticle-data 'gloria-patri) :english))))
 
 
-(provide 'bcp-liturgy-canticles)
-;;; bcp-liturgy-canticles.el ends here
+(provide 'bcp-common-canticles)
+;;; bcp-common-canticles.el ends here

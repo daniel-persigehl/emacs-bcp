@@ -121,11 +121,35 @@
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Daily Office — region
 
-;; Region for state prayer selection.
+;; Region for state prayer selection (controls which prayers are said after the Office).
 ;; 'monarchy  — pray for the King and Royal Family (default; BCP 1662 / Commonwealth)
 ;; 'us        — pray for the President (uses 1928 American BCP wording)
 ;; 'republic  — generic prayer for civil authority (other republics)
 (setq bcp-liturgy-region 'us)
+
+;; Form of the civil-authority versicle in the Preces.
+;; Independent of region — choose on theological grounds:
+;; 'monarchy       — "O Lord, save the King." (or Queen per bcp-liturgy-sovereign-title)
+;; 'state          — "O Lord, save the State."  (1928 American republican form)
+;; 'them-that-rule — "O Lord, save them that rule."  (1662 international form)
+(setq bcp-liturgy-state-versicle-form 'state)
+
+;; Sovereign title, used when bcp-liturgy-state-versicle-form is 'monarchy.
+;; 'king or 'queen — controls both versicle and prayer selection.
+(setq bcp-liturgy-sovereign-title 'king)
+
+;; Sovereign's Christian name, inserted into the prayer as "King [NAME]" / "Queen [NAME]".
+;; nil uses the name hard-coded in the defconst.
+(setq bcp-liturgy-sovereign-name "Charles")
+
+;; Royal family members named in the prayer, before "and all the Royal Family".
+;; nil uses the names hard-coded in the defconst.
+(setq bcp-liturgy-royal-family-names
+      "Queen Camilla, William Prince of Wales, the Princess of Wales")
+
+;; Name of the current President, inserted per the 1928 rubric N.
+;; Set to nil to omit, or a string e.g. "Donald".
+(setq bcp-liturgy-president-name "Donald")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Daily Office — officiant

@@ -152,6 +152,10 @@ people, standing. The Nicene Creed may be used in place of the Apostles' Creed."
      :alt-creed bcp-common-prayers-nicene-creed)
 
     (:rubric "And after that, these Prayers following, all devoutly kneeling.")
+    ;; TODO: when `office-officiant' is `lay' or `deacon', substitute
+    ;; "Hear my prayer, O Lord." / "And let my cry come unto thee." in place
+    ;; of "The Lord be with you." / "And with thy spirit."  Verify exact
+    ;; wording in the 1928 BCP before implementing.
     (:versicles
      ("The Lord be with you."
       "And with thy spirit.")
@@ -164,7 +168,15 @@ people, standing. The Nicene Creed may be used in place of the Apostles' Creed."
     (:rubric "Then the Minister, standing, shall say,")
     (:versicles
      ("O Lord, show thy mercy upon us."
-      "And grant us thy salvation.")
+      "And grant us thy salvation."))
+    (:state-versicles :tradition 1928)
+    (:versicles
+     ("Endue thy ministers with righteousness."
+      "And make thy chosen people joyful.")
+     ("O Lord, save thy people."
+      "And bless thine inheritance.")
+     ("Give peace in our time, O Lord."
+      "For it is thou, Lord, only, that makest us dwell in safety.")
      ("O God, make clean our hearts within us."
       "And take not thy Holy Spirit from us."))
 
@@ -275,6 +287,10 @@ people, standing. The Nicene Creed may be used in place of the Apostles' Creed."
      :alt-creed bcp-common-prayers-nicene-creed)
 
     (:rubric "And after that, these Prayers following, all devoutly kneeling.")
+    ;; TODO: when `office-officiant' is `lay' or `deacon', substitute
+    ;; "Hear my prayer, O Lord." / "And let my cry come unto thee." in place
+    ;; of "The Lord be with you." / "And with thy spirit."  Verify exact
+    ;; wording in the 1928 BCP before implementing.
     (:versicles
      ("The Lord be with you."
       "And with thy spirit.")
@@ -287,7 +303,15 @@ people, standing. The Nicene Creed may be used in place of the Apostles' Creed."
     (:rubric "Then the Minister, standing, shall say,")
     (:versicles
      ("O Lord, show thy mercy upon us."
-      "And grant us thy salvation.")
+      "And grant us thy salvation."))
+    (:state-versicles :tradition 1928)
+    (:versicles
+     ("Endue thy ministers with righteousness."
+      "And make thy chosen people joyful.")
+     ("O Lord, save thy people."
+      "And bless thine inheritance.")
+     ("Give peace in our time, O Lord."
+      "For it is thou, Lord, only, that makest us dwell in safety.")
      ("O God, make clean our hearts within us."
       "And take not thy Holy Spirit from us."))
 

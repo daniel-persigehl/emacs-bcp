@@ -56,6 +56,76 @@
   :group 'bcp-liturgy)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; State versicle form
+
+(defcustom bcp-liturgy-state-versicle-form 'monarchy
+  "Versicle form used for the civil-authority suffrages at Morning and Evening Prayer.
+
+The three forms represent distinct theological positions on the civil order and
+should be chosen on their own merits, not merely as a proxy for geography:
+
+  `monarchy'        — \"O Lord, save the King.\"
+                      The classical BCP form; addresses the sovereign directly.
+                      Appropriate wherever a Christian monarch reigns, or wherever
+                      one wishes to pray in the historic Western form.
+
+  `state'           — \"O Lord, save the State.\"
+                      The 1928 American BCP form for a republic; prays for the
+                      political community as such rather than its current rulers.
+
+  `them-that-rule'  — \"O Lord, save them that rule.\"
+                      The 1662 international form for a non-monarchical context;
+                      prays for all who exercise authority without naming a specific
+                      office or polity.
+
+All three share the response: \"And mercifully hear us when we call upon thee.\""
+  :type  '(choice (const :tag "Monarchy — save the King"            monarchy)
+                  (const :tag "State — save the State (1928)"       state)
+                  (const :tag "Them that rule (1662 international)" them-that-rule))
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Sovereign title (monarchy contexts)
+
+(defcustom bcp-liturgy-sovereign-title 'king
+  "Title of the current sovereign, used when `bcp-liturgy-state-versicle-form'
+is `monarchy'.  Controls both the Preces versicle and the prayer text.
+
+  `king'  — \"O Lord, save the King.\" / \"A Prayer for the King's Majesty.\"
+  `queen' — \"O Lord, save the Queen.\" / \"A Prayer for the Queen's Majesty.\""
+  :type  '(choice (const :tag "King" king)
+                  (const :tag "Queen" queen))
+  :group 'bcp-liturgy)
+
+(defcustom bcp-liturgy-sovereign-name nil
+  "Christian name of the current sovereign, or nil to use the name in the defconst.
+When non-nil, substituted into the prayer: \"King [NAME]\" or \"Queen [NAME]\"."
+  :type  '(choice (const  :tag "Use defconst name" nil)
+                  (string :tag "Name"))
+  :group 'bcp-liturgy)
+
+(defcustom bcp-liturgy-royal-family-names nil
+  "Names of the royal family members to pray for, or nil to use the defconst text.
+When non-nil, replaces the named members in the prayer before \"and all the Royal Family\".
+Write in the form used in the prayer, e.g.:
+  \"Queen Camilla, William Prince of Wales, the Princess of Wales\""
+  :type  '(choice (const  :tag "Use defconst names" nil)
+                  (string :tag "Names"))
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; President's name (US context)
+
+(defcustom bcp-liturgy-president-name nil
+  "Name of the current President of the United States, or nil to omit.
+When non-nil, inserted before the office in the prayer:
+  \"Grant to [NAME], the President of the United States…\"
+The 1928 BCP uses N. as a rubric placeholder for this name."
+  :type  '(choice (const :tag "Omit name" nil)
+                  (string :tag "Name"))
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Creed
 ;;;; ══════════════════════════════════════════════════════════════════════════
 

@@ -82,7 +82,7 @@ Saviour, Jesus Christ. Amen.")
     :text  "O Lord, our heavenly Father, the high and mighty, King of kings, \
 Lord of lords, the only Ruler of princes, who dost from thy throne behold all \
 the dwellers upon earth; Most heartily we beseech thee with thy favour to behold \
-our most gracious Sovereign Lord, King CHARLES; and so replenish him with the \
+our most gracious Sovereign Lord, KING CHARLES; and so replenish him with the \
 grace of thy Holy Spirit, that he may always incline to thy will, and walk in \
 thy way. Endue him plenteously with heavenly gifts; grant him in health and wealth \
 long to live; strengthen him that he may vanquish and overcome all his enemies; \
@@ -91,11 +91,26 @@ Jesus Christ our Lord. Amen.")
   "A Prayer for the King's Majesty (current sovereign: Charles III).
 Update the sovereign's name when the crown passes.")
 
+(defconst bcp-common-anglican-prayer-queen
+  '(:name  prayer-queen
+    :title "A Prayer for the Queen's Majesty."
+    :text  "O Lord, our heavenly Father, the high and mighty, King of kings, \
+Lord of lords, the only Ruler of princes, who dost from thy throne behold all \
+the dwellers upon earth; Most heartily we beseech thee with thy favour to behold \
+our most gracious Sovereign Lady, QUEEN ELIZABETH; and so replenish her with the \
+grace of thy Holy Spirit, that she may always incline to thy will, and walk in \
+thy way. Endue her plenteously with heavenly gifts; grant her in health and wealth \
+long to live; strengthen her that she may vanquish and overcome all her enemies; \
+and finally, after this life, she may attain everlasting joy and felicity; through \
+Jesus Christ our Lord. Amen.")
+  "A Prayer for the Queen's Majesty.
+Update the sovereign's name when the crown passes.")
+
 (defconst bcp-common-anglican-prayer-royal-family
   '(:name  prayer-royal-family
     :title "A Prayer for the Royal Family."
     :text  "Almighty God, the fountain of all goodness, we humbly beseech thee \
-to bless Queen Camilla, William Prince of Wales, the Princess of Wales, and all \
+to bless QUEEN CAMILLA, WILLIAM PRINCE OF WALES, THE PRINCESS OF WALES, and all \
 the Royal Family: Endue them with thy Holy Spirit; enrich them with thy heavenly \
 grace; prosper them with all happiness; and bring them to thine everlasting \
 kingdom; through Jesus Christ our Lord. Amen.")
@@ -330,20 +345,75 @@ And this we beg for Jesus Christ his sake. Amen.")
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; State prayer resolver
 
-(defun bcp-liturgy-state-versicles (tradition)
+(defun bcp-liturgy-state-versicles (_tradition)
   "Return the versicle pair for civil authority as (VERSICLE RESPONSE).
-Adapts to the current region and TRADITION:
-  monarchy           — \"O Lord, save the King.\" (all traditions)
-  republic/us + 1662 — \"O Lord, save them that rule.\" (1662 International)
-  republic/us + 1928 — \"O Lord, save those who govern us.\" (1928 American)"
+The form is selected by `bcp-liturgy-state-versicle-form':
+  `monarchy'       — \"O Lord, save the King.\" or \"…the Queen.\" per
+                     `bcp-liturgy-sovereign-title'
+  `state'          — \"O Lord, save the State.\" (1928 American)
+  `them-that-rule' — \"O Lord, save them that rule.\" (1662 international)"
   (let ((response "And mercifully hear us when we call upon thee."))
-    (cond
-     ((eq bcp-liturgy-region 'monarchy)
-      (list "O Lord, save the King." response))
-     ((eq tradition '1928)
-      (list "O Lord, save those who govern us." response))
-     (t  ; 1662 and other traditions in a republic
-      (list "O Lord, save them that rule." response)))))
+    (pcase bcp-liturgy-state-versicle-form
+      ('monarchy
+       (list (if (eq bcp-liturgy-sovereign-title 'queen)
+                 "O Lord, save the Queen."
+               "O Lord, save the King.")
+             response))
+      ('state         (list "O Lord, save the State."      response))
+      (_              (list "O Lord, save them that rule." response)))))
+
+(defun bcp-liturgy--sovereign-prayer ()
+  "Return the sovereign prayer plist, substituting the name when configured.
+Selects king or queen prayer per `bcp-liturgy-sovereign-title'.
+If `bcp-liturgy-sovereign-name' is non-nil, substitutes it into the text.
+The title and name are rendered in ALL-CAPS in the output."
+  (let* ((base-plist (if (eq bcp-liturgy-sovereign-title 'queen)
+                         bcp-common-anglican-prayer-queen
+                       bcp-common-anglican-prayer-king))
+         (name bcp-liturgy-sovereign-name))
+    (if (not name)
+        base-plist
+      (let* ((title-word (if (eq bcp-liturgy-sovereign-title 'queen) "QUEEN" "KING"))
+             (text (replace-regexp-in-string
+                    (format "%s [A-Z]+" title-word)
+                    (format "%s %s" title-word (upcase name))
+                    (plist-get base-plist :text) t nil)))
+        (list :name  (plist-get base-plist :name)
+              :title (plist-get base-plist :title)
+              :text  text)))))
+
+(defun bcp-liturgy--royal-family-prayer ()
+  "Return the Royal Family prayer plist, substituting member names when configured.
+If `bcp-liturgy-royal-family-names' is non-nil, it replaces the named members
+in the prayer before \"and all the Royal Family\".
+The substituted names are rendered in ALL-CAPS in the output."
+  (if (not bcp-liturgy-royal-family-names)
+      bcp-common-anglican-prayer-royal-family
+    (let* ((base (plist-get bcp-common-anglican-prayer-royal-family :text))
+           (text (replace-regexp-in-string
+                  "to bless [^,]+\\(?:, [^,]+\\)*, and all the Royal Family"
+                  (format "to bless %s, and all the Royal Family"
+                          (upcase bcp-liturgy-royal-family-names))
+                  base t nil)))
+      (list :name  'prayer-royal-family
+            :title (plist-get bcp-common-anglican-prayer-royal-family :title)
+            :text  text))))
+
+(defun bcp-liturgy--president-prayer ()
+  "Return the Prayer for the President plist, inserting the name when configured.
+If `bcp-liturgy-president-name' is non-nil, the name is inserted per the 1928
+rubric: \"Grant to N. the President of the United States…\"
+The name is rendered in ALL-CAPS in the output."
+  (if (not bcp-liturgy-president-name)
+      bcp-common-anglican-prayer-for-president
+    (let* ((base (plist-get bcp-common-anglican-prayer-for-president :english))
+           (text (replace-regexp-in-string
+                  "Grant to the President"
+                  (format "Grant to %s, the President" (upcase bcp-liturgy-president-name))
+                  base t t)))
+      (list :name  'prayer-for-president
+            :title (plist-get bcp-common-anglican-prayer-for-president :title)
+            :english text))))
 
 (defun bcp-liturgy-state-prayers (tradition)
   "Return the list of state prayer plists for the current region and TRADITION.
@@ -360,14 +430,14 @@ Regions:
 Each returned plist has at least :title and :text (or :english) keys."
   (cond
    ((eq bcp-liturgy-region 'us)
-    (list bcp-common-anglican-prayer-for-president
+    (list (bcp-liturgy--president-prayer)
           bcp-common-anglican-prayer-clergy-people-1928))
    ((eq bcp-liturgy-region 'republic)
     (list bcp-common-anglican-prayer-civil-authority
           bcp-common-anglican-prayer-clergy-people-1928))
    (t  ; monarchy
-    (list bcp-common-anglican-prayer-king
-          bcp-common-anglican-prayer-royal-family
+    (list (bcp-liturgy--sovereign-prayer)
+          (bcp-liturgy--royal-family-prayer)
           (if (eq tradition '1662)
               bcp-common-anglican-prayer-clergy-people
             bcp-common-anglican-prayer-clergy-people-1928)))))

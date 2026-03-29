@@ -4,26 +4,29 @@
 
 ;;; Commentary:
 
-;; BCP 1662-specific Office renderer.  Depends on bcp-liturgy-render.el
-;; for all buffer primitives and calls into it for every buffer operation.
+;; BCP 1662-specific Office renderer.  Builds a tradition context (ctx) and
+;; delegates the shared step dispatch and ordo walk to bcp-anglican-render.el.
 ;;
 ;; This file owns:
-;;   - The rubric face (red/comment) and its defcustom
-;;   - bcp-1662--rubric-face-fn (passed to bcp-liturgy-render--insert-rubric)
-;;   - bcp-1662--render-ordo-step — step-type dispatch for the 1662 ordo format
-;;   - bcp-1662--render-office — the main ordo walker with rubrical option logic:
-;;       penitential intro omission, venite exception handling,
-;;       absolution flow (priest vs. lay/deacon), confession variant,
-;;       bidding form, additional prayers, communion propers
-;;   - bcp-1662--day-identity — BCP-specific liturgical identity plist
-;;   - bcp-1662--season-label — compatibility shim
-;;   - bcp-1662--office-label
+;;   - Rubric face (red/comment) and its defcustom
+;;   - bcp-1662--rubric-face     — :rubric-face-fn for the ctx
+;;   - bcp-1662--day-identity    — 1662-specific liturgical identity plist
+;;   - bcp-1662--season-label    — compatibility shim
+;;   - bcp-1662--venite-strip-verses-8-11 — low-level Venite text editor
+;;   - bcp-1662--venite-filter   — :venite-filter-fn for the ctx
+;;   - bcp-1662--seasonal-collect-rubric — :seasonal-collect-rubric-fn for the ctx
+;;   - bcp-1662--easter-anthems-p — :easter-anthems-p-fn for the ctx
+;;   - bcp-1662--no-priest-rubric — :absolution-no-priest-rubric-fn for the ctx
+;;   - bcp-1662--step-override   — :step-override-fn (bidding, confession options)
+;;   - bcp-1662--post-office     — :post-office-fn (communion propers)
+;;   - bcp-1662--build-ctx       — assembles the full tradition context
+;;   - bcp-1662--render-office   — thin wrapper calling the shared walker
 ;;
 ;; What does NOT live here:
-;;   - Shared rendering framework (bcp-render.el)
 ;;   - Buffer primitives (bcp-liturgy-render.el)
+;;   - Shared step dispatch and ordo walker (bcp-anglican-render.el)
 ;;   - Ordo plist data (bcp-1662-ordo.el)
-;;   - Collect/lesson/propers dispatch (bcp-1662.el)
+;;   - Collect/lesson/propers dispatch and ref utilities (bcp-1662.el)
 ;;   - Defcustoms for rubrical options (bcp-1662.el)
 
 ;;; Code:
@@ -32,35 +35,11 @@
 (require 'calendar)
 (require 'bcp-render)
 (require 'bcp-liturgy-render)
-(require 'bcp-liturgy-canticles)
+(require 'bcp-common-canticles)
+(require 'bcp-anglican-render)
 (require 'bcp-1662-calendar)
 (require 'bcp-1662-data)
 (require 'bcp-1662-ordo)
-
-;;;; ══════════════════════════════════════════════════════════════════════════
-;;;; Lesson label helpers
-
-(defun bcp-1662--last-verse-in-text (text)
-  "Return the last `bcp-verse' property value found in TEXT, or nil."
-  (let ((pos 0) (len (length text)) (last nil))
-    (while (< pos len)
-      (let ((v (get-text-property pos 'bcp-verse text)))
-        (when v (setq last v)))
-      (setq pos (next-single-property-change pos 'bcp-verse text len)))
-    last))
-
-(defun bcp-1662--ref-label-with-text (ref text)
-  "Return a display label for REF, appending the actual last verse when known.
-When REF specifies a start verse > 1 with no explicit end, scans TEXT for the
-highest `bcp-verse' property value and appends it as the end of the range."
-  (let* ((v1 (and (listp ref) (stringp (car ref)) (caddr ref)))
-         (v2 (and (listp ref) (stringp (car ref)) (cadddr ref))))
-    (if (and text v1 (> v1 1) (null v2))
-        (let ((last (bcp-1662--last-verse-in-text text)))
-          (if last
-              (format "%s-%d" (bcp-1662--ref-label ref) last)
-            (bcp-1662--ref-label ref)))
-      (bcp-1662--ref-label ref))))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Rubric face
@@ -84,53 +63,10 @@ highest `bcp-verse' property value and appends it as the end of the range."
       'bcp-1662-rubric-comment
     'bcp-1662-rubric-red))
 
-;;;; ══════════════════════════════════════════════════════════════════════════
-;;;; Thin wrappers that bind the BCP rubric face
-;;;; ══════════════════════════════════════════════════════════════════════════
-;;
-;; These keep call sites inside this file clean.  External callers should
-;; use the bcp-liturgy-render-- primitives directly where possible.
-
-(defun bcp-1662--insert-heading (level text)
-  "Insert a heading at LEVEL with TEXT."
-  (bcp-liturgy-render--insert-heading level text))
-
-(defun bcp-1662--insert-rubric (text)
-  "Insert TEXT as a BCP-styled rubric."
-  (bcp-liturgy-render--insert-rubric text #'bcp-1662--rubric-face))
-
-(defun bcp-1662--insert-versicles (pairs)
-  "Insert versicle PAIRS."
-  (bcp-liturgy-render--insert-versicles pairs))
-
-(defun bcp-1662--insert-lords-prayer ()
-  "Insert the Lord's Prayer placeholder."
-  (bcp-liturgy-render--insert-lords-prayer))
-
-
-(defun bcp-1662--insert-fixed-text (name text)
-  "Insert fixed TEXT identified by NAME."
-  (bcp-liturgy-render--insert-fixed-text name text))
-
-(defun bcp-1662--insert-text-block (text)
-  "Insert a plain text block."
-  (bcp-liturgy-render--insert-text-block text))
-
-(defun bcp-1662--insert-canticle-text (text)
-  "Insert canticle TEXT with consistent indent."
-  (bcp-liturgy-render--insert-canticle-text text))
-
-(defun bcp-1662--normalise-spacing ()
-  "Normalise spacing in the current Office buffer."
-  (bcp-liturgy-render--normalise-spacing))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
-;;;; Office and season labels
+;;;; Day identity and season labels
 ;;;; ══════════════════════════════════════════════════════════════════════════
-
-(defun bcp-1662--office-label (office)
-  "Return a display string for OFFICE symbol."
-  (if (eq office 'mattins) "Morning Prayer" "Evening Prayer"))
 
 (defun bcp-1662--day-identity (propers)
   "Return a plist describing the liturgical identity of the day in PROPERS.
@@ -327,445 +263,153 @@ verse 12 \"Unto whom I sware\".  Returns TEXT unchanged if not found."
                     (substring text end))))))))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
-;;;; Step-type renderer
+;;;; Tradition context helpers
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
-(defun bcp-1662--render-ordo-step (step propers psalms psalm-texts lesson-texts)
-  "Render a single ordo STEP using data from PROPERS, PSALMS, PSALM-TEXTS, LESSON-TEXTS."
-  (let ((type (car step)))
-    (pcase type
+(defun bcp-1662--venite-filter (text season)
+  "Strip Venite verses 8–11 outside Lent and Passiontide when configured.
+The penitential verses are appropriate in Lent but optional in ordinary
+time per `bcp-1662-omit-venite-passiontide'."
+  (if (and bcp-1662-omit-venite-passiontide
+           (not (memq season '(lent passiontide))))
+      (bcp-1662--venite-strip-verses-8-11 text)
+    text))
 
-      ;; ── Rubric ─────────────────────────────────────────────────────────
-      (:rubric
-       (when-let* ((text (plist-get step :rubric)))
-         (bcp-1662--insert-rubric text)))
+(defun bcp-1662--seasonal-collect-rubric (sc)
+  "Return the rubric string for seasonal collect SC."
+  (pcase sc
+    ('advent-1      "The Collect of Advent (said daily until Christmas Eve):")
+    ('ash-wednesday "The Collect of Ash Wednesday (said daily throughout Lent):")
+    (_              "Seasonal Collect:")))
 
-      ;; ── Opening sentences ───────────────────────────────────────────────
-      (:sentences
-       (let ((sents (bcp-1662--select-opening-sentences
-                     (plist-get propers :season)
-                     (plist-get propers :date)
-                     (plist-get propers :office))))
-         (dolist (sent sents)
-           (if (stringp sent)
-               ;; Plain string — seasonal sentence, no citation
-               (bcp-1662--insert-text-block sent)
-             ;; (TEXT CITATION) pair from the general pool
-             (let* ((text  (car sent))
-                    (cit   (cadr sent))
-                    (label (if (and (listp cit) (listp (car cit)))
-                               (mapconcat #'bcp-1662--ref-label cit " / ")
-                             (bcp-1662--ref-label cit))))
-               (bcp-1662--insert-text-block
-                (concat text " — " label)))))))
+(defun bcp-1662--easter-anthems-p (propers)
+  "Return t if Easter Anthems should replace the Venite."
+  (let* ((date   (plist-get propers :date))
+         (season (plist-get propers :season))
+         (year   (caddr date))
+         (easter (and date (bcp-1662-easter year))))
+    (or (and easter (equal easter date))
+        (and bcp-1662-easter-anthems-throughout-eastertide
+             (eq season 'eastertide)))))
 
-      ;; ── Fixed text ─────────────────────────────────────────────────────
-      (:text
-       (let ((name      (plist-get step :text))
-             (ref       (plist-get step :ref))
-             (alt-creed (plist-get step :alt-creed)))
-         (cond
-          ((eq name 'lords-prayer)
-           (bcp-1662--insert-lords-prayer))
-          ;; Creed: swap to Nicene when bcp-liturgy-creed says so and an
-          ;; alt-creed ref is present on the step.
-          ((and (eq name 'apostles-creed)
-                alt-creed
-                (eq bcp-liturgy-creed 'nicene))
-           (let ((text (symbol-value alt-creed)))
-             (bcp-1662--insert-fixed-text
-              'nicene-creed
-              (if (stringp text) text
-                (or (bcp-common-prayers-text text) "")))))
-          (ref
-           (let ((text (symbol-value ref)))
-             (bcp-1662--insert-fixed-text
-              (or name (intern (symbol-name ref)))
-              (if (stringp text) text
-                (or (bcp-common-prayers-text text) "")))))
-          (t nil))))
+(defun bcp-1662--no-priest-rubric (ordo)
+  "Return the 'no priest' rubric text found in ORDO, or nil.
+This rubric (whose step carries :alt-collect) is suppressed in the main
+ordo walk and re-emitted before the lay absolution substitute."
+  (when-let* ((step (cl-find-if (lambda (s) (plist-get s :alt-collect)) ordo)))
+    (plist-get step :rubric)))
 
-      ;; ── Versicles ──────────────────────────────────────────────────────
-      (:versicles
-       (bcp-1662--insert-versicles (cdr step)))
+(defun bcp-1662--step-override (step _propers)
+  "Handle 1662-specific rubrical options for STEP.
+Returns :skip (omit), :handled (already rendered), or nil (shared handling)."
+  (let ((type   (car step))
+        (name   (plist-get step :text))
+        (rubric (plist-get step :rubric)))
+    (cond
+     ;; Suppress the "no priest" rubric — re-emitted by the absolution handler
+     ((and (eq type :rubric) (plist-get step :alt-collect))
+      :skip)
+     ;; Suppress General Confession rubric when confession is omitted
+     ((and (eq type :rubric)
+           (string-match-p "general Confession" (or rubric "")))
+      (when (eq bcp-1662-general-confession-form 'omit) :skip))
+     ;; Exhortation (Bidding) — honour bidding form option
+     ((and (eq type :text) (eq name 'exhortation))
+      (pcase bcp-1662-bidding-form
+        ('omit :skip)
+        ('brief
+         (bcp-liturgy-render--insert-fixed-text
+          'exhortation (or bcp-1662-bidding-brief ""))
+         :handled)
+        (_ nil)))
+     ;; General Confession — honour confession form option
+     ((and (eq type :text) (eq name 'general-confession))
+      (pcase bcp-1662-general-confession-form
+        ('omit :skip)
+        ('variant
+         (bcp-liturgy-render--insert-fixed-text
+          'general-confession bcp-1662-text-general-confession-variant)
+         :handled)
+        (_ nil)))
+     (t nil))))
 
-      ;; ── Canticle ───────────────────────────────────────────────────────
-      (:canticle
-       (let* ((name        (plist-get step :canticle))
-              (latin-title (plist-get step :latin))
-              (exc-easter  (plist-get step :exception-easter))
-              (exc-dom     (plist-get step :exception-day-of-month))
-              (date        (plist-get propers :date))
-              (dom         (cadr date))
-              (easter-day  (and exc-easter
-                                (eq (plist-get propers :season) 'eastertide)
-                                (equal (bcp-1662-easter (caddr date)) date)))
-              (dom-except  (and exc-dom (= dom exc-dom))))
-         (cond
-          ((or easter-day
-               (and bcp-1662-easter-anthems-throughout-eastertide
-                    (eq (plist-get propers :season) 'eastertide)
-                    (eq name 'venite)))
-           (bcp-1662--insert-heading 3 "Easter Anthems")
-           (when-let* ((text (bcp-1662-collect-text 'easter-anthems)))
-             (bcp-1662--insert-canticle-text text)))
-          (dom-except nil)
-          (t
-           (let* ((title    (or latin-title
-                                (bcp-liturgy-canticle-title name)
-                                (symbol-name name)))
-                  (raw-text (bcp-liturgy-canticle-get name))
-                  (text     (if (and (eq name 'venite)
-                                     bcp-1662-omit-venite-passiontide
-                                     (not (memq (plist-get propers :season)
-                                                '(lent passiontide))))
-                                (bcp-1662--venite-strip-verses-8-11 raw-text)
-                              raw-text)))
-             (bcp-1662--insert-heading 3 title)
-             (insert "\n")
-             (if text
-                 (progn
-                   (bcp-1662--insert-canticle-text text)
-                   (when (and bcp-liturgy-canticle-append-gloria
-                              (bcp-liturgy-canticle-gloria-p name))
-                     (bcp-1662--insert-canticle-text
-                      (bcp-liturgy-canticle-gloria-text))))
-               (bcp-1662--insert-rubric
-                (format "[%s: text not yet available]" title))))))))
+(defun bcp-1662--post-office (propers lesson-texts ctx)
+  "Render 1662 communion propers after the office when configured."
+  (let ((communion-sym (plist-get propers :communion))
+        (ot-ref        (plist-get propers :ot-reading))
+        (ref-label-fn  (plist-get ctx :ref-label-fn))
+        (ref-str-fn    (plist-get ctx :ref-to-string-fn)))
+    (when (and bcp-1662-show-communion-propers communion-sym)
+      (bcp-liturgy-render--insert-heading 2 "Communion Propers")
+      (when ot-ref
+        (let* ((label (funcall ref-label-fn ot-ref))
+               (txt   (cdr (assoc "ot" lesson-texts))))
+          (bcp-liturgy-render--insert-heading 3 (format "OT Lesson: %s" label))
+          (if txt
+              (bcp-liturgy-render--insert-text-block txt)
+            (insert (format "[[bible:%s][%s]]\n\n"
+                            (funcall ref-str-fn ot-ref) label)))))
+      (when-let* ((cp (bcp-1662-communion-propers communion-sym))
+                  (ep (plist-get cp :epistle))
+                  (go (plist-get cp :gospel)))
+        (let* ((ep-label (funcall ref-label-fn ep))
+               (go-label (funcall ref-label-fn go))
+               (ep-txt   (cdr (assoc "epistle" lesson-texts)))
+               (go-txt   (cdr (assoc "gospel"  lesson-texts))))
+          (bcp-liturgy-render--insert-heading 3 (format "Epistle: %s" ep-label))
+          (if ep-txt
+              (bcp-liturgy-render--insert-text-block ep-txt)
+            (insert (format "[[bible:%s][%s]]\n\n"
+                            (funcall ref-str-fn ep) ep-label)))
+          (bcp-liturgy-render--insert-heading 3 (format "Gospel: %s" go-label))
+          (if go-txt
+              (bcp-liturgy-render--insert-text-block go-txt)
+            (insert (format "[[bible:%s][%s]]\n\n"
+                            (funcall ref-str-fn go) go-label))))
+        (insert "\n")))))
 
-      ;; ── Alternatives (Te Deum / Benedicite etc.) ───────────────────────
-      (:alternatives
-       (let* ((opts  (cl-remove-if #'keywordp
-                                   (cl-remove-if-not #'listp (cdr step))))
-              (first (car opts))
-              (rest  (cdr opts)))
-         (when first
-           (let* ((name        (plist-get first :canticle))
-                  (latin-title (plist-get first :latin))
-                  (title       (or latin-title
-                                   (bcp-liturgy-canticle-title name)
-                                   (symbol-name name))))
-             (bcp-1662--insert-heading 3 title)
-             (when rest
-               (bcp-1662--insert-rubric
-                (format "[or: %s]"
-                        (mapconcat
-                         (lambda (o)
-                           (or (plist-get o :latin)
-                               (bcp-liturgy-canticle-title (plist-get o :canticle))
-                               "alternative"))
-                         rest " / "))))
-             (let* ((exc-easter (plist-get first :exception-easter))
-                    (exc-dom    (plist-get first :exception-day-of-month))
-                    (date       (plist-get propers :date))
-                    (dom        (cadr date))
-                    (easter-day (and exc-easter
-                                     (eq (plist-get propers :season) 'eastertide)
-                                     (equal (bcp-1662-easter (caddr date)) date)))
-                    (dom-except (and exc-dom (= dom exc-dom)))
-                    (raw-text   (bcp-liturgy-canticle-get name))
-                    (text       (if (and (eq name 'venite)
-                                         bcp-1662-omit-venite-passiontide
-                                         (not (memq (plist-get propers :season)
-                                                    '(lent passiontide))))
-                                    (bcp-1662--venite-strip-verses-8-11 raw-text)
-                                  raw-text)))
-               (cond
-                ((or easter-day
-                     (and bcp-1662-easter-anthems-throughout-eastertide
-                          (eq (plist-get propers :season) 'eastertide)
-                          (eq name 'venite)))
-                 (when-let* ((at (bcp-1662-collect-text 'easter-anthems)))
-                   (bcp-1662--insert-canticle-text at)))
-                (dom-except nil)
-                (text
-                 (bcp-1662--insert-canticle-text text)
-                 (when (and bcp-liturgy-canticle-append-gloria
-                            (bcp-liturgy-canticle-gloria-p name))
-                   (bcp-1662--insert-canticle-text
-                    (bcp-liturgy-canticle-gloria-text))))
-                (t
-                 (bcp-1662--insert-rubric
-                  (format "[%s: text not yet available]" title)))))))))
-
-      ;; ── Psalm slot ─────────────────────────────────────────────────────
-      (:psalm
-       (dolist (p psalms)
-         (let* ((key  (bcp-1662--psalm-label p))
-                (text (cdr (assoc key psalm-texts))))
-           (bcp-1662--insert-heading 3 key)
-           (if text
-               (progn
-                 (bcp-1662--insert-text-block text)
-                 (when bcp-liturgy-canticle-append-gloria
-                   (bcp-1662--insert-text-block
-                    (bcp-liturgy-canticle-gloria-text))))
-             (insert (format "[[bible:%s][%s]]\n\n"
-                             (bcp-1662--psalm-to-passage p) key))))))
-
-      ;; ── Lesson slot ────────────────────────────────────────────────────
-      (:lesson
-       (let* ((which   (plist-get step :lesson))
-              (key     (if (eq which 'second) "lesson2" "lesson1"))
-              (lessons (plist-get propers :lessons))
-              (ref     (plist-get lessons (if (eq which 'second)
-                                              :lesson2 :lesson1)))
-              (text    (cdr (assoc key lesson-texts))))
-         (when ref
-           (let ((label (bcp-1662--ref-label-with-text ref text)))
-             (bcp-1662--insert-heading 3
-               (format "%s Lesson: %s"
-                       (if (eq which 'second) "Second" "First")
-                       label))
-             (if text
-                 (bcp-1662--insert-text-block text)
-               (insert (format "[[bible:%s][%s]]\n\n"
-                               (bcp-1662--lectionary-ref-to-string ref)
-                               label)))))))
-
-      ;; ── Collect slot ───────────────────────────────────────────────────
-      (:collect
-       (let* ((which (plist-get step :collect))
-              (ref   (plist-get step :ref)))
-         (cond
-          ((eq which 'day)
-           (let* ((sym  (plist-get propers :collect))
-                  (text (when sym (bcp-1662-collect-text sym))))
-             (bcp-1662--insert-heading 3 "Collect of the Day")
-             (if text
-                 (insert text "\n")
-               (insert (format ";; [collect for %s]\n\n"
-                               (or sym "unknown"))))
-             (when-let* ((sc  (plist-get propers :seasonal-collect))
-                         (sct (bcp-1662-collect-text sc)))
-               (bcp-1662--insert-rubric
-                (pcase sc
-                  ('advent-1      "The Collect of Advent (said daily until Christmas Eve):")
-                  ('ash-wednesday "The Collect of Ash Wednesday (said daily throughout Lent):")
-                  (_              "Seasonal Collect:")))
-               (bcp-1662--insert-fixed-text 'seasonal-collect sct))))
-          (ref
-           (let* ((data  (symbol-value ref))
-                  (title (plist-get data :title))
-                  (text  (bcp-common-prayers-text data)))
-             (bcp-1662--insert-heading 3 (or title "Collect"))
-             (when text (insert text "\n")))))))
-
-      ;; ── Anthem ─────────────────────────────────────────────────────────
-      (:anthem
-       (bcp-1662--insert-rubric
-        (or (plist-get step :rubric)
-            "In Quires and Places where they sing here followeth the Anthem.")))
-
-      ;; ── Prayer slot ────────────────────────────────────────────────────
-      (:prayer
-       (let* ((ref   (plist-get step :ref))
-              (data  (when ref (symbol-value ref)))
-              (title (when data (plist-get data :title)))
-              (text  (when data (bcp-common-prayers-text data))))
-         (bcp-1662--insert-heading 3 (or title "Prayer"))
-         (when text
-           (bcp-1662--insert-fixed-text
-            (or (plist-get step :prayer) (intern (symbol-name ref)))
-            text))))
-
-      ;; ── State versicle (region-resolved) ───────────────────────────────
-      (:state-versicles
-       (let ((tradition (plist-get step :tradition)))
-         (bcp-1662--insert-versicles
-          (list (bcp-liturgy-state-versicles tradition)))))
-
-      ;; ── State prayers (region-resolved) ────────────────────────────────
-      (:state-prayers
-       (let ((tradition (plist-get step :tradition)))
-         (dolist (prayer (bcp-liturgy-state-prayers tradition))
-           (let* ((title (plist-get prayer :title))
-                  (text  (bcp-common-prayers-text prayer)))
-             (bcp-1662--insert-heading 3 (or title "Prayer"))
-             (when text
-               (bcp-1662--insert-fixed-text
-                (or (plist-get prayer :name) 'state-prayer)
-                text))))))
-
-      ;; ── Unknown — ignore silently ───────────────────────────────────────
-      (_ nil))))
+(defun bcp-1662--build-ctx (propers)
+  "Build the Anglican render context for the 1662 BCP.
+Resolves current defcustom values and registers all tradition callbacks."
+  (let* ((date      (plist-get propers :date))
+         (is-sunday (when date (= (calendar-day-of-week date) 0))))
+    (list
+     :rubric-face-fn                #'bcp-1662--rubric-face
+     :collect-text-fn               #'bcp-1662-collect-text
+     :ref-to-string-fn              #'bcp-1662--lectionary-ref-to-string
+     :ref-label-fn                  #'bcp-1662--ref-label
+     :psalm-label-fn                #'bcp-1662--psalm-label
+     :psalm-to-passage-fn           #'bcp-1662--psalm-to-passage
+     :opening-sentences-fn          #'bcp-1662--select-opening-sentences
+     :easter-anthems-p-fn           #'bcp-1662--easter-anthems-p
+     :venite-filter-fn              #'bcp-1662--venite-filter
+     :officiant                     office-officiant
+     :show-penitential-intro        (not (and bcp-1662-omit-penitential-intro
+                                              (not is-sunday)))
+     :absolution-substitute-key     'trinity-21
+     :absolution-no-priest-rubric-fn #'bcp-1662--no-priest-rubric
+     :seasonal-collect-rubric-fn    #'bcp-1662--seasonal-collect-rubric
+     :additional-prayers            bcp-1662-additional-prayers
+     :step-override-fn              #'bcp-1662--step-override
+     :post-office-fn                #'bcp-1662--post-office
+     :day-id-fn                     #'bcp-1662--day-identity
+     :office-label-fn               #'bcp-anglican-render--office-label
+     :buffer-name                   bcp-1662-office-buffer-name)))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
-;;;; Main ordo walker
+;;;; Main entry point
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
 (defun bcp-1662--render-office (propers psalms psalm-texts date-str lesson-texts)
   "Render the BCP 1662 Office buffer.
-
-Walks `bcp-1662-ordo-morning' or `bcp-1662-ordo-evening' in order,
-applying rubrical options and filling variable slots from PROPERS,
-PSALMS, PSALM-TEXTS, and LESSON-TEXTS."
-  (let* ((office       (plist-get propers :office))
-         (feast-name   (plist-get propers :feast-name))
-         (feast-rank   (plist-get propers :feast-rank))
-         (ordo         (if (eq office 'mattins)
-                           bcp-1662-ordo-morning
-                         bcp-1662-ordo-evening))
-         (office-label (bcp-1662--office-label office))
-         (day-id       (bcp-1662--day-identity propers))
-         (communion-sym (plist-get propers :communion))
-         (ot-ref        (plist-get propers :ot-reading)))
-    (with-current-buffer
-        (bcp-liturgy-render--setup-buffer bcp-1662-office-buffer-name)
-
-      ;; ── Title ────────────────────────────────────────────────────────
-      (bcp-1662--insert-heading 1
-        (format "%s — %s" office-label date-str))
-
-      ;; ── Liturgical identity block ────────────────────────────────────
-      (bcp-liturgy-render--insert-identity-block day-id feast-name feast-rank)
-      (insert "\n")
-
-      ;; ── Ordo walk ────────────────────────────────────────────────────
-      (let* ((season     (plist-get propers :season))
-             (is-sunday  (= (calendar-day-of-week (plist-get propers :date)) 0))
-             (is-weekday (not is-sunday))
-             (show-penit (not (and bcp-1662-omit-penitential-intro is-weekday)))
-             (past-venite nil))
-
-        (dolist (step ordo)
-          (let ((type       (car step))
-                (pos-before (point)))
-            (cond
-             ;; Penitential intro omission: skip rubrics, sentences, and
-             ;; fixed texts before the opening versicles
-             ((and (not show-penit) (not past-venite)
-                   (memq type '(:rubric :sentences :text)))
-              nil)
-             ;; Opening versicles end the penitential section
-             ((and (not show-penit) (not past-venite)
-                   (eq type :versicles))
-              (setq past-venite t)
-              (bcp-1662--render-ordo-step
-               step propers psalms psalm-texts lesson-texts))
-             ;; General Confession — honour confession form option
-             ((and (eq type :text)
-                   (eq (plist-get step :text) 'general-confession))
-              (pcase bcp-1662-general-confession-form
-                ('omit nil)
-                ('variant
-                 (bcp-1662--insert-fixed-text
-                  'general-confession
-                  bcp-1662-text-general-confession-variant))
-                (_
-                 (bcp-1662--render-ordo-step
-                  step propers psalms psalm-texts lesson-texts))))
-             ;; Exhortation (Bidding) — honour bidding form option
-             ((and (eq type :text)
-                   (eq (plist-get step :text) 'exhortation))
-              (pcase bcp-1662-bidding-form
-                ('full
-                 (bcp-1662--render-ordo-step
-                  step propers psalms psalm-texts lesson-texts))
-                ('brief
-                 (if bcp-1662-bidding-brief
-                     (bcp-1662--insert-fixed-text
-                      'exhortation bcp-1662-bidding-brief)
-                   (bcp-1662--render-ordo-step
-                    step propers psalms psalm-texts lesson-texts)))
-                ('omit nil)))
-             ;; General Confession rubric — suppress if confession is omitted
-             ((and (eq type :rubric)
-                   (string-match-p "general Confession"
-                                   (or (plist-get step :rubric) "")))
-              (unless (eq bcp-1662-general-confession-form 'omit)
-                (bcp-1662--render-ordo-step
-                 step propers psalms psalm-texts lesson-texts)))
-             ;; "No priest" rubric — suppressed here; rendered via absolution handler
-             ((and (eq type :rubric)
-                   (plist-get step :alt-collect))
-              nil)
-             ;; Absolution rubric — priest/bishop only
-             ((and (eq type :rubric)
-                   (string-match-p "Absolution\\|Remission of sins"
-                                   (or (plist-get step :rubric) "")))
-              (when (memq office-officiant '(priest bishop))
-                (bcp-1662--render-ordo-step
-                 step propers psalms psalm-texts lesson-texts)))
-             ;; Absolution text — priest gets absolution; lay/deacon gets
-             ;; the "no priest" rubric then the Trinity 21 collect
-             ((and (eq type :text)
-                   (eq (plist-get step :text) 'absolution))
-              (if (memq office-officiant '(priest bishop))
-                  (bcp-1662--render-ordo-step
-                   step propers psalms psalm-texts lesson-texts)
-                (let ((no-priest-step
-                       (cl-find-if (lambda (s) (plist-get s :alt-collect))
-                                   ordo)))
-                  (when no-priest-step
-                    (bcp-1662--render-ordo-step
-                     no-priest-step propers psalms psalm-texts lesson-texts))
-                  (let ((text (bcp-1662-collect-text 'trinity-21)))
-                    (if text
-                        (bcp-1662--insert-fixed-text 'absolution text)
-                      (bcp-1662--insert-rubric
-                       "[Collect for the Twenty-First Sunday after Trinity]"))))))
-             ;; All other steps
-             (t
-              (setq past-venite t)
-              (bcp-1662--render-ordo-step
-               step propers psalms psalm-texts lesson-texts)))
-            ;; Blank line after each step that produced output
-            (when (> (point) pos-before)
-              (insert "\n"))))
-
-        ;; Additional prayers
-        (when bcp-1662-additional-prayers
-          (dolist (prayer bcp-1662-additional-prayers)
-            (cond
-             ((stringp prayer)
-              (bcp-1662--insert-fixed-text 'additional-prayer prayer))
-             ((symbolp prayer)
-              (let ((data (and (boundp prayer) (symbol-value prayer))))
-                (when data
-                  (bcp-1662--insert-heading 3
-                    (or (plist-get data :title) (symbol-name prayer)))
-                  (bcp-1662--insert-fixed-text
-                   prayer (plist-get data :text)))))))))
-
-      ;; ── Communion propers ────────────────────────────────────────────
-      (when (and bcp-1662-show-communion-propers communion-sym)
-        (bcp-1662--insert-heading 2 "Communion Propers")
-        (when ot-ref
-          (let* ((label (bcp-1662--ref-label ot-ref))
-                 (text  (cdr (assoc "ot" lesson-texts))))
-            (bcp-1662--insert-heading 3 (format "OT Lesson: %s" label))
-            (if text
-                (bcp-1662--insert-text-block text)
-              (insert (format "[[bible:%s][%s]]\n\n"
-                              (bcp-1662--lectionary-ref-to-string ot-ref)
-                              label)))))
-        (when-let* ((cp (bcp-1662-communion-propers communion-sym))
-                    (ep (plist-get cp :epistle))
-                    (go (plist-get cp :gospel)))
-          (let* ((ep-label (bcp-1662--ref-label ep))
-                 (go-label (bcp-1662--ref-label go))
-                 (ep-text  (cdr (assoc "epistle" lesson-texts)))
-                 (go-text  (cdr (assoc "gospel"  lesson-texts))))
-            (bcp-1662--insert-heading 3 (format "Epistle: %s" ep-label))
-            (if ep-text
-                (bcp-1662--insert-text-block ep-text)
-              (insert (format "[[bible:%s][%s]]\n\n"
-                              (bcp-1662--lectionary-ref-to-string ep) ep-label)))
-            (bcp-1662--insert-heading 3 (format "Gospel: %s" go-label))
-            (if go-text
-                (bcp-1662--insert-text-block go-text)
-              (insert (format "[[bible:%s][%s]]\n\n"
-                              (bcp-1662--lectionary-ref-to-string go)
-                              go-label))))))
-
-      ;; ── Finalise ─────────────────────────────────────────────────────
-      (bcp-reader--add-verse-number-overlays)
-      (when bcp-reader-paragraph-mode
-        (bcp-reader--add-paragraph-overlays))
-      (bcp-liturgy-render--finalise-buffer)
-      (current-buffer))))
-
+Builds the tradition context and delegates to the shared Anglican walker."
+  (let* ((office (plist-get propers :office))
+         (ordo   (if (eq office 'mattins)
+                     bcp-1662-ordo-morning
+                   bcp-1662-ordo-evening))
+         (ctx    (bcp-1662--build-ctx propers)))
+    (bcp-anglican-render--render-office
+     propers psalms psalm-texts date-str lesson-texts ordo ctx)))
 
 (provide 'bcp-1662-render)
 ;;; bcp-1662-render.el ends here

@@ -1,6 +1,6 @@
 # emacs-bcp — Bible Commentary & Prayer
 
-An Emacs Lisp framework for Bible study and liturgical prayer. It has two equal purposes: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline. The BCP 1662 Daily Office is the first fully implemented tradition; the architecture is designed to accommodate additional prayer books and the Roman Breviary.
+An Emacs Lisp framework for Bible study and liturgical prayer. It has two equal purposes: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline. The BCP 1662 and 1928 American BCP Daily Offices are fully implemented; the architecture is designed to accommodate additional prayer books and the Roman Breviary.
 
 ---
 
@@ -14,9 +14,14 @@ The core of the project is a scripture reader (`bcp-reader`) and study notebook 
 
 ### Daily Office
 
-The prayer side renders the full text of the BCP 1662 Daily Office — Morning and Evening Prayer — as a read-only buffer. The complete ordo is present: opening sentences, confession, absolution, psalms, canticles, lessons, collects, and prayers, with lessons fetched and inserted inline. No external browser or PDF viewer is required. The liturgical calendar engine handles the full 1662 feast calendar, moveable feasts, and user-defined observances.
+The prayer side renders the full text of the BCP Daily Office — Morning and Evening Prayer — as a read-only buffer. The complete ordo is present: opening sentences, confession, absolution, psalms, canticles, lessons, collects, preces, and prayers, with lessons fetched and inserted inline. No external browser or PDF viewer is required.
 
-The 1662 implementation is the proof of concept for a tradition-agnostic Office framework. Support for the 1928 and 1979 American BCPs and the Roman Breviary is planned.
+Two traditions are fully implemented:
+
+- **BCP 1662** — the English prayer book; full liturgical calendar with moveable feasts and user-defined observances
+- **1928 American BCP** — the pre-revision American prayer book; full liturgical calendar and lectionary
+
+Both share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. Support for the 1979 American BCP and the Roman Breviary is planned.
 
 ---
 
@@ -38,11 +43,24 @@ The current implementation covers:
 - Configurable canticles with optional Latin texts and per-canticle language overrides
 - Lessons (OT and NT) fetched and inserted inline; Communion propers optionally appended
 - Collects of the Day resolved from the full liturgical calendar
-- Support for user-defined additional prayers
+- Support for user-defined additional prayers and feasts
 
-**Liturgical calendar:**
+**1928 American BCP Daily Office:**
+- Complete Morning and Evening Prayer ordos
+- Seasonal opening sentences from the 1928 corpus
+- Full 1928 lectionary (original 1928 edition, not the 1945 revision)
+- 1928 canticles including Benedictus es Domine
+- Collects and Communion propers from the 1928 BCP
+
+**State prayers (both traditions):**
+- Three versicle forms — monarchy / *save the State* (1928) / *them that rule* (1662) — selectable independently of region on theological grounds
+- Sovereign name, title (king/queen), and royal family members configurable; rendered in ALL-CAPS to mark as requiring update at succession
+- President's name injected per the 1928 *N.* rubric; rendered in ALL-CAPS
+
+**Liturgical calendars:**
 - Full BCP 1662 calendar including fixed feasts, moveable feasts, and occurrences
-- User-defined feast overrides
+- Full 1928 American BCP calendar and sanctoral
+- User-defined feast overrides (1662)
 
 **Scripture backends:**
 - `coverdale` — Miles Coverdale's Psalter served locally from a bundled text file; no network required for psalms
@@ -55,23 +73,26 @@ The current implementation covers:
 
 ### Architecture
 
-The codebase is divided into four domains:
+The codebase is divided into five domains:
 
 | Prefix | Domain |
 |--------|--------|
 | `bcp-` | Shared framework: computus, feast rank taxonomy, fetch/parse layer, buffer primitives |
-| `bcp-liturgy-` | Generic Office machinery: canticle registry, ordo walker protocol |
-| `bcp-1662-` | BCP 1662 implementation: calendar, lectionary, ordo, renderer |
+| `bcp-liturgy-` | Generic Office machinery: canticle registry, ordo walker protocol, canonical hours |
+| `bcp-common-` | Shared text pools: `bcp-common-prayers` (ecumenical), `bcp-common-anglican` (Anglican family), `bcp-common-canticles`, `bcp-common-roman` (planned) |
+| `bcp-anglican-` | Shared Anglican render layer (`bcp-anglican-render`); tradition files: `bcp-1662-`, `bcp-anglican-1928-` |
 | `bcp-reader` / `bcp-notebook` | Scripture reader and study notebook |
 
 The fetch layer (`bcp-fetcher`) is shared by both the scripture reader and the Office engine. Translation settings, fallback chains, and caching apply uniformly across both.
 
+The shared rendering layer (`bcp-anglican-render`) implements the ordo walker and step dispatch for the classical Anglican BCP family. Tradition-specific files (e.g. `bcp-1662-render`, `bcp-anglican-1928-render`) build a context plist and delegate to it; they own only what genuinely differs — rubric face, Venite rules, ref-label format, collect dispatch.
+
 ### Rendering pipeline
 
-1. `bcp-1662-open-office` determines the office (Morning or Evening Prayer) from the current time and date
-2. `bcp-1662-propers-for-date` resolves the liturgical day: feast, season, week, collect, lessons, and communion propers
+1. `bcp-1662-open-office` (or `bcp-1928-open-office`) determines the office from the current time and date
+2. `bcp-1662-propers-for-date` (or `bcp-1928-propers-for-date`) resolves the liturgical day: feast, season, week, collect, lessons, and communion propers
 3. All psalm and lesson passages are fetched in parallel via the `bcp-fetcher` layer
-4. Once all fetches complete (or time out), `bcp-1662--render-office` walks the ordo step sequence and inserts the full liturgy into the office buffer
+4. Once all fetches complete (or time out), the tradition's render function builds a context plist and passes it to `bcp-anglican-render--render-office`, which walks the ordo step sequence and inserts the full liturgy into the office buffer
 5. The buffer is rendered read-only with overlays for verse numbers, rubric colouring, and heading styles
 
 ### Fetch backends
@@ -101,28 +122,46 @@ The default configuration is `coverdale` primary, `oremus` fallback. Psalms are 
 ```elisp
 (add-to-list 'load-path "~/.emacs.d/elisp")
 
+;; Shared framework
 (require 'bcp-fetcher)
 (require 'bcp-fetcher-oremus)
 (require 'bcp-calendar)
-(require 'bcp-liturgy-canticles)
+(require 'bcp-common-canticles)
+(require 'bcp-common-prayers)
+(require 'bcp-common-anglican)
 (require 'bcp-liturgy-render)
+(require 'bcp-liturgy-hours)
 (require 'bcp-render)
+(require 'bcp-anglican-render)
+
+;; BCP 1662
 (require 'bcp-1662-calendar)
 (require 'bcp-1662-data)
 (require 'bcp-1662-user-feasts)
 (require 'bcp-1662-ordo)
 (require 'bcp-1662-render)
 (require 'bcp-1662)
+
+;; 1928 American BCP
+(require 'bcp-anglican-1928-calendar)
+(require 'bcp-anglican-1928-data)
+(require 'bcp-anglican-1928-lectionary)
+(require 'bcp-anglican-1928-ordo)
+(require 'bcp-anglican-1928-render)
+(require 'bcp-anglican-1928)
+
+;; Scripture reader and notebook
 (require 'bcp-reader)
 (require 'bcp-notebook)
 
 (load "~/.emacs.d/elisp/bcp-preferences.el")
 ```
 
-3. Optionally bind the entry command:
+3. Optionally bind the entry commands:
 
 ```elisp
 (global-set-key (kbd "C-c o") #'bcp-1662-open-office)
+(global-set-key (kbd "C-c O") #'bcp-1928-open-office)
 ```
 
 ### Coverdale Psalter
@@ -175,13 +214,45 @@ All settings are collected in `bcp-preferences.el`. Copy this file and edit it, 
 
 ### Officiant order
 
-Affects the form of the Absolution:
+Affects the form of the Absolution (priest says it; lay or deacon receives a substitute collect):
 
 ```elisp
 (setq office-officiant 'lay)   ; lay deacon priest bishop
 ```
 
-### Rubrical options
+### State prayers
+
+The civil-authority versicle in the Preces and the state prayers said after the Office are controlled independently.
+
+```elisp
+;; Versicle form — choose on theological grounds, not merely geographic ones.
+;; 'monarchy       — "O Lord, save the King." (or Queen)
+;; 'state          — "O Lord, save the State."  (1928 American republican form)
+;; 'them-that-rule — "O Lord, save them that rule."  (1662 international form)
+(setq bcp-liturgy-state-versicle-form 'state)
+
+;; Region — controls which state prayers are said after the Office.
+;; 'monarchy  — sovereign, royal family, clergy
+;; 'us        — President of the United States, clergy (1928 American wording)
+;; 'republic  — civil authority, clergy (generic)
+(setq bcp-liturgy-region 'us)
+
+;; Sovereign (when bcp-liturgy-state-versicle-form is 'monarchy)
+(setq bcp-liturgy-sovereign-title 'king)   ; 'king or 'queen
+(setq bcp-liturgy-sovereign-name "Charles")  ; inserted as KING CHARLES in the prayer
+
+;; Royal family members named in the prayer (before "and all the Royal Family")
+(setq bcp-liturgy-royal-family-names
+      "Queen Camilla, William Prince of Wales, the Princess of Wales")
+
+;; President's name, inserted per the 1928 N. rubric (rendered in ALL-CAPS)
+;; nil omits the name: "Grant to the President of the United States..."
+(setq bcp-liturgy-president-name "Donald")
+```
+
+Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to update them when the officeholder changes.
+
+### BCP 1662 rubrical options
 
 ```elisp
 ;; Omit penitential introduction on weekdays
@@ -190,7 +261,7 @@ Affects the form of the Absolution:
 ;; Opening sentence corpus
 (setq bcp-1662-opening-sentence-corpus '1662)
 ;;   '1662     — eleven penitential sentences from the BCP 1662
-;;   'extended — seasonal sentence from 1928 BCP; falls back to 1662 pool
+;;   'extended — seasonal sentence from the 1928 BCP; falls back to 1662 pool
 
 ;; Opening sentence selection (when corpus is '1662)
 (setq bcp-1662-opening-sentence-selection 'auto)
@@ -219,6 +290,19 @@ Affects the form of the Absolution:
 (setq bcp-1662-show-communion-propers t)
 ```
 
+### 1928 American BCP rubrical options
+
+```elisp
+;; Omit penitential introduction on weekdays
+(setq bcp-1928-omit-penitential-intro nil)
+
+;; Show Communion propers in the office buffer
+(setq bcp-1928-show-communion-propers t)
+
+;; Rubric style
+(setq bcp-1928-rubric-style 'red)   ; 'red or 'comment
+```
+
 ### Canticles
 
 ```elisp
@@ -235,7 +319,7 @@ Affects the form of the Absolution:
 ### Rendering
 
 ```elisp
-;; Rubric style
+;; Rubric style (BCP 1662)
 (setq bcp-1662-rubric-style 'red)
 ;;   'red     — traditional liturgical red
 ;;   'comment — inherits font-lock-comment-face (theme-aware grey)
@@ -244,11 +328,11 @@ Affects the form of the Absolution:
 (setq bcp-1662-morning-prayer-hour-limit 12)
 ```
 
-### User-defined feasts
+### User-defined feasts (BCP 1662)
 
 Add local or diocesan observances in `bcp-1662-user-feasts.el`. Each entry specifies a date, rank, collect, and lessons. See the file for format documentation.
 
-### Additional prayers
+### Additional prayers (BCP 1662)
 
 ```elisp
 ;; Append extra prayers after the five state prayers
@@ -275,7 +359,7 @@ Reloads all package files in dependency order without restarting Emacs.
 
 **The Coverdale Psalter** — Miles Coverdale's translation of the Psalms, appointed in the BCP 1662 — is in the public domain. The bundled `bcp-liturgy-psalter-coverdale.txt` was prepared from the Oremus Bible Browser's BCP psalter texts.
 
-**The Book of Common Prayer 1928** (American) is in the public domain. Opening sentences and the brief bidding form in this project are drawn from the 1928 Morning and Evening Prayer services.
+**The Book of Common Prayer 1928** (American) is in the public domain. The text of the collects, canticles, prayers, and liturgical calendar used here follows the standard 1928 edition.
 
 **eBible.org** provides freely downloadable plain-text scripture files used by the optional `bcp-fetcher-ebible` backend.
 
@@ -293,4 +377,4 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others in the Anglican tradition who use Emacs may find it useful. Contributions, corrections, and suggestions are welcome.
 
-Planned additions include: 1928 and 1979 American BCPs, canonical hours framework (Prime, Terce, Sext, None, Compline), multi-language prayer texts (*Liber Precum Publicarum*, Roman Breviary), and a `transient`-based preferences interface.
+Planned additions include: the 1979 American BCP, canonical hours framework (Prime, Terce, Sext, None, Compline), multi-language prayer texts (*Liber Precum Publicarum*, Roman Breviary), and a `transient`-based preferences interface.

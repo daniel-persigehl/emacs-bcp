@@ -17,7 +17,7 @@
 ;;   (require 'bcp-anglican-1928-calendar)
 ;;   (require 'bcp-anglican-1928-data)
 ;;   (require 'bcp-anglican-1928-lectionary)
-;;   (require 'bcp-angular-1928-render)   ; note: "angular" typo in filename
+;;   (require 'bcp-anglican-1928-render)
 ;;   (require 'bcp-anglican-1928)
 
 ;;; Code:
@@ -29,7 +29,7 @@
 (require 'bcp-anglican-1928-calendar)
 (require 'bcp-anglican-1928-data)
 (require 'bcp-anglican-1928-lectionary)
-(require 'bcp-angular-1928-render)
+(require 'bcp-anglican-1928-render)
 (require 'bcp-liturgy-hours)
 (require 'bcp-liturgy-dispatch)
 
@@ -101,7 +101,8 @@ For most days returns WEEK-KEY unchanged.  Handles:
   Easter octave Mon/Tue → easter-monday, easter-tuesday
   Whitsun week Mon/Tue → whit-monday, whit-tuesday
   Trinity Sunday → trinity-sunday
-  Sunday after Ascension → after-ascension"
+  Sunday after Ascension → after-ascension
+  Sunday Next Before Advent → after-trinity-25"
   (cond
    ;; Holy Week
    ((and (eq week-key 'palm-sunday) (eq dow 'monday))    'holy-monday)
@@ -121,6 +122,9 @@ For most days returns WEEK-KEY unchanged.  Handles:
    ;; Sunday after Ascension (calendar: 'sunday-after-ascension;
    ;; collect/proper key: 'after-ascension)
    ((eq week-key 'sunday-after-ascension)                'after-ascension)
+   ;; Sunday Next Before Advent (calendar: 'sunday-before-advent;
+   ;; collect/proper key: 'after-trinity-25)
+   ((eq week-key 'sunday-before-advent)                  'after-trinity-25)
    ;; Default: use week-key as-is
    (t week-key)))
 
@@ -538,7 +542,7 @@ With a prefix argument ARG, prompts for date and office."
       (remove-overlays)
       (erase-buffer)
       (insert (format "Loading %s — %s…\n\nFetching %d passage(s) from Oremus.\n"
-                      (if (eq office 'mattins) "Morning Prayer" "Evening Prayer")
+                      (bcp-anglican-render--office-label office)
                       date-str
                       (+ (length psalm-passages) (length lesson-passages))))
       (read-only-mode 1))
@@ -558,7 +562,7 @@ With a prefix argument ARG, prompts for date and office."
           (with-current-buffer (get-buffer bcp-1928-office-buffer-name)
             (bcp-office-nav-init time 'bcp-1928 #'bcp-1928-open-office))
           (message "%s — %s"
-                   (if (eq office 'mattins) "Morning Prayer" "Evening Prayer")
+                   (bcp-anglican-render--office-label office)
                    date-str)))))))
 
 (defun bcp-1928--prompt-office-time ()
