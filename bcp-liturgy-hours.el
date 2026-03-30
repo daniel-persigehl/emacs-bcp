@@ -86,5 +86,19 @@ GROUPING is an alist of (CANONICAL-HOUR . OFFICE-SYMBOL)."
   "Return the hour-grouping alist for RITE, or nil if not registered."
   (alist-get rite bcp-liturgy--hour-grouping-registry nil nil #'equal))
 
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Built-in hour groupings
+
+(bcp-liturgy-register-hour-grouping
+ 'roman-lobvm
+ '((matins   . matins)
+   (lauds    . lauds)
+   (prime    . prime)
+   (terce    . terce)
+   (sext     . sext)
+   (none     . none)
+   (vespers  . vespers)
+   (compline . compline)))
+
 (provide 'bcp-liturgy-hours)
 ;;; bcp-liturgy-hours.el ends here

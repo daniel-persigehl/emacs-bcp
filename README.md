@@ -16,12 +16,13 @@ The core of the project is a scripture reader (`bcp-reader`) and study notebook 
 
 The prayer side renders the full text of the BCP Daily Office — Morning and Evening Prayer — as a read-only buffer. The complete ordo is present: opening sentences, confession, absolution, psalms, canticles, lessons, collects, preces, and prayers, with lessons fetched and inserted inline. No external browser or PDF viewer is required.
 
-Two traditions are fully implemented:
+Three traditions are implemented:
 
 - **BCP 1662** — the English prayer book; full liturgical calendar with moveable feasts and user-defined observances
 - **1928 American BCP** — the pre-revision American prayer book; full liturgical calendar and lectionary
+- **Little Office of the BVM** — the Roman Office (*Officium Parvum BMV*), DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering
 
-Both share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. Support for the 1979 American BCP and the Roman Breviary is planned.
+The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`). Support for the 1979 American BCP and the full Roman Breviary is planned.
 
 ---
 
@@ -52,7 +53,16 @@ The current implementation covers:
 - 1928 canticles including Benedictus es Domine
 - Collects and Communion propers from the 1928 BCP
 
-**State prayers (both traditions):**
+**Little Office of the BVM (Roman):**
+- All eight canonical hours: Matins, Lauds, Prime, Terce, Sext, None, Vespers, Compline
+- Auto-hour selection based on time of day
+- Latin/English bilingual rendering (Marquess of Bute 1908 prose translation)
+- Hymnal with multiple named English translators per hymn (Britt, Caswall, Neale)
+- Scripture capitula resolved via the configurable fetch layer (user's preferred Bible translation)
+- Seasonal Marian antiphons (Alma Redemptoris, Ave Regina, Regina caeli, Salve Regina)
+- Penitential season Alleluia suppression
+
+**State prayers (both Anglican traditions):**
 - Three versicle forms — monarchy / *save the State* (1928) / *them that rule* (1662) — selectable independently of region on theological grounds
 - Sovereign name, title (king/queen), and royal family members configurable; rendered in ALL-CAPS to mark as requiring update at succession
 - President's name injected per the 1928 *N.* rubric; rendered in ALL-CAPS
@@ -80,8 +90,9 @@ The codebase is divided into five domains:
 |--------|--------|
 | `bcp-` | Shared framework: computus, feast rank taxonomy, fetch/parse layer, buffer primitives |
 | `bcp-liturgy-` | Generic Office machinery: canticle registry, ordo walker protocol, canonical hours |
-| `bcp-common-` | Shared text pools: `bcp-common-prayers` (ecumenical), `bcp-common-anglican` (Anglican family), `bcp-common-canticles`, `bcp-common-roman` (planned) |
+| `bcp-common-` | Shared text pools: `bcp-common-prayers` (ecumenical), `bcp-common-anglican` (Anglican family), `bcp-common-canticles`, `bcp-common-roman` (Roman fixed texts, Latin + English) |
 | `bcp-anglican-` | Shared Anglican render layer (`bcp-anglican-render`); tradition files: `bcp-1662-`, `bcp-anglican-1928-` |
+| `bcp-roman-` | Roman Office: renderer, ordo, hymnal; tradition files: `bcp-roman-lobvm` (Little Office of the BVM) |
 | `bcp-reader` / `bcp-notebook` | Scripture reader and study notebook |
 
 The fetch layer (`bcp-fetcher`) is shared by both the scripture reader and the Office engine. Translation settings, fallback chains, and caching apply uniformly across both.
@@ -154,6 +165,12 @@ The default configuration is `coverdale` primary, `oremus` fallback. Psalms are 
 (require 'bcp-anglican-1928-render)
 (require 'bcp-anglican-1928)
 
+;; Roman Office (Little Office of the BVM)
+(require 'bcp-common-roman)
+(require 'bcp-roman-hymnal)
+(require 'bcp-roman-ordo)
+(require 'bcp-roman-lobvm)
+
 ;; Scripture reader and notebook
 (require 'bcp-reader)
 (require 'bcp-notebook)
@@ -166,6 +183,7 @@ The default configuration is `coverdale` primary, `oremus` fallback. Psalms are 
 ```elisp
 (global-set-key (kbd "C-c o") #'bcp-1662-open-office)
 (global-set-key (kbd "C-c O") #'bcp-1928-open-office)
+(global-set-key (kbd "C-c r") #'bcp-roman-lobvm)  ; auto-selects hour by time
 ```
 
 ### Coverdale Psalter
@@ -330,6 +348,25 @@ Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to up
 (setq bcp-liturgy-canticle-overrides '((te-deum . latin)))
 ```
 
+### Roman Office (Little Office of the BVM)
+
+```elisp
+;; Office language
+(setq bcp-roman-office-language 'latin)   ; 'latin or 'english
+
+;; Preferred hymn translator (English mode)
+(setq bcp-roman-hymnal-preferred-translator 'britt)
+;;   'britt    — Dom Matthew Britt, O.S.B. (1922)
+;;   'caswall  — Edward Caswall (1849)
+;;   'neale    — John Mason Neale (1851)
+;;   'primer   — The Primer tradition
+
+;; Translator fallback order
+(setq bcp-roman-hymnal-fallback-order '(britt caswall neale primer))
+```
+
+Both settings are also available from the transient menu (`M-x bcp-settings`, then `R` for the Roman Office submenu).
+
 ### Rendering
 
 ```elisp
@@ -381,7 +418,9 @@ The author would like to extend thanks to the creators of the [*1662 Daily Offic
 
 The author also wishes to thank the many wonderful members of the Personal Ordinariate of St. Peter for their personal kindness and their work in raising awareness of the richness of the Anglican traditions.
 
-This project was inspired by [Divinum Officium](https://divinumofficium.com/), and represents the author's attempt to create a comparable service for the Book of Common Prayer.
+**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation (Little Office of the BVM). The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer and the Roman Breviary.
+
+**The Marquess of Bute's** translation of the Roman Breviary (1908) provides the English prose translations for the Little Office of the BVM. Hymn translations are attributed to their individual translators: Dom Matthew Britt, O.S.B. (1922), Edward Caswall (1849), and John Mason Neale (1851).
 
 This project was developed with the assistance of [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
@@ -391,4 +430,4 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others in the Anglican tradition who use Emacs may find it useful. Contributions, corrections, and suggestions are welcome.
 
-Planned additions include: the 1979 American BCP, canonical hours framework (Prime, Terce, Sext, None, Compline), multi-language prayer texts (*Liber Precum Publicarum*, Roman Breviary), and a psalm pointing utility.
+Planned additions include: the 1979 American BCP, the full Roman Breviary (beyond the Little Office), additional hymn translations, and a psalm pointing utility.

@@ -275,61 +275,23 @@ Looks in `bcp-1662-user-feast-data'.  Returns a plist
 (defun bcp-1662-user-feast-observed-date (feast-symbol year)
   "Return the date on which FEAST-SYMBOL is actually observed in YEAR.
 
-Applies BCP Rule 1: if the feast's fixed date falls on a protected
-period (Ash Wednesday, Passiontide, Easter octave, Ascension Day, or
-Whitsuntide), it is transferred to the appropriate day.
-
-Transfer targets:
-  Ash Wednesday conflict       → Friday after Ash Wednesday
-  Passiontide / Easter octave  → Tuesday after Easter 1
-  Ascension Day conflict        → Friday after Ascension Day
-  Whitsuntide conflict          → Tuesday after Trinity Sunday
+Applies BCP Rule 1 via `bcp-1662--transfer-date': if the feast's fixed
+date falls in a protected period (Ash Wednesday, Passiontide, Easter
+octave, Ascension Day, or Whitsuntide), it is transferred.
 
 Returns (MONTH DAY YEAR) of the observed date."
   (let* ((udata (cdr (assq feast-symbol bcp-1662-user-feast-data)))
          (fixed (plist-get udata :date)))
     (unless fixed
       (error "No fixed date for feast %s" feast-symbol))
-    (let* ((month    (car fixed))
-           (day      (cadr fixed))
-           (feast    (calendar-absolute-from-gregorian (list month day year)))
-           (feasts   (bcp-1662-moveable-feasts year))
-           (ash      (calendar-absolute-from-gregorian
-                      (cdr (assq 'ash-wednesday feasts))))
-           (passion  (calendar-absolute-from-gregorian
-                      (cdr (assq 'passion-sunday feasts))))
-           (easter   (calendar-absolute-from-gregorian
-                      (cdr (assq 'easter feasts))))
-           (easter-1 (calendar-absolute-from-gregorian
-                      (cdr (assq 'easter-1 feasts))))
-           (asc      (calendar-absolute-from-gregorian
-                      (cdr (assq 'ascension feasts))))
-           (whit     (calendar-absolute-from-gregorian
-                      (cdr (assq 'whitsunday feasts))))
-           (trinity  (calendar-absolute-from-gregorian
-                      (cdr (assq 'trinity-sunday feasts)))))
-      (cond
-       ;; Ash Wednesday itself
-       ((= feast ash)
-        (calendar-gregorian-from-absolute (+ ash 2)))  ; Friday after Ash Wed
-
-       ;; Passiontide (Passion Sunday through Holy Saturday = easter - 1)
-       ;; and Easter octave (Easter Day through Low Sunday)
-       ((or (and (>= feast passion) (<= feast (1- easter)))
-            (and (>= feast easter) (<= feast easter-1)))
-        (calendar-gregorian-from-absolute (+ easter-1 2)))  ; Tuesday after Easter 1
-
-       ;; Ascension Day itself
-       ((= feast asc)
-        (calendar-gregorian-from-absolute (+ asc 1)))  ; Friday after Ascension
-       ;; (Ascension is always Thursday; +1 = Friday)
-
-       ;; Whitsunday through 7 days following
-       ((and (>= feast whit) (<= feast (+ whit 7)))
-        (calendar-gregorian-from-absolute (+ trinity 2)))  ; Tuesday after Trinity
-
-       ;; No conflict — observed on its fixed date
-       (t (list month day year))))))
+    (let* ((month (car fixed))
+           (day   (cadr fixed))
+           (abs   (calendar-absolute-from-gregorian (list month day year)))
+           (xfer  (bcp-1662--transfer-date abs year)))
+      (if xfer
+          (let ((greg (calendar-gregorian-from-absolute xfer)))
+            (list (car greg) (cadr greg) (caddr greg)))
+        (list month day year)))))
 
 (defun bcp-1662-user-feasts-for-date (month day year)
   "Return all user feasts observed on (MONTH DAY YEAR) in YEAR.

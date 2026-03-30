@@ -220,20 +220,65 @@ nil means no seasonal collect for that season.")
               (name  (plist-get (cddr entry) :feast)))
     (bcp-1662-feast-symbol name)))
 
+(defun bcp-1662--transferred-feast-for-date (month day year)
+  "Return the standard greater/principal feast transferred TO (MONTH DAY YEAR).
+Iterates all standard feasts whose rank is greater or principal.  If one's
+fixed date falls in a protected period and transfers to this date, return
+its symbol.  Returns the highest-ranking match, or nil."
+  (let ((target (calendar-absolute-from-gregorian (list month day year)))
+        best best-rank-val)
+    (dolist (entry bcp-1662-feast-data)
+      (let* ((sym   (car entry))
+             (rank  (plist-get (cdr entry) :rank))
+             (fixed (plist-get (cdr entry) :date)))
+        (when (and fixed (memq rank '(principal greater)))
+          (let* ((abs  (calendar-absolute-from-gregorian
+                        (list (car fixed) (cadr fixed) year)))
+                 (xfer (bcp-1662--transfer-date abs year)))
+            (when (and xfer (= xfer target))
+              (let ((rv (bcp-1662--rank-value rank)))
+                (when (or (null best) (< rv best-rank-val))
+                  (setq best sym
+                        best-rank-val rv))))))))
+    best))
+
 (defun bcp-1662--best-feast-for-date (month day year)
   "Return the highest-ranking feast symbol observed on (MONTH DAY YEAR).
 
-Considers both BCP calendar feasts and user patronal feasts (with
-transfer logic).  Returns the single best feast symbol, or nil.
+Considers standard BCP calendar feasts (with Rule 1 transfer logic)
+and user patronal feasts (with transfer logic).  Returns the single
+best feast symbol, or nil.
 
 Precedence: principal > greater (patronal-elevated > standard) > lesser."
   (let* (;; BCP calendar feast on this fixed date
          (cal-sym   (bcp-1662--feast-symbol-for-date month day))
+         (cal-data  (when cal-sym (bcp-1662-feast-data cal-sym)))
+         (cal-base  (when cal-data (plist-get cal-data :rank)))
          (cal-rank  (when cal-sym
                       (bcp-1662-effective-feast-rank
-                       cal-sym
-                       (or (plist-get (bcp-1662-feast-data cal-sym) :rank)
-                           'lesser))))
+                       cal-sym (or cal-base 'lesser))))
+         ;; Suppress fixed-date feast if it has been transferred away
+         (cal-abs   (calendar-absolute-from-gregorian (list month day year)))
+         (cal-xfer  (when (and cal-sym (memq cal-rank '(principal greater)))
+                      (bcp-1662--transfer-date cal-abs year)))
+         (cal-sym   (if cal-xfer nil cal-sym))
+         (cal-rank  (if cal-xfer nil cal-rank))
+         ;; Check if any standard feast has been transferred TO this date
+         (xfer-sym  (bcp-1662--transferred-feast-for-date month day year))
+         (xfer-rank (when xfer-sym
+                      (plist-get (bcp-1662-feast-data xfer-sym) :rank)))
+         ;; Best standard feast: transferred-in or fixed-date
+         (std-sym   (cond
+                     ((and xfer-sym cal-sym)
+                      (if (<= (bcp-1662--rank-value xfer-rank)
+                              (bcp-1662--rank-value cal-rank))
+                          xfer-sym cal-sym))
+                     (xfer-sym xfer-sym)
+                     (t cal-sym)))
+         (std-rank  (cond
+                     ((eq std-sym xfer-sym) xfer-rank)
+                     ((eq std-sym cal-sym)  cal-rank)
+                     (t nil)))
          ;; User custom feasts observed on this date (after transfers)
          (user-syms (when (fboundp 'bcp-1662-user-feasts-for-date)
                       (bcp-1662-user-feasts-for-date month day year)))
@@ -243,15 +288,15 @@ Precedence: principal > greater (patronal-elevated > standard) > lesser."
                       (bcp-1662-effective-feast-rank user-sym 'lesser))))
     (cond
      ;; No feasts at all
-     ((and (null cal-sym) (null user-sym)) nil)
+     ((and (null std-sym) (null user-sym)) nil)
      ;; Only one type present
-     ((null user-sym) cal-sym)
-     ((null cal-sym)  user-sym)
+     ((null user-sym) std-sym)
+     ((null std-sym)  user-sym)
      ;; Both present — pick higher rank; user feast wins ties (patronal precedence)
      ((<= (bcp-1662--rank-value user-rank)
-          (bcp-1662--rank-value cal-rank))
+          (bcp-1662--rank-value std-rank))
       user-sym)
-     (t cal-sym))))
+     (t std-sym))))
 
 (defun bcp-1662--preceding-sunday (month day year)
   "Return the date of the most recent Sunday on or before (MONTH DAY YEAR)."
@@ -525,7 +570,7 @@ Checks fixed feasts first, then moveable feasts and Sunday propers."
          (easter    (calendar-absolute-from-gregorian
                      (cdr (assq 'easter feasts))))
          (advent    (calendar-absolute-from-gregorian
-                     (bcp-1662-advent-sunday year))))
+                     (bcp-1662-advent-1 year))))
     (or
      ;; Fixed feast communion proper
      (when (and feast-sym (bcp-1662-communion-propers feast-sym))
@@ -821,7 +866,8 @@ These are appended after the Prayer of St Chrysostom and before the Grace."
                     ("Luke" 2 10 11)))
     (epiphany    . ("From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
                     ("Mal" 1 11)))
-    (pre-lent    . nil)
+    (pre-lent    . ("Seek ye the Lord while he may be found, call ye upon him while he is near: let the wicked forsake his way, and the unrighteous man his thoughts: and let him return unto the Lord, and he will have mercy upon him; and to our God, for he will abundantly pardon."
+                    ("Isa" 55 6 7)))
     (lent        . ("Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
                     ("Joel" 2 13)))
     (passiontide . ("Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
@@ -846,7 +892,8 @@ Default texts are drawn from the 1928 American BCP Morning Prayer."
                     ("Rev" 21 3)))
     (epiphany    . ("And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
                     ("Isa" 60 3)))
-    (pre-lent    . nil)
+    (pre-lent    . ("To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
+                    ("Dan" 9 9 10)))
     (lent        . ("I acknowledge my transgressions: and my sin is ever before me."
                     ("Ps" 51 3)))
     (passiontide . ("All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."

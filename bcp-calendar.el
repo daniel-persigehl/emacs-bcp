@@ -379,7 +379,7 @@ Valid through 2199."
 ;;;; Advent Sunday
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
-(defun bcp-advent-sunday (year)
+(defun bcp-advent-1 (year)
   "Return Advent Sunday for YEAR as (MONTH DAY YEAR).
 
 Advent Sunday is the nearest Sunday to St Andrew's Day (November 30).
@@ -417,7 +417,7 @@ Feasts returned:
   ascension        — Easter + 39  (Thursday)
   whitsunday       — Easter + 49  (Pentecost Sunday)
   trinity-sunday   — Easter + 56
-  advent-sunday    — nearest Sunday to November 30
+  advent-1         — nearest Sunday to November 30 (Advent I)
 
 Note: Corpus Christi (Easter + 60), Sacred Heart (Easter + 68), and
 Christ the King (last Sunday before Advent in some calendars) are not
@@ -434,7 +434,7 @@ included here as their observance is rite-specific."
      (cons 'ascension       (calendar-gregorian-from-absolute (+ e 39)))
      (cons 'whitsunday      (calendar-gregorian-from-absolute (+ e 49)))
      (cons 'trinity-sunday  (calendar-gregorian-from-absolute (+ e 56)))
-     (cons 'advent-sunday   (bcp-advent-sunday year)))))
+     (cons 'advent-1   (bcp-advent-1 year)))))
 
 (defun bcp-moveable-feast-date (feast year)
   "Return the date of moveable FEAST in YEAR as (MONTH DAY YEAR), or nil."

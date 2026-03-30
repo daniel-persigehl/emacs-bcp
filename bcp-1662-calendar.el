@@ -20,7 +20,7 @@
 ;; to work without modification:
 ;;   bcp-1662-easter            → bcp-easter
 ;;   bcp-1662-dominical-letter  → bcp-dominical-letter
-;;   bcp-1662-advent-sunday     → bcp-advent-sunday
+;;   bcp-1662-advent-1     → bcp-advent-1
 ;;   bcp-1662-moveable-feasts   → bcp-moveable-feasts
 ;;   bcp-1662-ember-days        → bcp-ember-days
 ;;   bcp-1662-rogation-days     → bcp-rogation-days
@@ -42,7 +42,7 @@
 ;; Computus
 (defalias 'bcp-1662-easter            #'bcp-easter)
 (defalias 'bcp-1662-dominical-letter  #'bcp-dominical-letter)
-(defalias 'bcp-1662-advent-sunday     #'bcp-advent-sunday)
+(defalias 'bcp-1662-advent-1     #'bcp-advent-1)
 (defalias 'bcp-1662-moveable-feasts   #'bcp-moveable-feasts)
 (defalias 'bcp-1662-ember-days        #'bcp-ember-days)
 (defalias 'bcp-1662-rogation-days     #'bcp-rogation-days)
@@ -94,7 +94,7 @@ specific to the BCP family of rites."
          (trinity  (calendar-absolute-from-gregorian
                     (cdr (assq 'trinity-sunday feasts))))
          (advent   (calendar-absolute-from-gregorian
-                    (bcp-advent-sunday year)))
+                    (bcp-advent-1 year)))
          ;; Septuagesima = 9 Sundays before Easter = Easter - 63
          (septuagesima (- easter 63))
          ;; Christmas Day
@@ -103,7 +103,7 @@ specific to the BCP family of rites."
          (epiphany  (calendar-absolute-from-gregorian (list 1 6 year)))
          ;; Advent of previous year (for dates in Jan–Nov)
          (prev-advent (calendar-absolute-from-gregorian
-                       (bcp-advent-sunday (1- year)))))
+                       (bcp-advent-1 (1- year)))))
     (cond
      ;; Advent (current year: from Advent Sunday to Dec 24)
      ((and (>= abs advent) (<= abs (+ christmas -1)))
@@ -157,7 +157,7 @@ Examples:
          (trinity    (calendar-absolute-from-gregorian
                       (cdr (assq 'trinity-sunday feasts))))
          (advent     (calendar-absolute-from-gregorian
-                      (bcp-advent-sunday year)))
+                      (bcp-advent-1 year)))
          (epiphany   (calendar-absolute-from-gregorian (list 1 6 year)))
          (septuagesima (- easter 63))
          (season     (bcp-1662-liturgical-season month day year))
@@ -950,6 +950,52 @@ A vigil is the day immediately before a feast that has :vigil t."
          (when (and (= month vmonth) (= day vday))
            sym))))
    bcp-1662-feast-data))
+
+;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; BCP Rule 1 — Protected-period transfer logic
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+(defun bcp-1662--transfer-date (abs-date year)
+  "If ABS-DATE falls in a protected liturgical period in YEAR, return transfer target.
+Returns the absolute date to which a greater/principal feast should be
+transferred, or nil if no transfer is needed.
+
+Protected periods and their transfer targets (BCP Rule 1):
+  Ash Wednesday            → Friday after Ash Wednesday
+  Passiontide/Easter octave → Tuesday after Easter 1
+  Ascension Day            → Friday after Ascension
+  Whitsuntide (8 days)     → Tuesday after Trinity Sunday"
+  (let* ((feasts  (bcp-moveable-feasts year))
+         (ash     (calendar-absolute-from-gregorian
+                   (cdr (assq 'ash-wednesday feasts))))
+         (passion (calendar-absolute-from-gregorian
+                   (cdr (assq 'passion-sunday feasts))))
+         (easter  (calendar-absolute-from-gregorian
+                   (cdr (assq 'easter feasts))))
+         (easter1 (calendar-absolute-from-gregorian
+                   (cdr (assq 'easter-1 feasts))))
+         (asc     (calendar-absolute-from-gregorian
+                   (cdr (assq 'ascension feasts))))
+         (whit    (calendar-absolute-from-gregorian
+                   (cdr (assq 'whitsunday feasts))))
+         (trinity (calendar-absolute-from-gregorian
+                   (cdr (assq 'trinity-sunday feasts)))))
+    (cond
+     ;; Ash Wednesday itself
+     ((= abs-date ash)
+      (+ ash 2))                        ; Friday after Ash Wed
+     ;; Passiontide (Passion Sunday through Holy Saturday) and Easter octave
+     ((or (and (>= abs-date passion) (<= abs-date (1- easter)))
+          (and (>= abs-date easter)  (<= abs-date easter1)))
+      (+ easter1 2))                    ; Tuesday after Easter 1
+     ;; Ascension Day
+     ((= abs-date asc)
+      (+ asc 1))                        ; Friday (Ascension is always Thursday)
+     ;; Whitsunday through 7 days following
+     ((and (>= abs-date whit) (<= abs-date (+ whit 7)))
+      (+ trinity 2))                    ; Tuesday after Trinity Sunday
+     ;; No conflict
+     (t nil))))
 
 (provide 'bcp-1662-calendar)
 ;;; bcp-1662-calendar.el ends here

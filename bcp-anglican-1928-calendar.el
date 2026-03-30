@@ -76,7 +76,7 @@ use YEAR-1 and YEAR respectively to span the Advent–Trinity arc."
   (let* ((easter     (bcp-easter year))
          (easter-abs (calendar-absolute-from-gregorian easter))
          (advent-abs (calendar-absolute-from-gregorian
-                      (bcp-advent-sunday (1- year))))
+                      (bcp-advent-1 (1- year))))
          (christmas-abs (calendar-absolute-from-gregorian
                          (list 12 25 (1- year))))
          (epiphany-abs  (calendar-absolute-from-gregorian (list 1 6 year)))
@@ -89,7 +89,7 @@ use YEAR-1 and YEAR respectively to span the Advent–Trinity arc."
          (pentecost-abs    (+ easter-abs 49))
          (trinity-abs      (+ easter-abs 56))
          (advent-next-abs  (calendar-absolute-from-gregorian
-                            (bcp-advent-sunday year))))
+                            (bcp-advent-1 year))))
     (list :advent         advent-abs
           :christmas      christmas-abs
           :epiphany       epiphany-abs
@@ -110,7 +110,7 @@ that contains (MONTH DAY YEAR).
 The church year starts on Advent Sunday of YEAR-1 and ends on the
 Saturday before Advent Sunday of YEAR."
   (let* ((advent-this (calendar-absolute-from-gregorian
-                       (bcp-advent-sunday year)))
+                       (bcp-advent-1 year)))
          (abs (calendar-absolute-from-gregorian (list month day year))))
     ;; If date is on or after Advent Sunday of this year → Easter is next year
     (if (>= abs advent-this)
@@ -159,7 +159,7 @@ Returns nil if the date cannot be classified."
 
      ;; ── Advent ────────────────────────────────────────────────────────────
      ;; Advent runs from Advent Sunday (advent-abs) through Christmas Eve.
-     ;; Note: advent-abs = bcp-advent-sunday(ey-1), which is the correct
+     ;; Note: advent-abs = bcp-advent-1(ey-1), which is the correct
      ;; start of the Advent season for the church year whose Easter falls in ey.
      ((and (>= abs advent-abs)
            (< abs christmas-abs))

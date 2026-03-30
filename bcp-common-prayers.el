@@ -61,14 +61,19 @@ prayer plists that have not yet adopted the language-keyed format."
 Thy will be done in earth, As it is in heaven. Give us this day our daily bread. \
 And forgive us our trespasses, As we forgive them that trespass against us. \
 And lead us not into temptation, But deliver us from evil."
-    :latin nil)
+    :latin
+    "Pater noster, qui es in cælis, sanctificétur nomen tuum: advéniat regnum tuum: \
+fiat volúntas tua, sicut in cælo et in terra. Panem nostrum cotidiánum da nobis hódie: \
+et dimítte nobis débita nostra, sicut et nos dimíttimus debitóribus nostris: \
+et ne nos indúcas in tentatiónem: sed líbera nos a malo. Amen.")
   "The Lord's Prayer body without doxology (1662 form: \"which\"/\"them that\").
 Use with `bcp-common-prayers-lords-prayer-doxology' when the doxology is required.")
 
 (defconst bcp-common-prayers-lords-prayer-doxology
   '(:english
     "For thine is the kingdom, The power, and the glory, For ever and ever. Amen."
-    :latin nil)
+    :latin
+    "Quia tuum est regnum, et potéstas, et glória, in sǽcula sæculórum. Amen.")
   "Doxology appended to the Lord's Prayer (1662 form).
 Append to `bcp-common-prayers-lords-prayer' via the ordo step's :doxology key.")
 
@@ -78,22 +83,29 @@ Append to `bcp-common-prayers-lords-prayer' via the ordo step's :doxology key.")
 Thy will be done on earth, As it is in heaven. Give us this day our daily bread. \
 And forgive us our trespasses, As we forgive those who trespass against us. \
 And lead us not into temptation, But deliver us from evil."
-    :latin nil)
+    :latin
+    "Pater noster, qui es in cælis, sanctificétur nomen tuum: advéniat regnum tuum: \
+fiat volúntas tua, sicut in cælo et in terra. Panem nostrum cotidiánum da nobis hódie: \
+et dimítte nobis débita nostra, sicut et nos dimíttimus debitóribus nostris: \
+et ne nos indúcas in tentatiónem: sed líbera nos a malo. Amen.")
   "The Lord's Prayer body without doxology (1928 American form: \"who\"/\"those who\").
 Use with `bcp-common-prayers-lords-prayer-doxology-1928' when the doxology is required.")
 
 (defconst bcp-common-prayers-lords-prayer-doxology-1928
   '(:english
     "For thine is the kingdom, and the power, and the glory, for ever and ever. Amen."
-    :latin nil)
+    :latin
+    "Quia tuum est regnum, et potéstas, et glória, in sǽcula sæculórum. Amen.")
   "Doxology appended to the Lord's Prayer (1928 American form).
 Append to `bcp-common-prayers-lords-prayer-1928' via the ordo step's :doxology key.")
 
 (defconst bcp-common-prayers-gloria-patri
   '(:english
-    "Glory be to the Father, and to the Son, and to the Holy Ghost; \
+    "Glory be to the Father, and to the Son, and to the Holy Ghost;\n\
 As it was in the beginning, is now, and ever shall be, world without end. Amen."
-    :latin nil)
+    :latin
+    "Glória Patri, et Fílio, et Spirítui Sancto.\n\
+Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.")
   "The Gloria Patri (Lesser Doxology).")
 
 (defconst bcp-common-prayers-apostles-creed
@@ -106,7 +118,17 @@ He ascended into heaven, And sitteth on the right hand of God the Father Almight
 From thence he shall come to judge the quick and the dead. \
 I believe in the Holy Ghost: The holy Catholick Church; The Communion of Saints: \
 The Forgiveness of sins: The Resurrection of the body, And the Life everlasting. Amen."
-    :latin nil)
+    :latin
+    "Credo in Deum, Patrem omnipoténtem, Creatórem cæli et terræ. \
+Et in Jesum Christum, Fílium ejus únicum, Dóminum nostrum: \
+qui concéptus est de Spíritu Sancto, natus ex María Vírgine, \
+passus sub Póntio Piláto, crucifíxus, mórtuus, et sepúltus: \
+descéndit ad ínferos; tértia die resurréxit a mórtuis; \
+ascéndit ad cælos; sedet ad déxteram Dei Patris omnipoténtis: \
+inde ventúrus est judicáre vivos et mórtuos. \
+Credo in Spíritum Sanctum, sanctam Ecclésiam cathólicam, \
+Sanctórum communiónem, remissiónem peccatórum, \
+carnis resurrectiónem, vitam ætérnam. Amen.")
   "The Apostles' Creed.")
 
 (defconst bcp-common-prayers-nicene-creed
@@ -132,7 +154,27 @@ And I believe one Catholick and Apostolick Church: \
 I acknowledge one Baptism for the remission of sins: \
 And I look for the Resurrection of the dead: \
 And the Life of the world to come. Amen."
-    :latin nil)
+    :latin
+    "Credo in unum Deum, Patrem omnipoténtem, factórem cæli et terræ, \
+visibílium ómnium et invisibílium. \
+Et in unum Dóminum Jesum Christum, Fílium Dei unigénitum, \
+et ex Patre natum ante ómnia sǽcula. \
+Deum de Deo, lumen de lúmine, Deum verum de Deo vero, \
+génitum, non factum, consubstantiálem Patri: per quem ómnia facta sunt. \
+Qui propter nos hómines et propter nostram salútem descéndit de cælis. \
+Et incarnátus est de Spíritu Sancto ex María Vírgine, et homo factus est. \
+Crucifíxus étiam pro nobis sub Póntio Piláto; passus et sepúltus est, \
+et resurréxit tértia die, secúndum Scriptúras, \
+et ascéndit in cælum, sedet ad déxteram Patris. \
+Et íterum ventúrus est cum glória, judicáre vivos et mórtuos: \
+cujus regni non erit finis. \
+Et in Spíritum Sanctum, Dóminum et vivificántem: \
+qui ex Patre Filióque procédit. \
+Qui cum Patre et Fílio simul adorátur et conglorificátur: \
+qui locútus est per prophétas. \
+Et unam, sanctam, cathólicam et apostólicam Ecclésiam. \
+Confíteor unum baptísma in remissiónem peccatórum. \
+Et exspécto resurrectiónem mortuórum, et vitam ventúri sǽculi. Amen.")
   "The Nicene Creed (Niceno-Constantinopolitan form with Filioque).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
@@ -158,8 +200,35 @@ everlasting. Amen."
     :english
     "The grace of our Lord Jesus Christ, and the love of God, and the fellowship \
 of the Holy Ghost, be with us all evermore. Amen."
-    :latin nil)
+    :latin
+    "Grátia Dómini nostri Jesu Christi, et cáritas Dei, et communicátio \
+Sancti Spíritus sit cum ómnibus nobis. Amen.")
   "The Grace (2 Corinthians 13:14).")
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Penitential forms registry
+;;
+;; Cross-tradition registry for confession and absolution texts.
+;; Each tradition registers its forms at load time; the ordo step
+;; `:confession' / `:absolution' resolves via a defcustom key.
+
+(defvar bcp-penitential-forms nil
+  "Alist of (KEY . PLIST) for cross-tradition penitential rites.
+Each PLIST has:
+  :confession  STRING — the confession text
+  :absolution  STRING — the absolution/pardon text
+  :rubric      STRING — optional rubric for the confession
+Traditions register their forms via `bcp-penitential-register'.")
+
+(defun bcp-penitential-register (key plist)
+  "Register PLIST as penitential form KEY.
+KEY is a symbol (e.g. \\='roman, \\='anglican-1662).
+PLIST has :confession, :absolution, and optionally :rubric."
+  (setf (alist-get key bcp-penitential-forms) plist))
+
+(defun bcp-penitential-form (key)
+  "Return the penitential form plist for KEY, or nil."
+  (alist-get key bcp-penitential-forms))
 
 (provide 'bcp-common-prayers)
 ;;; bcp-common-prayers.el ends here

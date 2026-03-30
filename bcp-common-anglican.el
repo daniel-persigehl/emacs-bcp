@@ -419,21 +419,41 @@ The substituted names are rendered in ALL-CAPS in the output."
             :title (plist-get bcp-common-anglican-prayer-royal-family :title)
             :text  text))))
 
-(defun bcp-liturgy--president-prayer ()
-  "Return the Prayer for the President plist, inserting the name when configured.
-If `bcp-liturgy-president-name' is non-nil, the name is inserted per the 1928
-rubric: \"Grant to N. the President of the United States…\"
-The name is rendered in ALL-CAPS in the output."
-  (if (not bcp-liturgy-president-name)
-      bcp-common-anglican-prayer-for-president
-    (let* ((base (plist-get bcp-common-anglican-prayer-for-president :english))
-           (text (replace-regexp-in-string
-                  "Grant to the President"
-                  (format "Grant to %s, the President" (upcase bcp-liturgy-president-name))
-                  base t t)))
-      (list :name  'prayer-for-president
-            :title (plist-get bcp-common-anglican-prayer-for-president :title)
-            :english text))))
+(defun bcp-liturgy--head-of-state-prayer ()
+  "Return the head-of-state prayer plist for the current republic configuration.
+When `bcp-liturgy-head-of-state-title' is nil, returns the generic civil
+authority prayer.  When set, builds the prayer from the 1928 BCP template
+using `bcp-liturgy-head-of-state-title', `bcp-liturgy-country-name', and
+`bcp-liturgy-president-name'."
+  (let ((title   bcp-liturgy-head-of-state-title)
+        (country bcp-liturgy-country-name)
+        (name    bcp-liturgy-president-name))
+    (if (or (null title) (string-empty-p title))
+        ;; No title configured — generic civil authority prayer
+        bcp-common-anglican-prayer-civil-authority
+      ;; Build from the 1928 president prayer template
+      (let* (;; "the President of the United States" or just "the President"
+             (office-phrase (if (and country (not (string-empty-p country)))
+                               (format "%s of %s" title country)
+                             title))
+             ;; Prayer title
+             (prayer-title (format "A Prayer for %s, and all in Civil Authority."
+                                   office-phrase))
+             ;; Prayer text — substitute the office phrase
+             (base (plist-get bcp-common-anglican-prayer-for-president :english))
+             (text (replace-regexp-in-string
+                    "the President of the United States"
+                    office-phrase base t t))
+             ;; Insert personal name if provided
+             (text (if (not name)
+                       text
+                     (replace-regexp-in-string
+                      (regexp-quote (format "Grant to %s" office-phrase))
+                      (format "Grant to %s, %s" (upcase name) office-phrase)
+                      text t t))))
+        (list :name    'prayer-for-head-of-state
+              :title   prayer-title
+              :english text)))))
 
 (defun bcp-liturgy-state-prayers (tradition)
   "Return the list of state prayer plists for the current region and TRADITION.
@@ -442,18 +462,18 @@ used to select tradition-appropriate wording for the clergy prayer in the
 monarchy case.  The active region is read from `bcp-liturgy-region'.
 
 Regions:
-  `monarchy' — sovereign, royal family, clergy (1662 wording: \"Curates\";
-               1928 and later: \"other Clergy\")
-  `us'       — President, clergy (1928 American BCP form for both)
-  `republic' — civil authority, clergy (generic; no specific office or nation)
+  `monarchy'       — sovereign, royal family, clergy (1662 wording:
+                     \"Curates\"; 1928 and later: \"other Clergy\")
+  `us' / `republic' — head of state and civil authority, clergy.
+                     When `bcp-liturgy-head-of-state-title' is set, names
+                     the office (and country via `bcp-liturgy-country-name').
+                     When nil, uses generic \"those in Civil Authority\"
+                     wording.
 
 Each returned plist has at least :title and :text (or :english) keys."
   (cond
-   ((eq bcp-liturgy-region 'us)
-    (list (bcp-liturgy--president-prayer)
-          bcp-common-anglican-prayer-clergy-people-1928))
-   ((eq bcp-liturgy-region 'republic)
-    (list bcp-common-anglican-prayer-civil-authority
+   ((memq bcp-liturgy-region '(us republic))
+    (list (bcp-liturgy--head-of-state-prayer)
           bcp-common-anglican-prayer-clergy-people-1928))
    (t  ; monarchy
     (list (bcp-liturgy--sovereign-prayer)
@@ -582,6 +602,36 @@ American BCP).  Easter Day itself uses the Easter Anthems instead of the Venite.
   "The Lord is glorious in his saints : O come, let us adore him."
   "Invitatory antiphon for other festivals with a proper Epistle and Gospel (1928
 American BCP).  Used when no more specific invitatory is appointed.")
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Penitential form registration
+;;
+;; Register Anglican confession/absolution forms so that the Roman Office
+;; (and any future cross-tradition rendering) can swap them in.
+
+(bcp-penitential-register
+ 'anglican-1662
+ '(:confession
+   "Almighty and most merciful Father; We have erred, and strayed from thy ways like lost sheep. We have followed too much the devices and desires of our own hearts. We have offended against thy holy laws. We have left undone those things which we ought to have done; And we have done those things which we ought not to have done; And there is no health in us. But thou, O Lord, have mercy upon us, miserable offenders. Spare thou them, O God, who confess their faults. Restore thou them that are penitent; According to thy promises declared unto mankind in Christ Jesu our Lord. And grant, O most merciful Father, for his sake; That we may hereafter live a godly, righteous, and sober life, To the glory of thy holy Name. Amen."
+   :absolution
+   "Almighty God, the Father of our Lord Jesus Christ, who desireth not the death of a sinner, but rather that he may turn from his wickedness, and live; and hath given power, and commandment, to his Ministers, to declare and pronounce to his people, being penitent, the Absolution and Remission of their sins: He pardoneth and absolveth all them that truly repent, and unfeignedly believe his holy Gospel. Wherefore let us beseech him to grant us true repentance, and his Holy Spirit, that those things may please him, which we do at this present; and that the rest of our life hereafter may be pure, and holy; so that at the last we may come to his eternal joy; through Jesus Christ our Lord."
+   :rubric "A general Confession to be said of the whole Congregation after the Minister, all kneeling."))
+
+(bcp-penitential-register
+ 'anglican-1662-lay
+ '(:confession
+   "Almighty and most merciful Father; We have erred, and strayed from thy ways like lost sheep. We have followed too much the devices and desires of our own hearts. We have offended against thy holy laws. We have left undone those things which we ought to have done; And we have done those things which we ought not to have done; And there is no health in us. But thou, O Lord, have mercy upon us, miserable offenders. Spare thou them, O God, who confess their faults. Restore thou them that are penitent; According to thy promises declared unto mankind in Christ Jesu our Lord. And grant, O most merciful Father, for his sake; That we may hereafter live a godly, righteous, and sober life, To the glory of thy holy Name. Amen."
+   :absolution
+   "GRANT, we beseech thee, merciful Lord, to thy faithful people pardon and peace, that they may be cleansed from all their sins, and serve thee with a quiet mind; through Jesus Christ our Lord. Amen."
+   :rubric "If no priest be present the person saying the service shall read the Collect for the Twenty-First Sunday after Trinity."))
+
+(bcp-penitential-register
+ 'anglican-1928
+ '(:confession
+   "Almighty and most merciful Father; We have erred, and strayed from thy ways like lost sheep. We have followed too much the devices and desires of our own hearts. We have offended against thy holy laws. We have left undone those things which we ought to have done; And we have done those things which we ought not to have done; And there is no health in us. But thou, O Lord, have mercy upon us, miserable offenders. Spare thou those, O God, who confess their faults. Restore thou those who are penitent; According to thy promises declared unto mankind in Christ Jesus our Lord. And grant, O most merciful Father, for his sake; That we may hereafter live a godly, righteous, and sober life, To the glory of thy holy Name. Amen."
+   :absolution
+   "Almighty God, the Father of our Lord Jesus Christ, who desireth not the death of a sinner, but rather that he may turn from his wickedness, and live; and hath given power, and commandment, to his Ministers, to declare and pronounce to his people, being penitent, the Absolution and Remission of their sins: He pardoneth and absolveth all those who truly repent, and unfeignedly believe his holy Gospel. Wherefore let us beseech him to grant us true repentance, and his Holy Spirit, that those things may please him, which we do at this present; and that the rest of our life hereafter may be pure, and holy; so that at the last we may come to his eternal joy; through Jesus Christ our Lord."
+   :rubric "Then shall be said by the Minister and people, all kneeling."))
 
 (provide 'bcp-common-anglican)
 ;;; bcp-common-anglican.el ends here

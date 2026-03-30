@@ -114,13 +114,45 @@ Write in the form used in the prayer, e.g.:
   :group 'bcp-liturgy)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
-;;;; President's name (US context)
+;;;; Head of state and country (republic / US contexts)
+
+(defcustom bcp-liturgy-head-of-state-title nil
+  "Title of the head of state for republic contexts, or nil for generic wording.
+Used in the state prayer text and title when `bcp-liturgy-region' is
+`us' or `republic'.  Include the article, e.g. \"the President\",
+\"the Prime Minister\", \"the Governor General\".
+
+When nil, the prayer uses \"those in Civil Authority\" without naming
+a specific office.
+
+In the `monarchy' region this is ignored; use `bcp-liturgy-sovereign-title'
+instead."
+  :type  '(choice (const  :tag "Generic (no specific office)" nil)
+                  (string :tag "Title"))
+  :group 'bcp-liturgy)
+
+(defcustom bcp-liturgy-country-name nil
+  "Name of the country for republic state prayers, or nil to omit.
+Used in the prayer title and text when `bcp-liturgy-region' is
+`us' or `republic' and `bcp-liturgy-head-of-state-title' is set.
+Include the article if grammatically required, e.g.
+\"the United States\", \"Canada\", \"the Commonwealth of Australia\".
+
+When nil, the country is not named in the prayer.
+
+In the `monarchy' region this is ignored."
+  :type  '(choice (const  :tag "Omit country name" nil)
+                  (string :tag "Country name"))
+  :group 'bcp-liturgy)
 
 (defcustom bcp-liturgy-president-name nil
-  "Name of the current President of the United States, or nil to omit.
-When non-nil, inserted before the office in the prayer:
+  "Christian name of the head of state, or nil to omit.
+When non-nil, inserted before the title in the prayer:
   \"Grant to [NAME], the President of the United States…\"
-The 1928 BCP uses N. as a rubric placeholder for this name."
+The 1928 BCP uses N. as a rubric placeholder for this name.
+
+Despite the variable name, this applies to whatever office is
+configured in `bcp-liturgy-head-of-state-title'."
   :type  '(choice (const :tag "Omit name" nil)
                   (string :tag "Name"))
   :group 'bcp-liturgy)
@@ -380,6 +412,18 @@ redundancies (e.g. subdivision = week-name)."
     (let ((ov (make-overlay info-start (point))))
       (overlay-put ov 'face '(:slant italic)))))
 
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Officiant-sensitive versicles
+
+(defun bcp-liturgy-render--insert-dominus-vobiscum (priest-form lay-form)
+  "Insert the greeting versicle appropriate to `office-officiant'.
+PRIEST-FORM and LAY-FORM are each a list of versicle pairs.
+Priests and bishops use PRIEST-FORM; others use LAY-FORM."
+  (bcp-liturgy-render--insert-versicles
+   (if (memq office-officiant '(priest bishop))
+       priest-form
+     lay-form)))
 
 (provide 'bcp-liturgy-render)
 ;;; bcp-liturgy-render.el ends here

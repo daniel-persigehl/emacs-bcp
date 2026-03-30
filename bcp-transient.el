@@ -40,6 +40,8 @@
 (defvar bcp-liturgy-sovereign-title)
 (defvar bcp-liturgy-sovereign-name)
 (defvar bcp-liturgy-royal-family-names)
+(defvar bcp-liturgy-head-of-state-title)
+(defvar bcp-liturgy-country-name)
 (defvar bcp-liturgy-president-name)
 (defvar bcp-liturgy-canticle-language)
 (defvar bcp-liturgy-canticle-append-gloria)
@@ -65,6 +67,8 @@
 (defvar bcp-1928-rubric-style)
 (defvar bcp-1928-omit-penitential-intro)
 (defvar bcp-1928-show-communion-propers)
+(defvar bcp-roman-office-language)
+(defvar bcp-roman-hymnal-preferred-translator)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Helpers
@@ -207,14 +211,38 @@ Comparison uses `equal'; wraps around after the last choice."
     (setq bcp-liturgy-royal-family-names
           (if (string-empty-p s) nil s))))
 
-(transient-define-suffix bcp--set-president-name ()
-  "Set the President's name (used when region is us)."
+(transient-define-suffix bcp--set-head-of-state-title ()
+  "Set the head of state's title (republic contexts), or clear to use generic wording."
   :description (lambda ()
-    (format "President name: %s"
+    (format "Title: %s"
+      (or bcp-liturgy-head-of-state-title "(generic)")))
+  :transient t
+  (interactive)
+  (let ((s (read-string "Head of state title (RET for generic, e.g. \"the President\"): "
+              bcp-liturgy-head-of-state-title)))
+    (setq bcp-liturgy-head-of-state-title
+          (if (string-empty-p s) nil s))))
+
+(transient-define-suffix bcp--set-country-name ()
+  "Set the country name for republic state prayers, or clear to omit."
+  :description (lambda ()
+    (format "Country: %s"
+      (or bcp-liturgy-country-name "(omit)")))
+  :transient t
+  (interactive)
+  (let ((s (read-string "Country name (RET to omit, e.g. \"the United States\"): "
+              bcp-liturgy-country-name)))
+    (setq bcp-liturgy-country-name
+          (if (string-empty-p s) nil s))))
+
+(transient-define-suffix bcp--set-president-name ()
+  "Set the head of state's personal name."
+  :description (lambda ()
+    (format "Name: %s"
       (or bcp-liturgy-president-name "(omit)")))
   :transient t
   (interactive)
-  (let ((s (read-string "President name (RET to omit): "
+  (let ((s (read-string "Head of state name (RET to omit): "
               bcp-liturgy-president-name)))
     (setq bcp-liturgy-president-name
           (if (string-empty-p s) nil s))))
@@ -498,6 +526,110 @@ Comparison uses `equal'; wraps around after the last choice."
   (interactive)
   (bcp-1928-open-office))
 
+(transient-define-suffix bcp--action-open-lobvm ()
+  "Open the Little Office of the BVM (auto-selects hour)."
+  :description "LOBVM (auto)"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm))
+
+(transient-define-suffix bcp--action-open-lobvm-lauds ()
+  "Open Lauds of the Little Office of the BVM."
+  :description "LOBVM Lauds"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-lauds))
+
+(transient-define-suffix bcp--action-open-lobvm-vespers ()
+  "Open Vespers of the Little Office of the BVM."
+  :description "LOBVM Vespers"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-vespers))
+
+(transient-define-suffix bcp--action-open-lobvm-matins ()
+  "Open Matins of the Little Office of the BVM."
+  :description "LOBVM Matins"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-matins))
+
+(transient-define-suffix bcp--action-open-lobvm-prime ()
+  "Open Prime of the Little Office of the BVM."
+  :description "LOBVM Prime"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-prime))
+
+(transient-define-suffix bcp--action-open-lobvm-terce ()
+  "Open Terce of the Little Office of the BVM."
+  :description "LOBVM Terce"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-terce))
+
+(transient-define-suffix bcp--action-open-lobvm-sext ()
+  "Open Sext of the Little Office of the BVM."
+  :description "LOBVM Sext"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-sext))
+
+(transient-define-suffix bcp--action-open-lobvm-none ()
+  "Open None of the Little Office of the BVM."
+  :description "LOBVM None"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-none))
+
+(transient-define-suffix bcp--action-open-lobvm-compline ()
+  "Open Compline of the Little Office of the BVM."
+  :description "LOBVM Compline"
+  (interactive)
+  (require 'bcp-roman-lobvm)
+  (bcp-roman-lobvm-compline))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Roman Office suffixes
+
+(transient-define-suffix bcp--set-roman-language ()
+  "Toggle the Roman Office language between Latin and English."
+  :description (lambda ()
+    (format "Language: %s"
+      (if (eq bcp-roman-office-language 'english) "English" "Latin")))
+  :transient t
+  (interactive)
+  (bcp--cycle 'bcp-roman-office-language '(latin english)))
+
+(transient-define-suffix bcp--set-roman-hymn-translator ()
+  "Cycle the preferred hymn translator."
+  :description (lambda ()
+    (format "Hymn translator: %s"
+      (symbol-name bcp-roman-hymnal-preferred-translator)))
+  :transient t
+  (interactive)
+  (bcp--cycle 'bcp-roman-hymnal-preferred-translator
+    '(britt caswall neale primer)))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Little Office submenu
+
+(transient-define-prefix bcp-settings-lobvm ()
+  "Roman Office — Little Office of the BVM."
+  [["Settings"
+    ("L" bcp--set-roman-language)
+    ("H" bcp--set-roman-hymn-translator)]
+   ["Hours"
+    ("a" bcp--action-open-lobvm)
+    ("m" bcp--action-open-lobvm-matins)
+    ("l" bcp--action-open-lobvm-lauds)
+    ("p" bcp--action-open-lobvm-prime)
+    ("t" bcp--action-open-lobvm-terce)
+    ("s" bcp--action-open-lobvm-sext)
+    ("n" bcp--action-open-lobvm-none)
+    ("v" bcp--action-open-lobvm-vespers)
+    ("c" bcp--action-open-lobvm-compline)]])
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Main prefix
 
@@ -517,11 +649,13 @@ and 2 (BCP 1928)."
     ("p" bcp--set-psalm-translation)
     ("b" bcp--set-backend)]
    ["State prayers"
-    ("v" bcp--set-state-versicle-form)
+    ("s" bcp--set-state-versicle-form)
     ("r" bcp--set-region)
     ("k" bcp--set-sovereign-title)
     ("K" bcp--set-sovereign-name)
     ("F" bcp--set-royal-family-names)
+    ("T" bcp--set-head-of-state-title)
+    ("C" bcp--set-country-name)
     ("P" bcp--set-president-name)]]
   [["Canticles"
     ("l" bcp--set-canticle-language)
@@ -530,9 +664,11 @@ and 2 (BCP 1928)."
     ("1" "BCP 1662 rubrics…" bcp-settings-1662)
     ("2" "BCP 1928 rubrics…" bcp-settings-1928)]
    ["Actions"
-    ("R" bcp--action-reload)
-    ("M" bcp--action-open-1662)
+    ("E" bcp--action-open-1662)
     ("A" bcp--action-open-1928)
+    ("r" bcp--action-open-lobvm)
+    ("R" "Roman Office hours…" bcp-settings-lobvm)
+    ("g" bcp--action-reload)
     ("q" bcp--quit)]])
 
 (provide 'bcp-transient)

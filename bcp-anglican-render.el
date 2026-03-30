@@ -214,9 +214,9 @@ CTX is the tradition context plist."
         ;; Priest/bishop: "The Lord be with you." / "And with thy spirit."
         ;; Lay/deacon:    "Hear my prayer, O Lord." / "And let my cry…"
         (:versicles-preces
-         (versicles! (if (memq officiant '(lay deacon))
-                         bcp-common-anglican-preces-lay
-                       bcp-common-anglican-preces-lord-be-with-you)))
+         (bcp-liturgy-render--insert-dominus-vobiscum
+          bcp-common-anglican-preces-lord-be-with-you
+          bcp-common-anglican-preces-lay))
 
         ;; ── Canticle ─────────────────────────────────────────────────────
         (:canticle

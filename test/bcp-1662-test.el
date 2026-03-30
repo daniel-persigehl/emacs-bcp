@@ -81,9 +81,9 @@
 
   ;; ── 3. Advent Sunday ───────────────────────────────────────────────────
   (bcp-1662-test-section "3. Advent Sunday"
-    (bcp-1662-check "Advent 2026 = Nov 29" '(11 29 2026) (bcp-1662-advent-sunday 2026))
-    (bcp-1662-check "Advent 2025 = Nov 30 (Nov 30 is Sunday)" '(11 30 2025) (bcp-1662-advent-sunday 2025))
-    (bcp-1662-check "Advent 2024 = Dec 1"  '(12  1 2024) (bcp-1662-advent-sunday 2024)))
+    (bcp-1662-check "Advent 2026 = Nov 29" '(11 29 2026) (bcp-1662-advent-1 2026))
+    (bcp-1662-check "Advent 2025 = Nov 30 (Nov 30 is Sunday)" '(11 30 2025) (bcp-1662-advent-1 2025))
+    (bcp-1662-check "Advent 2024 = Dec 1"  '(12  1 2024) (bcp-1662-advent-1 2024)))
 
   ;; ── 4. Dominical letter ────────────────────────────────────────────────
   (bcp-1662-test-section "4. Dominical letter"

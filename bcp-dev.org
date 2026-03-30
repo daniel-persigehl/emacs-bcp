@@ -1,6 +1,6 @@
 #+TITLE: BCP — Biblical Commentary and Prayer
 #+SUBTITLE: Development Bible
-#+DATE: 2026-03-22
+#+DATE: 2026-03-29
 #+STARTUP: overview
 
 # HOW TO USE: Paste this entire file at the start of a new Claude session.
@@ -54,11 +54,16 @@ Not tied to any specific prayer book edition.
 - Canticle registry (texts only meaningful in an ordo context)
 - Propers protocol (the standard plist shape all rites return)
 - Rite implementations live under their own sub-prefix:
-  - =bcp-1662-=           Book of Common Prayer 1662
-  - =bcp-breviary-=       Breviarium Romanum 1962
-  - =bcp-anglican-breviary-=  Anglican Breviary (1955)
-  - =bcp-lobia-=          Little Office of the BVM
-  - =bcp-divine-worship-= Divine Worship: Daily Office
+  - =bcp-1662-=              Book of Common Prayer 1662
+  - =bcp-1928-=              American BCP 1928
+  - =bcp-roman-=             Roman Office (DA 1911 is test case)
+  - =bcp-roman-lobvm-=       Little Office of the BVM
+  - =bcp-roman-1962-=        Breviarium Romanum 1962 (future)
+  - =bcp-roman-1568-=        Breviarium Romanum 1568 (future)
+  - =bcp-roman-sarum-=       Use of Sarum (future)
+  - =bcp-roman-monastic-=    Monastic Breviary (future)
+  - =bcp-anglican-breviary-= Anglican Breviary 1955 (future)
+  - =bcp-divine-worship-=    Divine Worship: Daily Office (future)
 
 ** =bcp-reader-= Scripture Reader
 Simple, fast text display for study reading.
@@ -81,7 +86,7 @@ Office lessons, collects, reader passages alike.
 | =bcp-= | Shared framework | bcp-calendar.el, bcp-fetcher.el, bcp-render.el |
 | =bcp-liturgy-= | Generic Office | bcp-liturgy-render.el, bcp-liturgy-canticles.el |
 | =bcp-1662-= | BCP 1662 implementation | bcp-1662-calendar.el, bcp-1662-ordo.el |
-| =bcp-breviary-= | Breviarium Romanum 1962 | bcp-breviary-calendar.el (future) |
+| =bcp-roman-= | Roman Office (DA 1911) | bcp-roman-ordo.el, bcp-roman-render.el, bcp-roman-lobvm.el |
 | =bcp-reader-= | Scripture reader | bcp-reader.el (future) |
 | =bcp-notebook-= | Annotation layer | bcp-notebook.el (future) |
 
@@ -116,6 +121,13 @@ BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= 
 (require 'bcp-1662-ordo)             ; Morning/Evening Prayer ordo plists
 (require 'bcp-1662)                  ; dispatch + renderer
 
+;; ── Liturgy: Roman Office (DA 1911) ───────────────────────────────
+(require 'bcp-common-roman)          ; Roman fixed texts, Marian antiphons (Latin + English)
+(require 'bcp-roman-hymnal)          ; Hymn registry (multi-translator)
+(require 'bcp-roman-ordo)            ; Roman ordo step types
+(require 'bcp-roman-lobvm)           ; LOBVM data + entry points (all 8 hours)
+;; bcp-roman-render.el autoloaded on first render
+
 ;; ── Reader & Notebook ─────────────────────────────────────────────
 (require 'bcp-reader)                ; scripture reader (standalone, no org deps)
 (require 'bcp-notebook)              ; annotation, org-roam, capture, export
@@ -140,6 +152,14 @@ BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= 
 | bcp-1662-test.el | bcp-1662- | 229 automated tests | SETTLED |
 | bcp-reader.el | bcp-reader- | Scripture reader: passage display, navigation, psalm schemes, local files | SETTLED |
 | bcp-notebook.el | bcp-notebook- | Annotation, org-roam, capture, spanning psalms, contextual view, export | SETTLED |
+| bcp-common-prayers.el | bcp- | Shared ecumenical texts (Lord's Prayer, Creeds, Gloria Patri) with :english/:latin keys; penitential forms registry | SETTLED |
+| bcp-common-anglican.el | bcp- | Shared Anglican texts (collects, state prayers, canticles); registers Anglican penitential forms | SETTLED |
+| bcp-common-roman.el | bcp- | Roman-only fixed texts (Confiteor, Ave Maria, versicles, Marian antiphons); registers Roman penitential forms | SETTLED |
+| bcp-roman-ordo.el | bcp-roman- | Roman ordo step types + LOBVM Compline ordo | SETTLED |
+| bcp-roman-render.el | bcp-roman- | Roman Office renderer (step dispatch, office walker, language threading) | SETTLED |
+| bcp-roman-hymnal.el | bcp-roman- | Hymn registry: Latin texts + multiple English translators (Britt, Caswall, Neale) | SETTLED |
+| bcp-roman-lobvm.el | bcp-roman- | LOBVM data (all 8 hours, Latin + English) + entry points | SETTLED |
+| bcp-liturgy-hours.el | bcp-liturgy- | Canonical hours framework, hour-grouping registry | SETTLED |
 | bcp-vulgate-collate.el | bcp- | One-time utility: collates 150 DO Latin psalm files into bcp-liturgy-psalter-vulgate.txt | SETTLED |
 
 * bcp-fetcher.el :science:
@@ -248,7 +268,7 @@ Rite-agnostic calendar engine. No BCP-specific content.
 ** Computus
 - bcp-easter(year) — Gregorian algorithm
 - bcp-dominical-letter(year) — returns "D" or "GF" for leap years
-- bcp-advent-sunday(year) — nearest Sunday to Nov 30
+- bcp-advent-1(year) — nearest Sunday to Nov 30 (Advent I)
 - bcp-moveable-feasts(year) — alist of Easter-relative dates
 - bcp-ember-days(year), bcp-rogation-days(year)
 
@@ -482,12 +502,13 @@ They are one-time utilities (fetch all 150 psalms, write SWORD plain-text
 files) and currently orphaned from the rest of the Oremus parsing code.
 Low priority; no functional impact.
 
-** TODO BCP Rule 1 Transfers for Standard Greater Feasts
-Only user patronal feasts currently have transfer logic.
-Standard greater feasts (e.g. Annunciation in Holy Week) not yet transferred.
+** DONE BCP Rule 1 Transfers for Standard Greater Feasts
+Shared transfer function bcp-1662--transfer-date in bcp-1662-calendar.el.
+bcp-1662--best-feast-for-date is now transfer-aware: suppresses feasts
+transferred away, recognizes feasts transferred TO a date.
 
-** TODO Seasonal Sentences
-bcp-1662-seasonal-sentences alist exists; all values nil.
+** DONE Seasonal Sentences
+Pre-Lent sentences filled: Mattins (Isa 55:6-7), Evensong (Dan 9:9-10).
 
 ** DONE Latin Canticle Texts
 All 11 canticles now have Latin Vulgate texts from Divinum Officium sources.
@@ -512,6 +533,111 @@ insert-canticle-text, normalise-spacing, render-office.
 [Chapter N]\n from dom-to-text causes blank line at chapter
 boundaries. Multiple fix attempts broke verse numbering.
 Accepted as known cosmetic issue.
+
+* Rejected Approaches
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+* Roman Office (bcp-roman-) :science:
+:PROPERTIES:
+:STATUS: IN-DEVELOPMENT
+:END:
+
+Roman Breviary framework, DA 1911 rubrics. Source: Divinum Officium project.
+Pre-extracted data (not runtime DO parsing). All eight LOBVM hours complete.
+
+** Architecture
+Parallel to Anglican side:
+| bcp-roman-ordo.el | Step type definitions + ordines for all 8 hours |
+| bcp-roman-render.el | Step dispatch, office walker, language threading |
+| bcp-roman-lobvm.el | LOBVM data (Latin + English) + entry points |
+| bcp-common-roman.el | Shared Roman fixed texts (Latin + English) |
+| bcp-roman-hymnal.el | Hymn registry: multiple translators per hymn |
+
+** Roman ordo step types
+:rubric, :text, :versicles (reused from Anglican), plus Roman-specific:
+:incipit, :antiphon, :psalm, :psalm-group, :hymn, :capitulum, :canticle,
+:confession, :absolution, :pre-oratio, :collect, :conclusio,
+:marian-antiphon, :commemoratio, :silent-prayers, :invitatory,
+:lesson, :responsory, :te-deum, :lesson-absolutio, :lesson-benedictio,
+:nocturn-versicle.
+
+** LOBVM Hours
+All eight canonical hours implemented:
+| Hour | Entry point | Transient key |
+| Matins | =bcp-roman-lobvm-matins= | m |
+| Lauds | =bcp-roman-lobvm-lauds= | l |
+| Prime | =bcp-roman-lobvm-prime= | p |
+| Terce | =bcp-roman-lobvm-terce= | t |
+| Sext | =bcp-roman-lobvm-sext= | s |
+| None | =bcp-roman-lobvm-none= | n |
+| Vespers | =bcp-roman-lobvm-vespers= | v |
+| Compline | =bcp-roman-lobvm-compline= | c |
+
+=bcp-roman-lobvm= auto-selects the appropriate hour by time of day.
+All hours accessible from the LOBVM transient submenu (R from main menu).
+
+Fixed texts embedded (psalms, hymns, capitula, collects).
+Seasonal variation via data resolver:
+| per-annum | Sub tuum praesidium, Alleluia, Salve Regina |
+| advent | Sub tuum praesidium, Alleluia, Alma Redemptoris Mater |
+| christmastide | Sub tuum praesidium, Alleluia, Alma Redemptoris (different V./R. + collect) |
+| lent | Sub tuum praesidium, Laus tibi Domine, Ave Regina caelorum |
+| eastertide | Regina caeli (psalm antiphon), Alleluia, Regina caeli (final) |
+
+** Multilingual Support :constraint:
+Controlled by =bcp-roman-office-language= defcustom (default: ='latin=).
+Toggleable from transient menu (L key in LOBVM submenu).
+
+Three strategies by text type:
+1. *Office prose* (antiphons, collects, versicles): Marquess of Bute 1908
+   translation as English fallback, stored as parallel =-en= constants.
+   Resolver tries English first, falls back to Latin.
+2. *Hymns*: Separate hymnal file (=bcp-roman-hymnal.el=), keyed by Latin
+   incipit, supporting multiple named English translations per hymn.
+   User selects preferred translator via =bcp-roman-hymnal-preferred-translator=
+   defcustom (default: ='britt=). Fallback chain: =bcp-roman-hymnal-fallback-order=.
+   Available translators: Britt, Caswall, Neale, Primer.
+3. *Scripture* (capitula, lessons): Store only the citation reference (:ref slot).
+   English text resolved at render time via =bcp-fetcher-fetch= using the
+   user's configured Bible translation. Latin Vulgate text stays embedded.
+
+All headings, rubrics, and structural text localised:
+Psalmus/Psalm, Hymnus/Hymn, Capitulum/Chapter, Lectio/Lesson,
+secreto/said silently, Absolutio/Absolution, Benedictio/Blessing, etc.
+
+Canticles (Nunc dimittis, Magnificat, Benedictus, Benedicite) fetch
+English text from the canticle registry via =:canticle-key= in data plists.
+
+Marian antiphons have a parallel English alist (=bcp-roman-marian-antiphons-en=)
+with Bute 1908 verse translations.
+
+** Penitential Forms Registry :constraint:
+Cross-tradition registry in bcp-common-prayers.el:
+=bcp-penitential-forms= alist, registered via =bcp-penitential-register=.
+Registered forms: roman, anglican-1662, anglican-1662-lay (pardon and peace),
+anglican-1928.
+Defcustoms =bcp-roman-confession-form= and =bcp-roman-absolution-form=
+control which form the Roman renderer uses. Works in reverse too.
+
+** Marian Antiphons
+Four seasonal final antiphons in bcp-common-roman.el (Latin + English):
+| advent | Alma Redemptoris Mater | Angelus Domini / Et concepit |
+| christmastide | Alma Redemptoris Mater | Post partum / Dei Genetrix |
+| lent | Ave Regina caelorum | Dignare me laudare / Da mihi virtutem |
+| eastertide | Regina caeli | Gaude et laetare / Quia surrexit |
+| per-annum | Salve Regina | Ora pro nobis / Ut digni efficiamur |
+Each has antiphon + V./R. + Oremus + collect.
+English translations (=bcp-roman-marian-antiphons-en=) from Bute 1908.
+
+** DONE Remaining LOBVM hours
+All eight hours (Matins, Lauds, Prime, Terce, Sext, None, Vespers, Compline)
+implemented with Latin + English support. Auto-hour selector via =bcp-roman-lobvm=.
+
+** TODO Full Roman Breviary framework
+Psalterium (weekly cycle), Proprium de Tempore, Proprium Sanctorum,
+Commune Sanctorum. Separate files per category.
 
 * Rejected Approaches
 :PROPERTIES:

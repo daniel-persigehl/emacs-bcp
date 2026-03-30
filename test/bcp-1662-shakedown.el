@@ -45,8 +45,8 @@
 (bcp-1662-easter 2019) ;; Expected: (4 21 2019)
 
 ;; Advent Sunday — should always be the Sunday nearest Nov 30
-(bcp-1662-advent-sunday 2026) ;; Expected: (11 29 2026)  Sun nearest Nov 30
-(bcp-1662-advent-sunday 2025) ;; Expected: (11 30 2025)  Nov 30 IS a Sunday
+(bcp-1662-advent-1 2026) ;; Expected: (11 29 2026)  Sun nearest Nov 30
+(bcp-1662-advent-1 2025) ;; Expected: (11 30 2025)  Nov 30 IS a Sunday
 
 ;; Liturgical seasons — check boundaries carefully
 (bcp-1662-liturgical-season 3 21 2026) ;; Expected: lent       (today, before Passion Sun Mar 22)
@@ -102,7 +102,7 @@
 ;; Expected: nil  (Feb 29 has no dominical letter by design)
 
 ;; Year where Advent Sunday = Dec 1 (Nov 30 is Saturday, Sunday is Dec 1)
-(bcp-1662-advent-sunday 2024) ;; Expected: (12 1 2024)
+(bcp-1662-advent-1 2024) ;; Expected: (12 1 2024)
 
 ;; Chair of St Peter (Feb 22) falls on Ash Wednesday in 2034
 (bcp-1662-user-feast-observed-date 'chair-of-st-peter 2034)
