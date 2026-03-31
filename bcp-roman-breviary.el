@@ -144,23 +144,101 @@ Psalterium/Psalmorum/Psalm%d.txt" num)
               (puthash num vec bcp-roman-breviary--canticle-cache)
               vec))))))
 
+(defun bcp-roman-breviary--vulgate-to-coverdale (vulg-num &optional v-start v-end)
+  "Map Vulgate psalm VULG-NUM (with optional verse range) to Coverdale lookup.
+Returns a list of (BCP-NUM START END) specs to concatenate.
+Verse numbers are adjusted for BCP/Coverdale numbering.
+END of nil means \\='to end of psalm\\='."
+  (cond
+   ((<= vulg-num 8)
+    `((,vulg-num ,v-start ,v-end)))
+   ((= vulg-num 9)
+    ;; Vulgate 9 = BCP 9 (vv.1-20) + BCP 10 (vv.21+, renumbered from 1)
+    (let ((split 20))  ; BCP 9 covers Vulgate vv.1-20
+      (cond
+       ((and v-start (> v-start split))
+        ;; Entirely in BCP 10
+        `((10 ,(- v-start split) ,(when v-end (- v-end split)))))
+       ((and v-end (<= v-end split))
+        ;; Entirely in BCP 9
+        `((9 ,v-start ,v-end)))
+       (v-start
+        ;; Spans both — nil end for first part means "to end"
+        `((9 ,v-start nil) (10 1 ,(when v-end (- v-end split)))))
+       (t
+        ;; Whole psalm 9 = BCP 9 + BCP 10
+        '((9 nil nil) (10 nil nil))))))
+   ((<= vulg-num 112)
+    `((,(1+ vulg-num) ,v-start ,v-end)))
+   ((= vulg-num 113)
+    ;; Vulgate 113 = BCP 114 (vv.1-8) + BCP 115 (vv.9+, renumbered)
+    (let ((split 8))
+      (cond
+       ((and v-start (> v-start split))
+        `((115 ,(- v-start split) ,(when v-end (- v-end split)))))
+       ((and v-end (<= v-end split))
+        `((114 ,v-start ,v-end)))
+       (v-start
+        `((114 ,v-start nil) (115 1 ,(when v-end (- v-end split)))))
+       (t '((114 nil nil) (115 nil nil))))))
+   ((or (= vulg-num 114) (= vulg-num 115))
+    ;; Vulgate 114 + 115 = BCP 116
+    `((116 ,v-start ,v-end)))
+   ((<= vulg-num 145)
+    `((,(1+ vulg-num) ,v-start ,v-end)))
+   ((or (= vulg-num 146) (= vulg-num 147))
+    ;; Vulgate 146 + 147 = BCP 147
+    `((147 ,v-start ,v-end)))
+   (t
+    `((,vulg-num ,v-start ,v-end)))))
+
 (defun bcp-roman-breviary--psalm-verses (spec)
   "Return verse list for psalm SPEC.
 SPEC is an integer (full psalm, Vulgate numbering) or a list
 \(PSALM-NUM START-VERSE END-VERSE\) for a subsection.
-Numbers >= 200 are treated as DO canticle numbers."
+Numbers >= 200 are treated as DO canticle numbers.
+Uses the Coverdale psalter when `bcp-roman-office-language' is \\='english."
   (let* ((vulg-num (if (listp spec) (car spec) spec))
-         (all (if (>= vulg-num 200)
-                  (bcp-roman-breviary--load-canticle vulg-num)
-                (let ((table (bcp-fetcher--vulgate-psalms)))
-                  (when table (gethash vulg-num table))))))
-    (when all
-      (let ((verses (append all nil))) ; vector → list
-        (if (listp spec)
-            (let ((start (nth 1 spec))
-                  (end   (nth 2 spec)))
-              (seq-subseq verses (1- start) end))
-          verses)))))
+         (english (eq bcp-roman-office-language 'english)))
+    (cond
+     ;; Canticles: always from DO files (Latin only for now)
+     ((>= vulg-num 200)
+      (let ((all (bcp-roman-breviary--load-canticle vulg-num)))
+        (when all (append all nil))))
+     ;; English: Coverdale psalter with BCP numbering
+     (english
+      (let* ((table (bcp-fetcher--coverdale-psalms))
+             (v-start (when (listp spec) (nth 1 spec)))
+             (v-end   (when (listp spec) (nth 2 spec)))
+             (lookups (bcp-roman-breviary--vulgate-to-coverdale
+                       vulg-num v-start v-end))
+             (result nil))
+        (when table
+          (dolist (lookup lookups)
+            (let* ((bcp-num (nth 0 lookup))
+                   (start   (nth 1 lookup))
+                   (end     (nth 2 lookup))
+                   (all     (gethash bcp-num table)))
+              (when all
+                (let* ((verses (append all nil))
+                       (len (length verses))
+                       (from (1- (or start 1)))
+                       (to (if end (min end len) len)))
+                  (setq result
+                        (nconc result
+                               (seq-subseq verses from to)))))))
+          result)))
+     ;; Latin: Vulgate psalter
+     (t
+      (let* ((table (bcp-fetcher--vulgate-psalms))
+             (all (when table (gethash vulg-num table))))
+        (when all
+          (let ((verses (append all nil)))
+            (if (listp spec)
+                (let ((start (nth 1 spec))
+                      (end   (nth 2 spec)))
+                  (seq-subseq verses (1- start) end))
+              verses))))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Ordo builders
