@@ -28,6 +28,7 @@
 (require 'bcp-common-prayers)
 (require 'bcp-common-canticles)
 (require 'bcp-roman-hymnal)
+(require 'bcp-roman-psalterium)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Scripture fetching for English mode
@@ -114,11 +115,13 @@ Uses the active `bcp-fetcher' backend."
 
 (defun bcp-roman-render--insert-psalm (vulg-num verses gloria-patri &optional language)
   "Insert psalm VULG-NUM with VERSES and GLORIA-PATRI.
+VULG-NUM is an integer or a list (NUM START END) for subsections.
 VERSES is a list of verse strings with Breviary pointing.
 LANGUAGE is \\='latin or \\='english."
   (insert "\n")
-  (bcp-liturgy-render--insert-heading
-   3 (format (if (eq language 'english) "Psalm %d" "Psalmus %d") vulg-num))
+  (let ((num (if (listp vulg-num) (car vulg-num) vulg-num)))
+    (bcp-liturgy-render--insert-heading
+     3 (format (if (eq language 'english) "Psalm %d" "Psalmus %d") num)))
   (dolist (v verses)
     (insert v "\n"))
   (when gloria-patri
@@ -324,27 +327,47 @@ following the traditional Roman pattern."
                (when (nth i verses)
                  (insert (nth i verses) "\n"))))))))))
 
+(defun bcp-roman-render--to-roman (n)
+  "Convert integer N (1-9) to a lowercase Roman numeral string."
+  (nth n '("" "i" "ii" "iii" "iv" "v" "vi" "vii" "viii" "ix")))
+
 (defun bcp-roman-render--insert-lesson (data n &optional language)
   "Insert a Matins lesson from DATA plist, lesson number N (1-based).
-DATA has :ref (scripture reference) and :text (lesson body).
-When LANGUAGE is \\='english, fetch scripture text via `bcp-fetcher'."
+DATA has :ref (scripture reference), :text (lesson body),
+and optionally :source (patristic attribution) and
+:gospel-incipit (Gospel pericope text for homily lessons).
+When LANGUAGE is \\='english, scripture lessons are fetched via `bcp-fetcher'."
+  (when data
   (insert "\n")
-  (bcp-liturgy-render--insert-heading
-   3 (format (if (eq language 'english) "Lesson %s" "Lectio %s")
-             (upcase (make-string n ?i))))
-  (let ((ref (plist-get data :ref)))
+  (let ((roman (upcase (bcp-roman-render--to-roman n))))
+    (bcp-liturgy-render--insert-heading
+     3 (format (if (eq language 'english) "Lesson %s" "Lectio %s") roman)))
+  (let ((ref     (plist-get data :ref))
+        (source  (plist-get data :source))
+        (incipit (plist-get data :gospel-incipit))
+        (text    (plist-get data :text)))
+    ;; Source attribution (patristic/homily)
+    (when source
+      (bcp-liturgy-render--insert-rubric source #'bcp-roman-render--rubric-face))
+    ;; Scripture reference
     (when ref
       (bcp-liturgy-render--insert-rubric ref #'bcp-roman-render--rubric-face))
-    (if (eq language 'english)
-        (let ((fetched (when ref (bcp-roman-render--fetch-scripture ref))))
-          (if fetched
-              (insert fetched "\n")
-            (if ref
-                (bcp-liturgy-render--insert-rubric
-                 "(Scripture text from user's configured Bible translation)"
-                 #'bcp-roman-render--rubric-face)
-              (insert (plist-get data :text) "\n"))))
-      (insert (plist-get data :text) "\n"))))
+    ;; Gospel incipit (for homily lessons)
+    (when incipit
+      (insert incipit "\n"))
+    ;; Lesson body
+    (cond
+     ;; English: try to fetch scripture for lessons with a ref and no source
+     ((and (eq language 'english) ref (not source))
+      (let ((fetched (bcp-roman-render--fetch-scripture ref)))
+        (if fetched
+            (insert fetched "\n")
+          (bcp-liturgy-render--insert-rubric
+           "(Scripture text from user's configured Bible translation)"
+           #'bcp-roman-render--rubric-face))))
+     ;; Otherwise: insert embedded Latin text
+     (text
+      (insert text "\n"))))))
 
 (defun bcp-roman-render--insert-responsory (data)
   "Insert a responsory from DATA plist.
@@ -504,6 +527,30 @@ LANGUAGE is \\='latin or \\='english (default \\='latin)."
       (:pre-oratio
        (bcp-roman-render--insert-pre-oratio language))
 
+      (:preces
+       ;; Preces: list of (V R) pairs, resolved from data-fn or inline
+       (let ((pairs (let ((key (cadr step)))
+                      (if (symbolp key) (funcall data-fn key) key))))
+         (insert "\n")
+         (bcp-liturgy-render--insert-versicles pairs)))
+
+      (:suffragium
+       ;; Suffragium sanctorum: series of commemorations
+       (let ((comms (bcp-roman-psalterium-suffragium language)))
+         (insert "\n")
+         (bcp-liturgy-render--insert-heading
+          3 (if (eq language 'english) "Suffrages of the Saints"
+              "Suffrágia Sanctórum"))
+         (dolist (comm comms)
+           (insert "\n")
+           (bcp-liturgy-render--insert-rubric
+            (plist-get comm :heading) #'bcp-roman-render--rubric-face)
+           (insert "Ant. " (plist-get comm :antiphon) "\n\n")
+           (bcp-liturgy-render--insert-versicles
+            (list (list (plist-get comm :versicle)
+                        (plist-get comm :response))))
+           (insert "\n" (plist-get comm :collect) "\n"))))
+
       (:collect
        (let ((text (funcall data-fn (cadr step))))
          (insert "\n")
@@ -538,24 +585,25 @@ LANGUAGE is \\='latin or \\='english (default \\='latin)."
          (bcp-roman-render--insert-lesson
           data
           (or (plist-get (cddr step) :number)
-              ;; Derive lesson number from key name
-              (cond
-               ((string-match-p "1" (symbol-name key)) 1)
-               ((string-match-p "2" (symbol-name key)) 2)
-               ((string-match-p "3" (symbol-name key)) 3)
-               (t 1)))
+              ;; Derive lesson number from key name (e.g., matins-lesson-7 → 7)
+              (when (string-match "\\([0-9]+\\)" (symbol-name key))
+                (string-to-number (match-string 1 (symbol-name key))))
+              1)
           language)))
 
       (:responsory
        (let ((data (funcall data-fn (cadr step))))
-         (bcp-roman-render--insert-responsory data)))
+         (when data
+           (bcp-roman-render--insert-responsory data))))
 
       (:te-deum
        (bcp-roman-render--insert-te-deum language))
 
       (:lesson-absolutio
        (let* ((idx (cadr step))
-              (text (nth idx bcp-roman-absolutiones)))
+              (text (nth idx (if (eq language 'english)
+                                 bcp-roman-absolutiones-en
+                               bcp-roman-absolutiones))))
          (insert "\n")
          (bcp-liturgy-render--insert-rubric
           (if (eq language 'english) "Absolution." "Absolutio.")
@@ -582,6 +630,37 @@ LANGUAGE is \\='latin or \\='english (default \\='latin)."
        (let ((pair (funcall data-fn (cadr step))))
          (insert "\n")
          (bcp-liturgy-render--insert-versicles (list pair))))
+
+      (:lectio-brevis
+       (let ((data (funcall data-fn (cadr step))))
+         (when data
+           (insert "\n")
+           (bcp-liturgy-render--insert-heading 3
+            (if (eq language 'english) "Short Lesson" "Lectio Brevis"))
+           (let ((ref  (plist-get data :ref))
+                 (text (plist-get data :text))
+                 (resp (plist-get data :responsory)))
+             (when ref
+               (bcp-liturgy-render--insert-rubric
+                ref #'bcp-roman-render--rubric-face))
+             (insert text "\n")
+             ;; Tu autem
+             (insert (if (eq language 'english)
+                         "But thou, O Lord, have mercy upon us.\n℟. Thanks be to God.\n"
+                       "Tu autem, Dómine, miserére nobis.\n℟. Deo grátias.\n"))
+             ;; Short responsory
+             (when resp
+               (insert "\n")
+               (let ((respond (plist-get resp :respond))
+                     (versus  (plist-get resp :versus))
+                     (repeat  (plist-get resp :repeat)))
+                 (insert "℟. " respond "\n")
+                 (insert "℣. " versus "\n")
+                 (insert "℟. " repeat "\n")
+                 (insert (plist-get bcp-common-prayers-gloria-patri
+                                    (intern (format ":%s" language)))
+                         "\n")
+                 (insert "℟. " respond "\n")))))))
 
       (_
        (insert (format "\n[Unknown step: %S]\n" step))))))

@@ -176,8 +176,8 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-roman-responsory.el | bcp-roman- | Responsory registry: incipit-keyed, nested plist shape (respond/verse/repeat) | SETTLED |
 | bcp-roman-lobvm.el | bcp-roman- | LOBVM data (all 8 hours) + entry points; resolver uses incipit-keyed registries | SETTLED |
 | bcp-roman-psalterium.el | bcp-roman- | Weekly psalter: psalm/antiphon assignments for all hours, capitula, versicles, preces, suffragium | SETTLED |
-| bcp-roman-tempora.el | bcp-roman- | Proper of the Time: 24 Per Annum Sunday collects, preceding-Sunday computation | SETTLED |
-| bcp-roman-breviary.el | bcp-roman- | Ferial Breviary: ordo builders (7 hours), resolver, psalm-fn, auto-hour dispatch | SETTLED |
+| bcp-roman-tempora.el | bcp-roman- | Proper of the Time: 24 Per Annum Sunday collects + dominical Matins lessons/responsories | SETTLED |
+| bcp-roman-breviary.el | bcp-roman- | Full Breviary: ferial + dominical ordo builders, resolver, psalm-fn, auto-hour dispatch | SETTLED |
 | bcp-liturgy-hours.el | bcp-liturgy- | Canonical hours framework, hour-grouping registry | SETTLED |
 | bcp-vulgate-collate.el | bcp- | One-time utility: collates 150 DO Latin psalm files into bcp-liturgy-psalter-vulgate.txt | SETTLED |
 
@@ -574,8 +574,8 @@ Parallel to Anglican side:
 | bcp-roman-render.el | Step dispatch, office walker, language threading |
 | bcp-roman-lobvm.el | LOBVM data + entry points; resolver uses incipit-keyed registries |
 | bcp-roman-psalterium.el | Weekly psalter cycle: psalm/antiphon assignments, propers, preces, suffragium |
-| bcp-roman-tempora.el | Proper of the Time: 24 Per Annum Sunday collects, preceding-Sunday logic |
-| bcp-roman-breviary.el | Ferial Breviary: 7 hours (Vespers–None), ordo builders, resolver, psalm-fn |
+| bcp-roman-tempora.el | Proper of the Time: 24 Per Annum Sunday collects + dominical Matins lessons/responsories |
+| bcp-roman-breviary.el | Full Breviary: ferial + dominical ordo builders, resolver, psalm-fn |
 | bcp-common-roman.el | Shared Roman fixed texts (Latin + English) |
 | bcp-roman-hymnal.el | Hymn registry: multiple translators per hymn |
 | bcp-roman-antiphonary.el | Antiphon registry: incipit-keyed, multi-translator |
@@ -605,9 +605,10 @@ All eight canonical hours implemented:
 =bcp-roman-lobvm= auto-selects the appropriate hour by time of day.
 All hours accessible from the LOBVM transient submenu (R from main menu).
 
-** Ferial Breviary Hours
-Seven non-Matins hours implemented:
+** Breviary Hours
+All eight canonical hours implemented:
 | Hour | Entry point | Transient key |
+| Matins | =bcp-roman-breviary-matins= | m |
 | Lauds | =bcp-roman-breviary-lauds= | l |
 | Prime | =bcp-roman-breviary-prime= | p |
 | Terce | =bcp-roman-breviary-terce= | t |
@@ -618,6 +619,13 @@ Seven non-Matins hours implemented:
 
 =bcp-roman-breviary= auto-selects the appropriate hour by time of day.
 Accessible from the Breviary transient submenu (B from main menu).
+
+Matins dispatches by day of week:
+- Mon–Sat (ferial): 1 nocturn, 12 psalms under 6 antiphons, lectio brevis
+- Sunday (dominical): 3 nocturns × 3 psalms, 9 lessons (scripture + patristic
+  + homily), 8 responsories, Te Deum. Data from =bcp-roman-tempora.el=
+  (24 Per Annum Sundays). Nocturn I lessons fetched via =bcp-fetcher=;
+  Nocturns II–III embedded Latin. English absolutiones/benedictiones included.
 
 Each hour uses the weekly psalter cycle from =bcp-roman-psalterium.el=,
 proper collect from =bcp-roman-tempora.el= (Per Annum), ferial preces,
@@ -714,12 +722,17 @@ Completed:
   and OT canticle loading, auto-hour dispatch
 - Ferial Matins: 12 psalms under 6 antiphons (Daya cursus), invitatory,
   lectio brevis with responsory, capitulum — all days Mon–Sat
+- Dominical Matins: 3 nocturns × 3 psalms, 9 lessons, 8 responsories,
+  Te Deum. 24 Per Annum Sunday datasets (=bcp-roman-tempora.el=).
+  Nocturn I lessons fetched via =bcp-fetcher= (scripture refs);
+  Nocturns II–III embedded Latin (patristic/homily).
+  English absolutiones/benedictiones, Evangelica benediction for Nocturn III.
 - Transient menu (=bcp-transient.el=): Breviary submenu with all hours
-- ~250 antiphons registered (psalter + Magnificat + Benedictus ferial)
+- ~260 antiphons registered (psalter + Magnificat + Benedictus ferial + 9 dominical)
 - 12 ferial hymns (Lauds Day0–6, Prime, Terce, Sext, None, + Matins per-day)
 
 Remaining:
-- Dominical (Sunday) Matins with 3 nocturns and full lessons
+- Fill incomplete dominical data (responsories for Pent02–24, some Nocturn I–II lessons)
 - Proprium Sanctorum, Commune Sanctorum
 - Laudes2 penitential psalm set
 - Advent/Lent/Eastertide seasonal variations

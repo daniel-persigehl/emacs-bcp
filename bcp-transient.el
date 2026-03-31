@@ -31,6 +31,24 @@
 (declare-function bcp-reload         "bcp-preferences")
 (declare-function bcp-1662-open-office   "bcp-1662")
 (declare-function bcp-1928-open-office   "bcp-anglican-1928")
+(declare-function bcp-roman-lobvm        "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-matins "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-lauds  "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-prime  "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-terce  "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-sext   "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-none   "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-vespers   "bcp-roman-lobvm")
+(declare-function bcp-roman-lobvm-compline  "bcp-roman-lobvm")
+(declare-function bcp-roman-breviary         "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-matins  "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-lauds   "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-prime   "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-terce   "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-sext    "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-none    "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-vespers "bcp-roman-breviary")
+(declare-function bcp-roman-breviary-compline "bcp-roman-breviary")
 
 (defvar office-officiant)
 (defvar bcp-liturgy-creed)
@@ -612,6 +630,72 @@ Comparison uses `equal'; wraps around after the last choice."
     '(britt caswall neale primer)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Breviary action suffixes
+
+(transient-define-suffix bcp--action-open-breviary ()
+  "Open the ferial Breviary (auto-selects hour)."
+  :description "Breviary (auto)"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary))
+
+(transient-define-suffix bcp--action-open-breviary-matins ()
+  "Open Matins of the ferial Breviary."
+  :description "Breviary Matins"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-matins))
+
+(transient-define-suffix bcp--action-open-breviary-lauds ()
+  "Open Lauds of the ferial Breviary."
+  :description "Breviary Lauds"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-lauds))
+
+(transient-define-suffix bcp--action-open-breviary-prime ()
+  "Open Prime of the ferial Breviary."
+  :description "Breviary Prime"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-prime))
+
+(transient-define-suffix bcp--action-open-breviary-terce ()
+  "Open Terce of the ferial Breviary."
+  :description "Breviary Terce"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-terce))
+
+(transient-define-suffix bcp--action-open-breviary-sext ()
+  "Open Sext of the ferial Breviary."
+  :description "Breviary Sext"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-sext))
+
+(transient-define-suffix bcp--action-open-breviary-none ()
+  "Open None of the ferial Breviary."
+  :description "Breviary None"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-none))
+
+(transient-define-suffix bcp--action-open-breviary-vespers ()
+  "Open Vespers of the ferial Breviary."
+  :description "Breviary Vespers"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-vespers))
+
+(transient-define-suffix bcp--action-open-breviary-compline ()
+  "Open Compline of the ferial Breviary."
+  :description "Breviary Compline"
+  (interactive)
+  (require 'bcp-roman-breviary)
+  (bcp-roman-breviary-compline))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Little Office submenu
 
 (transient-define-prefix bcp-settings-lobvm ()
@@ -629,6 +713,25 @@ Comparison uses `equal'; wraps around after the last choice."
     ("n" bcp--action-open-lobvm-none)
     ("v" bcp--action-open-lobvm-vespers)
     ("c" bcp--action-open-lobvm-compline)]])
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Breviary submenu
+
+(transient-define-prefix bcp-settings-breviary ()
+  "Roman Office — Ferial Breviary."
+  [["Settings"
+    ("L" bcp--set-roman-language)
+    ("H" bcp--set-roman-hymn-translator)]
+   ["Hours"
+    ("a" bcp--action-open-breviary)
+    ("m" bcp--action-open-breviary-matins)
+    ("l" bcp--action-open-breviary-lauds)
+    ("p" bcp--action-open-breviary-prime)
+    ("t" bcp--action-open-breviary-terce)
+    ("s" bcp--action-open-breviary-sext)
+    ("n" bcp--action-open-breviary-none)
+    ("v" bcp--action-open-breviary-vespers)
+    ("c" bcp--action-open-breviary-compline)]])
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Main prefix
@@ -667,7 +770,8 @@ and 2 (BCP 1928)."
     ("E" bcp--action-open-1662)
     ("A" bcp--action-open-1928)
     ("r" bcp--action-open-lobvm)
-    ("R" "Roman Office hours…" bcp-settings-lobvm)
+    ("R" "Little Office hours…" bcp-settings-lobvm)
+    ("B" "Breviary hours…" bcp-settings-breviary)
     ("g" bcp--action-reload)
     ("q" bcp--quit)]])
 

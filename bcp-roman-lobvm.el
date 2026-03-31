@@ -23,6 +23,10 @@
 (require 'bcp-common-roman)
 (require 'bcp-common-prayers)
 (require 'bcp-roman-ordo)
+(require 'bcp-roman-antiphonary)
+(require 'bcp-roman-collectarium)
+(require 'bcp-roman-responsory)
+(require 'bcp-roman-hymnal)
 (require 'bcp-liturgy-dispatch)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
@@ -450,68 +454,7 @@ Sicut locútus est ad patres nostros: * Ábraham, et sémini ejus in sǽcula.")
   "Magnificat (Canticum B.M.V., Luc. 1:46-55).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Vespers antiphons (from C11 [Ant Vespera])
-
-(defconst bcp-roman-lobvm--vespers-antiphon-1
-  "Dum esset Rex in accúbitu suo, nardus mea dedit odórem suavitátis."
-  "Vespers antiphon 1 (Ps 109).")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-2
-  "Læva ejus sub cápite meo, et déxtera illíus amplexábitur me."
-  "Vespers antiphon 2 (Ps 112).")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-3
-  "Nigra sum, sed formósa, fíliæ Jerúsalem; ídeo diléxit me Rex, et introdúxit me in cubículum suum."
-  "Vespers antiphon 3 (Ps 121).")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-4
-  "Jam hiems tránsiit, imber ábiit et recéssit: surge, amíca mea, et veni."
-  "Vespers antiphon 4 (Ps 126).")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-5
-  "Speciósa facta es et suávis in delíciis tuis, sancta Dei Génetrix."
-  "Vespers antiphon 5 (Ps 147).")
-
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Vespers hymn: Ave maris stella (from C11 [Hymnus Vespera])
-
-(defconst bcp-roman-lobvm--vespers-hymn
-  "Ave maris stella,
-Dei Mater alma,
-Atque semper Virgo,
-Felix cæli porta.
-
-Sumens illud Ave
-Gabriélis ore,
-Funda nos in pace,
-Mutans Hevæ nomen.
-
-Solve vincla reis,
-Profer lumen cæcis,
-Mala nostra pelle,
-Bona cuncta posce.
-
-Monstra te esse matrem,
-Sumat per te preces,
-Qui pro nobis natus,
-Tulit esse tuus.
-
-Virgo singuláris,
-Inter omnes mitis,
-Nos culpis solútos
-Mites fac et castos.
-
-Vitam præsta puram,
-Iter para tutum,
-Ut vidéntes Jesum,
-Semper collætémur.
-
-Sit laus Deo Patri,
-Summo Christo decus,
-Spirítui Sancto,
-Tribus honor unus.
-Amen."
-  "Vespers hymn: Ave maris stella.")
+;;;; Vespers antiphons and hymn: now in antiphonary and hymnal registries
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Vespers capitulum, versicle, canticle antiphon, collect
@@ -527,74 +470,16 @@ sǽculum non désinam, et in habitatióne sancta coram ipso ministrávi.")
     "Proptérea benedíxit te Deus in ætérnum.")
   "Vespers versicle (from C6 [Versum 2]).")
 
-(defconst bcp-roman-lobvm--vespers-canticle-antiphon
-  "Beáta Mater et intácta Virgo, gloriósa Regína mundi, intercéde pro nobis ad Dóminum."
-  "Vespers Magnificat antiphon (per annum).")
-
-(defconst bcp-roman-lobvm--vespers-canticle-antiphon-eastertide
-  "Regína cæli, lætáre, allelúja; quia quem meruísti portáre, allelúja; \
-resurréxit, sicut dixit, allelúja: ora pro nobis Deum, allelúja."
-  "Vespers Magnificat antiphon (Eastertide).")
-
-(defconst bcp-roman-lobvm--vespers-collect
-  (concat
-   "Concéde nos fámulos tuos, quǽsumus, Dómine Deus, perpétua mentis \
-et córporis sanitáte gaudére: et, gloriósa beátæ Maríæ semper Vírginis \
-intercessióne, a præsénti liberári tristítia, et ætérna pérfrui lætítia.\n"
-   bcp-roman-per-dominum)
-  "Vespers collect: Concede nos famulos + Per Dominum.")
+;; Vespers canticle antiphons → antiphonary (beata-mater-et-intacta, regina-caeli)
+;; Vespers collect → collectarium (concede-nos-famulos)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Lauds antiphons (from C12 [Ant Laudes])
+;;;; Lauds antiphons: now in antiphonary registry
 
-(defconst bcp-roman-lobvm--lauds-antiphon-1
-  "Assúmpta est María in cælum: gaudent Angeli, laudántes benedícunt Dóminum."
-  "Lauds antiphon 1 (Ps 92).")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-2
-  "María Virgo assúmpta est ad æthéreum thálamum, in quo Rex regum stelláto sedet sólio."
-  "Lauds antiphon 2 (Ps 99).")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-3
-  "In odórem unguentórum tuórum cúrrimus: adolescéntulæ dilexérunt te nimis."
-  "Lauds antiphon 3 (Ps 62).")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-4
-  "Benedícta fília tu a Dómino: quia per te fructum vitæ communicávimus."
-  "Lauds antiphon 4 (Benedicite).")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-5
-  "Pulchra es, et decóra, fília Jerúsalem: terríbilis ut castrórum ácies ordináta."
-  "Lauds antiphon 5 (Ps 148-150).")
+;; Lauds hymn → hymnal (o-gloriosa-virginum)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Lauds hymn: O gloriosa virginum (from C11 [Hymnus Laudes])
-
-(defconst bcp-roman-lobvm--lauds-hymn
-  "O gloriósa vírginum,
-Sublímis inter sídera,
-Qui te creávit, párvulum
-Lacténte nutris úbere.
-
-Quod Heva tristis ábstulit,
-Tu reddis almo gérmine:
-Intrent ut astra flébiles,
-Cæli reclúdis cárdines.
-
-Tu Regis alti jánua
-Et aula lucis fúlgida:
-Vitam datam per Vírginem,
-Gentes redémptæ, pláudite.
-
-Jesu, tibi sit glória,
-Qui natus es de Vírgine,
-Cum Patre et almo Spíritu,
-In sempitérna sǽcula.
-Amen."
-  "Lauds hymn: O gloriosa virginum.")
-
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Lauds capitulum, versicle, canticle antiphon, collect
+;;;; Lauds capitulum and versicle
 
 (defconst bcp-roman-lobvm--lauds-capitulum
   '(:ref "Cant 6:8"
@@ -607,25 +492,8 @@ et regínæ laudavérunt eam.")
     "Et benedíctus fructus ventris tui.")
   "Lauds versicle (from C10 [Versum 2]).")
 
-(defconst bcp-roman-lobvm--lauds-canticle-antiphon
-  "Beáta Dei Génetrix, María, Virgo perpétua, templum Dómini, \
-sacrárium Spíritus Sancti, sola sine exémplo placuísti Dómino nostro \
-Jesu Christo: ora pro pópulo, intérveni pro clero, intercéde pro devóto femíneo sexu."
-  "Lauds Benedictus antiphon (per annum).")
-
-(defconst bcp-roman-lobvm--lauds-canticle-antiphon-eastertide
-  "Regína cæli, lætáre, allelúja; quia quem meruísti portáre, allelúja; \
-resurréxit, sicut dixit, allelúja: ora pro nobis Deum, allelúja."
-  "Lauds Benedictus antiphon (Eastertide).")
-
-(defconst bcp-roman-lobvm--lauds-collect
-  (concat
-   "Deus, qui de beátæ Maríæ Vírginis útero Verbum tuum, Angelo \
-nuntiánte, carnem suscípere voluísti: præsta supplícibus tuis; ut, \
-qui vere eam Genetrícem Dei crédimus, ejus apud te intercessiónibus \
-adjuvémur.\n"
-   bcp-roman-per-eumdem)
-  "Lauds collect: Deus qui de beatae Mariae + Per eumdem.")
+;; Lauds canticle antiphons → antiphonary (beata-dei-genetrix, regina-caeli)
+;; Lauds collect → collectarium (deus-qui-de-beatae)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Commemoratio de Sanctis (shared, from C12 [Commemoratio])
@@ -648,31 +516,7 @@ bona retríbue, et ómnibus fidélibus defúnctis réquiem ætérnam concéde.\n
                   bcp-roman-per-dominum))
   "Commemoratio de Sanctis (DA 1911 rubrics).")
 
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Minor Hours shared hymn
-;;
-;; All four Little Hours use the same hymn: Memento rerum Conditor
-;; (DA form) with Maria Mater gratiae + Nativity doxology.
-;; This is the same as the Compline hymn but WITHOUT the Enixa est
-;; puerpera stanza.
-
-(defconst bcp-roman-lobvm--minor-hymn
-  "Meménto, rerum Cónditor,
-Nostri quod olim córporis,
-Sacráta ab alvo Vírginis
-Nascéndo formam súmpseris.
-
-María Mater grátiæ,
-Dulcis Parens cleméntiæ,
-Tu nos ab hoste prótege,
-Et mortis hora súscipe.
-
-Jesu, tibi sit glória,
-Qui natus es de Vírgine,
-Cum Patre et almo Spíritu,
-In sempitérna sǽcula.
-Amen."
-  "Minor Hours hymn: Memento rerum Conditor (without Compline stanza).")
+;; Minor Hours hymn → hymnal (memento-rerum-conditor)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Prime propers
@@ -688,13 +532,7 @@ pulchra ut luna, elécta ut sol, terríbilis ut castrórum ácies ordináta?")
     "Da mihi virtútem contra hostes tuos.")
   "Prime versicle (from C11 [Versum 1]).")
 
-(defconst bcp-roman-lobvm--prime-collect
-  (concat
-   "Deus, qui virginálem aulam beátæ Maríæ, in qua habitáres, \
-elígere dignátus es: da, quǽsumus; ut, sua nos defensióne munítos, \
-jucúndos fácias suæ interésse commemoratióni.\n"
-   bcp-roman-qui-vivis)
-  "Prime collect: Deus, qui virginalem aulam + Qui vivis.")
+;; Prime collect → collectarium (deus-qui-virginalem)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Terce propers
@@ -710,14 +548,7 @@ simíliter requiévi, et in Jerúsalem potéstas mea.")
     "Proptérea benedíxit te Deus in ætérnum.")
   "Terce versicle (from C6 [Versum 2]).")
 
-(defconst bcp-roman-lobvm--terce-collect
-  (concat
-   "Deus, qui salútis ætérnæ, beátæ Maríæ virginitáte fecúnda, \
-humáno géneri prǽmia præstitísti: tríbue, quǽsumus; ut ipsam pro \
-nobis intercédere sentiámus, per quam merúimus auctórem vitæ \
-suscípere, Dóminum nostrum Jesum Christum Fílium tuum:\n"
-   bcp-roman-qui-tecum)
-  "Terce collect: Circumcision (Sancti/01-01) + Qui tecum.")
+;; Terce collect → collectarium (deus-qui-salutis)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Sext propers
@@ -733,13 +564,7 @@ heréditas illíus, et in plenitúdine sanctórum deténtio mea.")
     "Et benedíctus fructus ventris tui.")
   "Sext versicle (from C10 [Versum 2]).")
 
-(defconst bcp-roman-lobvm--sext-collect
-  (concat
-   "Concéde, miséricors Deus, fragilitáti nostræ præsídium; ut, qui \
-sanctæ Dei Genetrícis memóriam ágimus; intercessiónis ejus auxílio, \
-a nostris iniquitátibus resurgámus.\n"
-   bcp-roman-per-eumdem)
-  "Sext collect: Concede, misericors Deus + Per eumdem.")
+;; Sext collect → collectarium (concede-misericors-deus)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; None propers
@@ -755,64 +580,14 @@ dedi: quasi myrrha elécta, dedi suavitátem odóris.")
     "Dei Génitrix, intercéde pro nobis.")
   "None versicle (from C12 [Verse Nona]).")
 
-(defconst bcp-roman-lobvm--none-collect
-  (concat
-   "Famulórum tuórum, quǽsumus, Dómine, delíctis ignósce: ut qui \
-tibi placére de áctibus nostris non valémus: Genitrícis Fílii tui \
-Dómini nostri intercessióne salvémur:\n"
-   bcp-roman-qui-tecum)
-  "None collect: Famulorum tuorum + Qui tecum.")
+;; None collect → collectarium (famulorum-tuorum)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Matins propers
 ;;
-;; Invitatory, hymn, antiphons, nocturn versicle, lessons, responsories,
-;; benedictions, and collect for LOBVM Matins.
-
-(defconst bcp-roman-lobvm--matins-invitatory
-  "Ave María, grátia plena, * Dóminus tecum."
-  "Matins invitatory antiphon (from C10 [Invit]).")
-
-(defconst bcp-roman-lobvm--matins-hymn
-  "Quem terra, pontus, sídera\n\
-Colunt, adórant, prædicant,\n\
-Trinam regéntem máchinam,\n\
-Claustrum Maríæ bájulat.\n\
-\n\
-Cui luna, sol, et ómnia\n\
-Desérviunt per témpora,\n\
-Perfúsa cæli grátia,\n\
-Gestant puéllæ víscera.\n\
-\n\
-Beáta Mater múnere,\n\
-Cujus supérnus ártifex\n\
-Mundum pugíllo cóntinens,\n\
-Ventris sub arca clausus est.\n\
-\n\
-Beáta cæli núntio,\n\
-Fœcúnda sancto Spíritu,\n\
-Desiderátus géntibus,\n\
-Cujus per alvum fusus est.\n\
-\n\
-Jesu, tibi sit glória,\n\
-Qui natus es de Vírgine,\n\
-Cum Patre, et almo Spíritu\n\
-In sempitérna sǽcula.\n\
-Amen."
-  "Matins hymn: Quem terra, pontus, sidera (from C11 [Hymnus Matutinum]).")
-
-;; Matins antiphons (from C11 [Ant MatutinumBMV], first three for one nocturn)
-(defconst bcp-roman-lobvm--matins-antiphon-1
-  "Benedícta tu in muliéribus, et benedíctus fructus ventris tui."
-  "Matins antiphon 1 (Psalm 8).")
-
-(defconst bcp-roman-lobvm--matins-antiphon-2
-  "Sicut myrrha elécta, odórem dedísti suavitátis, sancta Dei Génetrix."
-  "Matins antiphon 2 (Psalm 18).")
-
-(defconst bcp-roman-lobvm--matins-antiphon-3
-  "Ante torum hujus Vírginis frequentáte nobis dúlcia cántica drámatis."
-  "Matins antiphon 3 (Psalm 23).")
+;; Invitatory, antiphons → antiphonary registry
+;; Hymn → hymnal (quem-terra-pontus-sidera)
+;; Nocturn versicle, lessons, benedictions stay local.
 
 (defconst bcp-roman-lobvm--matins-nocturn-versicle
   '("Diffúsa est grátia in lábiis tuis."
@@ -845,78 +620,17 @@ sum juxta aquam in platéis. Sicut cinnamómum et bálsamum aromatízans \
 odórem dedi: quasi myrrha elécta dedi suavitátem odóris.")
   "Matins Lectio III: Sir 24:17-20.")
 
-;; Responsories
-(defconst bcp-roman-lobvm--matins-responsory-1
-  '(:respond "Sancta et immaculáta virgínitas, quibus te láudibus éfferam, néscio:"
-    :repeat "Quia quem cæli cápere non póterant, tuo grémio contulísti."
-    :verse "Benedícta tu in muliéribus, et benedíctus fructus ventris tui.")
-  "Matins Responsory I (from C11 [Responsory1]).")
-
-(defconst bcp-roman-lobvm--matins-responsory-2
-  '(:respond "Beáta es, Virgo María, quæ Dóminum portásti, Creatórem mundi:"
-    :repeat "Genuísti qui te fecit, et in ætérnum pérmanes Virgo."
-    :verse "Ave María, grátia plena, Dóminus tecum.")
-  "Matins Responsory II (from C12 [Responsory2]).")
+;; Responsories → responsory registry (sancta-et-immaculata, beata-es-virgo-maria)
 
 ;; Benedictions (LOBVM-specific, from C10 [Benedictio])
 (defconst bcp-roman-lobvm--matins-benedictiones
   bcp-roman-benedictiones-lobvm
   "Matins benedictions: the three LOBVM-specific forms from C10.")
 
-;; Collect (same as Lauds collect — the LOBVM uses the same oratio at Matins)
-(defconst bcp-roman-lobvm--matins-collect
-  (concat
-   "Deus, qui de beátæ Maríæ Vírginis útero, Verbum tuum, Ángelo \
-nuntiánte, carnem suscípere voluísti: præsta supplícibus tuis; ut, \
-qui vere eam Genetrícem Dei crédimus, ejus apud te intercessiónibus \
-adjuvémur.\n"
-   bcp-roman-per-dominum)
-  "Matins collect: Deus qui de beatae Mariae + Per Dominum.")
+;; Matins collect → collectarium (deus-qui-de-beatae-per-dominum)
 
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Compline antiphon
-
-(defconst bcp-roman-lobvm--compline-antiphon
-  "Sub tuum præsídium confúgimus, sancta Dei Génetrix: \
-nostras deprecatiónes ne despícias in necessitátibus, \
-sed a perículis cunctis líbera nos semper, Virgo gloriósa et benedícta."
-  "Compline antiphon: Sub tuum praesidium (per annum).")
-
-(defconst bcp-roman-lobvm--compline-antiphon-eastertide
-  "Regína cæli, lætáre, allelúja; \
-quia quem meruísti portáre, allelúja; \
-resurréxit, sicut dixit, allelúja: \
-ora pro nobis Deum, allelúja."
-  "Compline antiphon: Regina caeli (Eastertide).")
-
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Compline hymn
-;;
-;; Memento rerum Conditor (DA form) with LOBVM Compline stanza
-;; "Enixa est puerpera" and Nativity doxology.
-
-(defconst bcp-roman-lobvm--compline-hymn
-  "Meménto, rerum Cónditor,
-Nostri quod olim córporis,
-Sacráta ab alvo Vírginis
-Nascéndo formam súmpseris.
-
-Eníxa est puérpera,
-Quem Gábriel prædíxerat,
-Quem matris alvo géstiens,
-Clausus Joánnes sénserat.
-
-María Mater grátiæ,
-Dulcis Parens cleméntiæ,
-Tu nos ab hoste prótege,
-Et mortis hora súscipe.
-
-Jesu, tibi sit glória,
-Qui natus es de Vírgine,
-Cum Patre et almo Spíritu,
-In sempitérna sǽcula.
-Amen."
-  "LOBVM Compline hymn: Memento rerum Conditor with Compline stanza.")
+;; Compline antiphons → antiphonary (sub-tuum-praesidium, regina-caeli)
+;; Compline hymn → hymnal (memento-rerum-conditor-compl)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Compline capitulum and versicle
@@ -946,15 +660,7 @@ Quod parásti * ante fáciem ómnium populórum,
 Lumen ad revelatiónem géntium, * et glóriam plebis tuæ Israël.")
   "The Nunc dimittis (Canticum Simeonis, Luc. 2:29-32).")
 
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Compline collect
-
-(defconst bcp-roman-lobvm--compline-collect
-  (concat
-   "Beátæ et gloriósæ semper Vírginis Maríæ, quǽsumus, Dómine, \
-intercéssio gloriósa nos prótegat, et ad vitam perdúcat ætérnam.\n"
-   bcp-roman-per-dominum)
-  "Compline collect: Beatae et gloriosae + Per Dominum.")
+;; Compline collect → collectarium (beatae-et-gloriosae)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Season resolution
@@ -1006,345 +712,119 @@ the Saturday after Pentecost, not Trinity Sunday."
      (t 'per-annum))))
 
 (defun bcp-roman-lobvm--compline-antiphon-for-season (season)
-  "Return the Compline antiphon string for SEASON."
-  (if (eq season 'eastertide)
-      bcp-roman-lobvm--compline-antiphon-eastertide
-    bcp-roman-lobvm--compline-antiphon))
+  "Return the antiphonary incipit symbol for Compline antiphon in SEASON."
+  (if (eq season 'eastertide) 'regina-caeli 'sub-tuum-praesidium))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Data resolver
 ;;
-;; Maps ordo step keys to pre-extracted data.
+;; Maps ordo step keys to pre-extracted data.  Antiphons, collects, and
+;; responsories are looked up from incipit-keyed registries; versicles,
+;; capitula, and structural texts remain as local constants.
 
 (defun bcp-roman-lobvm--canticle-antiphon-for-season (hour season)
-  "Return the canticle antiphon for HOUR and SEASON.
+  "Return the antiphonary incipit symbol for canticle antiphon in HOUR and SEASON.
 HOUR is one of `lauds' or `vespers'."
   (if (eq season 'eastertide)
-      (if (eq hour 'lauds)
-          bcp-roman-lobvm--lauds-canticle-antiphon-eastertide
-        bcp-roman-lobvm--vespers-canticle-antiphon-eastertide)
-    (if (eq hour 'lauds)
-        bcp-roman-lobvm--lauds-canticle-antiphon
-      bcp-roman-lobvm--vespers-canticle-antiphon)))
+      'regina-caeli
+    (if (eq hour 'lauds) 'beata-dei-genetrix 'beata-mater-et-intacta)))
 
-(defun bcp-roman-lobvm--resolve (key season)
-  "Resolve data KEY for the current SEASON.
-Returns the appropriate text, plist, or data structure for the
-ordo step identified by KEY."
-  (pcase key
-    ;; Compline
-    ('jube-domne          (bcp-roman-jube-domne))
-    ('benedictio-compline bcp-roman-benedictio-compline)
-    ('ave-maria           bcp-roman-ave-maria)
-    ('converte-nos        bcp-roman-converte-nos)
-    ('compline-antiphon   (bcp-roman-lobvm--compline-antiphon-for-season season))
-    ('compline-hymn       bcp-roman-lobvm--compline-hymn)
-    ('compline-capitulum  bcp-roman-lobvm--compline-capitulum)
-    ('compline-versicle   bcp-roman-lobvm--compline-versicle)
-    ('nunc-dimittis       bcp-roman-lobvm--nunc-dimittis)
-    ('compline-collect    bcp-roman-lobvm--compline-collect)
-    ('divinum-auxilium    bcp-roman-divinum-auxilium)
-    ('pater-noster        (plist-get bcp-common-prayers-lords-prayer :latin))
-    ('credo               (plist-get bcp-common-prayers-apostles-creed :latin))
+;; Slot → incipit mapping for LOBVM antiphons.
+;; Keys are ordo step symbols; values are antiphonary incipit symbols.
+(defconst bcp-roman-lobvm--antiphon-map
+  '((vespers-antiphon-1 . dum-esset-rex)
+    (vespers-antiphon-2 . laeva-ejus)
+    (vespers-antiphon-3 . nigra-sum)
+    (vespers-antiphon-4 . jam-hiems-transiit)
+    (vespers-antiphon-5 . speciosa-facta-es)
+    (lauds-antiphon-1   . assumpta-est-maria)
+    (lauds-antiphon-2   . maria-virgo-assumpta)
+    (lauds-antiphon-3   . in-odorem-unguentorum)
+    (lauds-antiphon-4   . benedicta-filia)
+    (lauds-antiphon-5   . pulchra-es-et-decora)
+    (matins-invitatory   . ave-maria-invitatory)
+    (matins-antiphon-1   . benedicta-tu-in-mulieribus)
+    (matins-antiphon-2   . sicut-myrrha-electa)
+    (matins-antiphon-3   . ante-torum)
+    ;; Minor hour antiphons are aliases to Lauds antiphons
+    (prime-antiphon      . assumpta-est-maria)
+    (terce-antiphon      . maria-virgo-assumpta)
+    (sext-antiphon       . in-odorem-unguentorum)
+    (none-antiphon       . pulchra-es-et-decora))
+  "Map ordo slot keys to antiphonary incipit symbols.")
 
-    ;; Vespers
-    ('vespers-antiphon-1  bcp-roman-lobvm--vespers-antiphon-1)
-    ('vespers-antiphon-2  bcp-roman-lobvm--vespers-antiphon-2)
-    ('vespers-antiphon-3  bcp-roman-lobvm--vespers-antiphon-3)
-    ('vespers-antiphon-4  bcp-roman-lobvm--vespers-antiphon-4)
-    ('vespers-antiphon-5  bcp-roman-lobvm--vespers-antiphon-5)
-    ('vespers-hymn        bcp-roman-lobvm--vespers-hymn)
-    ('vespers-capitulum   bcp-roman-lobvm--vespers-capitulum)
-    ('vespers-versicle    bcp-roman-lobvm--vespers-versicle)
-    ('vespers-canticle-antiphon
-     (bcp-roman-lobvm--canticle-antiphon-for-season 'vespers season))
-    ('magnificat          bcp-roman-lobvm--magnificat)
-    ('vespers-collect     bcp-roman-lobvm--vespers-collect)
+;; Slot → incipit mapping for LOBVM collects.
+(defconst bcp-roman-lobvm--collect-map
+  '((vespers-collect  . concede-nos-famulos)
+    (lauds-collect    . deus-qui-de-beatae)
+    (matins-collect   . deus-qui-de-beatae-per-dominum)
+    (prime-collect    . deus-qui-virginalem)
+    (terce-collect    . deus-qui-salutis)
+    (sext-collect     . concede-misericors-deus)
+    (none-collect     . famulorum-tuorum)
+    (compline-collect . beatae-et-gloriosae))
+  "Map ordo slot keys to collectarium incipit symbols.")
 
-    ;; Lauds
-    ('lauds-antiphon-1    bcp-roman-lobvm--lauds-antiphon-1)
-    ('lauds-antiphon-2    bcp-roman-lobvm--lauds-antiphon-2)
-    ('lauds-antiphon-3    bcp-roman-lobvm--lauds-antiphon-3)
-    ('lauds-antiphon-4    bcp-roman-lobvm--lauds-antiphon-4)
-    ('lauds-antiphon-5    bcp-roman-lobvm--lauds-antiphon-5)
-    ('lauds-hymn          bcp-roman-lobvm--lauds-hymn)
-    ('lauds-capitulum     bcp-roman-lobvm--lauds-capitulum)
-    ('lauds-versicle      bcp-roman-lobvm--lauds-versicle)
-    ('lauds-canticle-antiphon
-     (bcp-roman-lobvm--canticle-antiphon-for-season 'lauds season))
-    ('benedicite          bcp-roman-lobvm--benedicite)
-    ('benedictus          bcp-roman-lobvm--benedictus)
-    ('lauds-collect       bcp-roman-lobvm--lauds-collect)
-
-    ;; Matins
-    ('matins-invitatory   bcp-roman-lobvm--matins-invitatory)
-    ('matins-hymn         bcp-roman-lobvm--matins-hymn)
-    ('matins-antiphon-1   bcp-roman-lobvm--matins-antiphon-1)
-    ('matins-antiphon-2   bcp-roman-lobvm--matins-antiphon-2)
-    ('matins-antiphon-3   bcp-roman-lobvm--matins-antiphon-3)
-    ('matins-nocturn-versicle bcp-roman-lobvm--matins-nocturn-versicle)
-    ('matins-lectio-1     bcp-roman-lobvm--matins-lectio-1)
-    ('matins-lectio-2     bcp-roman-lobvm--matins-lectio-2)
-    ('matins-lectio-3     bcp-roman-lobvm--matins-lectio-3)
-    ('matins-responsory-1 bcp-roman-lobvm--matins-responsory-1)
-    ('matins-responsory-2 bcp-roman-lobvm--matins-responsory-2)
-    ('matins-benedictiones bcp-roman-lobvm--matins-benedictiones)
-    ('matins-collect      bcp-roman-lobvm--matins-collect)
-
-    ;; Minor Hours — shared hymn
-    ('minor-hymn          bcp-roman-lobvm--minor-hymn)
-
-    ;; Prime
-    ('prime-antiphon      bcp-roman-lobvm--lauds-antiphon-1)
-    ('prime-capitulum     bcp-roman-lobvm--prime-capitulum)
-    ('prime-versicle      bcp-roman-lobvm--prime-versicle)
-    ('prime-collect       bcp-roman-lobvm--prime-collect)
-
-    ;; Terce
-    ('terce-antiphon      bcp-roman-lobvm--lauds-antiphon-2)
-    ('terce-capitulum     bcp-roman-lobvm--terce-capitulum)
-    ('terce-versicle      bcp-roman-lobvm--terce-versicle)
-    ('terce-collect       bcp-roman-lobvm--terce-collect)
-
-    ;; Sext
-    ('sext-antiphon       bcp-roman-lobvm--lauds-antiphon-3)
-    ('sext-capitulum      bcp-roman-lobvm--sext-capitulum)
-    ('sext-versicle       bcp-roman-lobvm--sext-versicle)
-    ('sext-collect        bcp-roman-lobvm--sext-collect)
-
-    ;; None
-    ('none-antiphon       bcp-roman-lobvm--lauds-antiphon-5)
-    ('none-capitulum      bcp-roman-lobvm--none-capitulum)
-    ('none-versicle       bcp-roman-lobvm--none-versicle)
-    ('none-collect        bcp-roman-lobvm--none-collect)
-
-    ;; Shared
-    ('commemoratio        bcp-roman-lobvm--commemoratio)
-
-    (_ (error "Unknown LOBVM data key: %s" key))))
+;; Slot → incipit mapping for LOBVM responsories.
+(defconst bcp-roman-lobvm--responsory-map
+  '((matins-responsory-1 . sancta-et-immaculata)
+    (matins-responsory-2 . beata-es-virgo-maria))
+  "Map ordo slot keys to responsory incipit symbols.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; English prose texts (Bute 1908 translation)
 ;;
-;; Marquess of Bute, The Roman Breviary (1908).  These are the fallback
-;; English translations for Office prose — antiphons, collects, versicles,
-;; responsories.  Hymns are resolved through `bcp-roman-hymnal'; scripture
-;; (capitula, lessons) through `bcp-fetcher'.
+;; Versicles and composite texts that remain local (not registry material).
+;; Antiphons, collects, and responsories have moved to the incipit-keyed
+;; registries: bcp-roman-antiphonary.el, bcp-roman-collectarium.el,
+;; bcp-roman-responsory.el.
 
-;; Vespers antiphons (English)
-(defconst bcp-roman-lobvm--vespers-antiphon-1-en
-  "While the King sitteth at his table, my spikenard sendeth forth the smell thereof."
-  "Vespers antiphon 1 (Ps 109), English — Bute.")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-2-en
-  "His left hand is under my head, and his right hand doth embrace me."
-  "Vespers antiphon 2 (Ps 112), English — Bute.")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-3-en
-  "I am black but comely, O ye daughters of Jerusalem; therefore hath the King loved me, and brought me into his chamber."
-  "Vespers antiphon 3 (Ps 121), English — Bute.")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-4-en
-  "Lo the winter is past, the rain is over and gone. Rise up, my love, and come away."
-  "Vespers antiphon 4 (Ps 126), English — Bute.")
-
-(defconst bcp-roman-lobvm--vespers-antiphon-5-en
-  "O Holy Mother of God, thou art become beautiful and gentle in thy gladness."
-  "Vespers antiphon 5 (Ps 147), English — Bute.")
-
-;; Vespers versicle, canticle antiphon, collect (English)
 (defconst bcp-roman-lobvm--vespers-versicle-en
   '("Blessed art thou amongst women."
     "And blessed is the fruit of thy womb.")
   "Vespers versicle, English — Bute.")
 
-(defconst bcp-roman-lobvm--vespers-canticle-antiphon-en
-  "Blessed Mother and inviolate Maiden! Glorious Queen of the world! Plead for us with the Lord!"
-  "Vespers Magnificat antiphon (per annum), English — Bute.")
-
-(defconst bcp-roman-lobvm--vespers-canticle-antiphon-eastertide-en
-  "O Queen of heaven, rejoice! alleluia: For He whom thou didst merit to bear, alleluia, Hath arisen as he said, alleluia. Pray for us to God, alleluia."
-  "Vespers Magnificat antiphon (Eastertide), English — Bute.")
-
-(defconst bcp-roman-lobvm--vespers-collect-en
-  "Grant, we beseech thee, O Lord God, unto all thy servants, that they \
-may remain continually in the enjoyment of soundness both of mind and body, \
-and by the glorious intercession of the Blessed Mary, always a Virgin, may \
-be delivered from present sadness, and enter into the joy of thine eternal \
-gladness.\nThrough our Lord."
-  "Vespers collect, English — Bute.")
-
-;; Lauds antiphons (English)
-(defconst bcp-roman-lobvm--lauds-antiphon-1-en
-  "Mary hath been taken to heaven; the Angels rejoice; they praise and bless the Lord."
-  "Lauds antiphon 1 (Ps 92), English — Bute.")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-2-en
-  "The Virgin Mary hath been taken into the chamber on high, where the King of kings sitteth on a throne amid the stars."
-  "Lauds antiphon 2 (Ps 99), English — Bute.")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-3-en
-  "We run after thee, on the scent of thy perfumes; the virgins love thee heartily."
-  "Lauds antiphon 3 (Ps 62), English — Bute.")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-4-en
-  "Blessed of the Lord art thou, O daughter, for by thee we have been given to eat of the fruit of the tree of Life."
-  "Lauds antiphon 4 (Benedicite), English — Bute.")
-
-(defconst bcp-roman-lobvm--lauds-antiphon-5-en
-  "Fair and comely art thou, O daughter of Jerusalem, terrible as a fenced camp set in battle array."
-  "Lauds antiphon 5 (Ps 148-150), English — Bute.")
-
-;; Lauds versicle, canticle antiphon, collect (English)
 (defconst bcp-roman-lobvm--lauds-versicle-en
   '("Holy Virgin, my praise by thee accepted be."
     "Give me strength against thine enemies.")
   "Lauds versicle, English — Bute.")
 
-(defconst bcp-roman-lobvm--lauds-canticle-antiphon-en
-  "O Blessed Mary, Mother of God, Virgin for ever, temple of the Lord, \
-sanctuary of the Holy Ghost, thou, without any example before thee, didst \
-make thyself well-pleasing in the sight of our Lord Jesus Christ; pray for \
-the people, plead for the clergy, make intercession for all women vowed to God."
-  "Lauds Benedictus antiphon (per annum), English — Bute.")
-
-(defconst bcp-roman-lobvm--lauds-canticle-antiphon-eastertide-en
-  "O Queen of heaven, rejoice! alleluia: For He whom thou didst merit to bear, alleluia, Hath arisen as he said, alleluia. Pray for us to God, alleluia."
-  "Lauds Benedictus antiphon (Eastertide), English — Bute.")
-
-(defconst bcp-roman-lobvm--lauds-collect-en
-  "O God, who didst will that, at the announcement of an Angel, thy Word \
-should take flesh in the womb of the Blessed Virgin Mary, grant to us thy \
-suppliants, that we who believe her to be truly the Mother of God may be \
-helped by her intercession with thee.\nThrough the same Lord."
-  "Lauds collect, English — Bute.")
-
-;; Matins antiphons (English)
-(defconst bcp-roman-lobvm--matins-invitatory-en
-  "Hail Mary, full of grace, * The Lord is with thee."
-  "Matins invitatory antiphon, English — Bute.")
-
-(defconst bcp-roman-lobvm--matins-antiphon-1-en
-  "Blessed art thou among women, and blessed is the fruit of thy womb."
-  "Matins antiphon 1 (Psalm 8), English — Bute.")
-
-(defconst bcp-roman-lobvm--matins-antiphon-2-en
-  "O Holy Mother of God, thou hast yielded a pleasant odor like the best myrrh."
-  "Matins antiphon 2 (Psalm 18), English — Bute.")
-
-(defconst bcp-roman-lobvm--matins-antiphon-3-en
-  "Sing for us again and again before this maiden's bed the tender idylls of the play."
-  "Matins antiphon 3 (Psalm 23), English — Bute.")
-
-;; Matins nocturn versicle (English)
 (defconst bcp-roman-lobvm--matins-nocturn-versicle-en
   '("Holy Virgin, my praise by thee accepted be."
     "Give me strength against thine enemies.")
   "Matins nocturn versicle, English — Bute.")
 
-;; Matins responsories (English)
-(defconst bcp-roman-lobvm--matins-responsory-1-en
-  '(:respond "O how holy and how spotless is thy virginity; I am too dull to praise thee:"
-    :repeat "For thou hast borne in thy breast Him Whom the heavens cannot contain."
-    :verse "Blessed art thou among women, and blessed is the fruit of thy womb.")
-  "Matins responsory 1, English — Bute.")
-
-(defconst bcp-roman-lobvm--matins-responsory-2-en
-  '(:respond "Blessed art thou, O Virgin Mary, who hast carried the Lord, the Maker of the world."
-    :repeat "Thou hast borne Him Who created thee, and thou abidest a virgin for ever."
-    :verse "Hail, Mary, full of grace, the Lord is with thee.")
-  "Matins responsory 2, English — Bute.")
-
-;; Matins collect (English)
-(defconst bcp-roman-lobvm--matins-collect-en
-  "O God, who didst will that, at the announcement of an Angel, thy Word \
-should take flesh in the womb of the Blessed Virgin Mary, grant to us thy \
-suppliants, that we who believe her to be truly the Mother of God may be \
-helped by her intercession with thee.\nThrough the same Lord."
-  "Matins collect, English — Bute.")
-
-;; Matins benedictions (English)
 (defconst bcp-roman-lobvm--matins-benedictiones-en
   '("May the prayers and merits of blessed Mary ever Virgin and all the Saints bring us to the kingdom of heaven."
     "May the Virgin Mary with her Loving Offspring bless us."
     "May the Virgin of virgins, intercede for us to the Lord.")
   "Matins benedictions, English — Bute.")
 
-;; Prime propers (English)
 (defconst bcp-roman-lobvm--prime-versicle-en
   '("Holy Virgin, my praise by thee accepted be."
     "Give me strength against thine enemies.")
   "Prime versicle, English — Bute.")
 
-(defconst bcp-roman-lobvm--prime-collect-en
-  "O God, Who wast pleased to choose for thy dwelling-place the maiden palace \
-of Blessed Mary, grant, we beseech thee, that her protection may shield us, \
-and make us glad in her commemoration.\nWho livest and reignest."
-  "Prime collect, English — Bute.")
-
-;; Terce propers (English)
 (defconst bcp-roman-lobvm--terce-versicle-en
   '("Grace is poured into thy lips."
     "Therefore God hath blessed thee for ever.")
   "Terce versicle, English — Bute.")
 
-(defconst bcp-roman-lobvm--terce-collect-en
-  "O God, Who, by the fruitful virginity of Blessed Mary, hast bestowed upon \
-mankind the reward of eternal salvation; grant, we beseech thee, that we \
-may feel the power of her intercession, through whom we have been made \
-worthy to receive the Author of Life, our Lord Jesus Christ thy Son.\n\
-Who livest and reignest with thee."
-  "Terce collect, English — Bute.")
-
-;; Sext propers (English)
 (defconst bcp-roman-lobvm--sext-versicle-en
   '("Blessed art thou amongst women."
     "And blessed is the fruit of thy womb.")
   "Sext versicle, English — Bute.")
 
-(defconst bcp-roman-lobvm--sext-collect-en
-  "Most merciful God, grant, we beseech thee, a succour unto the frailty of \
-our nature, that as we keep ever alive the memory of the holy Mother of God, \
-so by the help of her intercession we may be raised up from the bondage of \
-our sins.\nThrough the same Lord."
-  "Sext collect, English — Bute.")
-
-;; None propers (English)
 (defconst bcp-roman-lobvm--none-versicle-en
   '("After thy delivery, thou still remainest a Virgin undefiled."
     "Mother of God, pray for us.")
   "None versicle, English — Bute.")
-
-(defconst bcp-roman-lobvm--none-collect-en
-  "O Lord, we beseech thee, forgive the transgressions of thy servants, \
-and, forasmuch as by our own deeds we cannot please thee, may we find \
-safety through the prayers of the Mother of thy Son and our Lord.\n\
-Who livest and reignest with thee."
-  "None collect, English — Bute.")
-
-;; Compline propers (English)
-(defconst bcp-roman-lobvm--compline-antiphon-en
-  "We take refuge under thy protection, O holy Mother of God! Despise not \
-our supplications in our need, but deliver us always from all dangers, O \
-Virgin, glorious and blessed!"
-  "Compline antiphon (Sub tuum praesidium), English — Bute.")
-
-(defconst bcp-roman-lobvm--compline-antiphon-eastertide-en
-  "O Queen of heaven, rejoice! alleluia: For He whom thou didst merit to bear, alleluia, Hath arisen as he said, alleluia. Pray for us to God, alleluia."
-  "Compline antiphon (Eastertide), English — Bute.")
 
 (defconst bcp-roman-lobvm--compline-versicle-en
   '("Pray for us, O holy Mother of God."
     "That we may be made worthy of the promises of Christ.")
   "Compline versicle, English — Bute.")
 
-(defconst bcp-roman-lobvm--compline-collect-en
-  "O Lord, we pray thee, that the glorious intercession of Mary, blessed, \
-and glorious, and everlastingly Virgin, may shield us and bring us on \
-toward eternal life.\nThrough our Lord."
-  "Compline collect, English — Bute.")
-
-;; Commemoratio (English)
 (defconst bcp-roman-lobvm--commemoratio-en
   '(:antiphon "All ye saints of God, vouchsafe to plead for our salvation and for that of all mankind."
     :versicle "Be glad in the Lord and rejoice, ye just."
@@ -1353,91 +833,109 @@ toward eternal life.\nThrough our Lord."
   "Commemoratio de Sanctis, English — Bute.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; English data resolver
+;;;; Unified resolver
 
-(defun bcp-roman-lobvm--compline-antiphon-en-for-season (season)
-  "Return the English Compline antiphon for SEASON."
-  (if (eq season 'eastertide)
-      bcp-roman-lobvm--compline-antiphon-eastertide-en
-    bcp-roman-lobvm--compline-antiphon-en))
+(defun bcp-roman-lobvm--resolve (key season)
+  "Resolve data KEY for the current SEASON.
+Returns the appropriate text, plist, or data structure for the
+ordo step identified by KEY.  Antiphons, collects, and responsories
+are resolved via incipit-keyed registries; everything else via
+local constants."
+  (let ((lang bcp-roman-office-language))
+    ;; Seasonal antiphons (dispatch by season → incipit → registry)
+    (pcase key
+      ('compline-antiphon
+       (bcp-roman-antiphonary-get
+        (bcp-roman-lobvm--compline-antiphon-for-season season) lang))
+      ('vespers-canticle-antiphon
+       (bcp-roman-antiphonary-get
+        (bcp-roman-lobvm--canticle-antiphon-for-season 'vespers season) lang))
+      ('lauds-canticle-antiphon
+       (bcp-roman-antiphonary-get
+        (bcp-roman-lobvm--canticle-antiphon-for-season 'lauds season) lang))
 
-(defun bcp-roman-lobvm--canticle-antiphon-en-for-season (hour season)
-  "Return the English canticle antiphon for HOUR and SEASON."
-  (if (eq season 'eastertide)
-      (if (eq hour 'lauds)
-          bcp-roman-lobvm--lauds-canticle-antiphon-eastertide-en
-        bcp-roman-lobvm--vespers-canticle-antiphon-eastertide-en)
-    (if (eq hour 'lauds)
-        bcp-roman-lobvm--lauds-canticle-antiphon-en
-      bcp-roman-lobvm--vespers-canticle-antiphon-en)))
+      ;; Static antiphons (slot → incipit → registry)
+      ((guard (alist-get key bcp-roman-lobvm--antiphon-map))
+       (bcp-roman-antiphonary-get
+        (alist-get key bcp-roman-lobvm--antiphon-map) lang))
 
-(defun bcp-roman-lobvm--resolve-english (key season)
-  "Resolve English text for data KEY and SEASON.
-Returns the English translation, or nil if none available (falls
-back to Latin via the caller)."
-  (pcase key
-    ;; Compline
-    ('compline-antiphon   (bcp-roman-lobvm--compline-antiphon-en-for-season season))
-    ('compline-versicle   bcp-roman-lobvm--compline-versicle-en)
-    ('compline-collect    bcp-roman-lobvm--compline-collect-en)
+      ;; Collects (slot → incipit → registry)
+      ((guard (alist-get key bcp-roman-lobvm--collect-map))
+       (bcp-roman-collectarium-get
+        (alist-get key bcp-roman-lobvm--collect-map) lang))
 
-    ;; Vespers
-    ('vespers-antiphon-1  bcp-roman-lobvm--vespers-antiphon-1-en)
-    ('vespers-antiphon-2  bcp-roman-lobvm--vespers-antiphon-2-en)
-    ('vespers-antiphon-3  bcp-roman-lobvm--vespers-antiphon-3-en)
-    ('vespers-antiphon-4  bcp-roman-lobvm--vespers-antiphon-4-en)
-    ('vespers-antiphon-5  bcp-roman-lobvm--vespers-antiphon-5-en)
-    ('vespers-versicle    bcp-roman-lobvm--vespers-versicle-en)
-    ('vespers-canticle-antiphon
-     (bcp-roman-lobvm--canticle-antiphon-en-for-season 'vespers season))
-    ('vespers-collect     bcp-roman-lobvm--vespers-collect-en)
+      ;; Responsories (slot → incipit → registry)
+      ((guard (alist-get key bcp-roman-lobvm--responsory-map))
+       (bcp-roman-responsory-get
+        (alist-get key bcp-roman-lobvm--responsory-map) lang))
 
-    ;; Lauds
-    ('lauds-antiphon-1    bcp-roman-lobvm--lauds-antiphon-1-en)
-    ('lauds-antiphon-2    bcp-roman-lobvm--lauds-antiphon-2-en)
-    ('lauds-antiphon-3    bcp-roman-lobvm--lauds-antiphon-3-en)
-    ('lauds-antiphon-4    bcp-roman-lobvm--lauds-antiphon-4-en)
-    ('lauds-antiphon-5    bcp-roman-lobvm--lauds-antiphon-5-en)
-    ('lauds-versicle      bcp-roman-lobvm--lauds-versicle-en)
-    ('lauds-canticle-antiphon
-     (bcp-roman-lobvm--canticle-antiphon-en-for-season 'lauds season))
-    ('lauds-collect       bcp-roman-lobvm--lauds-collect-en)
+      ;; Hymns (already in hymnal registry)
+      ('vespers-hymn  (bcp-roman-hymnal-get 'ave-maris-stella lang))
+      ('lauds-hymn    (bcp-roman-hymnal-get 'o-gloriosa-virginum lang))
+      ('matins-hymn   (bcp-roman-hymnal-get 'quem-terra-pontus-sidera lang))
+      ('minor-hymn    (bcp-roman-hymnal-get 'memento-rerum-conditor lang))
+      ('compline-hymn (bcp-roman-hymnal-get 'memento-rerum-conditor-compl lang))
 
-    ;; Matins
-    ('matins-invitatory   bcp-roman-lobvm--matins-invitatory-en)
-    ('matins-antiphon-1   bcp-roman-lobvm--matins-antiphon-1-en)
-    ('matins-antiphon-2   bcp-roman-lobvm--matins-antiphon-2-en)
-    ('matins-antiphon-3   bcp-roman-lobvm--matins-antiphon-3-en)
-    ('matins-nocturn-versicle bcp-roman-lobvm--matins-nocturn-versicle-en)
-    ('matins-responsory-1 bcp-roman-lobvm--matins-responsory-1-en)
-    ('matins-responsory-2 bcp-roman-lobvm--matins-responsory-2-en)
-    ('matins-benedictiones bcp-roman-lobvm--matins-benedictiones-en)
-    ('matins-collect      bcp-roman-lobvm--matins-collect-en)
+      ;; Structural texts from bcp-common-roman.el (not registry material)
+      ('jube-domne
+       (if (eq lang 'english) (bcp-roman-jube-domne-en) (bcp-roman-jube-domne)))
+      ('benedictio-compline
+       (if (eq lang 'english) bcp-roman-benedictio-compline-en bcp-roman-benedictio-compline))
+      ('ave-maria           bcp-roman-ave-maria)
+      ('converte-nos
+       (if (eq lang 'english) bcp-roman-converte-nos-en bcp-roman-converte-nos))
+      ('divinum-auxilium
+       (if (eq lang 'english) bcp-roman-divinum-auxilium-en bcp-roman-divinum-auxilium))
+      ('pater-noster
+       (plist-get bcp-common-prayers-lords-prayer (if (eq lang 'english) :english :latin)))
+      ('credo
+       (plist-get bcp-common-prayers-apostles-creed (if (eq lang 'english) :english :latin)))
 
-    ;; Minor Hours
-    ('prime-versicle      bcp-roman-lobvm--prime-versicle-en)
-    ('prime-collect       bcp-roman-lobvm--prime-collect-en)
-    ('terce-versicle      bcp-roman-lobvm--terce-versicle-en)
-    ('terce-collect       bcp-roman-lobvm--terce-collect-en)
-    ('sext-versicle       bcp-roman-lobvm--sext-versicle-en)
-    ('sext-collect        bcp-roman-lobvm--sext-collect-en)
-    ('none-versicle       bcp-roman-lobvm--none-versicle-en)
-    ('none-collect        bcp-roman-lobvm--none-collect-en)
+      ;; Canticles (stay local — special plist shape with :canticle-key)
+      ('nunc-dimittis       bcp-roman-lobvm--nunc-dimittis)
+      ('benedicite          bcp-roman-lobvm--benedicite)
+      ('benedictus          bcp-roman-lobvm--benedictus)
+      ('magnificat          bcp-roman-lobvm--magnificat)
 
-    ;; Shared
-    ('commemoratio        bcp-roman-lobvm--commemoratio-en)
+      ;; Versicles (stay local — not incipit-keyed)
+      ('vespers-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--vespers-versicle-en bcp-roman-lobvm--vespers-versicle))
+      ('lauds-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--lauds-versicle-en bcp-roman-lobvm--lauds-versicle))
+      ('matins-nocturn-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--matins-nocturn-versicle-en bcp-roman-lobvm--matins-nocturn-versicle))
+      ('compline-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--compline-versicle-en bcp-roman-lobvm--compline-versicle))
+      ('prime-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--prime-versicle-en bcp-roman-lobvm--prime-versicle))
+      ('terce-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--terce-versicle-en bcp-roman-lobvm--terce-versicle))
+      ('sext-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--sext-versicle-en bcp-roman-lobvm--sext-versicle))
+      ('none-versicle
+       (if (eq lang 'english) bcp-roman-lobvm--none-versicle-en bcp-roman-lobvm--none-versicle))
 
-    ;; Structural texts from bcp-common-roman.el
-    ('jube-domne          (bcp-roman-jube-domne-en))
-    ('benedictio-compline bcp-roman-benedictio-compline-en)
-    ('converte-nos        bcp-roman-converte-nos-en)
-    ('divinum-auxilium    bcp-roman-divinum-auxilium-en)
-    ('ave-maria           bcp-roman-ave-maria)  ;; same in both languages
-    ('pater-noster        (plist-get bcp-common-prayers-lords-prayer :english))
-    ('credo               (plist-get bcp-common-prayers-apostles-creed :english))
+      ;; Capitula (stay local — scripture citations with :ref)
+      ('vespers-capitulum   bcp-roman-lobvm--vespers-capitulum)
+      ('lauds-capitulum     bcp-roman-lobvm--lauds-capitulum)
+      ('compline-capitulum  bcp-roman-lobvm--compline-capitulum)
+      ('prime-capitulum     bcp-roman-lobvm--prime-capitulum)
+      ('terce-capitulum     bcp-roman-lobvm--terce-capitulum)
+      ('sext-capitulum      bcp-roman-lobvm--sext-capitulum)
+      ('none-capitulum      bcp-roman-lobvm--none-capitulum)
 
-    ;; Keys with no English translation → return nil, fall back to Latin
-    (_ nil)))
+      ;; Lessons and benedictions (stay local)
+      ('matins-lectio-1     bcp-roman-lobvm--matins-lectio-1)
+      ('matins-lectio-2     bcp-roman-lobvm--matins-lectio-2)
+      ('matins-lectio-3     bcp-roman-lobvm--matins-lectio-3)
+      ('matins-benedictiones
+       (if (eq lang 'english) bcp-roman-lobvm--matins-benedictiones-en bcp-roman-lobvm--matins-benedictiones))
+
+      ;; Commemoratio (composite plist — stays local)
+      ('commemoratio
+       (if (eq lang 'english) bcp-roman-lobvm--commemoratio-en bcp-roman-lobvm--commemoratio))
+
+      (_ (error "Unknown LOBVM data key: %s" key)))))
 
 (defun bcp-roman-lobvm--psalm-verses (vulg-num)
   "Return the verse list for Vulgate psalm VULG-NUM, or nil."
@@ -1477,10 +975,7 @@ HOUR is a symbol: `matins', `lauds', `prime', `terce', `sext',
              :language lang
              :marian-antiphon marian-data
              :data-fn (lambda (key)
-                        (if (eq lang 'english)
-                            (or (bcp-roman-lobvm--resolve-english key season)
-                                (bcp-roman-lobvm--resolve key season))
-                          (bcp-roman-lobvm--resolve key season)))
+                        (bcp-roman-lobvm--resolve key season))
              :psalm-fn #'bcp-roman-lobvm--psalm-verses
              :gloria-patri (plist-get bcp-common-prayers-gloria-patri
                                       (intern (format ":%s" lang)))

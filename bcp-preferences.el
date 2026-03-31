@@ -257,18 +257,30 @@ restarting Emacs."
                  "bcp-anglican-1928.el"
                  "bcp-anglican.el"
                  "bcp-common-roman.el"
+                 "bcp-roman-antiphonary.el"
+                 "bcp-roman-hymnal.el"
+                 "bcp-roman-collectarium.el"
+                 "bcp-roman-responsory.el"
+                 "bcp-roman-psalterium.el"
+                 "bcp-roman-tempora.el"
                  "bcp-roman-ordo.el"
                  "bcp-roman-render.el"
                  "bcp-roman-lobvm.el"
+                 "bcp-roman-breviary.el"
                  "bcp-roman.el"
                  "bcp-reader.el"
                  "bcp-notebook.el"
                  "bcp-transient.el")))
     (dolist (file files)
-      (let ((path (expand-file-name file dir)))
-        (when (file-readable-p path)
-          (load path nil t))))
-    (load (expand-file-name "bcp-preferences.el" dir) nil t)
+      (let ((base (file-name-sans-extension
+                   (expand-file-name file dir))))
+        (when (or (file-readable-p (concat base ".elc"))
+                  (file-readable-p (concat base ".el")))
+          ;; Remove from features so require chains re-fire
+          (setq features (delq (intern (file-name-base file)) features))
+          (load base nil t))))
+    (load (file-name-sans-extension
+           (expand-file-name "bcp-preferences.el" dir)) nil t)
     (message "BCP reloaded.")))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

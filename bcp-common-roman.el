@@ -213,6 +213,52 @@ Index 0 = Nocturn I, 1 = Nocturn II, 2 = Nocturn III.")
     "Ad societátem cívium supernórum perdúcat nos Rex Angelórum.")
   "The three standard benedictions for Nocturn III lessons.")
 
+(defconst bcp-roman-benedictio-evangelica
+  "Evangélica léctio sit nobis salus et protéctio."
+  "The Evangelica benediction, said before the first lesson of Nocturn III
+\(the Gospel homily lesson\).")
+
+(defconst bcp-roman-benedictiones-nocturn-3-dominical
+  (list "Evangélica léctio sit nobis salus et protéctio."
+        "Divínum auxílium máneat semper nobíscum."
+        "Ad societátem cívium supernórum perdúcat nos Rex Angelórum.")
+  "Benedictions for Nocturn III on Sundays (Evangelica replaces position 0).")
+
+;; English translations (Bute 1908)
+
+(defconst bcp-roman-absolutiones-en
+  '("O Lord Jesus Christ, graciously hear the prayers of Thy servants, \
+and have mercy upon us, Who livest and reignest with the Father, \
+and the Holy Ghost, ever world without end."
+    "May His loving-kindness and mercy help us, Who liveth and reigneth \
+with the Father, and the Holy Ghost, world without end."
+    "May the Almighty and merciful Lord loose us from the bonds of our sins.")
+  "English translations of the three absolutiones.")
+
+(defconst bcp-roman-benedictiones-nocturn-1-en
+  '("May the Eternal Father bless us with an eternal blessing."
+    "May the Son, the Sole-begotten, mercifully bless and keep us."
+    "May the grace of the Holy Spirit enlighten all our hearts and minds.")
+  "English translations of the Nocturn I benedictions.")
+
+(defconst bcp-roman-benedictiones-nocturn-2-en
+  '("May God the Father Omnipotent, be to us merciful and clement."
+    "May Christ to all His people give, for ever in His sight to live."
+    "May the Spirit's fire Divine in our hearts enkindled shine.")
+  "English translations of the Nocturn II benedictions.")
+
+(defconst bcp-roman-benedictiones-nocturn-3-en
+  '("May His blessing be upon us who doth live and reign for ever."
+    "God's most mighty strength alway be His people's staff and stay."
+    "May He that is the Angels' King to that high realm His people bring.")
+  "English translations of the Nocturn III benedictions.")
+
+(defconst bcp-roman-benedictiones-nocturn-3-dominical-en
+  (list "May the Gospel's holy lection be our safety and protection."
+        "God's most mighty strength alway be His people's staff and stay."
+        "May He that is the Angels' King to that high realm His people bring.")
+  "English benedictions for Nocturn III on Sundays (Evangelica at position 0).")
+
 (defconst bcp-roman-benedictiones-lobvm
   '("Précibus et méritis beátæ Maríæ semper Vírginis et ómnium Sanctórum, \
 perdúcat nos Dóminus ad regna cælórum."
