@@ -16,13 +16,14 @@ The core of the project is a scripture reader (`bcp-reader`) and study notebook 
 
 The prayer side renders the full text of the BCP Daily Office — Morning and Evening Prayer — as a read-only buffer. The complete ordo is present: opening sentences, confession, absolution, psalms, canticles, lessons, collects, preces, and prayers, with lessons fetched and inserted inline. No external browser or PDF viewer is required.
 
-Three traditions are implemented:
+Four traditions are implemented:
 
 - **BCP 1662** — the English prayer book; full liturgical calendar with moveable feasts and user-defined observances
 - **1928 American BCP** — the pre-revision American prayer book; full liturgical calendar and lectionary
 - **Little Office of the BVM** — the Roman Office (*Officium Parvum BMV*), DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering
+- **Roman Breviary (ferial)** — the full ferial (weekday) office of the Roman Breviary, DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering, weekly psalter cycle, and Per Annum collects
 
-The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`). Support for the 1979 American BCP and the full Roman Breviary is planned.
+The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`). Support for the 1979 American BCP and further Roman Breviary extensions (dominical Matins, Proprium Sanctorum, seasonal variations) is planned.
 
 ---
 
@@ -62,6 +63,18 @@ The current implementation covers:
 - Seasonal Marian antiphons (Alma Redemptoris, Ave Regina, Regina caeli, Salve Regina)
 - Penitential season Alleluia suppression
 
+**Roman Breviary (ferial):**
+- All eight canonical hours: Matins, Lauds, Prime, Terce, Sext, None, Vespers, Compline
+- Auto-hour selection based on time of day
+- Latin/English bilingual rendering
+- Weekly psalter cycle from `bcp-roman-psalterium` (Daya cursus for Matins: 12 psalms under 6 antiphons)
+- Per Annum collects from the preceding Sunday (Pentecost I–XXIV)
+- Ferial preces (Lauds, Vespers, Prime, minor hours) with dominical/ferial switching
+- Suffragium sanctorum (Lauds and Vespers)
+- Invitatory antiphon and Venite (Matins)
+- Lectio brevis with short responsory (Matins)
+- Incipit-keyed registries for antiphons, hymns, collects, and responsories
+
 **State prayers (both Anglican traditions):**
 - Three versicle forms — monarchy / *save the State* (1928) / *them that rule* (1662) — selectable independently of region on theological grounds
 - Sovereign name, title (king/queen), and royal family members configurable; rendered in ALL-CAPS to mark as requiring update at succession
@@ -92,7 +105,7 @@ The codebase is divided into five domains:
 | `bcp-liturgy-` | Generic Office machinery: canticle registry, ordo walker protocol, canonical hours |
 | `bcp-common-` | Shared text pools: `bcp-common-prayers` (ecumenical), `bcp-common-anglican` (Anglican family), `bcp-common-canticles`, `bcp-common-roman` (Roman fixed texts, Latin + English) |
 | `bcp-anglican-` | Shared Anglican render layer (`bcp-anglican-render`); tradition files: `bcp-1662-`, `bcp-anglican-1928-` |
-| `bcp-roman-` | Roman Office: renderer, ordo, hymnal; tradition files: `bcp-roman-lobvm` (Little Office of the BVM) |
+| `bcp-roman-` | Roman Office: renderer, ordo, hymnal, psalterium, tempora; tradition files: `bcp-roman-lobvm` (LOBVM), `bcp-roman-breviary` (ferial Breviary) |
 | `bcp-reader` / `bcp-notebook` | Scripture reader and study notebook |
 
 The fetch layer (`bcp-fetcher`) is shared by both the scripture reader and the Office engine. Translation settings, fallback chains, and caching apply uniformly across both.
@@ -135,47 +148,21 @@ The default configuration is `coverdale` primary, `oremus` fallback. Psalms are 
 2. Add the following to your `init.el`:
 
 ```elisp
-(add-to-list 'load-path "~/.emacs.d/elisp")
+(add-to-list 'load-path (expand-file-name "elisp/" user-emacs-directory))
 
 ;; Shared framework
-(require 'bcp-fetcher)
-(require 'bcp-fetcher-oremus)
-(require 'bcp-calendar)
-(require 'bcp-common-canticles)
-(require 'bcp-common-prayers)
-(require 'bcp-common-anglican)
-(require 'bcp-liturgy-render)
-(require 'bcp-liturgy-hours)
-(require 'bcp-render)
-(require 'bcp-anglican-render)
+(require 'bcp-fetcher)               ; MUST BE FIRST — auto-loads oremus backend
 
 ;; BCP 1662
-(require 'bcp-1662-calendar)
-(require 'bcp-1662-data)
-(require 'bcp-1662-user-feasts)
-(require 'bcp-1662-ordo)
-(require 'bcp-1662-render)
-(require 'bcp-1662)
+(require 'bcp-1662)                  ; pulls in calendar, data, ordo, render, reader, etc.
 
-;; 1928 American BCP
-(require 'bcp-anglican-1928-calendar)
-(require 'bcp-anglican-1928-data)
-(require 'bcp-anglican-1928-lectionary)
-(require 'bcp-anglican-1928-ordo)
-(require 'bcp-anglican-1928-render)
-(require 'bcp-anglican-1928)
-
-;; Roman Office (Little Office of the BVM)
-(require 'bcp-common-roman)
-(require 'bcp-roman-hymnal)
-(require 'bcp-roman-ordo)
-(require 'bcp-roman-lobvm)
+;; Roman Office
+(require 'bcp-roman-lobvm)           ; Little Office of the BVM (all 8 hours)
+(require 'bcp-roman-breviary)        ; Ferial Breviary (all 8 hours)
 
 ;; Scripture reader and notebook
-(require 'bcp-reader)
-(require 'bcp-notebook)
-
-(load "~/.emacs.d/elisp/bcp-preferences.el")
+(require 'bcp-notebook)              ; annotation layer (pulls in bcp-reader)
+(load "bcp-preferences.el")          ; defcustoms + transient menu
 ```
 
 3. Optionally bind the entry commands:
@@ -183,7 +170,8 @@ The default configuration is `coverdale` primary, `oremus` fallback. Psalms are 
 ```elisp
 (global-set-key (kbd "C-c o") #'bcp-1662-open-office)
 (global-set-key (kbd "C-c O") #'bcp-1928-open-office)
-(global-set-key (kbd "C-c r") #'bcp-roman-lobvm)  ; auto-selects hour by time
+(global-set-key (kbd "C-c r") #'bcp-roman-lobvm)      ; LOBVM, auto-selects hour
+(global-set-key (kbd "C-c R") #'bcp-roman-breviary)    ; Breviary, auto-selects hour
 ```
 
 ### Coverdale Psalter
@@ -348,7 +336,7 @@ Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to up
 (setq bcp-liturgy-canticle-overrides '((te-deum . latin)))
 ```
 
-### Roman Office (Little Office of the BVM)
+### Roman Office (LOBVM and Breviary)
 
 ```elisp
 ;; Office language
@@ -430,4 +418,4 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others in the Anglican tradition who use Emacs may find it useful. Contributions, corrections, and suggestions are welcome.
 
-Planned additions include: the 1979 American BCP, the full Roman Breviary (beyond the Little Office), additional hymn translations, and a psalm pointing utility.
+Planned additions include: the 1979 American BCP, dominical Matins with full lessons, Proprium Sanctorum and Commune Sanctorum, seasonal variations (Advent, Lent, Eastertide), additional hymn translations, and a psalm pointing utility.
