@@ -315,7 +315,8 @@ Cache is per-session only; it is cleared when Emacs restarts or when
   (interactive)
   (clrhash bcp-fetcher--cache)
   (setq bcp-fetcher--coverdale-psalms nil
-        bcp-fetcher--vulgate-psalms nil)
+        bcp-fetcher--vulgate-psalms nil
+        bcp-fetcher--bungo-yaku-bible nil)
   (message "bcp-fetcher: passage cache cleared."))
 
 (defvar bcp-fetcher--backends nil
@@ -328,7 +329,15 @@ Required plist keys:
   :fetch-fn FUNCTION  — (fn passage translation callback)
                         async; calls (callback text) with propertized text
                         or nil on failure
-  :translations LIST  — list of supported translation name strings"
+  :translations LIST  — list of supported translation name strings
+Optional:
+  :psalm-numbering SYM — psalm numbering scheme: hebrew (alias: kjv,
+                         masoretic) or lxx (alias: vulgate, septuagint).
+                         Used by the psalm-mapping layer to convert
+                         between numbering systems when caller and
+                         backend disagree.  Default: hebrew."
+  (when-let ((pn (plist-get plist :psalm-numbering)))
+    (plist-put plist :psalm-numbering (bcp-fetcher--normalize-psalm-numbering pn)))
   (setf (alist-get name bcp-fetcher--backends) plist))
 
 (defun bcp-fetcher--active-backend ()
@@ -473,6 +482,79 @@ KJV/KJVA.\n\nTo read the surrounding passage, navigate to %s %d:%d-%d."
                           (format "%s  [%s]" passage translation)))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Psalm numbering: Hebrew ↔ LXX (Septuagint/Vulgate) conversion
+
+(defun bcp-fetcher--normalize-psalm-numbering (scheme)
+  "Normalize SCHEME to canonical psalm-numbering symbol.
+Accepts aliases: kjv/masoretic → hebrew; vulgate/septuagint → lxx."
+  (pcase scheme
+    ((or 'hebrew 'kjv 'masoretic) 'hebrew)
+    ((or 'lxx 'vulgate 'septuagint) 'lxx)
+    (_ (error "Unknown psalm-numbering scheme: %s" scheme))))
+
+(defun bcp-fetcher--hebrew-to-lxx (n)
+  "Map Hebrew psalm number N to LXX/Vulgate psalm resolution.
+Returns one of:
+  (LXX-N)                    — whole psalm
+  (LXX-N V-FROM V-TO)       — partial psalm (verse range)
+  ((LXX-A) (LXX-B))         — concatenation of two whole psalms
+  nil                        — no content (Hebrew 10, subsumed by LXX 9)"
+  (cond
+   ((<= n 8)   (list n))
+   ((= n 9)    '(9))
+   ((= n 10)   nil)                     ; content is in LXX 9
+   ((<= n 113) (list (1- n)))
+   ((= n 114)  '(113 1 8))             ; LXX 113 vv.1-8
+   ((= n 115)  '(113 9 nil))           ; LXX 113 vv.9-end
+   ((= n 116)  '((114) (115)))         ; LXX 114 + 115
+   ((<= n 146) (list (1- n)))
+   ((= n 147)  '((146) (147)))         ; LXX 146 + 147
+   (t          (list n))))              ; 148-150 same
+
+(defun bcp-fetcher--lxx-to-hebrew (n)
+  "Map LXX/Vulgate psalm number N to Hebrew psalm resolution.
+Returns one of:
+  (HEB-N)                    — whole psalm
+  (HEB-N V-FROM V-TO)       — partial psalm (verse range)
+  ((HEB-A) (HEB-B))         — concatenation of two whole psalms"
+  (cond
+   ((<= n 8)   (list n))
+   ((= n 9)    '((9) (10)))            ; Hebrew 9 + 10
+   ((<= n 112) (list (1+ n)))
+   ((= n 113)  '((114) (115)))         ; Hebrew 114 + 115
+   ((= n 114)  '(116 1 9))             ; Hebrew 116 vv.1-9
+   ((= n 115)  '(116 10 nil))          ; Hebrew 116 vv.10-end
+   ((<= n 145) (list (1+ n)))
+   ((= n 146)  '(147 1 11))            ; Hebrew 147 vv.1-11
+   ((= n 147)  '(147 12 nil))          ; Hebrew 147 vv.12-end
+   (t          (list n))))              ; 148-150 same
+
+(defun bcp-fetcher--convert-psalm-ref (ref from-scheme to-scheme)
+  "Convert a psalm scripture REF string between numbering schemes.
+FROM-SCHEME and TO-SCHEME are canonical symbols (hebrew or lxx).
+Returns the converted ref string, or REF unchanged if not a psalm
+or if the schemes match."
+  (if (eq from-scheme to-scheme)
+      ref
+    (let ((map-fn (if (eq from-scheme 'lxx)
+                      #'bcp-fetcher--lxx-to-hebrew
+                    #'bcp-fetcher--hebrew-to-lxx)))
+      (cond
+       ;; "Psalm N:V..." — convert the psalm number, keep the verse part
+       ((string-match "^\\(Psalms?\\) \\([0-9]+\\)\\(.*\\)" ref)
+        (let* ((prefix (match-string 1 ref))
+               (ps-num (string-to-number (match-string 2 ref)))
+               (rest   (match-string 3 ref))
+               (mapping (funcall map-fn ps-num)))
+          (if (and mapping (numberp (car mapping)))
+              (format "%s %d%s" prefix (car mapping) rest)
+            ;; Split/merge — just convert the number, caller handles complexity
+            (if (and mapping (consp (car mapping)))
+                (format "%s %d%s" prefix (caar mapping) rest)
+              ref))))
+       (t ref)))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Coverdale Psalter local backend
 
 (defcustom bcp-fetcher-coverdale-file
@@ -598,9 +680,10 @@ Returns nil for non-Psalms passages so the fallback chain continues."
 
 (bcp-fetcher-register-backend
  'coverdale
- :name         "Coverdale Psalter (local)"
- :fetch-fn     #'bcp-fetcher--coverdale-fetch
- :translations '("Coverdale" "BCP"))
+ :name            "Coverdale Psalter (local)"
+ :fetch-fn        #'bcp-fetcher--coverdale-fetch
+ :psalm-numbering 'hebrew
+ :translations    '("Coverdale" "BCP"))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Vulgate Psalter (local)
@@ -656,23 +739,9 @@ Populated lazily by `bcp-fetcher--vulgate-load'.")
    (t (bcp-fetcher--vulgate-load))))
 
 (defun bcp-fetcher--bcp-to-vulgate (n)
-  "Map BCP/Hebrew psalm number N to Vulgate psalm resolution.
-Returns one of:
-  (VULG-N)                   — whole psalm
-  (VULG-N V-FROM V-TO)      — partial psalm (verse range)
-  ((VULG-A) (VULG-B))       — concatenation of two whole psalms
-  nil                        — no content (BCP 10, subsumed by Vulg 9)"
-  (cond
-   ((<= n 8)   (list n))
-   ((= n 9)    '(9))
-   ((= n 10)   nil)                     ; content is in Vulgate 9
-   ((<= n 113) (list (1- n)))
-   ((= n 114)  '(113 1 8))              ; Vulgate 113 vv.1-8
-   ((= n 115)  '(113 9 nil))            ; Vulgate 113 vv.9-end
-   ((= n 116)  '((114) (115)))          ; Vulgate 114 + 115
-   ((<= n 146) (list (1- n)))
-   ((= n 147)  '((146) (147)))          ; Vulgate 146 + 147
-   (t          (list n))))              ; 148-150 same
+  "Map BCP/Hebrew psalm number N to Vulgate/LXX psalm resolution.
+Wrapper around `bcp-fetcher--hebrew-to-lxx' for backward compatibility."
+  (bcp-fetcher--hebrew-to-lxx n))
 
 (defun bcp-fetcher--vulgate-render (passage psalms)
   "Render PASSAGE from Vulgate PSALMS hash table, applying BCP→Vulgate mapping."
@@ -749,9 +818,336 @@ Returns one of:
 
 (bcp-fetcher-register-backend
  'vulgate
- :name         "Vulgate Psalter (local)"
- :fetch-fn     #'bcp-fetcher--vulgate-fetch
- :translations '("Vulgate" "Latin"))
+ :name            "Vulgate Psalter (local)"
+ :fetch-fn        #'bcp-fetcher--vulgate-fetch
+ :psalm-numbering 'lxx
+ :translations    '("Vulgate" "Latin"))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Bungo-yaku 文語訳 (local full Bible)
+
+(defcustom bcp-fetcher-furigana-display 'comment
+  "How to display furigana (《reading》) in Bungo-yaku text.
+`normal'  — display as normal text, same as surrounding kanji.
+`comment' — display in a muted face (inherits `font-lock-comment-face').
+`hidden'  — hide furigana entirely (can be toggled with
+            `bcp-fetcher-toggle-furigana')."
+  :type '(choice (const :tag "Normal text" normal)
+                 (const :tag "Comment face (muted)" comment)
+                 (const :tag "Hidden" hidden))
+  :group 'bcp-fetcher)
+
+(defface bcp-fetcher-furigana
+  '((t :inherit font-lock-comment-face :height 0.85))
+  "Face for furigana readings in Bungo-yaku text.
+Used when `bcp-fetcher-furigana-display' is `comment'."
+  :group 'bcp-fetcher)
+
+(defun bcp-fetcher--propertize-furigana (str)
+  "Apply furigana display properties to 《reading》 spans in STR.
+Respects `bcp-fetcher-furigana-display'."
+  (let ((result (copy-sequence str))
+        (start 0))
+    (while (string-match "《\\([^》]+\\)》" result start)
+      (let ((beg (match-beginning 0))
+            (end (match-end 0)))
+        (put-text-property beg end 'bcp-furigana t result)
+        (pcase bcp-fetcher-furigana-display
+          ('comment
+           (put-text-property beg end 'face 'bcp-fetcher-furigana result))
+          ('hidden
+           (put-text-property beg end 'invisible 'bcp-furigana result)))
+        (setq start end)))
+    result))
+
+(defun bcp-fetcher--walk-furigana (prop value)
+  "Set PROP to VALUE on all `bcp-furigana' spans in the current buffer."
+  (let ((inhibit-read-only t)
+        (pos (point-min)))
+    (while (setq pos (text-property-any pos (point-max) 'bcp-furigana t))
+      (let ((end (next-single-property-change pos 'bcp-furigana nil
+                                              (point-max))))
+        (put-text-property pos end prop value)
+        (setq pos end)))))
+
+(defun bcp-fetcher-toggle-furigana ()
+  "Toggle furigana visibility in the current buffer.
+When furigana are visible, hides them.  When hidden, restores them
+according to `bcp-fetcher-furigana-display' (normal or comment face)."
+  (interactive)
+  (if (and (boundp 'buffer-invisibility-alist)
+           (memq 'bcp-furigana buffer-invisibility-alist))
+      ;; Currently hidden → show
+      (progn
+        (remove-from-invisibility-spec 'bcp-furigana)
+        (bcp-fetcher--walk-furigana 'invisible nil)
+        (when (eq bcp-fetcher-furigana-display 'comment)
+          (bcp-fetcher--walk-furigana 'face 'bcp-fetcher-furigana))
+        (message "Furigana shown."))
+    ;; Currently visible → hide
+    (add-to-invisibility-spec 'bcp-furigana)
+    (bcp-fetcher--walk-furigana 'invisible 'bcp-furigana)
+    (message "Furigana hidden.")))
+
+(defcustom bcp-fetcher-bungo-yaku-file
+  (expand-file-name "bcp-liturgy-bungo-yaku.txt"
+                    (file-name-directory
+                     (or load-file-name buffer-file-name default-directory)))
+  "Path to the local Japanese Bungo-yaku Bible text file.
+Extracted from the JapBungo SWORD module (Public Domain).
+Format: \"Book Ch:Vs\\ttext\" lines with furigana as kanji《reading》."
+  :type 'file
+  :group 'bcp-fetcher)
+
+(defvar bcp-fetcher--bungo-yaku-bible nil
+  "Hash table mapping book names to chapter hash tables.
+Each chapter hash maps chapter numbers to verse vectors (1-indexed).
+Populated lazily by `bcp-fetcher--bungo-yaku-load'.")
+
+(defconst bcp-fetcher--book-name-aliases
+  '(;; OT
+    ("Gen"          . "Genesis")
+    ("Exod"         . "Exodus")
+    ("Lev"          . "Leviticus")
+    ("Num"          . "Numbers")
+    ("Deut"         . "Deuteronomy")
+    ("Josh"         . "Joshua")
+    ("Judg"         . "Judges")
+    ("I Sam"        . "I Samuel")
+    ("1 Sam"        . "I Samuel")
+    ("II Sam"       . "II Samuel")
+    ("2 Sam"        . "II Samuel")
+    ("I Kgs"        . "I Kings")
+    ("1 Kgs"        . "I Kings")
+    ("II Kgs"       . "II Kings")
+    ("2 Kgs"        . "II Kings")
+    ("I Chron"      . "I Chronicles")
+    ("I Chr"        . "I Chronicles")
+    ("1 Chr"        . "I Chronicles")
+    ("1 Chron"      . "I Chronicles")
+    ("II Chr"       . "II Chronicles")
+    ("II Chron"     . "II Chronicles")
+    ("2 Chr"        . "II Chronicles")
+    ("2 Chron"      . "II Chronicles")
+    ("Neh"          . "Nehemiah")
+    ("Esth"         . "Esther")
+    ("Ps"           . "Psalms")
+    ("Psalm"        . "Psalms")
+    ("Prov"         . "Proverbs")
+    ("Prov."        . "Proverbs")
+    ("Eccl"         . "Ecclesiastes")
+    ("Cant"         . "Song of Solomon")
+    ("Isa"          . "Isaiah")
+    ("Jer"          . "Jeremiah")
+    ("Jer."         . "Jeremiah")
+    ("Lam"          . "Lamentations")
+    ("Lam."         . "Lamentations")
+    ("Ezek"         . "Ezekiel")
+    ("Dan"          . "Daniel")
+    ("Dan."         . "Daniel")
+    ("Hos"          . "Hosea")
+    ("Obad"         . "Obadiah")
+    ("Mic"          . "Micah")
+    ("Nah"          . "Nahum")
+    ("Hab"          . "Habakkuk")
+    ("Hag"          . "Haggai")
+    ("Zech"         . "Zechariah")
+    ("Zeph"         . "Zephaniah")
+    ("Mal"          . "Malachi")
+    ;; NT
+    ("Matt"         . "Matthew")
+    ("Marc"         . "Mark")
+    ("Luc"          . "Luke")
+    ("Luc."         . "Luke")
+    ("Joh"          . "John")
+    ("Joan"         . "John")
+    ("Joann"        . "John")
+    ("Joannes"      . "John")
+    ("Act"          . "Acts")
+    ("Rom"          . "Romans")
+    ("Rom."         . "Romans")
+    ("I Cor"        . "I Corinthians")
+    ("1 Cor"        . "I Corinthians")
+    ("II Cor"       . "II Corinthians")
+    ("2 Cor"        . "II Corinthians")
+    ("Gal"          . "Galatians")
+    ("Gal."         . "Galatians")
+    ("Eph"          . "Ephesians")
+    ("Phil"         . "Philippians")
+    ("Col"          . "Colossians")
+    ("I Thess"      . "I Thessalonians")
+    ("1 Thess"      . "I Thessalonians")
+    ("II Thess"     . "II Thessalonians")
+    ("2 Thess"      . "II Thessalonians")
+    ("I Tim"        . "I Timothy")
+    ("1 Tim"        . "I Timothy")
+    ("II Tim"       . "II Timothy")
+    ("2 Tim"        . "II Timothy")
+    ("Tit"          . "Titus")
+    ("Phlm"         . "Philemon")
+    ("Heb"          . "Hebrews")
+    ("Jas"          . "James")
+    ("Jac"          . "James")
+    ("I Pet"        . "I Peter")
+    ("1 Pet"        . "I Peter")
+    ("II Pet"       . "II Peter")
+    ("2 Pet"        . "II Peter")
+    ("I John"       . "I John")
+    ("1 John"       . "I John")
+    ("II John"      . "II John")
+    ("2 John"       . "II John")
+    ("III John"     . "III John")
+    ("3 John"       . "III John")
+    ("Rev"          . "Revelation of John")
+    ("Apo"          . "Revelation of John")
+    ("Apoc"         . "Revelation of John"))
+  "Alist mapping common abbreviations to SWORD canonical book names.
+Used by `bcp-fetcher--bungo-yaku-resolve-book'.")
+
+(defun bcp-fetcher--bungo-yaku-resolve-book (name)
+  "Resolve book NAME to its canonical SWORD form.
+Returns NAME unchanged if it is already canonical or unrecognized."
+  (or (cdr (assoc name bcp-fetcher--book-name-aliases))
+      name))
+
+(defun bcp-fetcher--bungo-yaku-load ()
+  "Parse `bcp-fetcher-bungo-yaku-file' into `bcp-fetcher--bungo-yaku-bible'.
+Returns the hash table, or sets the variable to \\='unavailable on error."
+  (unless (file-exists-p bcp-fetcher-bungo-yaku-file)
+    (setq bcp-fetcher--bungo-yaku-bible 'unavailable)
+    (error "bcp-fetcher: Bungo-yaku file not found: %s"
+           bcp-fetcher-bungo-yaku-file))
+  (let ((books (make-hash-table :test 'equal)))
+    (with-temp-buffer
+      (insert-file-contents bcp-fetcher-bungo-yaku-file)
+      (goto-char (point-min))
+      (let ((current-book nil)
+            (current-ch   nil)
+            (verses       nil))
+        (while (not (eobp))
+          (let ((line (buffer-substring-no-properties
+                       (line-beginning-position) (line-end-position))))
+            (when (string-match
+                   "^\\(.+\\) \\([0-9]+\\):\\([0-9]+\\)\t\\(.*\\)$" line)
+              (let ((book (match-string 1 line))
+                    (ch   (string-to-number (match-string 2 line)))
+                    (text (match-string 4 line)))
+                ;; Flush previous chapter when book or chapter changes
+                (when (and current-book
+                          (or (not (string= book current-book))
+                              (/= ch current-ch)))
+                  (let ((ch-table (or (gethash current-book books)
+                                      (let ((h (make-hash-table :test 'eql)))
+                                        (puthash current-book h books)
+                                        h))))
+                    (puthash current-ch (vconcat (nreverse verses)) ch-table))
+                  (setq verses nil))
+                (setq current-book book
+                      current-ch   ch)
+                ;; Collect verses (we trust sequential ordering from mod2imp)
+                (push text verses))))
+          (forward-line 1))
+        ;; Flush final chapter
+        (when current-book
+          (let ((ch-table (or (gethash current-book books)
+                              (let ((h (make-hash-table :test 'eql)))
+                                (puthash current-book h books)
+                                h))))
+            (puthash current-ch (vconcat (nreverse verses)) ch-table)))))
+    (setq bcp-fetcher--bungo-yaku-bible books)))
+
+(defun bcp-fetcher--bungo-yaku-bible ()
+  "Return the Bungo-yaku Bible hash table, loading if necessary."
+  (cond
+   ((eq bcp-fetcher--bungo-yaku-bible 'unavailable) nil)
+   (bcp-fetcher--bungo-yaku-bible)
+   (t (bcp-fetcher--bungo-yaku-load))))
+
+(defun bcp-fetcher--bungo-yaku-render-verses (book ch verses v-from v-to)
+  "Render verse vector VERSES of BOOK chapter CH from V-FROM to V-TO.
+Returns a propertized string or nil."
+  (let* ((len   (length verses))
+         (start (1- (max 1 (or v-from 1))))
+         (end   (min len (or v-to len)))
+         (result ""))
+    (cl-loop for i from start below end
+             for vnum = (1+ i)
+             for raw = (aref verses i)
+             for text = (bcp-fetcher--propertize-furigana raw)
+             when (> (length text) 0) do
+             (unless (string-empty-p result)
+               (setq result (concat result "\n")))
+             (let ((props (list 'bcp-verse vnum 'bcp-book book)))
+               (when (= vnum 1)
+                 (setq props (nconc props (list 'bcp-chapter ch))))
+               (setq result
+                     (concat result
+                             (apply #'propertize (substring text 0 1) props)
+                             (substring text 1)))))
+    (unless (string-empty-p result) result)))
+
+(defun bcp-fetcher--bungo-yaku-render (passage bible)
+  "Render PASSAGE from Bungo-yaku BIBLE hash table as propertized text, or nil."
+  (cond
+   ;; "Book Ch:V1-V2" or "Book Ch:V"
+   ((string-match
+     "^\\(.+\\) \\([0-9]+\\):\\([0-9]+\\)\\(?:-\\([0-9]+\\)\\)?$" passage)
+    (let* ((book   (bcp-fetcher--bungo-yaku-resolve-book
+                    (match-string 1 passage)))
+           (ch     (string-to-number (match-string 2 passage)))
+           (v1     (string-to-number (match-string 3 passage)))
+           (v2     (if (match-string 4 passage)
+                       (string-to-number (match-string 4 passage))
+                     v1))
+           (ch-tbl (gethash book bible))
+           (verses (when ch-tbl (gethash ch ch-tbl))))
+      (when verses
+        (bcp-fetcher--bungo-yaku-render-verses book ch verses v1 v2))))
+   ;; "Book Ch" — whole chapter
+   ((string-match "^\\(.+\\) \\([0-9]+\\)$" passage)
+    (let* ((book   (bcp-fetcher--bungo-yaku-resolve-book
+                    (match-string 1 passage)))
+           (ch     (string-to-number (match-string 2 passage)))
+           (ch-tbl (gethash book bible))
+           (verses (when ch-tbl (gethash ch ch-tbl))))
+      (when verses
+        (bcp-fetcher--bungo-yaku-render-verses book ch verses 1 nil))))
+   ;; "Psalms N-M" — range of whole psalms
+   ((string-match "^Psalms? \\([0-9]+\\)-\\([0-9]+\\)$" passage)
+    (let* ((book   "Psalms")
+           (from   (string-to-number (match-string 1 passage)))
+           (to     (string-to-number (match-string 2 passage)))
+           (ch-tbl (gethash book bible))
+           (parts  nil))
+      (when ch-tbl
+        (cl-loop for n from from to to
+                 for verses = (gethash n ch-tbl)
+                 when verses do
+                 (let ((rendered (bcp-fetcher--bungo-yaku-render-verses
+                                 book n verses 1 nil)))
+                   (when rendered (push rendered parts))))
+        (when parts
+          (mapconcat #'identity (nreverse parts) "\n\n")))))
+   (t nil)))
+
+(defun bcp-fetcher--bungo-yaku-fetch (passage _translation callback)
+  "Serve PASSAGE from the local Bungo-yaku Bible and call CALLBACK with text."
+  (let ((text (condition-case err
+                  (bcp-fetcher--bungo-yaku-render
+                   passage (bcp-fetcher--bungo-yaku-bible))
+                (error
+                 (message "bcp-fetcher-bungo-yaku: %s" (error-message-string err))
+                 nil))))
+    (when text
+      (message "bcp-fetcher: %s served from local Bungo-yaku." passage))
+    (funcall callback text)))
+
+(bcp-fetcher-register-backend
+ 'bungo-yaku
+ :name            "文語訳聖書 Bungo-yaku (local)"
+ :fetch-fn        #'bcp-fetcher--bungo-yaku-fetch
+ :psalm-numbering 'hebrew
+ :translations    '("Bungo-yaku" "文語訳" "Japanese"))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Load default backend

@@ -21,9 +21,9 @@ Four traditions are implemented:
 - **BCP 1662** — the English prayer book; full liturgical calendar with moveable feasts and user-defined observances
 - **1928 American BCP** — the pre-revision American prayer book; full liturgical calendar and lectionary
 - **Little Office of the BVM** — the Roman Office (*Officium Parvum BMV*), DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering
-- **Roman Breviary (ferial)** — the full ferial (weekday) office of the Roman Breviary, DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering, weekly psalter cycle, and Per Annum collects
+- **Roman Breviary** — the pre-1955 (Divino Afflatu) Roman Breviary, all eight canonical hours with Latin/English/Japanese trilingual rendering, weekly psalter cycle, dominical and festal Matins with full lessons, Proprium Sanctorum, Commune Sanctorum, and four seasonal Propers of the Time (Advent, Lent, Eastertide, Christmastide); Holy Week and Sacred Triduum offices
 
-The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`). Support for the 1979 American BCP and further Roman Breviary extensions (dominical Matins, Proprium Sanctorum, seasonal variations) is planned.
+The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`). Support for the 1979 American BCP is planned.
 
 ---
 
@@ -63,17 +63,24 @@ The current implementation covers:
 - Seasonal Marian antiphons (Alma Redemptoris, Ave Regina, Regina caeli, Salve Regina)
 - Penitential season Alleluia suppression
 
-**Roman Breviary (ferial):**
+**Roman Breviary:**
 - All eight canonical hours: Matins, Lauds, Prime, Terce, Sext, None, Vespers, Compline
 - Auto-hour selection based on time of day
-- Latin/English bilingual rendering
-- Weekly psalter cycle from `bcp-roman-psalterium` (Daya cursus for Matins: 12 psalms under 6 antiphons)
+- Multilingual rendering governed by the language profile (Latin, English, Japanese)
+- Weekly psalter cycle from `bcp-roman-psalterium` (DA cursus for Matins: 12 psalms under 6 antiphons)
 - Per Annum collects from the preceding Sunday (Pentecost I–XXIV)
 - Ferial preces (Lauds, Vespers, Prime, minor hours) with dominical/ferial switching
 - Suffragium sanctorum (Lauds and Vespers)
 - Invitatory antiphon and Venite (Matins)
-- Lectio brevis with short responsory (Matins)
-- Incipit-keyed registries for antiphons, hymns, collects, and responsories
+- Lectio brevis with short responsory (ferial Matins)
+- Dominical Matins: 3 nocturns with 9 psalms, 3 versicles, 9 lessons, 8 responsories, Te Deum
+- Festal Matins: proper office for all 14 feasts with no commune, commune-based office for all others
+- Incipit-keyed registries: 537 antiphons, 60 hymns, collects, and responsories
+- Proprium Sanctorum: ~180 feasts across the calendar year with proper collects
+- Commune Sanctorum: 7 communes (Apostles, Martyrs, Confessor Bishop, Confessor non-Bishop, Virgins, Holy Women, BVM) with full Matins lessons and responsories
+- Four seasonal Propers of the Time: Advent, Lent, Eastertide, Christmastide — each with proper antiphons, capitula, and Matins data
+- Holy Week: Palm Sunday through Holy Saturday with proper offices
+- Sacred Triduum: Tenebrae Matins with Lamentations, proper Lauds, Vespers rubrics
 
 **State prayers (both Anglican traditions):**
 - Three versicle forms — monarchy / *save the State* (1928) / *them that rule* (1662) — selectable independently of region on theological grounds
@@ -85,9 +92,15 @@ The current implementation covers:
 - Full 1928 American BCP calendar and sanctoral
 - User-defined feast overrides (1662)
 
+**Language profiles:**
+- Three built-in profiles — ENG (English/Coverdale/KJVA), LAT (Latin/Vulgate), JAP (Japanese/文語訳) — each setting all scripture and liturgical language defaults at once
+- Per-setting overrides for mixing and matching (e.g. Latin structural texts with Japanese scripture)
+- Furigana display system for Japanese text: normal, muted (comment), or hidden, with in-buffer toggle
+
 **Scripture backends:**
 - `coverdale` — Miles Coverdale's Psalter served locally from a bundled text file; no network required for psalms
 - `vulgate` — Latin Vulgate Psalter with Breviary pointing (*, †, ‡) served locally; collated from Divinum Officium source files with BCP-to-Vulgate psalm number mapping
+- `bungo-yaku` — 文語訳聖書 (1917 Taishō revision), the complete 66-book Japanese Bible with furigana; served locally from a bundled text file
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
 - `ebible` — local eBible.org plain-text chapter files; fully offline
 
@@ -132,6 +145,7 @@ Available backends:
 
 - `coverdale` — serves psalms from `bcp-liturgy-psalter-coverdale.txt` (local, no network required); returns `nil` for non-psalm passages so the chain continues
 - `vulgate` — serves Latin psalms from `bcp-liturgy-psalter-vulgate.txt` (local, no network required); applies BCP-to-Vulgate psalm number mapping (e.g. BCP 114 → Vulgate 113:1-8, BCP 116 → Vulgate 114+115 concatenated)
+- `bungo-yaku` — serves the complete 文語訳聖書 from `bcp-liturgy-bungo-yaku.txt` (local, no network required); 31,099 verses with furigana as `kanji《reading》`
 - `oremus` — fetches from [Oremus Bible Browser](https://bible.oremus.org) (online); supports KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions (Coverdale/BCP, Common Worship, Liturgical Psalter)
 - `ebible` — fetches from a local directory of eBible.org plain-text chapter files; fully offline
 
@@ -202,17 +216,37 @@ Download the plain-text KJV chapter files from [eBible.org](https://ebible.org) 
 
 All settings are collected in `bcp-preferences.el`. Copy this file and edit it, or set variables directly in your `init.el`.
 
-### Scripture translation
+### Language profile
+
+A language profile sets all scripture and liturgical language defaults at once. Use `M-x bcp-settings` → Language to switch profiles or override individual settings.
 
 ```elisp
-;; Translation for lessons, epistles, and gospels
-(setq bible-commentary-translation "KJVA")   ; KJVA KJV NRSV NRSVAE
+;; English: Coverdale psalms, KJVA lessons, English office texts
+(setq bcp-language-profile 'ENG)
 
-;; Translation for the Psalter
-(setq bible-commentary-psalm-translation "Coverdale")  ; Coverdale BCP Vulgate Latin KJVA CW LP NRSV
+;; Latin: Vulgate psalms, Vulgate lessons, Latin office texts
+(setq bcp-language-profile 'LAT)
+
+;; Japanese: Bungo-yaku psalms and lessons, English structural texts
+(setq bcp-language-profile 'JAP)
+```
+
+Individual settings can be overridden while keeping the profile as a base:
+
+```elisp
+;; Override just the lesson translation (e.g. Latin profile but NRSV lessons)
+(setq bcp-profile-lesson-translation "NRSV")
+
+;; Override just the backend (e.g. English profile but Bungo-yaku scripture)
+(setq bcp-profile-backend 'bungo-yaku)
+
+;; Reset an override back to the profile default
+(setq bcp-profile-lesson-translation 'default)
 ```
 
 ### Fetch backend
+
+Normally set by the language profile. To override manually:
 
 ```elisp
 ;; Default: local Coverdale psalms, Oremus for lessons
@@ -221,6 +255,10 @@ All settings are collected in `bcp-preferences.el`. Copy this file and edit it, 
 
 ;; Latin Vulgate psalms, Oremus for lessons
 (setq bcp-fetcher-backend 'vulgate
+      bcp-fetcher-fallback-backend 'oremus)
+
+;; Japanese: local Bungo-yaku, Oremus fallback
+(setq bcp-fetcher-backend 'bungo-yaku
       bcp-fetcher-fallback-backend 'oremus)
 
 ;; Fully online (Oremus only)
@@ -326,10 +364,10 @@ Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to up
 ### Canticles
 
 ```elisp
-;; Append Gloria Patri after each canticle and psalm
+;; Append Gloria Patri after each canticle and psalm (normally set by profile)
 (setq bcp-liturgy-canticle-append-gloria nil)
 
-;; Default canticle language
+;; Default canticle language (normally set by profile)
 (setq bcp-liturgy-canticle-language 'english)   ; 'english or 'latin
 
 ;; Per-canticle language overrides
@@ -339,8 +377,9 @@ Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to up
 ### Roman Office (LOBVM and Breviary)
 
 ```elisp
-;; Office language
+;; Office language (normally set by the language profile)
 (setq bcp-roman-office-language 'latin)   ; 'latin or 'english
+;; Any non-latin value uses English structural texts and fetcher-based scripture/psalms
 
 ;; Preferred hymn translator (English mode)
 (setq bcp-roman-hymnal-preferred-translator 'britt)
@@ -406,9 +445,11 @@ The author would like to extend thanks to the creators of the [*1662 Daily Offic
 
 The author also wishes to thank the many wonderful members of the Personal Ordinariate of St. Peter for their personal kindness and their work in raising awareness of the richness of the Anglican traditions.
 
-**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation (Little Office of the BVM). The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer and the Roman Breviary.
+**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation. The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer and the Roman Breviary.
 
 **The Marquess of Bute's** translation of the Roman Breviary (1908) provides the English prose translations for the Little Office of the BVM. Hymn translations are attributed to their individual translators: Dom Matthew Britt, O.S.B. (1922), Edward Caswall (1849), and John Mason Neale (1851).
+
+The author's love of the Roman Office owes much to the ***Anglican Breviary*** (Frank Gavin Liturgical Foundation; currently maintained by the Lancelot Andrewes Press). No text has been drawn from that copyrighted work; all Latin and English texts in this project are sourced independently from the public domain.
 
 This project was developed with the assistance of [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
@@ -418,4 +459,4 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others in the Anglican tradition who use Emacs may find it useful. Contributions, corrections, and suggestions are welcome.
 
-Planned additions include: the 1979 American BCP, dominical Matins with full lessons, Proprium Sanctorum and Commune Sanctorum, seasonal variations (Advent, Lent, Eastertide), additional hymn translations, and a psalm pointing utility.
+Planned additions include: the 1979 American BCP, additional hymn translations, Coverdale/KJVA translations for scripture-derived antiphons, a psalm pointing utility, and CJK prayer book texts.

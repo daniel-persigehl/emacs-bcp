@@ -44,12 +44,19 @@ One of: lay, deacon, priest, bishop.")
 
 (defcustom bcp-roman-office-language 'latin
   "Language for the Roman Office.
-When set to \\='latin, all texts render in Latin (the default).
-When set to \\='english, the renderer uses:
+Normally set by the language profile (see `bcp-language-profile') via
+the :roman-language setting.
+
+When \\='latin, all texts render in Latin (the default).
+Any other value (e.g. \\='english) activates the vernacular path:
   - Hymnal translations for hymns (`bcp-roman-hymnal')
-  - The configured Bible fetcher for scripture (capitula, lessons)
-  - Bute 1908 prose translations for antiphons, collects, versicles
-  - Latin fallback when no English text is available"
+  - The configured Bible fetcher for scripture (capitula, lessons, psalms)
+  - Bute 1908 prose translations for structural texts, antiphons, collects
+  - Latin fallback when no vernacular text is available
+
+Scripture and psalms are fetched via the active `bcp-fetcher-backend',
+so the JAP profile (backend = bungo-yaku) yields Japanese scripture
+with English structural texts."
   :type  '(choice (const latin) (const english))
   :group 'bcp-roman)
 

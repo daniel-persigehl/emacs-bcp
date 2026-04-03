@@ -364,9 +364,14 @@ then calling `bcp-liturgy-render--finalise-buffer'."
 
 (defun bcp-liturgy-render--finalise-buffer ()
   "Finalise the current Office buffer after all content has been inserted.
-Normalises spacing, enables visual-line-mode, and sets read-only-mode."
+Normalises spacing, enables visual-line-mode, and sets read-only-mode.
+When `bcp-fetcher-furigana-display' is `hidden', adds `bcp-furigana'
+to the buffer invisibility spec."
   (goto-char (point-min))
   (bcp-liturgy-render--normalise-spacing)
+  (when (and (boundp 'bcp-fetcher-furigana-display)
+             (eq bcp-fetcher-furigana-display 'hidden))
+    (add-to-invisibility-spec 'bcp-furigana))
   (visual-line-mode 1)
   (read-only-mode 1))
 

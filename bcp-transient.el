@@ -24,11 +24,18 @@
 
 (require 'transient)
 (require 'cl-lib)
+(require 'bcp-profile)
 
 ;; Suppress byte-compiler warnings for variables and functions defined
 ;; in the tradition modules.  bcp-transient is loaded after them.
 
-(declare-function bcp-reload         "bcp-preferences")
+(declare-function bcp-reload                    "bcp-preferences")
+(declare-function bcp-fetcher-toggle-furigana    "bcp-fetcher")
+(declare-function bcp-fetcher-clear-cache        "bcp-fetcher")
+(declare-function bcp-profile-apply              "bcp-profile")
+(declare-function bcp-profile-reset              "bcp-profile")
+(declare-function bcp-profile-effective          "bcp-profile")
+(declare-function bcp-profile-overridden-p       "bcp-profile")
 (declare-function bcp-1662-open-office   "bcp-1662")
 (declare-function bcp-1928-open-office   "bcp-anglican-1928")
 (declare-function bcp-roman-lobvm        "bcp-roman-lobvm")
@@ -87,6 +94,7 @@
 (defvar bcp-1928-show-communion-propers)
 (defvar bcp-roman-office-language)
 (defvar bcp-roman-hymnal-preferred-translator)
+(defvar bcp-fetcher-furigana-display)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Helpers
@@ -130,42 +138,153 @@ Comparison uses `equal'; wraps around after the last choice."
   (bcp--cycle 'bcp-liturgy-churchmanship '(catholic reformed)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Scripture suffixes
+;;;; Language profile suffixes
 
-(transient-define-suffix bcp--set-translation ()
-  "Select the lesson translation."
+(defun bcp--bungo-yaku-label ()
+  "Return the display label for the Bungo-yaku translation.
+Uses 文語訳 in GUI Emacs, Bungo-yaku in terminal."
+  (if (display-graphic-p) "文語訳" "Bungo-yaku"))
+
+(defun bcp--profile-desc (setting fmt &optional val-fn)
+  "Return a description for SETTING showing effective value and source.
+FMT is a format string with one %s slot.  VAL-FN, if given, is
+called on the effective value to produce the display string."
+  (let* ((val (bcp-profile-effective setting))
+         (display (if val-fn (funcall val-fn val) (format "%s" val)))
+         (source (if (bcp-profile-overridden-p setting) "override" "profile")))
+    (format (concat fmt " (%s)") display source)))
+
+(transient-define-suffix bcp--set-language-profile ()
+  "Cycle the language profile: ENG → LAT → JAP."
   :description (lambda ()
-    (format "Lessons: %s" bible-commentary-translation))
+    (format "Profile: %s" bcp-language-profile))
   :transient t
   (interactive)
-  (setq bible-commentary-translation
-        (completing-read "Lesson translation: "
-          '("KJVA" "KJV" "NRSV" "NRSVAE") nil t
-          bible-commentary-translation)))
+  (bcp--cycle 'bcp-language-profile '(ENG LAT JAP))
+  (bcp-profile-reset))
 
-(transient-define-suffix bcp--set-psalm-translation ()
-  "Select the psalm translation."
+(transient-define-suffix bcp--toggle-furigana ()
+  "Toggle furigana visibility in the current office buffer."
+  :description "Toggle furigana"
+  (interactive)
+  (bcp-fetcher-toggle-furigana))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Advanced override suffixes
+
+(defun bcp--cycle-override (var choices)
+  "Cycle override VAR through (default . CHOICES) and re-apply profile."
+  (bcp--cycle var (cons 'default choices))
+  (bcp-profile-apply))
+
+(transient-define-suffix bcp--override-lesson-translation ()
+  "Override lesson translation or inherit from profile."
   :description (lambda ()
-    (format "Psalms: %s" bible-commentary-psalm-translation))
+    (bcp--profile-desc :lesson-translation "Lessons: %s"))
   :transient t
   (interactive)
-  (let ((new (completing-read "Psalm translation: "
-               '("Coverdale" "BCP" "Vulgate" "Latin" "KJVA" "CW" "LP" "NRSV") nil t
-               bible-commentary-psalm-translation)))
-    (unless (equal new bible-commentary-psalm-translation)
-      (setq bible-commentary-psalm-translation new)
-      (bcp-fetcher-clear-cache))))
+  (let ((bungo (bcp--bungo-yaku-label)))
+    (setq bcp-profile-lesson-translation
+          (let ((new (completing-read "Lesson translation (RET for default): "
+                       (list "default" "KJVA" "KJV" "NRSV" "NRSVAE"
+                             "Vulgate" bungo)
+                       nil t)))
+            (if (equal new "default") 'default new)))
+    (bcp-profile-apply)))
 
-(transient-define-suffix bcp--set-backend ()
-  "Cycle the primary fetch backend: coverdale → vulgate → oremus → ebible."
+(transient-define-suffix bcp--override-psalm-translation ()
+  "Override psalm translation or inherit from profile."
   :description (lambda ()
-    (format "Backend: %s → %s"
-      bcp-fetcher-backend
-      (or bcp-fetcher-fallback-backend "—")))
+    (bcp--profile-desc :psalm-translation "Psalms: %s"))
   :transient t
   (interactive)
-  (bcp--cycle 'bcp-fetcher-backend '(coverdale vulgate oremus ebible))
-  (bcp-fetcher-clear-cache))
+  (let ((bungo (bcp--bungo-yaku-label)))
+    (setq bcp-profile-psalm-translation
+          (let ((new (completing-read "Psalm translation (RET for default): "
+                       (list "default" "Coverdale" "BCP" "Vulgate" "Latin"
+                             "KJVA" "CW" "LP" "NRSV" bungo)
+                       nil t)))
+            (if (equal new "default") 'default new)))
+    (bcp-profile-apply)))
+
+(transient-define-suffix bcp--override-backend ()
+  "Override primary fetch backend or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :backend "Backend: %s"))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-backend
+                       '(coverdale vulgate bungo-yaku oremus ebible)))
+
+(transient-define-suffix bcp--override-fallback-backend ()
+  "Override fallback fetch backend or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :fallback-backend "Fallback: %s"
+                       (lambda (v) (if v (format "%s" v) "none"))))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-fallback-backend '(oremus ebible nil)))
+
+(transient-define-suffix bcp--override-roman-language ()
+  "Override Roman Office language or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :roman-language "Roman Office: %s"))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-roman-language '(latin english)))
+
+(transient-define-suffix bcp--override-canticle-language ()
+  "Override canticle language or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :canticle-language "Canticles: %s"))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-canticle-language '(english latin)))
+
+(transient-define-suffix bcp--override-canticle-gloria ()
+  "Override Gloria Patri after canticles or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :canticle-gloria "Gloria Patri: %s"
+                       (lambda (v) (if v "yes" "no"))))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-canticle-gloria '(t nil)))
+
+(transient-define-suffix bcp--override-furigana ()
+  "Override furigana display mode or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :furigana "Furigana: %s"))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-furigana '(normal comment hidden)))
+
+(transient-define-suffix bcp--profile-reset-all ()
+  "Reset all overrides to profile defaults."
+  :description "Reset all to profile defaults"
+  :transient t
+  (interactive)
+  (bcp-profile-reset))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Advanced overrides sub-prefix
+
+(transient-define-prefix bcp-settings-advanced ()
+  "Override individual language-profile settings.
+Each setting shows (profile) when inherited or (override) when
+explicitly set.  Use Reset to clear all overrides."
+  [["Lessons & Psalms"
+    ("t" bcp--override-lesson-translation)
+    ("p" bcp--override-psalm-translation)]
+   ["Backend"
+    ("b" bcp--override-backend)
+    ("B" bcp--override-fallback-backend)
+    ("f" bcp--override-furigana)]
+   ["Language"
+    ("r" bcp--override-roman-language)
+    ("c" bcp--override-canticle-language)
+    ("g" bcp--override-canticle-gloria)]
+   [""
+    ("R" bcp--profile-reset-all)]])
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; State prayer suffixes
@@ -521,7 +640,7 @@ Comparison uses `equal'; wraps around after the last choice."
   "Return to the main settings menu."
   :description "← Main menu"
   (interactive)
-  (bcp-settings))
+  (call-interactively #'bcp-settings))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Action suffixes
@@ -741,16 +860,16 @@ Comparison uses `equal'; wraps around after the last choice."
   "BCP Daily Office settings.
 
 Settings take effect immediately.  Quit with q, then re-open the office
-to see the result.  Tradition-specific rubric options are under 1 (BCP 1662)
-and 2 (BCP 1928)."
-  [["General"
+to see the result.  Language profile (L) sets all scripture and language
+defaults at once; use Advanced (A) to override individual settings."
+  [["Language"
+    ("L" bcp--set-language-profile)
+    ("A" "Advanced overrides…" bcp-settings-advanced)
+    ("j" bcp--toggle-furigana)]
+   ["General"
     ("o" bcp--set-officiant)
     ("c" bcp--set-creed)
     ("h" bcp--set-churchmanship)]
-   ["Scripture"
-    ("t" bcp--set-translation)
-    ("p" bcp--set-psalm-translation)
-    ("b" bcp--set-backend)]
    ["State prayers"
     ("s" bcp--set-state-versicle-form)
     ("r" bcp--set-region)
@@ -760,16 +879,13 @@ and 2 (BCP 1928)."
     ("T" bcp--set-head-of-state-title)
     ("C" bcp--set-country-name)
     ("P" bcp--set-president-name)]]
-  [["Canticles"
-    ("l" bcp--set-canticle-language)
-    ("g" bcp--set-canticle-append-gloria)]
-   ["Traditions"
+  [["Traditions"
     ("1" "BCP 1662 rubrics…" bcp-settings-1662)
     ("2" "BCP 1928 rubrics…" bcp-settings-1928)]
    ["Actions"
     ("E" bcp--action-open-1662)
-    ("A" bcp--action-open-1928)
-    ("r" bcp--action-open-lobvm)
+    ("W" bcp--action-open-1928)
+    ("v" bcp--action-open-lobvm)
     ("R" "Little Office hours…" bcp-settings-lobvm)
     ("B" "Breviary hours…" bcp-settings-breviary)
     ("g" bcp--action-reload)

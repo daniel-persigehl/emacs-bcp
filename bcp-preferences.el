@@ -19,46 +19,28 @@
 
 ;;; Code:
 
-;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Translation preferences
-
-;; Translation used for all lessons, epistles, and gospels.
-;; Supported values (via Oremus):
-;;   "KJVA"    — King James Version with Apocrypha (recommended for 1662 BCP)
-;;   "KJV"     — King James Version (Protestant canon only)
-;;   "NRSV"    — New Revised Standard Version (US spelling)
-;;   "NRSVAE"  — NRSV Anglicized Edition (British spelling)
-;; (setq bible-commentary-translation "KJVA")
-
-;; Translation used for the Psalter.
-;; Local backends (no network required):
-;;   "Coverdale" — Miles Coverdale's Psalter as in the BCP 1662 (recommended)
-;;   "BCP"       — Alias for Coverdale
-;;   "Vulgate"   — Latin Vulgate Psalter with Breviary pointing (*, †, ‡)
-;;   "Latin"     — Alias for Vulgate
-;; Via Oremus (network):
-;;   "KJVA"      — KJV Psalms
-;;   "CW"        — Common Worship Psalter (Church of England, 2000)
-;;   "LP"        — Liturgical Psalter (ASB 1980)
-;;   "NRSV"      — NRSV Psalms
-;; (setq bible-commentary-psalm-translation "Coverdale")
-
-(setq bible-commentary-psalm-translation "Vulgate")
-
+(require 'bcp-profile)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Backend configuration
+;;;; Language profile
+;;
+;; The language profile sets all scripture and language defaults at once.
+;; Use `bcp-settings' (M-x bcp-settings) → Language → Advanced to
+;; override individual settings.
+;;
+;; Profiles: ENG (English/Coverdale/KJVA), LAT (Latin/Vulgate),
+;;           JAP (Japanese/Bungo-yaku)
+(setq bcp-language-profile 'LAT)
 
-;; Primary backend for psalm fetching.  Local backends serve from disk;
-;; Oremus and eBible require network.
-;;   'coverdale — local Coverdale Psalter (English, BCP)
-;;   'vulgate   — local Vulgate Psalter (Latin, Breviary pointing)
-;;   'oremus    — Oremus Bible Browser (network)
-;;   'ebible    — eBible API (network)
-;; For Latin office psalms, set backend to 'vulgate and psalm-translation
-;; to "Vulgate".
-(setq bcp-fetcher-backend 'vulgate
-      bcp-fetcher-fallback-backend 'oremus)
+;; Per-setting overrides (set to 'default to inherit from the profile):
+;; (setq bcp-profile-lesson-translation 'default)
+;; (setq bcp-profile-psalm-translation  'default)
+;; (setq bcp-profile-backend            'default)
+;; (setq bcp-profile-fallback-backend   'default)
+;; (setq bcp-profile-roman-language     'default)
+;; (setq bcp-profile-canticle-language  'default)
+;; (setq bcp-profile-canticle-gloria    'default)
+;; (setq bcp-profile-furigana           'default)
 
 ;; Path to the local Coverdale Psalter file (auto-detected by default).
 ;; Override only if you keep the file in a non-standard location:
@@ -103,17 +85,13 @@
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Daily Office — rendering
 
-;; Whether to append Gloria Patri after each canticle and psalm.
-;; Disabled by default for private recitation.
-(setq bcp-liturgy-canticle-append-gloria nil)
+;; Gloria Patri and canticle language are now governed by the language
+;; profile.  Override via bcp-profile-canticle-gloria and
+;; bcp-profile-canticle-language (see above).
 
 ;; Creed used at Morning and Evening Prayer.
 ;; 'apostles (default) or 'nicene (1928 rubrical option; no effect on 1662 BCP)
 (setq bcp-liturgy-creed 'apostles)
-
-;; Default language for canticles: 'english or 'latin
-;; (Latin texts are nil until supplied; falls back to English automatically)
-(setq bcp-liturgy-canticle-language 'english)
 
 ;; Per-canticle language overrides — e.g. Latin Te Deum with English Benedictus:
 ;; (setq bcp-liturgy-canticle-overrides '((te-deum . latin)))
@@ -225,70 +203,33 @@
   "Directory containing the BCP package files.  Set at load time.")
 
 (defun bcp-reload ()
-  "Reload all BCP package files in dependency order.
-Run this after pulling updates to pick up any changed files without
-restarting Emacs."
+  "Reload all BCP package files, discovering them automatically.
+Run this after pulling updates to pick up any changed or new files
+without restarting Emacs.  Discovers all bcp-*.el files in the
+package directory, clears them from `features', then loads each one.
+Internal `require' chains resolve dependency order automatically.
+bcp-preferences.el is always loaded last."
   (interactive)
-  (let ((dir bcp--package-directory)
-        (files '("bcp-fetcher.el"
-                 "bcp-fetcher-oremus.el"
-                 "bcp-fetcher-ebible.el"
-                 "bcp-calendar.el"
-                 "bcp-liturgy-hours.el"
-                 "bcp-liturgy-canticles.el"
-                 "bcp-liturgy-dispatch.el"
-                 "bcp-common-prayers.el"
-                 "bcp-common-anglican.el"
-                 "bcp-liturgy-render.el"
-                 "bcp-render.el"
-                 "bcp-1662-calendar.el"
-                 "bcp-1662-data.el"
-                 "bcp-1662-user-feasts.el"
-                 "bcp-1662-ordo.el"
-                 "bcp-common-canticles.el"
-                 "bcp-anglican-render.el"
-                 "bcp-1662-render.el"
-                 "bcp-1662.el"
-                 "bcp-anglican-1928-calendar.el"
-                 "bcp-anglican-1928-data.el"
-                 "bcp-anglican-1928-lectionary.el"
-                 "bcp-anglican-1928-ordo.el"
-                 "bcp-anglican-1928-render.el"
-                 "bcp-anglican-1928.el"
-                 "bcp-anglican.el"
-                 "bcp-common-roman.el"
-                 "bcp-roman-antiphonary.el"
-                 "bcp-roman-hymnal.el"
-                 "bcp-roman-collectarium.el"
-                 "bcp-roman-responsory.el"
-                 "bcp-roman-capitulary.el"
-                 "bcp-roman-psalterium.el"
-                 "bcp-roman-tempora.el"
-                 "bcp-roman-season-advent.el"
-                 "bcp-roman-season-lent.el"
-                 "bcp-roman-season-easter.el"
-                 "bcp-roman-season-christmas.el"
-                 "bcp-roman-season-holyweek.el"
-                 "bcp-roman-ordo.el"
-                 "bcp-roman-render.el"
-                 "bcp-roman-lobvm.el"
-                 "bcp-roman-proprium.el"
-                 "bcp-roman-breviary.el"
-                 "bcp-roman.el"
-                 "bcp-reader.el"
-                 "bcp-notebook.el"
-                 "bcp-transient.el")))
+  (let* ((dir bcp--package-directory)
+         (load-prefer-newer t)
+         (all (directory-files dir nil "\\`bcp-.*\\.el\\'"))
+         ;; Exclude bcp-preferences.el — loaded last
+         (files (cl-remove "bcp-preferences.el" all :test #'string=)))
+    ;; Clear all bcp- features so require chains re-fire
+    (dolist (file (cons "bcp-preferences.el" files))
+      (setq features (delq (intern (file-name-sans-extension file)) features)))
+    ;; Load all discovered files
     (dolist (file files)
-      (let ((base (file-name-sans-extension
-                   (expand-file-name file dir))))
-        (when (or (file-readable-p (concat base ".elc"))
-                  (file-readable-p (concat base ".el")))
-          ;; Remove from features so require chains re-fire
-          (setq features (delq (intern (file-name-base file)) features))
-          (load base nil t))))
+      (load (file-name-sans-extension (expand-file-name file dir)) nil t))
+    ;; Reload bcp-preferences.el last (picks up this function itself)
     (load (file-name-sans-extension
            (expand-file-name "bcp-preferences.el" dir)) nil t)
-    (message "BCP reloaded.")))
+    (message "BCP reloaded (%d files)." (1+ (length files)))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Apply language profile (must run after all overrides above)
+
+(bcp-profile-apply)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Transient settings menu

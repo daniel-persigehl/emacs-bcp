@@ -29,6 +29,9 @@
 (require 'bcp-roman-hymnal)
 (require 'bcp-liturgy-dispatch)
 
+(declare-function bcp-roman-render--render-office "bcp-roman-render")
+(declare-function bcp-office-nav-init "bcp-office-nav")
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Compline psalms (Vulgate, embedded)
 ;;
@@ -944,6 +947,17 @@ local constants."
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Entry point
 
+(defconst bcp-roman-lobvm--hour-entry-fns
+  '((matins   . bcp-roman-lobvm-matins)
+    (lauds    . bcp-roman-lobvm-lauds)
+    (vespers  . bcp-roman-lobvm-vespers)
+    (compline . bcp-roman-lobvm-compline)
+    (prime    . bcp-roman-lobvm-prime)
+    (terce    . bcp-roman-lobvm-terce)
+    (sext     . bcp-roman-lobvm-sext)
+    (none     . bcp-roman-lobvm-none))
+  "Map from hour symbol to public entry-point function.")
+
 (defun bcp-roman-lobvm--render-hour (hour ordo buffer-name label &optional date)
   "Render an LOBVM HOUR with ORDO, BUFFER-NAME, LABEL, and optional DATE.
 HOUR is a symbol: `matins', `lauds', `prime', `terce', `sext',
@@ -980,7 +994,21 @@ HOUR is a symbol: `matins', `lauds', `prime', `terce', `sext',
              :gloria-patri (plist-get bcp-common-prayers-gloria-patri
                                       (intern (format ":%s" lang)))
              :buffer-name buffer-name
-             :office-label label)))))
+             :office-label label)))
+    ;; Init navigation mode for refresh/day-navigation
+    (require 'bcp-office-nav)
+    (let ((entry-fn (alist-get hour bcp-roman-lobvm--hour-entry-fns)))
+      (with-current-buffer (get-buffer buffer-name)
+        (bcp-office-nav-init
+         (decode-time (encode-time 0 0 12
+                                   (cadr date) (car date) (caddr date)))
+         'roman-lobvm
+         (lambda ()
+           (let ((d (if (bound-and-true-p bcp-office-nav--override-time)
+                        (let ((dt bcp-office-nav--override-time))
+                          (list (nth 4 dt) (nth 3 dt) (nth 5 dt)))
+                      date)))
+             (funcall entry-fn d))))))))
 
 (defun bcp-roman-lobvm-matins (&optional date)
   "Render Matins of the Little Office of the BVM.

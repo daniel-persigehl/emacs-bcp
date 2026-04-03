@@ -1,6 +1,6 @@
 #+TITLE: BCP — Biblical Commentary and Prayer
 #+SUBTITLE: Development Bible
-#+DATE: 2026-03-30
+#+DATE: 2026-04-03
 #+STARTUP: overview
 
 # HOW TO USE: Paste this entire file at the start of a new Claude session.
@@ -156,6 +156,8 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-fetcher-oremus.el | bcp- | Oremus backend — URL config, DOM parse, char clean; registers as 'oremus | SETTLED |
 | bcp-calendar.el | bcp- | Computus, rank taxonomy, date utilities | SETTLED |
 | bcp-preferences.el | bcp- | All user config | SETTLED |
+| bcp-profile.el | bcp- | Language profile system (ENG/LAT/JAP); 8 override defcustoms; profile-apply pushes to real variables | SETTLED |
+| bcp-transient.el | bcp- | Transient settings menu; language profile, advanced overrides, all rubrical options | SETTLED |
 | bcp-liturgy-canticles.el | bcp-liturgy- | Canticle texts + registry (was bcp-canticles.el) | SETTLED |
 | bcp-liturgy-render.el | bcp-liturgy- | Generic ordo walker + buffer primitives | SETTLED |
 | bcp-1662-calendar.el | bcp-1662- | BCP seasons/weeks, feast table | SETTLED |
@@ -173,7 +175,7 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-roman-ordo.el | bcp-roman- | Roman ordo step types + LOBVM Compline ordo | SETTLED |
 | bcp-roman-render.el | bcp-roman- | Roman Office renderer (step dispatch, office walker, language threading) | SETTLED |
 | bcp-roman-hymnal.el | bcp-roman- | Hymn registry: Latin texts + multiple English translators (Britt, Caswall, Neale) | SETTLED |
-| bcp-roman-antiphonary.el | bcp-roman- | Antiphon registry: incipit-keyed, multi-translator; shared resolver utility; source-tagged (411 antiphons: 293 gallican, 61 vulgate, 42 composition, 15 paraphrase) | SETTLED |
+| bcp-roman-antiphonary.el | bcp-roman- | Antiphon registry: incipit-keyed, multi-translator; shared resolver utility; source-tagged (537 antiphons: 328 gallican, 114 vulgate, 76 composition, 15 paraphrase) | SETTLED |
 | bcp-roman-collectarium.el | bcp-roman- | Collect registry: incipit-keyed, multi-translator; includes conclusion metadata | SETTLED |
 | bcp-roman-capitulary.el | bcp-roman- | Capitulum registry: incipit-keyed, multi-translator; includes scripture ref metadata | SETTLED |
 | bcp-roman-responsory.el | bcp-roman- | Responsory registry: incipit-keyed, nested plist shape (respond/verse/repeat) | SETTLED |
@@ -189,6 +191,7 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-roman-breviary.el | bcp-roman- | Full Breviary: ferial + dominical + feast ordo builders, resolver, psalm-fn, auto-hour dispatch | SETTLED |
 | bcp-liturgy-hours.el | bcp-liturgy- | Canonical hours framework, hour-grouping registry | SETTLED |
 | bcp-vulgate-collate.el | bcp- | One-time utility: collates 150 DO Latin psalm files into bcp-liturgy-psalter-vulgate.txt | SETTLED |
+| bcp-liturgy-bungo-yaku.txt | bcp- | 文語訳 Bible text (31,099 verses, 66 books); furigana as kanji《reading》 | SETTLED |
 
 * bcp-fetcher.el :science:
 :PROPERTIES:
@@ -285,6 +288,76 @@ Registers as 'oremus backend on load.
 
 To add a new backend, create bcp-fetcher-PROVIDER.el, implement the
 :fetch-fn protocol, and call bcp-fetcher-register-backend at load time.
+
+** Bungo-yaku Backend
+Registered as 'bungo-yaku.  Translations: ("Bungo-yaku" "文語訳" "Japanese").
+Psalm numbering: hebrew (KJV versification).
+Serves from =bcp-liturgy-bungo-yaku.txt= (31,099 verses, 66 books).
+Extracted from the JapBungo SWORD module via =mod2imp= + OSIS tag stripping.
+Furigana preserved as =kanji《reading》= (lenticular brackets).
+
+** Furigana Display System
+Three display modes controlled by =bcp-fetcher-furigana-display=:
+- =normal= — furigana displayed inline with body text
+- =comment= — furigana displayed in muted grey (font-lock-comment-face)
+- =hidden= — furigana invisible (Emacs =invisible= property with =bcp-furigana= spec)
+
+=bcp-fetcher--propertize-furigana= marks 《…》 spans with the =bcp-furigana=
+text property at render time.  =bcp-fetcher-toggle-furigana= cycles visibility
+in the current buffer without re-rendering.
+
+The language profile auto-promotes furigana from =hidden= to =comment= when
+the backend is =bungo-yaku= but the profile is not JAP (cross-language override).
+
+* bcp-profile.el :science:
+:PROPERTIES:
+:STATUS: SETTLED
+:END:
+
+Language profile system.  A profile sets all scripture and liturgical language
+defaults at once; individual settings can be overridden.
+
+** Profiles
+| Profile | Lesson | Psalm | Backend | Fallback | Roman lang | Canticle lang | Gloria | Furigana |
+|---------+--------+-------+---------+----------+------------+---------------+--------+----------|
+| ENG | KJVA | Coverdale | coverdale | oremus | english | english | nil | hidden |
+| LAT | Vulgate | Vulgate | vulgate | oremus | latin | latin | t | hidden |
+| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | oremus | english | english | nil | comment |
+
+** Architecture
+=bcp-profile--definitions= (defconst) maps profile symbols to 8 keyword→value plists.
+=bcp-profile--setting-to-variable= maps keywords to the real variables they govern.
+=bcp-profile--setting-to-override= maps keywords to override defcustom symbols.
+
+=bcp-profile-apply= resolves each setting: if the override is ='default=, use the
+profile's value; otherwise use the override.  Writes to real variables, so existing
+code reads them unchanged (no interception layer).
+
+** Override Variables
+All default to ='default= (inherit from profile):
+- =bcp-profile-lesson-translation= → =bible-commentary-translation=
+- =bcp-profile-psalm-translation= → =bible-commentary-psalm-translation=
+- =bcp-profile-backend= → =bcp-fetcher-backend=
+- =bcp-profile-fallback-backend= → =bcp-fetcher-fallback-backend=
+- =bcp-profile-roman-language= → =bcp-roman-office-language=
+- =bcp-profile-canticle-language= → =bcp-liturgy-canticle-language=
+- =bcp-profile-canticle-gloria= → =bcp-liturgy-canticle-append-gloria=
+- =bcp-profile-furigana= → =bcp-fetcher-furigana-display=
+
+** Roman Breviary Language Integration
+The Roman Breviary uses =bcp-roman-office-language= (set by :roman-language) for
+structural text dispatch (Latin vs English).  The JAP profile sets this to ='english=,
+so all =(eq language 'english)= checks in the renderer activate the vernacular path.
+
+Scripture and psalms are fetched via the active =bcp-fetcher-backend=.  The psalm
+loader (=bcp-roman-breviary--psalm-verses=) dispatches on the backend:
+- =coverdale= → Coverdale hash table with Vulgate→BCP number mapping
+- =vulgate= → Vulgate hash table (direct Vulgate numbering)
+- other → general fetcher with Vulgate→Hebrew conversion and verse slicing
+
+This means the JAP profile yields: English structural texts + Japanese scripture
+and psalms (via bungo-yaku backend), with Latin fallback for registry texts
+(antiphons, hymns, collects) that have no Japanese translation.
 
 * bcp-calendar.el :science:
 :PROPERTIES:
@@ -869,10 +942,11 @@ Completed:
 
 - Holy Week and Sacred Triduum (=bcp-roman-season-holyweek.el=): all 7 days
   (Palm Sunday through Holy Saturday). Tenebrae Matins with proper psalmody,
-  Lamentations, patristic/scripture lessons; Triduum Lauds, Vespers, Special
-  Compline with Christus factus est accumulation. Mon–Wed weekday propers.
-  ~60 antiphons, 36 lessons, 36 responsories. Palm Sunday data extends
-  =bcp-roman-season-lent.el= (entry 6). See DONE entry below for details.
+  Lamentations, patristic/scripture lessons; all 8 hours complete — Lauds,
+  Vespers, Prime, Terce, Sext, None, Special Compline with Christus factus est
+  accumulation. Mon–Wed weekday propers.  ~60 antiphons, 36 lessons,
+  36 responsories. Palm Sunday data extends =bcp-roman-season-lent.el=
+  (entry 6). See DONE entry below for details.
 
 ** TODO Prayerbook English translations for scripture-derived texts
 Antiphons drawn from scripture (psalms, canticles, gospels) should have
@@ -914,9 +988,14 @@ Implemented:
   tenebrae-versicle-N, lauds-versicle, christus-factus; English text swapping for
   lessons (:text-en) and responsories (:respond-en/:verse-en/:repeat-en).
 
-Still TODO:
-- Minor hours (Prime, Terce, Sext, None): need Triduum dispatch + Christus factus est
-- Christus factus est at end of all hours (currently only Lauds + Compline)
+All hours complete:
+- Minor hours (Prime, Terce, Sext, None): Triduum dispatch with Sunday psalms
+  (Psalmi minores Dominica), no antiphon (Minores sine Antiphona), no hymn/
+  capitulum/versicle/preces.  Uses =--prime-triduum-ordo= and
+  =--minor-hour-triduum-ordo= builders.
+- Christus factus est at end of all hours: Lauds, Vespers (Thu), Prime,
+  Terce, Sext, None, and Compline all conclude with secreto Christus factus est
+  + Pater noster + Ps 50 + silent concluding prayer.
 
 ** TODO Weekday propers for Advent and Lent
 Ferial days in Advent (~24) and Lent (~40) have their own proper antiphons,
@@ -930,11 +1009,64 @@ English translations would require ~2300+ lesson texts. Could source from
 DO English =Tempora/= and =Sancti/= files, or from published Anglican
 Breviary translations.
 
-** TODO Feast-specific Matins lessons
-257 feasts reference commune lessons by default, but higher-ranked feasts
-(Duplex I/II, Duplex majus) have their own proper patristic readings and
-Gospel homilies. Audit which feasts need proper lesson data beyond what
-the commune provides.
+** SETTLED Feast-specific Matins for =:commune nil= feasts
+14 feasts have =:commune nil= (no commune to inherit from), so ALL Matins
+data must be specified directly.  All 14 complete:
+- May 3 (Finding of the Holy Cross), May 8 (Apparition of St. Michael),
+  Jun 24 (Nativity of St. John Baptist), Jul 1 (Most Precious Blood),
+  Aug 6 (Transfiguration), Sep 14 (Exaltation of the Holy Cross),
+  Sep 29 (Dedication of St. Michael), Oct 24 (St. Raphael),
+  Jan 25 (Conversion of St. Paul), Mar 19 (St. Joseph),
+  Mar 24 (St. Gabriel), Corpus Christi, Sacred Heart, Christ the King.
+Each entry has: invitatory, hymn, 9 psalm+antiphon pairs across 3 nocturns,
+3 versicle pairs (Latin+English), 9 lessons (scripture/patristic/homily),
+8 responsories.  ~108 new antiphon registrations + 10 hymns for these feasts.
+Data sourced from Divinum Officium Latin =Sancti/= and =Tempora/= files.
+Christ the King uses split Psalm 88: =(88(2-30))= and =(88(31-53))= as
+string-format psalm references for the two halves.
+
+** OPEN CJK Bible translations and prayer books
+Very low priority.  Bible texts first (fetcher backends), prayer book
+texts second (collects, canticles, offices).
+
+*** Bible translations
+- *Japanese:* 文語訳聖書 (Bungo-yaku, 1917 Taishō revision) — the Japanese
+  KJV.  PD.  DONE as fetcher backend =bungo-yaku= in =bcp-fetcher.el=.
+  Extracted from JapBungo SWORD module via =mod2imp= + OSIS tag stripping.
+  Full 66-book Bible (31,099 verses).  Furigana preserved as =kanji《reading》=.
+  Registered with =:psalm-numbering 'hebrew= (KJV versification).
+  Data file: =bcp-liturgy-bungo-yaku.txt= (~9 MB).
+- *Chinese (Mandarin):* 和合本 (CUV, 1919) — the Chinese KJV.  PD.
+  Widely available digitally.
+- *Chinese (Literary):* 文理和合本 (Wenli CUV, 1919) — classical Chinese,
+  PD, niche but beautiful.
+
+*** Prayer books (public domain editions)
+- *Japanese (NSKK 日本聖公会):*
+  - 1879 祈祷書 — first Japanese BCP, direct 1662 translation.  PD.
+    Potentially at NDL (dl.ndl.go.jp).
+  - 1895 revision — PD.
+  - 1928/29 revision — PD (70yr institutional copyright expired ~1999).
+    Most "iconic" PD edition: standard book during the period of greatest
+    growth and trial (prewar expansion, wartime persecution, postwar
+    reconstruction).
+  - 1990 current book — UNDER COPYRIGHT.  Do not use.
+- *Chinese (CHSKH 中華聖公會 / HKSKH):*
+  - 1872 公禱書 — direct 1662 translation, published Shanghai.  PD.
+    May be on HathiTrust/Internet Archive.
+  - 1906, 1938 revisions — PD.  CHSKH ceased to exist post-1949;
+    PRC institutional copyright is 50yr.  The 1938 edition was the
+    standard book at the church's height (11 dioceses).
+  - Current HKSKH book (~2006) — UNDER COPYRIGHT.  Do not use.
+
+*** Implementation notes
+- Would require sourcing plain-text digitisations, verse-mapping for CJK
+  editions, and CJK text rendering in office buffers.
+- Register as =bcp-fetcher= backends (=bungo-yaku=, =cuv=, =wenli-cuv=).
+- Prayer book texts: collects, canticles, office texts as translation
+  keys alongside existing Latin/English.
+- Sources to check: NDL (dl.ndl.go.jp), HathiTrust, Internet Archive,
+  Project Canterbury (anglicanhistory.org).
 
 * Rejected Approaches
 :PROPERTIES:

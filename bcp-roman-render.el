@@ -30,6 +30,9 @@
 (require 'bcp-roman-hymnal)
 (require 'bcp-roman-psalterium)
 
+(declare-function bcp-fetcher--convert-psalm-ref "bcp-fetcher"
+                  (ref from-scheme to-scheme))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Scripture fetching for English mode
 
@@ -108,34 +111,8 @@ to KJV/Hebrew numbering for Psalms and Canticles."
 (defun bcp-roman-render--vulgate-to-kjv (ref)
   "Convert a Vulgate scripture REF to KJV/Hebrew versification.
 REF should already have book names expanded (e.g. \"Psalm 109:1\").
-Handles the main Psalter numbering differences."
-  (cond
-   ;; Psalms: Vulgate (LXX) numbering → Hebrew (KJV) numbering
-   ;; LXX 1-8 = Heb 1-8 (same)
-   ;; LXX 9 = Heb 9-10 (split)
-   ;; LXX 10-112 = Heb 11-113 (+1)
-   ;; LXX 113 = Heb 114-115 (split)
-   ;; LXX 114-115 = Heb 116 (merged)
-   ;; LXX 116-145 = Heb 117-146 (+1)
-   ;; LXX 146-147 = Heb 147 (merged)
-   ;; LXX 148-150 = Heb 148-150 (same)
-   ((string-match "^Psalm \\([0-9]+\\)\\(.*\\)" ref)
-    (let* ((ps-num (string-to-number (match-string 1 ref)))
-           (rest (match-string 2 ref))
-           (kjv-num (cond
-                     ((<= ps-num 8) ps-num)
-                     ((= ps-num 9) 9)
-                     ((<= ps-num 112) (1+ ps-num))
-                     ((= ps-num 113) 114)
-                     ((= ps-num 114) 116)
-                     ((= ps-num 115) 116)
-                     ((<= ps-num 145) (1+ ps-num))
-                     ((= ps-num 146) 147)
-                     ((= ps-num 147) 147)
-                     (t ps-num))))
-      (format "Psalm %d%s" kjv-num rest)))
-   ;; All other books: versification matches
-   (t ref)))
+Delegates to `bcp-fetcher--convert-psalm-ref'."
+  (bcp-fetcher--convert-psalm-ref ref 'lxx 'hebrew))
 
 (defcustom bcp-roman-render--fetch-timeout 10
   "Seconds to wait for async scripture fetch before giving up."

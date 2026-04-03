@@ -16,6 +16,7 @@
 ;;   n  — next day (same canonical hour)
 ;;   p  — previous day (same canonical hour)
 ;;   h  — change canonical hour (prompts from `bcp-canonical-hours')
+;;   g  — refresh (re-render same office, e.g. after settings change)
 ;;
 ;; The dynamic variable `bcp-office-nav--override-time' is checked by
 ;; rite open-office functions (e.g. `bcp-1662--current-time') so that
@@ -57,7 +58,11 @@ Set by `bcp-office-nav-init'.  Navigation commands call it via
   :doc "Keymap for `bcp-office-nav-mode'."
   "n" #'bcp-office-nav-next-day
   "p" #'bcp-office-nav-prev-day
-  "h" #'bcp-office-nav-change-hour)
+  "h" #'bcp-office-nav-change-hour
+  "g" #'bcp-office-nav-refresh)
+
+;; Ensure new bindings take effect on reload (defvar won't overwrite)
+(define-key bcp-office-nav-mode-map "g" #'bcp-office-nav-refresh)
 
 (define-minor-mode bcp-office-nav-mode
   "Minor mode for date and canonical-hour navigation in office buffers.
@@ -98,8 +103,11 @@ Returns the START-HOUR integer for the chosen hour."
 Binds `bcp-office-nav--override-time' dynamically so that the open-office
 function picks up NEW-TIME from `bcp-1662--current-time' (or its equivalent)
 without prompting.  Navigation state is updated when `bcp-office-nav-init'
-is called from inside the render callback."
-  (let ((bcp-office-nav--override-time new-time))
+is called from inside the render callback.
+`inhibit-read-only' is bound so the re-render can replace the read-only
+buffer contents without error."
+  (let ((bcp-office-nav--override-time new-time)
+        (inhibit-read-only t))
     (funcall bcp-office-nav--open-fn)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
@@ -131,6 +139,15 @@ Prompts for a canonical hour from `bcp-canonical-hours' by name."
          (new-time (copy-sequence bcp-office-nav--time)))
     (setf (nth 2 new-time) new-hour)
     (bcp-office-nav--rerender new-time)))
+
+(defun bcp-office-nav-refresh ()
+  "Re-render the current office with the same date and hour.
+Useful after changing settings (language, translation, etc.)
+via the transient menu."
+  (interactive)
+  (unless bcp-office-nav--open-fn
+    (user-error "No navigation state; re-open the office first"))
+  (bcp-office-nav--rerender bcp-office-nav--time))
 
 (provide 'bcp-office-nav)
 ;;; bcp-office-nav.el ends here

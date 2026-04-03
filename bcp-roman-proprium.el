@@ -34,6 +34,8 @@
 (require 'bcp-roman-collectarium)
 (require 'bcp-roman-psalterium)
 
+(declare-function bcp-roman-breviary--resolve "bcp-roman-breviary")
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Rank system
 
@@ -360,13 +362,325 @@ The feast uses the principal feast's collect and commune."
      :latin "In Festo Sanctíssimi Córporis Christi"
      :rank duplex-i
      :commune nil
-     :collect deus-qui-nobis-sub-sacramento)
+     :collect deus-qui-nobis-sub-sacramento
+
+     ;; ── Matins ──
+     ;; Proper office (Thomas Aquinas).
+     ;; Noc I: 1 Cor 11. Noc II: Thomas Aquinas Opusc. 57. Noc III: Augustine Tract. 26 in Joann.
+     :invitatory christum-regem-adoremus-dominantem
+     :hymn sacris-solemniis
+     :psalms-1 ((fructum-salutiferum . 1)
+                (a-fructu-frumenti . 4)
+                (communione-calicis . 15))
+     :psalms-2 ((memor-sit-dominus . 19)
+                (paratur-nobis-mensa . 22)
+                (in-voce-exsultationis . 41))
+     :psalms-3 ((introibo-ad-altare-sumam . 42)
+                (cibavit-nos-dominus-ex-adipe . 80)
+                (ex-altari-tuo-domine . 83))
+     :versicle-1 ("Panem cæli dedit eis, allelúja."
+                  "Panem Angelórum manducávit homo, allelúja.")
+     :versicle-1-en ("He gave them of the bread of heaven, alleluia."
+                     "Man did eat angels' food, alleluia.")
+     :versicle-2 ("Cibávit illos ex ádipe fruménti, allelúja."
+                  "Et de petra, melle saturávit eos, allelúja.")
+     :versicle-2-en ("He fed them with the finest of the wheat, alleluia."
+                     "And with honey out of the rock hath he satisfied them, alleluia.")
+     :versicle-3 ("Edúcas panem de terra, allelúja."
+                  "Et vinum lætíficet cor hóminis, allelúja.")
+     :versicle-3-en ("That thou mayest bring forth bread out of the earth, alleluia."
+                     "And wine that maketh glad the heart of man, alleluia.")
+
+     :lessons
+     (;; ── Nocturn I: 1 Corinthians 11 ──
+
+      (:ref "1 Cor 11:20-22"
+       :source "De Epístola prima beáti Pauli Apóstoli ad Corínthios"
+       :text "\
+Conveniéntibus ergo vobis in unum, jam non est Domínicam cenam manducáre. Unusquísque enim suam cenam \
+præsúmit ad manducándum. Et álius quidem ésurit, álius autem ébrius est. Numquid domos non habétis ad \
+manducándum et bibéndum? aut Ecclésiam Dei contémnitis, et confúnditis eos, qui non habent? Quid dicam \
+vobis? Laudo vos? In hoc non laudo.")
+
+      (:ref "1 Cor 11:23-26"
+       :text "\
+Ego enim accépi a Dómino quod et trádidi vobis, quóniam Dóminus Jesus, in qua nocte tradebátur, accépit \
+panem, et grátias agens fregit, et dixit: Accípite, et manducáte: hoc est corpus meum, quod pro vobis \
+tradétur: hoc fácite in meam commemoratiónem. Simíliter et cálicem, postquam cœnávit, dicens: Hic calix \
+novum testaméntum est in meo sánguine: hoc fácite, quotiescúmque bibétis, in meam commemoratiónem. \
+Quotiescúmque enim manducábitis panem hunc, et cálicem bibétis, mortem Dómini annuntiábitis donec véniat.")
+
+      (:ref "1 Cor 11:27-32"
+       :text "\
+Itaque quicúmque manducáverit panem hunc, vel bíberit cálicem Dómini indígne, reus erit córporis et \
+sánguinis Dómini. Probet autem seípsum homo: et sic de pane illo edat, et de cálice bibat. Qui enim \
+mandúcat et bibit indígne, judícium sibi mandúcat et bibit, non dijúdicans corpus Dómini. Ideo inter vos \
+multi infírmi et imbecílles, et dórmiunt multi. Quod, si nosmetípsos dijudicarémus, non útique judicarémur. \
+Dum judicámur autem, a Dómino corrípimur, ut non cum hoc mundo damnémur.")
+
+      ;; ── Nocturn II: Thomas Aquinas, Opusc. 57 ──
+
+      (:ref "Opusc."
+       :source "Sermo sancti Thomæ Aquinátis\nLectio iv in opusculo 57"
+       :text "\
+Imménsa divínæ largitátis benefícia, exhíbita pópulo christiáno, inæstimábilem ei cónferunt dignitátem. \
+Neque enim est, aut fuit aliquándo tam grandis nátio, quæ hábeat deos appropinquántes sibi, sicut adest \
+nobis Deus noster. Unigénitus síquidem Dei Fílius, suæ divinitátis volens nos esse partícipes, natúram \
+nostram assúmpsit, ut hómines deos fáceret factus homo. Et hoc ínsuper, quod de nostro assúmpsit, totum \
+nobis cóntulit ad salútem. Corpus namque suum pro nostra reconcilatióne in ara crucis hóstiam óbtulit Deo \
+Patri, sánguinem suum fudit in prétium simul et lavácrum; ut redémpti a miserábili servitúte, a peccátis \
+ómnibus mundarémur. Ut autem tanti benefícii jugis in nobis manéret memória, corpus suum in cibum, et \
+sánguinem suum in potum, sub spécie panis et vini suméndum fidélibus derelíquit.")
+
+      (:ref "Opusc."
+       :text "\
+O pretiósum et admirándum convívium, salutíferum et omni suavitáte replétum! Quid enim hoc convívio \
+pretiósius esse potest? in quo non carnes vitulórum et hircórum, ut olim in lege, sed nobis Christus \
+suméndus propónitur verus Deus. Quid hoc Sacraménto mirabílius? In ipso namque panis et vinum in Christi \
+corpus et sánguinem substantiáliter convertúntur; ideóque Christus, Deus et homo perféctus, sub módici \
+panis et vini spécie continétur. Manducátur ítaque a fidélibus, sed mínime lacerátur; quinímmo, divíso \
+Sacraménto, sub quálibet divisiónis partícula ínteger persevérat. Accidéntia autem sine subjécto in eódem \
+subsístunt, ut fides locum hábeat, dum visíbile invisibíliter súmitur aliéna spécie occultátum; et sensus \
+a deceptióne reddántur immúnes, qui de accidéntibus júdicant sibi notis.")
+
+      (:ref "Opusc."
+       :text "\
+Nullum étiam sacraméntum est isto salúbrius, quo purgántur peccáta, virtútes augéntur, et mens ómnium \
+spirituálium charísmatum abundántia impinguátur. Offértur in Ecclésia pro vivis et mórtuis, ut ómnibus \
+prosit, quod est pro salúte ómnium institútum. Suavitátem dénique hujus Sacraménti nullus exprímere \
+súfficit, per quod spirituális dulcédo in suo fonte gustátur; et recólitur memória illíus, quam in sua \
+passióne Christus monstrávit, excellentíssimæ caritátis. Unde, ut árctius hujus caritátis imménsitas \
+fidélium córdibus infigerétur, in última cena, quando Pascha cum discípulis celebráto, transitúrus erat \
+de hoc mundo ad Patrem, hoc Sacraméntum instítuit, tamquam passiónis suæ memoriále perénne, figurárum \
+véterum impletívum, miraculórum ab ipso factórum máximum; et de sua contristátis abséntia solátium \
+singuláre relíquit.")
+
+      ;; ── Nocturn III: Augustine, Tract. 26 in Joann. ──
+
+      (:ref "John 6:56-59"
+       :source "Léctio sancti Evangélii secúndum Joánnem\nJoannes 6:56-59\nIn illo témpore: Dixit Jesus turbis Judæórum: Caro mea vere est cibus, et sanguis meus vere est potus. Et réliqua.\n\nHomilía sancti Augustíni Epíscopi\nTractatus 26 in Joannem, sub finem"
+       :text "\
+Cum cibo et potu id áppetant hómines, ut neque esúriant, neque sítiant: hoc veráciter non præstat, nisi \
+iste cibus et potus, qui eos, a quibus súmitur, immortáles et incorruptíbiles facit; id est, socíetas \
+ipsa Sanctórum, ubi pax erit et únitas plena atque perfécta. Proptérea quippe, sicut étiam ante nos hoc \
+intellexérunt hómines Dei, Dóminus noster Jesus Christus corpus et sánguinem suum in eis rebus \
+commendávit, quæ ad unum áliquid redigúntur ex multis. Namque áliud in unum ex multis granis confícitur: \
+áliud in unum ex multis ácinis cónfluit. Dénique jam expónit, quómodo id fiat, quod lóquitur; et quid \
+sit manducáre corpus ejus, et sánguinem bíbere.")
+
+      (:ref "John 6:56-59"
+       :text "\
+Qui mandúcat carnem meam et bibit meum sánguinem, in me manet, et ego in illo. Hoc est ergo manducáre \
+illam escam, et illum bíbere potum, in Christo manére, et illum manéntem in se habére. Ac per hoc, qui \
+non manet in Christo, et in quo non manet Christus, proculdúbio nec mandúcat spiritáliter carnem ejus, \
+nec bibit ejus sánguinem, licet carnáliter et visibíliter premat déntibus Sacraméntum córporis et \
+sánguinis Christi: sed magis tantæ rei sacraméntum ad judícium sibi mandúcat et bibit, quia immúndus \
+præsúmpsit ad Christi accédere Sacraménta, quæ áliquis non digne sumit, nisi qui mundus est; de quibus \
+dícitur: Beáti mundo corde, quóniam ipsi Deum vidébunt.")
+
+      (:ref "John 6:56-59"
+       :text "\
+Sicut, inquit, misit me vivens Pater, et ego vivo propter Patrem: et qui mandúcat me, et ipse vivet \
+propter me. Ac si díceret: Ut ego vivam propter Patrem, id est, ad illum tamquam ad majórem réferam \
+vitam meam, exinanítio mea fecit, in qua me misit: ut autem quisquam vivat propter me, participátio \
+facit, qua mandúcat me. Ego ítaque humiliátus vivo propter Patrem: ille eréctus vivit propter me. Si \
+autem ita dictus est, Vivo propter Patrem, quia ipse de illo, non ille de ipso est; sine detriménto \
+æqualitátis dictum est. Nec tamen dicéndo, Et qui mandúcat me, et ipse vivet propter me; eándem suam \
+et nostram æqualitátem significávit, sed grátiam mediatóris osténdit."))
+
+     :responsories
+     ((:respond "Immolábit hædum multitúdo filiórum Israël ad vésperam Paschæ:"
+       :verse "Pascha nostrum immolátus est Christus: ítaque epulémur in ázymis sinceritátis et veritátis."
+       :repeat "Et edent carnes et ázymos panes.")
+      (:respond "Comedétis carnes, et saturabímini pánibus:"
+       :verse "Non Móyses dedit vobis panem de cælo, sed Pater meus dat vobis panem de cælo verum."
+       :repeat "Iste est panis, quem dedit vobis Dóminus ad vescéndum.")
+      (:respond "Respéxit Elías ad caput suum subcinerícium panem: qui surgens comédit et bibit:"
+       :verse "Si quis manducáverit ex hoc pane, vivet in ætérnum."
+       :repeat "Et ambulávit in fortitúdine cibi illíus usque ad montem Dei."
+       :gloria t)
+      (:respond "Cenántibus illis, accépit Jesus panem, et benedíxit, ac fregit, dedítque discípulis suis, et ait:"
+       :verse "Dixérunt viri tabernáculi mei: Quis det de cárnibus ejus, ut saturémur?"
+       :repeat "Accípite et comédite: hoc est corpus meum.")
+      (:respond "Accépit Jesus cálicem, postquam cenávit, dicens: Hic calix novum testaméntum est in meo sánguine:"
+       :verse "Memória memor ero, et tabéscet in me ánima mea."
+       :repeat "Hoc fácite in meam commemoratiónem.")
+      (:respond "Ego sum panis vitæ; patres vestri manducavérunt manna in desérto, et mórtui sunt:"
+       :verse "Ego sum panis vivus, qui de cælo descéndi: si quis manducáverit ex hoc pane, vivet in ætérnum."
+       :repeat "Hic est panis de cælo descéndens, ut, si quis ex ipso mandúcet, non moriátur."
+       :gloria t)
+      (:respond "Qui mandúcat meam carnem et bibit meum sánguinem,"
+       :verse "Non est ália nátio tam grandis, quæ hábeat deos appropinquántes sibi, sicut Deus noster adest nobis."
+       :repeat "In me manet, et ego in eo.")
+      (:respond "Misit me vivens Pater, et ego vivo propter Patrem:"
+       :verse "Cibávit illum Dóminus pane vitæ et intelléctus."
+       :repeat "Et qui mandúcat me, vivet propter me."
+       :gloria t)))
+
     (:offset 68
      :name "Sacred Heart of Jesus"
      :latin "Sacratíssimi Cordis D.N.J.C."
      :rank duplex-i
      :commune nil
-     :collect deus-qui-nobis-in-corde))
+     :collect deus-qui-nobis-in-corde
+
+     ;; ── Matins ──
+     ;; Proper office.
+     ;; Noc I: Jeremiah. Noc II: Historical (Devotion to the Sacred Heart). Noc III: Bonaventure on John 19.
+     :invitatory cor-jesu-amore-nostri
+     :hymn auctor-beate-saeculi
+     :psalms-1 ((cogitationes-cordis-ejus . 32)
+                (apud-te-est-fons-vitae . 35)
+                (homo-pacis-meae . 40))
+     :psalms-2 ((rex-omnis-terrae-deus . 46)
+                (dum-anxiaretur-cor-meum . 60)
+                (secundum-multitudinem-dolorum . 93))
+     :psalms-3 ((qui-diligitis-dominum-confitemini . 96)
+                (viderunt-omnes-termini . 97)
+                (psallam-tibi-in-nationibus . 107))
+     :versicle-1 ("Tóllite jugum meum super vos et díscite a me."
+                  "Quia mitis sum et húmilis Corde.")
+     :versicle-1-en ("Take my yoke upon you, and learn of me."
+                     "For I am meek and lowly in Heart.")
+     :versicle-2 ("Ego dixi, Dómine, miserére mei."
+                  "Sana ánimam meam quia peccávi tibi.")
+     :versicle-2-en ("I said: Lord, be merciful unto me."
+                     "Heal my soul, for I have sinned against thee.")
+     :versicle-3 ("Memóriam fecit mirabílium suórum miserátor Dóminus."
+                  "Escam dedit timéntibus se.")
+     :versicle-3-en ("The merciful Lord hath instituted a memorial of his wondrous deeds."
+                     "He hath given meat unto them that fear him.")
+
+     :lessons
+     (;; ── Nocturn I: Jeremiah ──
+
+      (:ref "Jer 24:5-7"
+       :source "De Jeremía Prophéta"
+       :text "\
+Hæc dicit Dóminus, Deus Israël: Cognóscam transmigratiónem Juda, quam emísi de loco isto in terram \
+Chaldæórum, in bonum. Et ponam óculos meos super eos ad placándum, et redúcam eos in terram hanc; et \
+ædificábo eos, et non déstruam; et plantábo eos et non evéllam. Et dabo eis cor ut sciant me, quia ego \
+sum Dóminus; et erunt mihi in pópulum, et ego ero eis in Deum, quia reverténtur ad me in toto corde suo.")
+
+      (:ref "Jer 30:18-19, 21-24"
+       :text "\
+Hæc dicit Dóminus: Ecce ego convértam conversiónem tabernaculórum Jacob, et tectis ejus miserébor, et \
+ædificábitur cívitas in excélso suo, et templum juxta órdinem suum fundábitur, et egrediétur de eis \
+laus, voxque ludéntium. Et erit dux ejus ex eo, et princeps de médio ejus producétur; et, applicábo eum \
+et accédet ad me. Quis enim iste est qui ápplicet cor suum ut appropínquet mihi? ait Dóminus. Et éritis \
+mihi in pópulum, et ego ero vobis in Deum. Ecce turbo Dómini, furor egrédiens, procélla ruens; in cápite \
+impiórum conquiéscet. Non avértet iram indignatiónis Dóminus, donec fáciat et cómpleat cogitatiónem \
+Cordis sui: in novíssimo diérum intellegétis ea.")
+
+      (:ref "Jer 31:1-3, 31-33"
+       :text "\
+In témpore illo, dicit Dóminus, ero Deus univérsis cognatiónibus Israël, et ipsi erunt mihi in pópulum. \
+Hæc dicit Dóminus: Invénit grátiam in desérto pópulus qui remánserat a gládio; vadet ad réquiem suam \
+Israël. Longe Dóminus appáruit mihi. Et in caritáte perpétua diléxi te: ídeo attráxi te, míserans. Ecce \
+dies vénient, dicit Dóminus: et fériam dómui Israël et dómui Juda fœdus novum: non secúndum pactum, quod \
+pépigi cum pátribus eórum in die, qua apprehéndi manum eórum, ut edúcerem eos de Terra Ægýpti: pactum \
+quod írritum fecérunt, et ego dominátus sum eórum, dicit Dóminus. Sed hoc erit pactum, quod fériam cum \
+domo Israël: post dies illos dicit Dóminus: Dabo legem meam in viscéribus eórum, et in corde eórum \
+scribam eam: et ero eis in Deum, et ipsi erunt mihi in pópulum.")
+
+      ;; ── Nocturn II: Historical (Devotion to the Sacred Heart) ──
+
+      (:ref "Encycl."
+       :source "Ex história devotiónis erga sacratíssimum Cor Jesu"
+       :text "\
+Inter mira sacræ doctrínæ pietatísque increménta, quibus divínæ Sapiéntiæ consília clárius in dies \
+Ecclésiæ manifestántur, vix áliud magis conspícuum est quam triumphális progréssio cultus sacratíssimi \
+Cordis Jesu. Sǽpius quidem, priórum decúrsu témporum, Patres, Doctóres, Sancti, Redemptóris nostri \
+amórem celebrárunt: vulnus in látere Christi apértum ómnium gratiárum arcánum dixérunt fontem. At inde a \
+médio ævo, cum tenerióre quadam erga sanctíssimam Salvatóris Humanitátem religióne fidéles áffici cœpti \
+sunt, ánimæ contemplatívæ per plagam illam ad ipsum Cor, amóre hóminum vulnerátum, penetráre fere \
+solébant. Atque ex eo témpore hæc contemplátio sanctíssimis quibúsque ita familiáris evásit, ut neque \
+régio neque ordo religiósus sit, in quibus non insígnia, hac ætáte, ejus reperiántur testimónia.")
+
+      (:ref "Encycl."
+       :text "\
+Verum, ad cultum sacratíssimi Cordis Jesu plene perfectéque constituéndum, eundémque per totum orbem \
+propagándum, Deus ipse sibi instruméntum elégit humíllimam ex órdine Visitatiónis vírginem, sanctam \
+Margarítam Maríam Alacóque, cui, a prima quidem ætáte jam in Eucharístiæ Sacraméntum amóre flagránti, \
+Christus Dóminus sæpenúmero appárens, divíni Cordis sui et divítias et optáta significáre dignátus est. \
+Quarum apparitiónum celebérrima illa est, qua ei ante Eucharístiam oránti Jesus conspiciéndum se dedit, \
+sacratíssimum Cor osténdit et conquéstus quod, pro imménsa sua caritáte, nihil nisi ingratórum hóminum \
+contumélias recíperet, ipsi præcépit ut novum festum, féria sexta post Octávam Córporis Christi, \
+instituéndum curáret, quo Cor suum honóre débito colerétur, atque injúriæ sibi in Sacraménto amóris a \
+peccatóribus illátæ dignis expiaréntur obséquiis.")
+
+      (:ref "Encycl."
+       :text "\
+Anno tandem millésimo septingentésimo sexagésimo quinto, Clemens décimus tértius Póntifex Máximus \
+offícium et missam in honórem sacratíssimi Cordis Jesu approbávit; Pius vero nonus festum ad univérsam \
+Ecclésiam exténdit. Exínde, cultus sacratíssimi Cordis, quasi flumen exúndans, prolútis impediméntis \
+ómnibus, per totum se orbem effúdit, et, novo illucescénte sǽculo, jubilǽo indícto, Leo décimus tértius \
+humánum genus univérsum sacratíssimo Cordi devótum vóluit. Quæ consecrátio, in ómnibus quidem cathólici \
+orbis ecclésiis, solémni ritu perácta, ingens áttulit devotiónis hujus increméntum, et ad eam non solum \
+pópulos, verum étiam singuláres famílias addúxit, quæ Divíno Cordi innumerábiles se dévovent, regióque \
+ejus império subíciunt.")
+
+      ;; ── Nocturn III: Bonaventure on John 19:31-37 ──
+
+      (:ref "John 19:31-37"
+       :source "Léctio sancti Evangélii secúndum Joánnem\nJoannes 19:31-37\nIn illo témpore: Judǽi, quóniam parascéve erat, ut non remanérent in cruce córpora sábbato rogavérunt Pilátum, ut frangeréntur eórum crura et tolleréntur. Et réliqua.\n\nHomilía sancti Bonaventúræ Epíscopi\nLiber de ligno vitæ, num. 30"
+       :text "\
+Ut de látere Christi dormiéntis in cruce formarétur Ecclésia, et Scriptúra implerétur quæ dicit: Vidébunt \
+in quem transfixérunt, divína est ordinatióne indúltum ut unus mílitum láncea latus illud sacrum aperiéndo \
+perfóderet, quátenus sánguine cum aqua manánte, prétium effunderétur nostræ salútis quod a fonte scílicet \
+Cordis arcáno profúsum, vim daret sacraméntis Ecclésiæ ad vitam grátiæ conferéndam, essétque jam in \
+Christo vivéntibus póculum fontis vivi, saliéntis in vitam ætérnam. Surge ígitur, ánima amíca Christi, \
+vigiláre non cesses, ibi os appóne, ut háurias aquas de fóntibus salvatóris.")
+
+      (:ref "John 19:31-37"
+       :source "De vite mystica, cap. 3"
+       :text "\
+Quia semel vénimus ad Cor Dómini Jesu dulcíssimi, et bonum est nos hic esse, non fácile evellámur ab eo. \
+O quam bonum et jucúndum habitáre in Corde hoc. Bonus thesáurus, pretiósa margaríta Cor tuum, óptime \
+Jesu, quam, fosso agro córporis tui, invenímus. Quis hanc margarítam abíciat? Quin pótius, dabo omnes \
+margarítas, cogitatiónes et affectiónes meas commutábo et comparábo illam mihi, jactans omnem cogitátum \
+meum in Cor boni Jesu, et sine fallácia illud me enútriet. Hoc ígitur tuo et meo Corde, dulcíssime Jesu, \
+invénto, orábo te Deum meum: admítte in sacrárium exauditiónis preces meas: immo me totum trahe in Cor tuum.")
+
+      (:ref "John 19:31-37"
+       :text "\
+Ad hoc enim perforátum est latus tuum, ut nobis páteat intróitus. Ad hoc vulnerátum est Cor tuum, ut in \
+illo ab exterióribus turbatiónibus absolúti habitáre possímus. Nihilóminus et proptérea vulnerátum est, ut \
+per vulnus visíbile, vulnus amóris invisíbile videámus. Quómodo hic ardor mélius posset osténdi, nisi quod \
+non solum corpus, verum étiam ipsum Cor láncea vulnerári permísit? Carnále ergo vulnus, vulnus spirituále \
+osténdit. Quis illud Cor tam vulnerátum non díligat? quis tam amántem non rédamet? quis tam castum non \
+amplectátur? Nos ígitur adhuc in carne manéntes, quantum póssumus, amántem redamémus, amplectámur \
+vulnerátum nostrum, cujus ímpii agrícolæ fodérunt manus et pedes, latus et Cor; oremúsque ut cor nostrum, \
+adhuc durum et impœ́nitens, amóris sui vínculo constríngere et jáculo vulneráre dignétur."))
+
+     :responsories
+     ((:respond "Fériam eis pactum sempitérnum et non désinam eis benefácere et timórem meum dabo in corde eórum"
+       :verse "Et lætábor super eis cum bene eis fécero in toto Corde meo."
+       :repeat "Ut non recédant a me.")
+      (:respond "Si inimícus meus maledixísset mihi, sustinuíssem útique"
+       :verse "Et si is qui me óderat super me magna locútus fuísset, abscondíssem me fórsitan ab eo."
+       :repeat "Tu vero homo unánimis qui simul mecum dulces capiébas cibos.")
+      (:respond "Cum essémus mórtui peccátis, convivificávit nos Deus in Christo"
+       :verse "Ut osténderet in sǽculis superveniéntibus abundántes divítias grátiæ suæ."
+       :repeat "Propter nímiam caritátem suam qua diléxit nos."
+       :gloria t)
+      (:respond "Prope est Dóminus ómnibus invocántibus eum,"
+       :verse "Miserátor et miséricors Dóminus, pátiens et multum miséricors."
+       :repeat "Omnibus invocántibus eum in veritáte.")
+      (:respond "Confíteor tibi, Pater, Dómine cæli et terræ, quia abscondísti hæc a sapiéntibus et prudéntibus"
+       :verse "Ita, Pater, quóniam sic fuit plácitum ante te."
+       :repeat "Et revelásti ea párvulis.")
+      (:respond "Omnes gentes quascúmque fecísti, vénient"
+       :verse "Et glorificábunt nomen tuum, quóniam magnus es tu, et fáciens mirabília."
+       :repeat "Et adorábunt coram te, Dómine."
+       :gloria t)
+      (:respond "Ego si exaltátus fúero a terra"
+       :verse "Hoc autem dicébat signíficans qua morte esset moritúrus."
+       :repeat "Omnia traham ad meípsum.")
+      (:respond "Simus ergo imitatóres Dei"
+       :verse "Sicut et Christus diléxit nos et trádidit semetípsum pro nobis."
+       :repeat "Et ambulémus in dilectióne."
+       :gloria t))))
   "Moveable feasts defined as Easter offsets.
 Each entry has :offset (days after Easter), plus standard feast plist keys.")
 
@@ -382,7 +696,168 @@ Last Sunday of October."
     :latin "D.N. Jesu Christi Regis"
     :rank duplex-i
     :commune nil
-    :collect omnipotens-sempiterne-deus-qui-in-dilecto)
+    :collect omnipotens-sempiterne-deus-qui-in-dilecto
+
+    ;; ── Matins ──
+    ;; Proper office (1925 Quas primas).
+    ;; Noc I: Colossians 1. Noc II: Pius XI Encycl. Quas primas. Noc III: Augustine on John 18.
+    :invitatory jesum-christum-regem-regum
+    :hymn aeterna-imago-altissimi
+    :psalms-1 ((ego-autem-constitutus-sum-rex . 2)
+               (gloria-et-honore-coronasti . 8)
+               (elevamini-portae-aeternales . 23))
+    :psalms-2 ((sedebit-dominus-rex . 28)
+               (virga-directionis . 44)
+               (psallite-regi-nostro . 46))
+    :psalms-3 ((benedicentur-in-ipso . 71)
+               (et-ego-primogenitum . "88(2-30)")
+               (thronus-ejus-sicut-sol . "88(31-53)"))
+    :versicle-1 ("Data est mihi omnis potéstas."
+                 "In cælo et in terra.")
+    :versicle-1-en ("Given to me is all power."
+                    "In heaven and in earth.")
+    :versicle-2 ("Afférte Dómino, famíliæ populórum."
+                 "Afférte Dómino glóriam et impérium.")
+    :versicle-2-en ("Bring ye to the Lord, O ye families of the nations."
+                    "Bring ye to the Lord glory and dominion.")
+    :versicle-3 ("Adorábunt eum omnes reges terræ."
+                 "Omnes gentes sérvient ei.")
+    :versicle-3-en ("All kings shall adore him."
+                    "All nations shall serve him.")
+
+    :lessons
+    (;; ── Nocturn I: Colossians 1 ──
+
+     (:ref "Col 1:3-8"
+      :source "De Epistola beáti Pauli Apóstoli ad Colossénses"
+      :text "\
+Grátias agimus Deo, et Patri Dómini nostri Jesu Christi, semper pro vobis orántes, audiéntes fidem \
+vestram in Christo Jesu, et dilectiónem quam habétis in sanctos omnes, propter spem, quæ repósita est \
+vobis in cælis, quam audístis in verbo veritátis Evangélii, quod pervénit ad vos, sicut et in univérso \
+mundo est, et fructíficat, et crescit, sicut in vobis, ex ea die, qua audístis, et cognovístis grátiam \
+Dei in veritáte, sicut didicístis ab Epáphra, caríssimo consérvo nostro, qui est fidélis pro vobis \
+miníster Christi Jesu, qui étiam manifestávit nobis dilectiónem vestram in spíritu.")
+
+     (:ref "Col 1:9-17"
+      :text "\
+Ideo et nos ex qua die audívimus, non cessámus pro vobis orántes, et postulántes ut impleámini agnitióne \
+voluntátis ejus, in omni sapiéntia et intelléctu spiritáli; ut ambulétis digne Deo per ómnia placéntes; \
+in omni ópere bono fructificántes, et crescéntes in sciéntia Dei: in omni virtúte confortáti secúndum \
+poténtiam claritátis ejus, in omni patiéntia et longanimitáte cum gáudio; grátias agéntes Deo Patri, \
+qui dignos nos fecit in partem sortis sanctórum in lúmine, qui erípuit nos de potestáte tenebrárum, et \
+tránstulit in regnum Fílii dilectiónis suæ, in quo habémus redemptiónem per sánguinem ejus, remissiónem \
+peccatórum. Qui est imágo Dei invisíbilis, primogénitus omnis creatúræ; quóniam in ipso cóndita sunt \
+univérsa in cælis et in terra, visibília, et invisibília, sive Throni, sive Dominatiónes, sive \
+Principátus, sive Potestátes: ómnia per ipsum et in ipso creáta sunt: et ipse est ante omnes, et ómnia \
+in ipso constant.")
+
+     (:ref "Col 1:18-23"
+      :text "\
+Et ipse est caput córporis Ecclésiæ, qui est princípium, primogénitus ex mórtuis, ut sit in ómnibus ipse \
+primátum tenens; quia in ipso complácuit omnem plenitúdinem inhabitáre, et per eum reconciliáre ómnia in \
+ipsum, pacíficans per sánguinem crucis ejus, sive quæ in terris, sive quæ in cælis sunt. Et vos, cum \
+essétis aliquándo alienáti, et inimíci sensu in opéribus malis; nunc autem reconciliávit in córpore \
+carnis ejus per mortem, exhibére vos sanctos, et immaculátos, et irreprehensíbiles coram ipso; si tamen \
+permanétis in fide fundáti, et stábiles, et immóbiles a spe evangélii, quod audístis, quod prædicátum \
+est in univérsa creatúra quæ sub cælo est, cujus factus sum ego Paulus miníster.")
+
+     ;; ── Nocturn II: Pius XI, Quas primas (1925) ──
+
+     (:ref "Encycl."
+      :source "Ex Lítteris Encýclicis Pii Papæ undécimi\nLitt. Encycl. « Quas primas » diei 11 Decembris 1925"
+      :text "\
+Cum Annus sacer non unam ad illustrándum Christi regnum habúerit opportunitátem, vidémur rem factúri \
+Apostólico múneri in primis consentáneam, si, plurimórum Patrum Cardinálium, Episcopórum fideliúmque \
+précibus, concedéntes, hunc ipsum Annum peculiári festo Dómini Nostri Jesu Christi Regis in \
+ecclesiásticam liturgíam inducéndo clausérimus. Ut transláta verbi significatióne Rex appellarétur \
+Christus ob summum excelléntiæ gradum, quo inter omnes res creátas præstat atque éminet, jam diu \
+communitérque usu venit. Ita enim fit, ut regnare is « in méntibus hóminum » dicátur non tam ob mentis \
+áciem scientiǽque suæ amplitúdinem, quam quod ipse est Véritas, et veritátem ab eo mortáles hauríre \
+atque obediénter accípere necésse est; « in voluntátibus » item « hóminum », quia non modo sanctitáti in \
+eo voluntátis divínæ perfécta prorsus respóndet humánæ intégritas atque obtemperátio, sed étiam líberæ \
+voluntáti nostræ id permotióne instinctúque suo súbicit, unde ad nobilíssima quæque exardescámus.")
+
+     (:ref "Encycl."
+      :text "\
+Quo autem hæc Dómini nostri dígnitas et potéstas fundaménto consístat, apte Cyríllus Alexandrínus \
+animadvértit: « Omnium, ut verbo dicam, creaturárum dominátum óbtinet, non per vim extórtum, nec \
+aliúnde invéctum, sed esséntia sua et natúra »; scílicet ejus principátus illa nítitur unióne mirábili, \
+quam hypostáticam appéllant. Unde conséquitur, non modo ut Christus ab Angelis et homínibus Deus sit \
+adorándus, sed étiam ut ejus império Hóminis, Angeli et hómines páreant et subjécti sint: nempe ut vel \
+solo hypostáticæ uniónis nómine Christus potestátem in univérsas creatúras obtíneat.")
+
+     (:ref "Encycl."
+      :text "\
+Verúmtamen ejúsmodi regnum præcípuo quodam modo et spirituále esse et ad spirituália pertinére, cum ea, \
+quæ ex Bíbliis supra protúlimus, verba planíssime osténdunt, tum Christus Dóminus sua agéndi ratióne \
+confírmat. Síquidem, non una data occasióne, cum Judǽi, immo vel ipsi Apóstoli, per errórem censérent, \
+fore ut Messías pópulum in libertátem vindicáret regnúmque Israël restitúeret, vanam ipse opiniónem ac \
+spem adímere et convéllere; rex a circumfúsa admirántium multitúdine renuntiándus, et nomen et honórem \
+fugiéndo latendóque detrectáre; coram prǽside Románo edícere, regnum suum « de hoc mundo » non esse. \
+Itaque, auctoritáte Nostra apostólica, festum Dómini Nostri Jesu Christi Regis institúimus, quotánnis, \
+postrémo mensis octóbris domínico die, qui scílicet Omnium Sanctórum celebritátem próxime antecédit, \
+ubíque terrárum agéndum.")
+
+     ;; ── Nocturn III: Augustine on John 18:33-37 ──
+
+     (:ref "John 18:33-37"
+      :source "Léctio sancti Evangélii secúndum Joánnem\nJoannes 18:33-37\nIn illo témpore: Dixit Pilátus ad Jesum: Tu es Rex Judæórum? Et réliqua.\n\nHomilía sancti Augustíni Epíscopi\nTract. 51 in Joann. 12-13; Tract 117 in Joann. 19-21"
+      :text "\
+Quid magnum fuit Regi sæculórum Regem fíeri hóminum? Non enim Rex Israël Christus ad exigéndum \
+tribútum vel exércitum ferro armándum hostésque visibíliter debellándos; sed Rex Israël, quod mentes \
+regat, quod in ætérnum cónsulat, quod in regnum cælórum credéntes, sperántes amantésque perdúcat. \
+Dei ergo Fílius æquális Patri, Verbum per quod facta sunt ómnia, quod Rex esse vóluit Israël, dignátio \
+est, non promótio; miseratiónis indícium est, non potestátis augméntum. Qui enim appellátus est in terra \
+Rex Judæórum, in cælis est Dóminus Angelórum. Sed Judæórum tantum Rex est Christus, an et géntium? \
+Immo et géntium.")
+
+     (:ref "John 18:33-37"
+      :source "Tract. 115 in Joannem 18-36"
+      :text "\
+Respóndit Jesus: Regnum meum non est de hoc mundo. Si ex hoc mundo esset regnum meum, minístri mei \
+útique decertárent, ut non tráderer Judǽis; nunc autem regnum meum non est hinc. Hoc est quod bonus \
+Magíster scire nos vóluit; sed prius nobis demonstránda fúerat vana hóminum de regno ejus opínio, sive \
+géntium, sive Judæórum a quibus id Pilátus audíerat: quasi proptérea morte fuísset plecténdus, quod \
+illícitum affectáverit regnum, vel quóniam solent regnatúris invidére regnántes, et vidélicet cavéndum \
+erat ne ejus regnum sive Románis, sive Judǽis esset advérsum.")
+
+     (:ref "John 18:33-37"
+      :text "\
+Póterat autem Dóminus quod ait, Regnum meum non est de hoc mundo, ad primam interrogatiónem prǽsidis \
+respondére, ubi ei dixit, Tu es rex Judæórum? sed eum vicíssim intérrogans, utrum hoc a semetípso \
+díceret, an audísset ab áliis, illo respondénte osténdere vóluit hoc sibi apud illum fuísse a Judǽis \
+velut crimen objéctum: patefáciens nobis cogitatiónes hóminum, quas ipse nóverat, quóniam vanæ sunt; \
+eísque post responsiónem Piláti, jam Judǽis et géntibus opportúnius aptiúsque respóndens, Regnum meum \
+non est de hoc mundo."))
+
+    :responsories
+    ((:respond "Super sólium David et super regnum ejus sedébit in ætérnum:"
+      :verse "Multiplicábitur ejus impérium, et pacis non erit finis."
+      :repeat "Et vocábitur nomen ejus Deus, Fortis, Princeps pacis.")
+     (:respond "Aspiciébam in visu noctis, et ecce in núbibus cæli Fílius hóminis veniébat: et datum est ei regnum et honor:"
+      :verse "Potéstas ejus, potéstas ætérna, quæ non auferétur: et regnum ejus, quod non corrumpétur."
+      :repeat "Et omnis pópulus, tribus et linguæ sérvient ei.")
+     (:respond "Tu Béthlehem Ephrata, párvulus in míllibus Juda: ex te mihi egrediétur qui sit dominátor in Israël:"
+      :verse "Egréssus ejus ab inítio, a diébus æternitátis: stabit, et pascet in fortitúdine Dómini."
+      :repeat "Et erit iste Pax."
+      :gloria t)
+     (:respond "Exsúlta satis, fília Sion; júbila, fília Jerúsalem: ecce Rex tuus véniet tibi justus et Salvátor:"
+      :verse "Potéstas ejus a mari usque ad mare: et a flumínibus usque ad fines terræ."
+      :repeat "Et loquétur pacem géntibus.")
+     (:respond "Opórtet illum regnáre, quóniam ómnia subjécit Deus sub pédibus ejus:"
+      :verse "Cum subjécta fúerint illi ómnia, tunc et ipse Fílius subjéctus erit Patri."
+      :repeat "Ut sit Deus ómnia in ómnibus.")
+     (:respond "Fecit nos regnum et sacerdótes Deo et Patri suo:"
+      :verse "Ipse est primogénitus mortuórum, et princeps regum terræ."
+      :repeat "Ipsi glória et impérium, in sǽcula sæculórum."
+      :gloria t)
+     (:respond "Factum est regnum hujus mundi Dómini nostri et Christi ejus:"
+      :verse "Adorábunt in conspéctu ejus univérsæ famíliæ géntium; quóniam Dómini est regnum."
+      :repeat "Et regnábit in sǽcula sæculórum.")
+     (:respond "Decem córnua quæ vidísti, decem reges sunt. Hi cum Agno pugnábunt, et Agnus vincet illos:"
+      :verse "Regnávit Dóminus Deus noster omnípotens: gaudeámus et exsultémus, et demus glóriam ei."
+      :repeat "Quóniam Dóminus dominórum est, et Rex regum."
+      :gloria t)))
   "Feast plist for Christ the King (last Sunday of October).")
 
 (defun bcp-roman-proprium--moveable-feast (date)
@@ -2466,7 +2941,159 @@ _
                   :latin "In Conversione S. Pauli Apostoli"
                   :rank duplex-majus
                   :commune nil
-                  :collect deus-qui-universum-mundum-beati))
+                  :collect deus-qui-universum-mundum-beati
+
+                  ;; ── Matins ──
+                  ;; ex Sancti/06-30 base; own invitatory and Noc I-II lessons.
+                  ;; Antiphons, hymn, and responsories from Jun 30.
+                  ;; Noc III lessons from C1 (in 2 loco): Bede on Matt 19:27-29.
+                  :invitatory laudemus-deum-nostrum-in-conversione
+                  :hymn egregie-doctor-paule
+                  :psalms-1 ((qui-operatus-est-petro . 18)
+                             (scio-cui-credidi . 33)
+                             (mihi-vivere-christus-est . 44))
+                  :psalms-2 ((tu-es-vas-electionis . 46)
+                             (magnus-sanctus-paulus . 60)
+                             (bonum-certamen . 63))
+                  :psalms-3 ((saulus-qui-et-paulus . 74)
+                             (ne-magnitudo-revelationum . 96)
+                             (reposita-est-mihi . 98))
+                  :versicle-1 ("In omnem terram exívit sonus eórum."
+                               "Et in fines orbis terræ verba eórum.")
+                  :versicle-1-en ("Their sound hath gone forth into all the earth."
+                                  "And their words unto the ends of the world.")
+                  :versicle-2 ("Constítues eos príncipes super omnem terram."
+                               "Mémores erunt nóminis tui, Dómine.")
+                  :versicle-2-en ("Thou shalt make them princes over all the earth."
+                                  "They shall be mindful of thy name, O Lord.")
+                  :versicle-3 ("Nimis honoráti sunt amíci tui, Deus."
+                               "Nimis confortátus est principátus eórum.")
+                  :versicle-3-en ("Thy friends, O God, are made exceedingly honourable."
+                                  "Their principality is exceedingly strengthened.")
+
+                  :lessons
+                  (;; ── Nocturn I: Acts 9 (Conversion on the Damascus Road) ──
+
+                   (:ref "Act 9:1-5"
+                    :source "De Actibus Apostolórum"
+                    :text "\
+Saulus autem adhuc spirans minárum et cædis in discípulos Dómini, accéssit ad príncipem sacerdótum, \
+et pétiit ab eo epístolas in Damáscum ad synagógas: ut si quos invenísset hujus viæ viros ac mulíeres, \
+vinctos perdúceret in Jerúsalem. Et cum iter fáceret, cóntigit ut appropinquáret Damásco: et súbito \
+circumfúlsit eum lux de cælo. Et cadens in terram audívit vocem dicéntem sibi: Saule, Saule, quid me \
+perséqueris? Qui dixit: Quis es, dómine? Et ille: Ego sum Jesus, quem tu perséqueris: durum est tibi \
+contra stímulum calcitráre.")
+
+                   (:ref "Act 9:6-9"
+                    :text "\
+Et tremens ac stupens dixit: Dómine, quid me vis fácere? Et Dóminus ad eum: Surge, et ingrédere \
+civitátem, et ibi dicétur tibi quid te opórteat fácere. Viri autem illi qui comitabántur cum eo, \
+stabant stupefácti, audiéntes quidem vocem, néminem autem vidéntes. Surréxit autem Saulus de terra, \
+apertísque óculis nihil vidébat. Ad manus autem illum trahéntes, introduxérunt Damáscum. Et erat ibi \
+tribus diébus non videns, et non manducávit, neque bibit.")
+
+                   (:ref "Act 9:10-16"
+                    :text "\
+Erat autem quidam discípulus Damásci, nómine Ananías: et dixit ad illum in visu Dóminus: Ananía. \
+At ille ait: Ecce ego, Dómine. Et Dóminus ad eum: Surge, et vade in vicum qui vocátur Rectus: et \
+quære in domo Judæ Saulum nómine Tarsénsem: ecce enim orat. Et vidit virum Ananíam nómine, introeúntem, \
+et imponéntem sibi manus ut visum recípiat. Respóndit autem Ananías: Dómine, audívi a multis de viro \
+hoc, quanta mala fécerit sanctis tuis in Jerúsalem: et hic habet potestátem a princípibus sacerdótum \
+alligándi omnes qui ínvocant nomen tuum. Dixit autem ad eum Dóminus: Vade, quóniam vas electiónis est \
+mihi iste, ut portet nomen meum coram géntibus, et régibus, et fíliis Israël. Ego enim osténdam illi \
+quanta opórteat eum pro nómine meo pati.")
+
+                   ;; ── Nocturn II: St. Augustine, Sermo 14 de Sanctis ──
+
+                   (:ref "Hom."
+                    :source "Sermo sancti Augustíni Epíscopi\nSermo 14 de Sanctis"
+                    :text "\
+Hódie de Actibus Apostolórum léctio hæc pronuntiáta est, ubi Paulus Apóstolus, ex persecutóre \
+Christianórum, annuntiátor factus est Christi. Prostrávit enim Christus persecutórem, ut fáceret \
+Ecclésiæ doctórem: percútiens eum, et sanans; occídens, et vivíficans: occísus agnus a lupis, et \
+fáciens agnos de lupis. Ita enim in præclára prophetía cum Jacob Patriárcha benedíceret fíliis suis \
+(præséntes tangens, futúra prospíciens) prædíctum erat quod in Paulo cóntigit. Erat autem Paulus, sicut \
+ipse testátur, de tribu Bénjamin. Cum autem Jacob, benedícens fílios suos, venísset ad benedicéndum \
+Bénjamin, ait de illo: Bénjamin lupus rapax.")
+
+                   (:ref "Hom."
+                    :text "\
+Quid ergo? lupus rapax semper? Absit; sed qui mane rapit prædam, ad vésperam dívidit escas. Hoc in \
+Apóstolo Paulo implétum est, quia et de illo dictum erat. Jam, si placet, audiámus illum mane rapiéntem, \
+ad vésperam escas dividéntem. Mane et véspere pósita sunt pro eo, ac si dicerétur, prius et póstea. Sic \
+ergo accipiámus: Prius rápiet, póstea dívidet escas. Atténdite raptórem: Saulus, inquit, accéptis \
+epístolis a princípibus sacerdótum, ibat, ut ubicúmque inveníret Christiános, ad sacerdótes attráheret \
+et addúceret, útique puniéndos.")
+
+                   (:ref "Hom."
+                    :text "\
+Ibat spirans et anhélans cædes: hoc est, mane rápiens. Nam et quando lapidátus est Stéphanus primus \
+Martyr pro nómine Christi, evidéntius áderat et Saulus; et sic áderat lapidántibus, ut non ei suffíceret, \
+si tantum suis mánibus lapidáret. Ut enim esset in ómnium lapidántium mánibus, ipse ómnium vestiménta \
+servábat; magis sǽviens omnes adjuvándo, quam suis mánibus lapidándo. Audívimus, mane rápiet: videámus \
+ad vésperam quáliter dívidat escas. Voce Christi prostrátus de cælo, et accípiens désuper interdíctum \
+jam sæviéndi, cécidit in fáciem suam, prius prosternéndus, póstea erigéndus; prius percutiéndus, \
+póstea sanándus.")
+
+                   ;; ── Nocturn III: C1 in 2 loco — Bede on Matt 19:27-29 ──
+
+                   (:ref "Matt 19:27-29"
+                    :source "Homilía sancti Bedæ Venerábilis Presbýteri\nHomilia in Natali S. Benedicti Ep."
+                    :text "\
+Perféctus ille est, qui ábiens vendit ómnia quæ habet, et dat paupéribus, ac véniens séquitur Christum; \
+habébit enim thesáurum non deficiéntem in cælis. Unde bene, interrogánte Petro, dixit tálibus Jesus: \
+Amen dico vobis, quod vos qui secúti estis me, in regeneratióne, cum séderit Fílius hóminis in sede \
+majestátis suæ, sedébitis et vos super sedes duódecim, judicántes duódecim tribus Israël. In hac \
+quippe vita pro ejus nómine laborántes, in ália prǽmium speráre dócuit, id est, in regeneratióne; cum \
+vidélicet in vitam immortálem fuérimus resurgéndo regeneráti, qui in vitam cadúcam mortáliter erámus \
+géniti.")
+
+                   (:ref "Matt 19:27-29"
+                    :text "\
+Et justa prorsus retribútio, ut, qui hic pro Christo humánæ glóriam celsitúdinis neglexérunt, illic a \
+Christo júdices glorificáti singuláriter cum eo assídeant qui a sequéndis ejus vestígiis nulla ratióne \
+póterant avélli. Nemo autem putet duódecim tantum Apóstolos, quia pro Juda prævaricánte Matthías eléctus \
+est, tunc esse judicatúros; sicut nec duódecim solæ sunt tribus Israël judicándæ: alióquin tribus Levi, \
+quæ tertiadécima est, injudicáta recédet.")
+
+                   (:ref "Matt 19:27-29"
+                    :text "\
+Et Paulus, qui tertiusdécimus est Apóstolus, judicándi sorte privábitur? cum ipse dicat: Nescítis \
+quóniam ángelos judicábimus, quanto magis sæculária? Sciéndum namque est, omnes, qui ad exémplum \
+Apostolórum, sua reliquérunt ómnia et secúti sunt Christum, júdices cum eo ventúros, sicut étiam omne \
+mortálium genus esse judicándum. Quia enim duodenário sæpe número solet in Scriptúris univérsitas \
+designári, per duódecim sedes Apostolórum ómnium numerósitas judicántium, et, per duódecim tribus \
+Israël, univérsitas eórum qui judicándi sunt, osténditur."))
+
+                  :responsories
+                  (;; Inherited from Jun 30 (Commemoratio S. Pauli)
+                   (:respond "Qui operátus est Petro in apostolátum, operátus est et mihi inter gentes:"
+                    :verse "Grátia Dei in me vácua non fuit, sed grátia ejus semper in me manet."
+                    :repeat "Et cognovérunt grátiam Dei, quæ data est mihi.")
+                   (:respond "Bonum certámen certávi, cursum consummávi, fidem servávi:"
+                    :verse "Scio cui crédidi, et certus sum quia potens est depósitum meum serváre in illum diem."
+                    :repeat "Ideóque repósita est mihi coróna justítiæ.")
+                   (:respond "Repósita est mihi coróna justítiæ,"
+                    :verse "Scio cui crédidi, et certus sum quia potens est depósitum meum serváre in illum diem."
+                    :repeat "Quam reddet mihi Dóminus in illum diem justus judex."
+                    :gloria t)
+                   (:respond "Tu es vas electiónis, sancte Paule Apóstole, prædicator veritátis in univérso mundo,"
+                    :verse "Intercéde pro nobis ad Deum, qui te elégit."
+                    :repeat "Per quem omnes gentes cognovérunt grátiam Dei.")
+                   (:respond "Grátia Dei sum id quod sum:"
+                    :verse "Qui operátus est Petro in apostolátum, operátus est et mihi inter gentes."
+                    :repeat "Et grátia ejus in me vacua non fuit, sed semper in me manet.")
+                   (:respond "Saulus, qui et Paulus, magnus prædicátor,"
+                    :verse "Osténdens quia hic est Christus, Fílius Dei."
+                    :repeat "A Deo confortátus convalescébat, et confundébat Judæos."
+                    :gloria t)
+                   (:respond "Sancte Paule Apóstole, prædicátor veritátis et doctor géntium,"
+                    :verse "Tu es vas electiónis, sancte Paule Apostole, prædicátor veritátis."
+                    :repeat "Intercéde pro nobis ad Deum, qui te elégit, ut digni efficiámur grátia Dei.")
+                   (:respond "Damasci, præpósitus gentis Aretæ regis vóluit me comprehéndere:"
+                    :verse "Deus et Pater Dómini nostri Jesu Christi scit quia non mentior."
+                    :repeat "Et a frátribus per murum demíssus sum in sporta, et sic evasi manus ejus in nómine Dómini."
+                    :gloria t))))
 
     ((1 . 26) . (:name "St. Polycarp, Bp.M."
                   :latin "S. Polycarpi Episcopi et Martyris"
@@ -2674,7 +3301,141 @@ _
                   :latin "S. Joseph Sponsi B.M.V. Confessoris"
                   :rank duplex-i
                   :commune nil
-                  :collect sanctissimae-genetricis-tuae-sponsi-quaesumus))
+                  :collect sanctissimae-genetricis-tuae-sponsi-quaesumus
+
+                  ;; ── Matins ──
+                  ;; Proper office. Noc I: Genesis (Patriarch Joseph).
+                  ;; Noc II: St. Bernard. Noc III: St. Jerome on Matt 1:18-21.
+                  :invitatory christum-dei-filium-putari
+                  :hymn caelitum-joseph-decus
+                  :psalms-1 ((ascendit-joseph-a-galilaea . 1)
+                             (venerunt-pastores . 2)
+                             (ecce-angelus-domini-apparuit-joseph . 3))
+                  :psalms-2 ((consurgens-joseph . 4)
+                             (defuncto-herode . 5)
+                             (accepit-joseph-puerum . 8))
+                  :psalms-3 ((audiens-joseph . 14)
+                             (admonitus-in-somnis . 20)
+                             (erat-pater-jesu . 23))
+                  :versicle-1 ("Constítuit eum dóminum domus suæ."
+                               "Et príncipem omnis possessiónis suæ.")
+                  :versicle-1-en ("He made him lord of his house."
+                                  "And ruler of all his possessions.")
+                  :versicle-2 ("Magna est glória ejus in salutári tuo."
+                               "Glóriam et magnum decórem impónes super eum.")
+                  :versicle-2-en ("Great is his glory in thy salvation."
+                                  "Glory and great beauty shalt thou lay upon him.")
+                  :versicle-3 ("Justus germinábit sicut lílium."
+                               "Et florébit in ætérnum ante Dóminum.")
+                  :versicle-3-en ("The just shall spring as a lily."
+                                  "And shall flourish for ever before the Lord.")
+
+                  :lessons
+                  (;; ── Nocturn I: Genesis (Patriarch Joseph as type) ──
+
+                   (:ref "Gen 39:1-5"
+                    :source "De libro Génesis"
+                    :text "\
+Joseph ígitur ductus est in Ægýptum, emítque eum Putíphar eunúchus Pharaónis, princeps exércitus, vir \
+Ægýptius, de manu Ismaelitárum, a quibus perdúctus erat. Fuítque Dóminus cum eo, et erat vir in cunctis \
+próspere agens: habitavítque in domo dómini sui, qui óptime nóverat Dóminum esse cum eo, et ómnia, quæ \
+gerébat, ab eo dírigi in manu illíus. Invenítque Joseph grátiam coram dómino suo, et ministrábat ei: a \
+quo præpósitus ómnibus gubernábat créditam sibi domum, et univérsa quæ ei trádita fúerant: \
+benedixítque Dóminus dómui Ægýptii propter Joseph.")
+
+                   (:ref "Gen 41:37-40"
+                    :text "\
+Plácuit Pharaóni consílium et cunctis minístris ejus: locutúsque est ad eos: Num inveníre potérimus \
+talem virum, qui spíritu Dei plenus sit? Dixit ergo ad Joseph: Quia osténdit tibi Deus ómnia quæ locútus \
+es, numquid sapientiórem et consímilem tui inveníre pótero? Tu eris super domum meam, et ad tui oris \
+impérium cunctus pópulus obédiet: uno tantum regni sólio te præcédam.")
+
+                   (:ref "Gen 41:41-44"
+                    :text "\
+Dixítque rursus Phárao ad Joseph: Ecce, constítui te super univérsam terram Ægýpti. Tulítque ánnulum \
+de manu sua, et dedit eum in manu ejus: vestivítque eum stola býssina, et collo torquem áuream \
+circumpósuit. Fecítque eum ascéndere super currum suum secúndum, clamánte præcóne, ut omnes coram eo \
+genu flécterent, et præpósitum esse scirent univérsæ terræ Ægýpti. Dixit quoque rex ad Joseph: Ego sum \
+Phárao: absque tuo império non movébit quisquam manum aut pedem in omni terra Ægýpti.")
+
+                   ;; ── Nocturn II: St. Bernard, Hom. 2 super Missus est ──
+
+                   (:ref "Hom."
+                    :source "Sermo sancti Bernárdi Abbátis\nHomil. 2 super Missus est, prope finem"
+                    :text "\
+Quis et qualis homo fúerit beátus Joseph, cónice ex appellatióne, qua, licet dispensatória, méruit \
+honorári ádeo, ut pater Dei et dictus et créditus sit; cónice et ex próprio vocábulo, quod augméntum \
+non dúbitas interpretári. Simul et meménto magni illíus quondam Patriárchæ vénditi in Ægýpto; et scito \
+ipsíus istum non solum vocábulum fuísse sortítum, sed et castimóniam adéptum, innocéntiam assecútum \
+et grátiam.")
+
+                   (:ref "Hom."
+                    :text "\
+Síquidem ille Joseph, fratérna ex invídia vénditus et ductus in Ægýptum, Christi venditiónem \
+præfigurávit: iste Joseph, Herodiánam invídiam fúgiens, Christum in Ægýptum portávit. Ille dómino suo \
+fidem servans, dóminæ nóluit commiscéri: iste Dóminam suam, Dómini sui matrem, vírginem agnóscens et \
+ipse cóntinens, fidéliter custodívit. Illi data est intellegéntia in mystériis somniórum: isti datum \
+est cónscium fíeri atque partícipem cæléstium sacramentórum.")
+
+                   (:ref "Hom."
+                    :text "\
+Ille fruménta servávit non sibi, sed omni pópulo: iste Panem vivum e cælo servándum accépit tam sibi \
+quam toti mundo. Non est dúbium, quin bonus et fidélis homo fúerit iste Joseph, cui Mater desponsáta \
+est Salvatóris. Fidélis, inquam, servus, et prudens, quem constítuit Dóminus suæ Matris solátium, suæ \
+carnis nutrítium, solum dénique in terris magni consílii coadjutórem fidelíssimum.")
+
+                   ;; ── Nocturn III: St. Jerome on Matt 1:18-21 (from 12-24) ──
+
+                   (:ref "Matt 1:18-21"
+                    :source "Homilía sancti Hierónymi Presbýteri\nLib. 1 Comment. in c. 1 Matth."
+                    :text "\
+Quare non de símplici vírgine, sed de desponsáta concípitur? Primum, ut per generatiónem Joseph, orígo \
+Maríæ monstrarétur: secúndo, ne lapidarétur a Judǽis ut adúltera: tértio, ut in Ægýptum fúgiens \
+habéret solátium. Martyr Ignátius étiam quartam áddidit causam, cur a desponsáta concéptus sit: Ut \
+partus, ínquiens, ejus celarétur diábolo, dum eum putat non de vírgine, sed de uxóre generátum.")
+
+                   (:ref "Matt 1:18-21"
+                    :text "\
+Antequam convenírent, invénta est in útero habens de Spíritu Sancto. Non ab álio invénta est, nisi a \
+Joseph, qui pene licéntia maritáli futúræ uxóris ómnia nóverat. Quod autem dícitur, Antequam \
+convenírent, non séquitur ut póstea convénerint: sed Scriptúra quod factum non sit, osténdit.")
+
+                   (:ref "Matt 1:18-21"
+                    :text "\
+Joseph autem vir ejus, cum esset justus, et nollet eam tradúcere, vóluit occúlte dimíttere eam. Si \
+quis fornicáriæ conjúngitur, unum corpus effícitur, et in lege præcéptum est, non solum reos, sed et \
+cónscios críminum obnóxios esse peccáti: quómodo Joseph, cum crimen celáret uxóris, justus scríbitur? \
+Sed hoc testimónium Maríæ est, quod Joseph sciens illíus castitátem, et admírans quod evénerat, celat \
+siléntio, cujus mystérium nesciébat."))
+
+                  :responsories
+                  ((:respond "Fuit Dóminus cum Joseph, et dedit ei grátiam in conspéctu príncipis cárceris:"
+                    :verse "Quidquid fiébat, sub ipso erat: Dóminus enim erat cum illo, et ómnia ópera ejus dirigébat."
+                    :repeat "Qui trádidit in manu illíus univérsos vinctos.")
+                   (:respond "Esuriénte terra Ægýpti, clamávit pópulus ad regem, aliménta petens. Quibus ille respóndit:"
+                    :verse "Crescébat cotídie fames in omni terra, aperuítque Joseph univérsa hórrea, et vendébat Ægýptiis."
+                    :repeat "Ite ad Joseph, et quidquid vobis díxerit, fácite.")
+                   (:respond "Fecit me Dóminus quasi patrem regis, et dóminum univérsæ domus ejus: nolíte pavére;"
+                    :verse "Veníte ad me, et ego dabo vobis ómnia bona Ægýpti, et comedétis medúllam terræ."
+                    :repeat "Pro salúte enim vestra misit me Deus ante vos in Ægýptum."
+                    :gloria t)
+                   (:respond "Ascéndit Joseph a Galilǽa de civitáte Názareth in Judǽam, in civitátem David, quæ vocátur Béthlehem:"
+                    :verse "Ut profiterétur cum María desponsáta sibi uxóre."
+                    :repeat "Eo quod esset de domo et família David.")
+                   (:respond "Surge, et áccipe Púerum et Matrem ejus, et fuge in Ægýptum;"
+                    :verse "Ut adimplerétur quod dictum est a Dómino per prophétam dicéntem: Ex Ægýpto vocávi Fílium meum."
+                    :repeat "Et esto ibi, usque dum dicam tibi.")
+                   (:respond "Cum indúcerent púerum Jesum paréntes ejus, ut fácerent secúndum consuetúdinem legis pro eo,"
+                    :verse "Et erat Pater ejus et Mater mirántes super his, quæ dicebántur de illo."
+                    :repeat "Accépit eum Símeon in ulnas suas, et benedíxit Deum."
+                    :gloria t)
+                   (:respond "Dicit Mater Jesu ad illum: Fili, quid fecísti nobis sic?"
+                    :verse "Et ait ad illos: Quid est, quod me quærebátis? nesciebátis, quia in his quæ Patris mei sunt, opórtet me esse?"
+                    :repeat "Ecce pater tuus et ego doléntes quærebámus te.")
+                   (:respond "Descéndit Jesus cum eis, et venit Názareth:"
+                    :verse "Proficiébat sapiéntia, et ætáte, et grátia apud Deum et hómines."
+                    :repeat "Et erat súbditus illis."
+                    :gloria t))))
 
     ((3 . 21) . (:name "St. Benedict, Ab."
                   :latin "S. Benedicti Abbatis"
@@ -2686,7 +3447,158 @@ _
                   :latin "S. Gabrielis Archangeli"
                   :rank duplex-majus
                   :commune nil
-                  :collect deus-qui-inter-ceteros-angelos))
+                  :collect deus-qui-inter-ceteros-angelos
+
+                  ;; ── Matins ──
+                  ;; ex Sancti/05-08 base; own antiphons, hymn, lessons, responsories.
+                  ;; Invitatory inherited from May 8.
+                  :invitatory regem-archangelorum-dominum
+                  :hymn christe-sanctorum-gabriel
+                  :psalms-1 ((dixit-angelus-gabriel-danieli . 8)
+                             (ecce-vir-gabriel . 10)
+                             (cumque-gabriel-loqueretur . 14))
+                  :psalms-2 ((gabriel-angelus-apparuit-zachariae . 18)
+                             (et-dixit-zacharias . 23)
+                             (respondens-autem-angelus-gabriel . 33))
+                  :psalms-3 ((missus-est-gabriel-angelus . 95)
+                             (gabriel-angelus-mariae-dixit . 96)
+                             (suscipe-verbum-virgo-maria . 102))
+                  :versicle-1 ("Stetit Angelus juxta aram templi."
+                               "Habens thuríbulum áureum in manu sua.")
+                  :versicle-1-en ("An Angel stood by the altar of the temple."
+                                  "Having a golden censer in his hand.")
+                  :versicle-2 ("Ascéndit fumus arómatum in conspéctu Dómini."
+                               "De manu Angeli.")
+                  :versicle-2-en ("The smoke of incense ascended before the Lord."
+                                  "From the hand of the Angel.")
+                  :versicle-3 ("In conspéctu Angelórum psallam tibi, Deus meus."
+                               "Adorábo ad templum sanctum tuum, et confitébor nómini tuo.")
+                  :versicle-3-en ("In the sight of the Angels I will sing unto thee, O my God."
+                                  "I will worship toward thy holy temple, and give thanks unto thy name.")
+
+                  :lessons
+                  (;; ── Nocturn I: Daniel 9 (Seventy Weeks prophecy) ──
+
+                   (:ref "Dan 9:20-23"
+                    :source "De Daniéle Prophéta"
+                    :text "\
+Ego Dániel, cum adhuc lóquerer, et orárem, et confitérer peccáta mea, et peccáta pópuli mei Israël, et \
+prostérnerem preces meas in conspéctu Dei mei, pro monte sancto Dei mei: Adhuc me loquénte in oratióne, \
+ecce vir Gábriel, quem víderam in visióne a princípio, cito volans tétigit me in témpore sacrifícii \
+vespertíni, et dócuit me, et locútus est mihi, dixítque: Dániel, nunc egréssus sum ut docérem te, et \
+intellígeres: ab exórdio precum tuárum egréssus est sermo; ego autem veni ut indicárem tibi, quia vir \
+desideriórum es; tu ergo animadvérte sermónem, et intéllige visiónem.")
+
+                   (:ref "Dan 9:24-25"
+                    :text "\
+Septuagínta hebdómades abbreviátæ sunt super pópulum tuum et super urbem sanctam tuam, ut consummétur \
+prævaricátio, et finem accípiat peccátum, et deleátur iníquitas, et adducátur justítia sempitérna, et \
+impleátur vísio et prophetía, et ungátur Sanctus sanctórum. Scito ergo, et animadvérte: Ab éxitu \
+sermónis, ut íterum ædificétur Jerúsalem, usque ad Christum ducem, hebdómades septem et hebdómades \
+sexagínta duæ erunt: et rursum ædificábitur platéa, et muri in angústia témporum.")
+
+                   (:ref "Dan 9:26-27"
+                    :text "\
+Et post hebdómades sexagínta duas occidétur Christus, et non erit ejus pópulus qui eum negatúrus est; \
+et civitátem et sanctuárium dissipábit pópulus cum duce ventúro: et finis ejus vástitas, et post finem \
+belli statúta desolátio. Confirmábit autem pactum multis hebdómada una: et in dimídio hebdómadis \
+defíciet hóstia et sacrifícium, et erit in templo abominátio desolatiónis: et usque ad consummatiónem \
+et finem perseverábit desolátio.")
+
+                   ;; ── Nocturn II: Bede on Luke 1:11-20 ──
+
+                   (:ref "Luc 1:11-20"
+                    :source "Sermo sancti Bedæ venerábilis Presbýteri\nExpositio in Luc. 1, 11-20."
+                    :text "\
+Appáruit Zacharíæ Angelus, stans a dextris altáris incénsi. Bene Angelus et in templo, et juxta altáre, \
+et dextris appáret; quia vidélicet et veri sacerdótis advéntum, et mystérium sacrifícii universális, et \
+cæléstis doni gáudium prǽdicat. Nam, sicut per sinístram præséntia, sic per déxteram sæpe bona \
+prænuntiántur ætérna. Juxta quod in sapiéntiæ laude cánitur: Longitúdo diérum in déxtera ejus; in \
+sinístra illíus divítiæ et glória. Treméntem Zacharíam confórtet Angelus, quia, sicut humánæ \
+fragilitátis est spiritális creatúræ visióne turbári, ita et angélicas benignitátis est pavéntes de \
+aspéctu suo mortáles mox blandiéndo solári. At contra dæmónicæ est ferocitátis, quos sui præséntia \
+térritos sénserit, amplióri semper horróre concútere, qua nulla mélius ratióne quam fide superátur \
+intrépida.")
+
+                   (:ref "Luc 1:11-20"
+                    :text "\
+Angelus, deprecatiónem dicens exaudítam, partum contínuo promíttit uxóris. Non quod ille, qui pro \
+pópulo oblatúrus intráverat, relíctis públicis votis, pro accipiéndis fíliis oráre potúerit, præsértim \
+quia nemo orat quod se acceptúrum despérat. Adeo autem ille, jam suæ ætátis et infœcúndæ cónjugis \
+memor, nasci sibi fílios desperábat, ut nec Angelo hoc promitténti créderet. Sed quod dicit: Exaudíta \
+est deprecátio tua, pro pópuli redemptióne signíficat; Et uxor tua páriet tibi fílium, ejúsdem \
+redemptiónis órdinem pandit, quod vidélicet natus Zacharíæ fílius Redemptóri illíus pópuli præconándo \
+sit iter factúrus.")
+
+                   (:ref "Luc 1:11-20"
+                    :text "\
+Zacharías ob altitúdinem promissórum hǽsitans, signum quo crédere váleat, inquírit cui sola Angeli \
+vísio vel allocútio pro signo suffícere debúerat. Unde méritam diffidéntiæ tacéndo pœnam luit, cui \
+tacitúrnitas eádem et signum fídei quod quæsívit, et infidelitátis esset pœna quem méruit. Vult \
+intélligi quod si homo tália promítteret, impúne signum flagitáre licéret, at cum ángelus promíttat, \
+jam dubitári non déceat. Datque signum quod rogátur, ut qui discredéndo locútus est, jam tacéndo crédere \
+discat. Ubi notándo quod Angelus se et ante Deum adstáre, et ad evangelizándum Zacharíæ missum esse \
+testátur; quia et cum ad nos véniunt Angeli, sic extérius implent ministérium, ut tamen nunquam desint \
+intérius per contemplatiónem.")
+
+                   ;; ── Nocturn III: St. Bernard on Luke 1:26-38 ──
+
+                   (:ref "Luc 1:26-38"
+                    :source "Homilía Sancti Bernárdi Abbátis\nHomilia 1 supra Missus est n. 2"
+                    :text "\
+Non árbitror hunc ángelum de minóribus esse, qui quálibet ex causa crebra sóleant ad terras fungi \
+legatióne. Quod ex ejus nómine palam intélligi dícitur, quod interpretátio Fortitúdo Dei dícitur; et \
+quia non ab álio áliquo forte excellentióre se (ut ássolet) spíritu, sed ab ipso Deo mitti perhibétur. \
+Propter hoc ergo pósitum est, A Deo. Vel ídeo dictum est, A Deo, ne cui, vel beatórum spirítuum suum \
+Deus, ántequam Vírgini, revelásse putétur consílium, excépto dumtáxat Archángelo Gabriéle; qui útique \
+tantæ inter suos inveníri potúerit excelléntiæ, ut tali et nómine dignus haberétur et núntio.")
+
+                   (:ref "Luc 1:26-38"
+                    :text "\
+Nec discórdat nomen a núntio. Dei quippe virtútem Christum quem mélius nuntiáre decébat quam hunc, \
+quem símile nomen honórat? Nam quid est áliud fortitúdo, quam virtus? Non autem dedécens aut incóngruum \
+videátur, Dóminum et núntium commúni censéri vocábulo; cum símilis in utróque appellatiónis, non sit \
+tamen utriúsque símilis causa. Aliter quippe Christus fortitúdo vel virtus Dei dícitur, áliter Angelus; \
+Angelus enim tantum nuncupatíve, Christus autem étiam substantíve.")
+
+                   (:ref "Luc 1:26-38"
+                    :text "\
+Christus Dei virtus et dícitur et est, qui forti armáto, qui suum átrium in pace custodíre solébat, \
+fórtior supervéniens, ipsum suo bráchio debellávit: et sic ei vasa captivitátis poténter erípuit. \
+Angelus vero fortitúdo Dei appellátus est, vel quod hujúsmodi merúerit, prærogatívam offícii, quo \
+ejúsdem nuntiáret advéntum virtútis: vel quia vírginem natúra pávidam, símplicem, verecúndam, de \
+miráculi novitáte ne expavésceret, confortáre debéret; quod et fecit, Ne tímeas, ínquiens, María, \
+invenísti enim grátiam apud Deum. Conveniénter ítaque Gábriel ad hoc opus elígitur, immo quia tale \
+illi negótium injúngitur, recte tali nómine designátur."))
+
+                  :responsories
+                  ((:respond "Cum oráret Dániel et confiterétur peccáta sua, et peccáta pópuli sui:"
+                    :verse "Cumque prostérneret preces suas in conspéctu Dei sui,"
+                    :repeat "Ecce Archángelus Gábriel cito volans tétigit eum in témpore sacrifícii vespertíni.")
+                   (:respond "Locútus est Gábriel Daniéli et dixit: Ab exórdio precum tuárum egréssus est sermo."
+                    :verse "Tu autem animadvérte sermónem, et intéllige visiónem."
+                    :repeat "Ego autem veni ut indicárem tibi, quia vir desideriórum es.")
+                   (:respond "Ecce vir Gábriel quem víderam in visióne a princípio cito volans tétigit me in témpore sacrifícii vespertíni et dócuit me et locútus est mihi dixítque"
+                    :verse "Gábriel fac me intellígere istam visiónem: et venit et stetit juxta ubi ego stabam, et ait ad me:"
+                    :repeat "Dániel nunc egréssus sum ut docérem te et intellígeres"
+                    :gloria t)
+                   (:respond "Factum est, cum sacerdótio fungerétur Zacharías in órdine vicis sufflánte Deum,"
+                    :verse "Cumque, ingréssus in templum Dómini, incénsum póneret secúndum consuetúdinem sacerdótii sui."
+                    :repeat "Appáruit ei Angelus Gábriel, stans a dextris altáris incénsi.")
+                   (:respond "Descéndit Gábriel Angelus ad Zacharíam dicens:"
+                    :verse "Et Zacharías turbátus est videns, et timor írruit super eum: ait autem ad illum Angelus:"
+                    :repeat "Ne tímeas quóniam exaudíta est deprecátio tua, et uxor tua Elísabeth paret tibi fílium, et vocábis nomen ejus Joánnem.")
+                   (:respond "Ego sum Gábriel Angelus, qui asto ante Dóminum; et missus sum loqui te, et hæc evangelizáre:"
+                    :verse "Pro eo quod non credidísti verbis meis, quæ implebúntur témpore suo,"
+                    :repeat "Ecce eris tacens, et non póteris loqui usque in diem quo hæc fiant."
+                    :gloria t)
+                   (:respond "Missus est Gábriel Angelus ad Maríam Vírginem desponsátam Joseph, núntians ei verbum: et expavéscit Virgo de lúmine."
+                    :verse "Quæ cum audísset turbáta est in sermóne ejus, et cogitábat qualis esset ista salutátio; et ait Angelus ei."
+                    :repeat "Ne tímeas, María, invenísti enim grátiam apud Dóminum: ecce concípies, et páries, et vocábitur Altíssimi Fílius.")
+                   (:respond "Gaude, María Virgo cunctas hǽreses sola interemísti:"
+                    :verse "Benedícta tu in muliéribus, et benedíctus fructus ventris tui."
+                    :repeat "Quæ Gabriéli Archángeli dictis credidísti, dum Virgo Deum et hóminem genuísti, et post partum, Virgo, invioláta permansísti."
+                    :gloria t))))
 
     ((3 . 25) . (:name "Annunciation of the Blessed Virgin Mary"
                   :latin "In Annuntiatione Beatæ Mariæ Virginis"
@@ -2828,7 +3740,156 @@ _
                   :latin "Inventione Sanctæ Crucis"
                   :rank duplex-ii
                   :commune nil
-                  :collect deus-qui-in-praeclara-salutiferae))
+                  :collect deus-qui-in-praeclara-salutiferae
+
+                  ;; ── Matins ──
+                  :invitatory christum-regem-crucifixum
+                  :hymn pange-lingua-gloriosi
+                  :psalms-1 ((inventae-crucis . 1)
+                             (inventae-crucis . 2)
+                             (inventae-crucis . 3))
+                  :psalms-2 ((felix-ille-triumphus . 4)
+                             (felix-ille-triumphus . 5)
+                             (felix-ille-triumphus . 8))
+                  :psalms-3 ((adoramus-te-christe-et-benedicimus . 95)
+                             (adoramus-te-christe-et-benedicimus . 96)
+                             (adoramus-te-christe-et-benedicimus . 97))
+                  :versicle-1 ("Hoc signum Crucis erit in cælo."
+                               "Cum Dóminus ad judicándum vénerit.")
+                  :versicle-1-en ("This sign of the Cross shall be in heaven."
+                                  "When the Lord shall come to judge.")
+                  :versicle-2 ("Adorámus te, Christe, et benedícimus tibi."
+                               "Quia per Crucem tuam redemísti mundum.")
+                  :versicle-2-en ("We adore thee, O Christ, and we bless thee."
+                                  "Because by thy Cross thou hast redeemed the world.")
+                  :versicle-3 ("Omnis terra adóret te, et psallat tibi."
+                               "Psalmum dicat nómini tuo, Dómine.")
+                  :versicle-3-en ("Let all the earth adore thee, and sing unto thee."
+                                  "Let it sing a psalm to thy name, O Lord.")
+
+                  :lessons
+                  (;; ── Nocturn I: Scripture (Galatians, Philippians, Colossians) ──
+
+                   (:ref "Gal 3:10-14"
+                    :source "De Epístola beáti Pauli Apóstoli ad Gálatas"
+                    :text "\
+Quicúmque ex opéribus legis sunt, sub maledícto sunt. Scriptum est enim: \
+Maledíctus omnis qui non permánserit in ómnibus quæ scripta sunt in libro legis ut fáciat ea. \
+Quóniam autem in lege nemo justificátur apud Deum, maniféstum est: quia justus ex fide vivit. \
+Lex autem non est ex fide, sed, Qui fécerit ea, vivet in illis. \
+Christus nos redémit de maledícto legis, factus pro nobis maledíctum: quia scriptum est: \
+Maledíctus omnis qui pendet in ligno: \
+ut in géntibus benedíctio Ábrahæ fíeret in Christo Jesu, ut pollicitatiónem Spíritus accipiámus per fidem.")
+
+                   (:ref "Phil 2:5-11"
+                    :source "De Epístola ad Philippénses"
+                    :text "\
+Hoc enim sentíte in vobis, quod et in Christo Jesu: \
+qui, cum in forma Dei esset, non rapínam arbitrátus est esse se æquálem Deo: \
+sed semetípsum exinanívit, formam servi accípiens, in similitúdinem hóminum factus, et hábitu invéntus ut homo. \
+Humiliávit semetípsum factus obédiens usque ad mortem, mortem autem crucis. \
+Propter quod et Deus exaltávit illum, et donávit illi nomen, quod est super omne nomen: \
+ut in nómine Jesu omne genu flectátur cæléstium, terréstrium et infernórum, \
+et omnis lingua confiteátur, quia Dóminus Jesus Christus in glória est Dei Patris.")
+
+                   (:ref "Col 2:9-15"
+                    :source "De Epístola ad Colossénses"
+                    :text "\
+In Christo inhábitat omnis plenitúdo divinitátis corporáliter: \
+et estis in illo repléti, qui est caput omnis principátus et potestátis; \
+in quo et circumcísi estis circumcisióne non manu facta in exspoliatióne córporis carnis, \
+sed in circumcisióne Christi; \
+consepúlti ei in baptísmo, in quo et resurrexístis per fidem operatiónis Dei, \
+qui suscitávit illum a mórtuis. \
+Et vos, cum mórtui essétis in delíctis, et præpútio carnis vestræ, convivificávit cum illo, \
+donans vobis ómnia delícta: \
+delens quod advérsus nos erat chirógraphum decréti, quod erat contrárium nobis, \
+et ipsum tulit de médio, affígens illud cruci: \
+et expólians principátus, et potestátes tradúxit confidénter, palam triúmphans illos in semetípso.")
+
+                   ;; ── Nocturn II: Historical (Finding of the Cross) ──
+
+                   (:ref "Hist."
+                    :source "Ex historia"
+                    :text "\
+Post insígnem victóriam, quam Constantínus imperátor, divínitus accépto signo Domínicæ Crucis, \
+ex Maxéntio reportávit, Hélena Constantíni mater, in somnis admónita, conquiréndæ Crucis stúdio \
+Jerosólymam venit; ubi marmóream Véneris státuam, in Crucis loco a Géntibus collocátam ad \
+tolléndam Christi Dómini passiónis memóriam, post centum círciter octogínta annos, everténdam curávit. \
+Quod item fecit ad præsépe Salvatóris et in loco resurrectiónis, inde Adónidis hinc Jovis subláto simulácro.")
+
+                   (:ref "Hist."
+                    :text "\
+Itaque loco Crucis purgáto, alte defóssæ tres cruces érutæ sunt, repertúsque seórsum ab illis \
+Crucis Domínicæ títulus: qui cum ex tribus cui affíxus fuísset, non apparéret, eam dubitatiónem \
+sústulit miráculum. Nam Macárius Jerosolymórum epíscopus, factis Deo précibus, síngulas cruces \
+cuídam féminæ, gravi morbo laboránti, admóvit; cui cum réliquæ nihil profuíssent, adhíbita tértia \
+Crux statim eam sanávit.")
+
+                   (:ref "Hist."
+                    :text "\
+Hélena, salutári Cruce invénta, magnificentíssimam ibi exstrúxit ecclésiam, in qua partem Crucis \
+relíquit thecis argénteis inclúsam, partem Constantíno fílio détulit; quæ Romæ repósita fuit in \
+ecclésia sanctæ Crucis in Jerúsalem, ædificáta in ædibus Sessoriánis. Clavos étiam áttulit fílio, \
+quibus sanctíssimum Jesu Christi corpus fixum fúerat. Quo ex témpore Constantínus legem sancívit, \
+ne crux ad supplícium cuíquam adhiberétur. Ita res, quæ ántea homínibus probro ac ludíbrio fúerat, \
+veneratióni et glóriæ esse cœpit.")
+
+                   ;; ── Nocturn III: St. Augustine on John 3 ──
+
+                   (:ref "Joann 3:1-15"
+                    :source "Homilía sancti Augustíni Epíscopi\nTract. 11 in Joann., post init."
+                    :text "\
+Nicodémus ex his erat, qui credíderant in nómine Jesu, vidéntes signa et prodígia quæ faciébat. \
+Supérius enim hoc dixit: Cum autem esset Jerosólymis in Pascha in die festo, multi credidérunt in \
+nómine ejus. Quare credidérunt in nómine ejus? Séquitur, et dicit: Vidéntes signa ejus, quæ faciébat. \
+Et de Nicodémo quid dicit? Erat princeps Judæórum, nómine Nicodémus. Hic venit ad eum nocte, et ait illi: \
+Rabbi, scimus quia a Deo venísti magíster. Et iste ergo credíderat in nómine ejus. Et ipse unde credíderat? \
+Séquitur: Nemo enim potest hæc signa fácere, quæ tu facis, nisi fúerit Deus cum eo.")
+
+                   (:ref "Joann 3:1-15"
+                    :text "\
+Si ergo Nicodémus de illis multis erat, qui credíderant in nómine ejus, jam in isto Nicodémo \
+attendámus, quare Jesus non se credébat eis. Respóndit Jesus et dixit ei: Amen, amen dico tibi, \
+nisi quis renátus fúerit dénuo, non potest vidére regnum Dei. Ipsis ergo se credit Jesus, qui nati \
+fúerint dénuo. Ecce illi credíderant in eum, et Jesus non se credébat eis. Tales sunt omnes \
+catechúmeni: ipsi jam credunt in nómine Christi, sed Jesus non se credit eis. Inténdat et intélligat \
+cáritas vestra. Si dixérimus catechúmeno: Credis in Christum? respóndet, Credo, et signat se Cruce \
+Christi: portat in fronte, et non erubéscit de Cruce Dómini sui. Ecce credit in nómine ejus. \
+Interrogémus eum: Mandúcas carnem Fílii hóminis, et bibis sánguinem Fílii hóminis? nescit quid \
+dícimus, quia Jesus non se crédidit ei.")
+
+                   ;; Lectio 9: not in DO source for this feast
+                   nil)
+
+                  :responsories
+                  ((:respond "Gloriósum diem sacra venerátur Ecclésia, dum triumphále reserátur lignum:"
+                    :verse "In ligno pendens nostræ salútis sémitam Verbum Patris invénit."
+                    :repeat "In quo Redémptor noster, mortis víncula rumpens, cállidum áspidem superávit.")
+                   (:respond "Crux fidélis, inter omnes arbor una nóbilis: nulla silva talem profert, fronde, flore, gérmine:"
+                    :verse "Super ómnia ligna cedrórum tu sola excélsior."
+                    :repeat "Dulce lignum, dulces clavos, dulce pondus sustínuit.")
+                   (:respond "Hæc est arbor digníssima, in paradísi médio situáta,"
+                    :verse "Crux præcellénti decóre fúlgida, quam Hélena Constantíni mater concupiscénti ánimo requisívit."
+                    :repeat "In qua salútis auctor própria morte mortem ómnium superávit."
+                    :gloria t)
+                   (:respond "Nos autem gloriári opórtet in Cruce Dómini nostri Jesu Christi, in quo est salus, vita, et resurréctio nostra:"
+                    :verse "Tuam Crucem adorámus, Dómine, et recólimus tuam gloriósam passiónem."
+                    :repeat "Per quem salváti et liberáti sumus.")
+                   (:respond "Dum sacrum pignus cǽlitus exaltátur, Christi fides roborátur:"
+                    :verse "Ad Crucis contáctum resúrgunt mórtui, et Dei magnália reserántur."
+                    :repeat "Adsunt prodígia divína in virga Móysi prímitus figuráta.")
+                   (:respond "Hoc signum Crucis erit in cælo, cum Dóminus ad judicándum vénerit:"
+                    :verse "Cum séderit Fílius hóminis in sede majestátis suæ, et cœ́perit judicáre sǽculum per ignem."
+                    :repeat "Tunc manifésta erunt abscóndita cordis nostri."
+                    :gloria t)
+                   (:respond "Dulce lignum, dulces clavos, dulce pondus sustínuit:"
+                    :verse "Hoc signum Crucis erit in cælo cum Dóminus ad judicándum vénerit."
+                    :repeat "Quæ sola digna fuit portáre prétium hujus sǽculi.")
+                   (:respond "Sicut Móyses exaltávit serpéntem in desérto, ita exaltári opórtet Fílium hóminis:"
+                    :verse "Non misit Deus Fílium suum in mundum ut júdicet mundum, sed ut salvétur mundus per ipsum."
+                    :repeat "Ut omnis qui credit in ipsum, non péreat, sed hábeat vitam ætérnam."
+                    :gloria t))))
 
     ((5 . 4) . (:name "St. Monica, W."
                   :latin "S. Monicæ Viduæ"
@@ -2858,7 +3919,156 @@ _
                   :latin "In Apparitione S. Michaëlis Archangeli"
                   :rank duplex-majus
                   :commune nil
-                  :collect deus-qui-miro-ordine-angelorum))
+                  :collect deus-qui-miro-ordine-angelorum
+
+                  ;; ── Matins ──
+                  :invitatory regem-archangelorum-dominum
+                  :hymn te-splendor-et-virtus-patris
+                  :psalms-1 ((concussum-est-mare . 8)
+                             (concussum-est-mare . 10)
+                             (concussum-est-mare . 14))
+                  :psalms-2 ((michael-archangele-veni . 18)
+                             (michael-archangele-veni . 23)
+                             (michael-archangele-veni . 33))
+                  :psalms-3 ((angelus-archangelus-michael . 95)
+                             (angelus-archangelus-michael . 96)
+                             (angelus-archangelus-michael . 102))
+                  :versicle-1 ("Stetit Angelus juxta aram templi."
+                               "Habens thuríbulum áureum in manu sua.")
+                  :versicle-1-en ("An Angel stood by the altar of the temple."
+                                  "Having a golden censer in his hand.")
+                  :versicle-2 ("Ascéndit fumus arómatum in conspéctu Dómini."
+                               "De manu Angeli.")
+                  :versicle-2-en ("The smoke of incense ascended before the Lord."
+                                  "From the hand of the Angel.")
+                  :versicle-3 ("In conspéctu Angelórum psallam tibi, Deus meus."
+                               "Adorábo ad templum sanctum tuum, et confitébor nómini tuo.")
+                  :versicle-3-en ("In the sight of the Angels I will sing unto thee, O my God."
+                                  "I will worship toward thy holy temple, and give thanks unto thy name.")
+
+                  :lessons
+                  (;; ── Nocturn I: Daniel ──
+
+                   (:ref "Dan 7:9-11"
+                    :source "De Daniéle Prophéta"
+                    :text "\
+Aspiciébam donec throni pósiti sunt, et antíquus diérum sedit. Vestiméntum ejus cándidum quasi nix, \
+et capílli cápitis ejus quasi lana munda, thronus ejus flammæ ignis, rotæ ejus ignis accénsus. \
+Flúvius ígneus rapidúsque egrediebátur a fácie ejus; míllia míllium ministrábant ei, et décies \
+míllies centéna míllia assistébant ei. Judícium sedit, et libri apérti sunt. \
+Aspiciébam propter vocem sermónum grándium, quos cornu illud loquebátur; et vidi quóniam interfécta \
+esset béstia, et perísset corpus ejus, et tráditum esset ad comburéndum igni.")
+
+                   (:ref "Dan 10:4-8"
+                    :text "\
+Die autem vigésima et quarta mensis primi, eram juxta flúvium magnum, qui est Tigris. \
+Et levávi óculos meos, et vidi: et ecce vir unus vestítus líneis, et renes ejus accíncti auro obrýzo; \
+et corpus ejus quasi chrysólithus, et fácies ejus velut spécies fúlguris, et óculi ejus ut lampas ardens, \
+et brácchia ejus, et quæ deórsum sunt usque ad pedes, quasi spécies æris candéntis; et vox sermónum ejus \
+ut vox multitúdinis. \
+Vidi autem ego Dániel solus visiónem; porro viri qui erant mecum non vidérunt; sed terror nímius \
+írruit super eos, et fugérunt in abscónditum. \
+Ego autem, relíctus solus, vidi visiónem grandem hanc, et non remánsit in me fortitúdo, sed et spécies \
+mea immutáta est in me, et emárcui nec hábui quidquam vírium.")
+
+                   (:ref "Dan 10:9-14"
+                    :text "\
+Et audívi vocem sermónum ejus: et áudiens jacébam consternátus super fáciem meam, et vultus meus \
+hærébat terræ. Et ecce manus tétigit me, et eréxit me super génua mea et super artículos mánuum meárum. \
+Et dixit ad me: Dániel, vir desideriórum, intéllege verba quæ ego loquor ad te, et sta in gradu tuo; \
+nunc enim sum missus ad te. Cumque dixísset mihi sermónem istum, steti tremens. \
+Et ait ad me: Noli metúere, Dániel; quia, ex die primo quo posuísti cor tuum ad intellegéndum, \
+ut te afflígeres in conspéctu Dei tui, exaudíta sunt verba tua, et ego veni propter sermónes tuos. \
+Princeps autem regni Persárum réstitit mihi vigínti et uno diébus; et ecce Míchaël, unus de \
+princípibus primis, venit in adjutórium meum, et ego remánsi ibi juxta regem Persárum. \
+Veni autem ut docérem te quæ ventúra sunt pópulo tuo in novíssimis diébus, quóniam adhuc vísio in dies.")
+
+                   ;; ── Nocturn II: Historical (Gargano apparition) ──
+
+                   (:ref "Hist."
+                    :source "Ex historia"
+                    :text "\
+Beátum Michaélem Archángelum sǽpius homínibus apparuísse, et sacrórum Librórum auctoritáte et \
+véteri Sanctórum traditióne comprobátur. Quam ob rem multis in locis facti memória celebrátur. \
+Eum, ut olim synagóga Judæórum, sic nunc custódem et patrónum Dei venerátur Ecclésia. \
+Gelásio autem primo, Pontífice máximo, in Apúlia in vértice Gargáni montis, ad cujus radíces \
+íncolunt Sipontíni, Archángeli Michaélis fuit illústris apparítio.")
+
+                   (:ref "Hist."
+                    :text "\
+Factum est enim, ut ex grégibus armentórum Gargáni cujúsdam taurus longe discéderet; quem diu \
+conquisítum, in áditu spelúncæ hæréntem invenérunt. Cum vero quidam ex illis, ut taurum confígeret, \
+sagíttam emisísset retórta sagítta in ipsum récidit sagittárium. Quæ res cum præséntes ac deínceps \
+céteros tanto timóre affecísset, ut ad eam spelúncam própius accédere nemo audéret, Sipontíni \
+epíscopum cónsulunt; qui, indícto trium diérum jejúnio et oratióne, rem a Deo respóndit quæri oportére.")
+
+                   (:ref "Hist."
+                    :text "\
+Post tríduum Míchaël Archángelus epíscopum monet in sua tutéla esse eum locum, eóque indício \
+demonstrásse, velle ibi cultum Deo in sui et Angelórum memóriam adhibéri. Quare epíscopus una cum \
+cívibus ad eam spelúncam ire pergit. Quam cum in templi cujúsdam similitúdinem conformátam vidíssent, \
+locum illum divínis offíciis celebráre cœpérunt: qui multis póstea miráculis illustrátus est. Nec ita \
+multo post Bonifátius Papa, Romæ in summo circo, sancti Michaélis ecclésiam dedicávit tértio Kaléndas \
+Octóbris; quo die étiam ómnium Angelórum memóriam Ecclésia celébrat. Hodiérnus autem dies Archángeli \
+Michaélis apparitióne consecrátus est.")
+
+                   ;; ── Nocturn III: St. Hilary on Matthew 18 ──
+
+                   (:ref "Matt 18:1-10"
+                    :source "Homilía sancti Hilárii Epíscopi\nComment in Matth. can. 18"
+                    :text "\
+Nónnisi revérsos in natúram puerórum introíre regnum cælórum Dóminus docet: id est, per simplicitátem \
+puerílem vítia córporum nostrórum animǽque revocánda. Púeros autem, credéntes omnes per audiéntiæ \
+fidem nuncupávit. Hi enim patrem sequúntur, matrem amant, próximo velle malum nésciunt, curam opum \
+négligunt; non insoléscunt, non odérunt, non mentiúntur, dictis credunt, et quod áudiunt, verum habent. \
+Reverténdum ígitur est ad simplicitátem infántium; quia, in ea collocáti, spéciem humilitátis Domínicæ \
+circumferémus.")
+
+                   (:ref "Matt 18:1-10"
+                    :text "\
+Væ huic mundo ab scándalis. Humílitas passiónis scándalum mundo est. In hoc enim máxime ignorántia \
+detinétur humána, quod sub deformitáte crucis, ætérnæ glóriæ Dóminum nóluit accípere. Et quid mundo \
+tam periculósum, quam non recepísse Christum? Ideo vero necésse esse ait veníre scándala; quia, ad \
+sacraméntum reddéndæ nobis æternitátis, omnis in eo passiónis humílitas esset explénda.")
+
+                   (:ref "Matt 18:1-10"
+                    :text "\
+Vidéte ne contemnátis unum de pusíllis istis, qui credunt in me. Aptíssimum vínculum mútui amóris \
+impósuit, ad eos præcípue qui vere in Dómino credidíssent. Pusillórum enim Angeli quotídie Deum vident: \
+quia Fílius hóminis venit salváre quæ pérdita sunt. Ergo et Fílius hóminis salvat, et Deum Angeli \
+vident, et Angeli pusillórum præsunt fidélium oratiónibus. Præésse Angelos absolúta auctóritas est. \
+Salvatórum ígitur per Christum oratiónes Angeli quotídie Deo ófferunt. Ergo periculóse ille \
+contémnitur, cujus desidéria ac postulatiónes ad ætérnum et invisíbilem Deum, ambitióso Angelórum \
+famulátu ac ministério, pervehúntur."))
+
+                  :responsories
+                  ((:respond "Factum est siléntium in cælo, dum commítteret bellum draco cum Michaéle Archángelo:"
+                    :verse "Míllia míllium ministrábant ei, et décies centéna míllia assistébant ei."
+                    :repeat "Audíta est vox míllia míllium dicéntium: Salus, honor et virtus omnipoténti Deo.")
+                   (:respond "Stetit Angelus juxta aram templi, habens thuríbulum áureum in manu sua, et data sunt ei incénsa multa:"
+                    :verse "In conspéctu Angelórum psallam tibi: adorábo ad templum sanctum tuum, et confitébor nómini tuo, Dómine."
+                    :repeat "Et ascéndit fumus arómatum de manu Angeli in conspéctu Dómini.")
+                   (:respond "In conspéctu Angelórum psallam tibi, et adorábo ad templum sanctum tuum:"
+                    :verse "Super misericórdia tua et veritáte tua: quóniam magnificásti super nos nomen sanctum tuum."
+                    :repeat "Et confitébor nómini tuo, Dómine."
+                    :gloria t)
+                   (:respond "Hic est Míchaël Archángelus, princeps milítiæ Angelórum,"
+                    :verse "Archángelus Míchaël præpósitus paradísi, quem honoríficant Angelórum cives."
+                    :repeat "Cujus honor præstat benefícia populórum, et orátio perdúcit ad regna cælórum.")
+                   (:respond "Venit Míchaël Archángelus cum multitúdine Angelórum, cui trádidit Deus ánimas Sanctórum,"
+                    :verse "Emítte, Dómine, Spíritum sanctum tuum de cælis, spíritum sapiéntiæ et intelléctus."
+                    :repeat "Ut perdúcat eas in paradísum exsultatiónis.")
+                   (:respond "In témpore illo consúrget Míchaël, qui stat pro fíliis vestris:"
+                    :verse "In témpore illo salvábitur pópulus tuus omnis, qui invéntus fúerit scriptus in libro vitæ."
+                    :repeat "Et véniet tempus, quale non fuit, ex quo gentes esse cœpérunt, usque ad illud."
+                    :gloria t)
+                   (:respond "In conspéctu géntium nolíte timére; vos enim in córdibus vestris adoráte et timéte Dóminum;"
+                    :verse "Stetit Angelus juxta aram templi, habens thuríbulum áureum in manu sua."
+                    :repeat "Angelus enim ejus vobíscum est.")
+                   (:respond "Míchaël Archángelus venit in adjutórium pópulo Dei,"
+                    :verse "Stetit Angelus juxta aram templi, habens thuríbulum áureum in manu sua."
+                    :repeat "Stetit in auxílium pro animábus justis."
+                    :gloria t))))
 
     ((5 . 9) . (:name "St. Gregory Nazianzen, Bishop, C.D."
                   :latin "S. Gregorii Nazianzeni Episcopi Confessoris et Ecclesiæ Doctoris"
@@ -3082,7 +4292,153 @@ _
                   :latin "In Nativitate S. Joannis Baptistæ"
                   :rank duplex-i
                   :commune nil
-                  :collect deus-qui-praesentem-diem-honorabilem))
+                  :collect deus-qui-praesentem-diem-honorabilem
+
+                  ;; ── Matins ──
+                  :invitatory regem-praecursoris-dominum
+                  :hymn antra-deserti
+                  :psalms-1 ((priusquam-te-formarem . 1)
+                             (ad-omnia-quae-mittam-te . 2)
+                             (ne-timeas-a-facie . 3))
+                  :psalms-2 ((misit-dominus-manum-suam . 4)
+                             (ecce-dedi-verba-mea . 5)
+                             (dominus-ab-utero-vocavit-me . 8))
+                  :psalms-3 ((posuit-os-meum . 14)
+                             (formans-me-ex-utero . 20)
+                             (reges-videbunt . 33))
+                  :versicle-1 ("Fuit homo missus a Deo."
+                               "Cui nomen erat Joánnes.")
+                  :versicle-1-en ("There was a man sent from God."
+                                  "Whose name was John.")
+                  :versicle-2 ("Inter natos mulíerum non surréxit major."
+                               "Joánne Baptísta.")
+                  :versicle-2-en ("Among them that are born of women there hath not risen a greater."
+                                  "Than John the Baptist.")
+                  :versicle-3 ("Elísabeth Zacharíæ magnum virum génuit."
+                               "Joánnem Baptístam, præcursórem Dómini.")
+                  :versicle-3-en ("Elisabeth, wife of Zachary, brought forth a great man."
+                                  "John the Baptist, the forerunner of the Lord.")
+
+                  :lessons
+                  (;; ── Nocturn I: Jeremiah ──
+
+                   (:ref "Jer 1:1-5"
+                    :source "Incipit liber Jeremíæ Prophétæ"
+                    :text "\
+Verba Jeremíæ fílii Helcíæ, de sacerdótibus, qui fuérunt in Anathoth, in terra Bénjamin. \
+Quod factum est verbum Dómini ad eum in diébus Josíæ fílii Amon regis Juda, in tertiodécimo anno \
+regni ejus. Et factum est in diébus Jóakim fílii Josíæ regis Juda, usque ad consummatiónem undécimi \
+anni Sedecíæ fílii Josíæ regis Juda, usque ad transmigratiónem Jerúsalem, in mense quinto. \
+Et factum est verbum Dómini ad me, dicens: \
+Priúsquam te formárem in útero, novi te: et ántequam exíres de vulva, sanctificávi te, et prophétam \
+in géntibus dedi te.")
+
+                   (:ref "Jer 1:6-10"
+                    :text "\
+Et dixi, A a a, Dómine Deus: ecce néscio loqui, quia puer ego sum. Et dixit Dóminus ad me: \
+Noli dícere, Puer sum: quóniam ad ómnia, quæ mittam te, ibis: et univérsa, quæcúmque mandávero \
+tibi, loquéris. Ne tímeas a fácie eórum: quia tecum ego sum, ut éruam te, dicit Dóminus. \
+Et misit Dóminus manum suam, et tétigit os meum: et dixit Dóminus ad me: Ecce dedi verba mea in ore tuo: \
+ecce constítui te hódie super gentes, et super regna, ut evéllas, et déstruas, et dispérdas, et díssipes, \
+et ædífices, et plantes.")
+
+                   (:ref "Jer 1:17-19"
+                    :text "\
+Tu ergo accínge lumbos tuos, et surge, et lóquere ad eos ómnia quæ ego præcípio tibi. Ne formídes a \
+fácie eórum: nec enim timére te fáciam vultum eórum. Ego quippe dedi te hódie in civitátem munítam, \
+et in colúmnam férream, et in murum ǽreum, super omnem terram, régibus Juda, princípibus ejus, et \
+sacerdótibus, et pópulo terræ. Et bellábunt advérsum te, et non prævalébunt: quia ego tecum sum, \
+ait Dóminus, ut líberem te.")
+
+                   ;; ── Nocturn II: St. Augustine, Sermo 20 de Sanctis ──
+
+                   (:ref "Sermo 20 de Sanctis"
+                    :source "Sermo sancti Augustíni Epíscopi"
+                    :text "\
+Post illum sacrosánctum Dómini natális diem, nullíus hóminum nativitátem légimus celebrári, nisi \
+solíus beáti Joánnis Baptístæ. In áliis Sanctis et eléctis Dei nóvimus illum diem coli, quo illos, \
+post consummatiónem labórum et devíctum triumphatúmque mundum, in perpétuas æternitátes præsens hæc \
+vita partúriit. In áliis consummáta últimi diéi mérita celebrántur: in hoc étiam prima dies, et ipsa \
+étiam hóminis inítia consecrántur; pro hac absque dúbio causa, quia per hunc Dóminus advéntum suum, \
+ne súbito hómines insperátum non agnóscerent, vóluit esse testátum. Joánnes autem figúra fuit véteris \
+Testaménti, et in se formam prǽtulit legis; et ídeo Joánnes prænuntiávit Salvatórem, sicut lex \
+grátiam præcucúrrit.")
+
+                   (:ref "Sermo 20 de Sanctis"
+                    :text "\
+Quod autem nondum natus de secréto matérni úteri prophetávit, et expers lucis jam testis est veritátis; \
+hoc est intellegéndum, quod latens sub velámine et carne lítteræ, et Redemptórem mundo spíritu \
+prædicávit, et nobis Dóminum nostrum de quodam legis útero proclamávit. Ergo quia Judǽi erravérunt \
+a ventre, id est, a lege quæ a Christo grávida erat, erravérunt a ventre, locúti sunt falsa; ídeo \
+hic venit in testimónium, ut testimónium perhibéret de lúmine.")
+
+                   (:ref "Sermo 20 de Sanctis"
+                    :text "\
+Quod autem Joánnes in cárcere constitútus ad Christum discípulos suos órdinat; lex ad Evangélium \
+transmíttit. Quæ lex juxta typum Joánnis, quasi ignorántiæ clausa cárcere, in obscúro et in occúlto \
+jacébat, et Judáica cæcitáte sensus intra lítteram tenebátur inclúsus. De hoc beátus Evangelísta \
+prolóquitur: Ille erat lucérna ardens, id est, Spíritus Sancti igne succénsus, ut mundo ignorántiæ \
+nocte possésso lumen salútis osténderet, et quasi inter densíssimas delictórum ténebras splendidíssimus \
+justítiæ solem lucis suæ rádio demonstráret, et de seípso dicens: Ego vox clamántis in desérto.")
+
+                   ;; ── Nocturn III: St. Ambrose on Luke 1 ──
+
+                   (:ref "Luc 1:57-69"
+                    :source "Homilía sancti Ambrósii Epíscopi\nLiber 2 Comm. in Lucæ cap. 1, ante finem"
+                    :text "\
+Péperit fílium Elísabeth, et congratulabántur vicíni. Habet Sanctórum edítio lætítiam plurimórum, \
+quia commúne est bonum; justítia enim commúnis est virtus. Et ídeo in ortu justi futúræ vitæ insígne \
+præmíttitur, et grátia secutúræ virtútis exsultatióne vicinórum præfiguránte signátur. Pulchre autem \
+tempus, quo fuit in útero Prophéta, descríbitur, ne Maríæ præséntia taceátur; sed tempus silétur \
+infántiæ, eo quia infántiæ impediménta nescívit. Et ídeo in Evangélio nihil super eo légimus, nisi \
+ortum ejus, et oráculum, exsultatiónem in útero, vocem in desérto.")
+
+                   (:ref "Luc 1:57-69"
+                    :text "\
+Neque enim ullam infántiæ sensit ætátem, qui supra natúram, supra ætátem in útero pósitus matris, \
+a mensúra cœpit ætátis plenitúdinis Christi. Mire sanctus Evangelísta præmitténdum putávit, quod \
+plúrimi infántem patris nómine Zacharíam appellándum putáverint; ut advértas matri non nomen alicújus \
+displicuísse degéneris, sed id Sancto infúsum Spíritu, quod ab Angelo ante Zacharíæ fúerat \
+prænuntiátum. Et quidem ille mutus intimáre vocábulum fílii nequívit uxóri; sed per prophetíam \
+Elísabeth dídicit, quod non didícerat a maríto.")
+
+                   (:ref "Luc 1:57-69"
+                    :text "\
+Joánnes est, inquit, nomen ejus; hoc est, non nos ei nomen impónimus, qui jam a Deo nomen accépit. \
+Habet vocábulum suum, quod agnóvimus, non quod elégimus. Habent hoc mérita Sanctórum, ut a Deo nomen \
+accípiant. Sic Jacob Israël dícitur, quia Deum vidit. Sic Dóminus noster Jesus nominátus est, \
+ántequam natus; cui non Angelus, sed Pater nomen impósuit. Vides Angelos quæ audíerint, non quæ \
+usurpáverint, nuntiáre. Nec miréris, si nomen múlier, quod non audívit, asséruit; quando Spíritus \
+ei Sanctus, qui Angelo mandáverat, revelávit."))
+
+                  :responsories
+                  ((:respond "Fuit homo missus a Deo, cui nomen erat Joánnes:"
+                    :verse "Erat Joánnes in desérto prǽdicans baptísmum pœniténtiæ."
+                    :repeat "Hic venit in testimónium, ut testimónium perhibéret de lúmine, et paráret Dómino plebem perféctam.")
+                   (:respond "Elísabeth Zacharíæ magnum virum génuit, Joánnem Baptístam, præcursórem Dómini:"
+                    :verse "Fuit homo missus a Deo, cui nomen erat Joánnes."
+                    :repeat "Qui viam Dómino præparávit in erémo.")
+                   (:respond "Priúsquam te formárem in útero, novi te: et ántequam exíres de ventre, sanctificávi te,"
+                    :verse "Vir diléctus a Deo, et homínibus honorátus est."
+                    :repeat "Et prophétam in géntibus dedi te."
+                    :gloria t)
+                   (:respond "Descéndit Angelus Dómini ad Zacharíam dicens: Accipe púerum in senectúte tua:"
+                    :verse "Iste puer magnus coram Dómino: nam et manus ejus cum ipso est."
+                    :repeat "Et habébit nomen Joánnes Baptísta.")
+                   (:respond "Hic est præcúrsor diléctus, et lucérna lucens ante Dóminum:"
+                    :verse "Ipse præíbit ante illum in spíritu et virtúte Elíæ."
+                    :repeat "Ipse est enim Joánnes, qui viam Dómino præparávit in erémo; sed et Agnum Dei demonstrávit, et illuminávit mentes hóminum.")
+                   (:respond "Innuébant patri ejus quem vellet vocári eum: et póstulans pugillárem, scripsit dicens:"
+                    :verse "Apértum est os Zacharíæ, et prophetávit dicens."
+                    :repeat "Joánnes est nomen ejus."
+                    :gloria t)
+                   (:respond "Præcúrsor Dómini venit, de quo ipse testátur:"
+                    :verse "Hic est enim prophéta, et plus quam prophéta, de quo Salvátor ait."
+                    :repeat "Nullus major inter natos mulíerum Joánne Baptísta.")
+                   (:respond "Gábriel Angelus appáruit Zacharíæ dicens: Nascétur tibi fílius, nomen ejus Joánnes vocábitur:"
+                    :verse "Erit enim magnus coram Dómino, vinum et síceram non bibet."
+                    :repeat "Et multi in nativitáte ejus gaudébunt."
+                    :gloria t))))
 
     ((6 . 25) . (:name "St. William, Ab."
                   :latin "S. Gulielmi Abbatis"
@@ -3120,7 +4476,173 @@ _
                   :latin "Pretiosissimi Sanguinis Domini Nostri Jesu Christi"
                   :rank duplex-i
                   :commune nil
-                  :collect omnipotens-sempiterne-deus-qui-unigenitum))
+                  :collect omnipotens-sempiterne-deus-qui-unigenitum
+
+                  ;; ── Matins ──
+                  :invitatory christum-dei-filium-qui-suo-nos
+                  :hymn ira-justa-conditoris
+                  :psalms-1 ((postquam-consummati-sunt . 2)
+                             (factus-in-agonia . 3)
+                             (judas-qui-eum-tradidit . 15))
+                  :psalms-2 ((pilatus-volens-populo . 22)
+                             (videns-autem-quia-nihil . 29)
+                             (et-respondens-universus-populus . 63))
+                  :psalms-3 ((exivit-ergo-jesus . 73)
+                             (et-bajulans-sibi-crucem . 87)
+                             (ut-viderunt-eum-jam-mortuum . 93))
+                  :versicle-1 ("Redemísti nos, Dómine."
+                               "In sánguine tuo.")
+                  :versicle-1-en ("Thou hast redeemed us, O Lord."
+                                  "In thy Blood.")
+                  :versicle-2 ("Sanguis Jesu Christi Fílii Dei."
+                               "Emúndat nos ab omni peccáto.")
+                  :versicle-2-en ("The Blood of Jesus Christ the Son of God."
+                                  "Cleanseth us from all sin.")
+                  :versicle-3 ("Christus diléxit nos."
+                               "Et lavit nos a peccátis nostris in sánguine suo.")
+                  :versicle-3-en ("Christ hath loved us."
+                                  "And washed us from our sins in his Blood.")
+
+                  :lessons
+                  (;; ── Nocturn I: Hebrews ──
+
+                   (:ref "Heb 9:11-15"
+                    :source "De Epístola beáti Pauli Apóstoli ad Hebrǽos"
+                    :text "\
+Christus assístens póntifex futurórum bonórum, per ámplius et perféctius tabernáculum, non manufáctum, \
+id est, non hujus creatiónis: neque per sánguinem hircórum aut vitulórum, sed per próprium sánguinem \
+introívit semel in Sancta, ætérna redemptióne invénta. Si enim sanguis hircórum et taurórum, et cinis \
+vítulæ aspérsus inquinátos sanctíficat ad emundatiónem carnis: quanto magis sanguis Christi, qui per \
+Spíritum Sanctum semetípsum óbtulit immaculátum Deo, emundábit consciéntiam nostram ab opéribus \
+mórtuis, ad serviéndum Deo vivénti? Et ídeo novi testaménti mediátor est: ut morte intercedénte, in \
+redemptiónem eárum prævaricatiónum, quæ erant sub prióri testaménto, repromissiónem accípiant qui \
+vocáti sunt ætérnæ hereditátis.")
+
+                   (:ref "Heb 9:16-22"
+                    :text "\
+Ubi enim testaméntum est, mors necésse est intercédat testatóris. Testaméntum enim in mórtuis \
+confirmátum est: alióquin nondum valet, dum vivit qui testátus est. Unde nec primum quidem sine \
+sánguine dedicátum est. Lecto enim omni mandáto legis a Móyse univérso pópulo, accípiens sánguinem \
+vitulórum et hircórum cum aqua, et lana coccínea, et hyssópo, ipsum quoque librum, et omnem pópulum \
+aspérsit, dicens: Hic sanguis testaménti, quod mandávit ad vos Deus. Etiam tabernáculum et ómnia \
+vasa ministérii sánguine simíliter aspérsit. Et ómnia pene in sánguine secúndum legem mundántur: \
+et sine sánguinis effusióne non fit remíssio.")
+
+                   (:ref "Heb 10:19-24"
+                    :text "\
+Habéntes ítaque, fratres, fidúciam in intróitu sanctórum in sánguine Christi, quam initiávit nobis \
+viam novam, et vivéntem per velámen, id est, carnem suam, et sacerdótem magnum super domum Dei: \
+accedámus cum vero corde in plenitúdine fídei, aspérsi corda a consciéntia mala, et ablúti corpus \
+aqua munda, teneámus spei nostræ confessiónem indeclinábilem (fidélis enim est qui repromísit), \
+et considerémus ínvicem in provocatiónem caritátis, et bonórum óperum.")
+
+                   ;; ── Nocturn II: St. John Chrysostom, Hom. ad Neophytos ──
+
+                   (:ref "Hom. ad Neophytos"
+                    :source "Sermo sancti Joánnis Chrysóstomi"
+                    :text "\
+Vis sánguinis Christi audíre virtútem? Redeámus ad ejus exémplum, et priórem typum recordémur, et \
+prístinam Scriptúram narrémus. In Ægýpto, nocte média, Ægýptiis Deus plagam décimam minabátur, ut \
+eórum primogénita deperírent, quia primogénitum ejus pópulum detinébant. Sed, ne amáta plebs \
+Judæórum una cum illis periclitarétur, quia unus locus continébat univérsos, remédium discretiónis \
+invéntum est. Proínde exémplum mirábile, ut discas in veritáte virtútem. Ira divínæ indignatiónis \
+operabátur, et domos síngulas mórtifer circuíbat. Quid ígitur Móyses? Occídite, inquit, agnum \
+annículum, et sánguine ejus liníte jánuas. Quid ais, Móyses? Sanguis ovis rationálem hóminem \
+liberáre consuévit? Valde, inquit; non eo quod sanguis est, sed quia Domínici sánguinis per eum \
+demonstrátur exémplum.")
+
+                   (:ref "Hom. ad Neophytos"
+                    :text "\
+Nam, sicut regnántium státuæ, quæ sine causa sunt et sermóne, nonnúmquam ad se confugiéntibus \
+homínibus, ánima et ratióne decorátis, subveníre consuevérunt, non quia sunt ære conféctæ, sed quia \
+rétinent imáginem principálem; ita et sanguis ille, qui irrationális fuit, ánimas habéntes hómines \
+liberávit, non quia sanguis fuit, sed quia hujus sánguinis ostendébat advéntum. Et tunc Angelus ille \
+vastátor, cum linítos postes atque áditus pervidéret, transjécit gressus et non est ausus intráre. \
+Nunc ergo si víderit inimícus, non póstibus impósitum sánguinem typi, sed fidélium ore lucéntem \
+sánguinem veritátis Christi, templi póstibus dedicátum, multo magis se súbtrahet. Si enim Angelus \
+cessit exémplo, quanto magis terrébitur inimícus, si ipsam perspéxerit veritátem? Vis et áliam hujus \
+sánguinis scrutári virtútem? Volo. Unde primum occúrrit, inspícias, et de quo fonte manávit. De ipsa \
+primum cruce procéssit; latus illud Domínicum inítium fuit. Latus miles apéruit, et templi sancti \
+paríetem patefécit; et ego thesáurum præclárum invéni, et fulgéntes divítias me grátulor reperíre.")
+
+                   (:ref "Hom. ad Neophytos"
+                    :text "\
+Sic et de illo agno factum est: Judǽi ovem occidérunt, et ego fructum de sacraménto cognóvi. De \
+látere sanguis et aqua. Nolo tam fácile, audítor, tránseas tanti secréta mystérii; restat enim mihi \
+mýstica atque secretális orátio. Dixi baptísmatis sýmbolum et mysteriórum, aquam illam et sánguinem \
+demonstráre. Ex his enim sancta fundáta est Ecclésia per lavácri regeneratiónem, et renovatiónem \
+Spíritus Sancti. Per baptísma, inquam, et mystéria, quæ ex látere vidéntur esse proláta. Ex látere \
+ígitur suo Christus ædificávit Ecclésiam, sicut de látere Adam ejus conjux Heva proláta est. Nam \
+hac de causa Paulus quoque testátur dicens: De córpore ejus et de óssibus ejus sumus; latus vidélicet \
+illud signíficans. Nam, sicut de illo látere Deus fecit féminam procreári, sic et de suo látere \
+Christus aquam nobis et sánguinem dedit, unde repararétur Ecclésia.")
+
+                   ;; ── Nocturn III: St. Augustine on John 19 ──
+
+                   (:ref "Joann 19:30-35"
+                    :source "Homilía sancti Augustíni Epíscopi\nTractatus 120 in Joannem"
+                    :text "\
+Vigilánti verbo Evangelísta usus est, ut non díceret: Latus ejus percússit, aut vulnerávit, aut quid \
+áliud, sed Apéruit; ut illic quodámmodo vitæ óstium panderétur, unde sacraménta Ecclésiæ manavérunt, \
+sine quibus ad vitam, quæ vera vita est, non intrátur. Ille sanguis qui fusus est, in remissiónem \
+fusus est peccatórum. Aqua illa salutáre témperat póculum; hæc et lavácrum præstat et potum. Hoc \
+prænuntiábat quod Noë in látere arcæ óstium fácere jussus est, quo intrárent animália quæ non erant \
+dilúvio peritúra, quibus præfigurabátur Ecclésia. Propter hoc prima múlier facta est de látere viri \
+dormiéntis, et appelláta est vita matérque vivórum. Magnum quippe significávit bonum, ante magnum \
+prævaricatiónis malum. Hic secúndus Adam, inclináto cápite, in cruce dormívit, ut inde formarétur \
+ei conjux, quæ de látere dormiéntis efflúxit. O mors, unde mórtui revivíscunt! Quid isto sánguine \
+múndius? Quid vúlnere isto salúbrius?")
+
+                   (:ref "Enarrat. in Psalm. 95, n. 5"
+                    :source "Sancti Augustíni Epíscopi"
+                    :text "\
+Tenebántur hómines captívi sub diábolo, et dæmónibus serviébant; sed redémpti sunt a captivitáte. \
+Véndere enim se potuérunt, sed redímere non potuérunt. Venit Redémptor, et dedit prétium; fudit \
+sánguinem suum, et emit orbem terrárum. Quǽritis quid émerit? Vidéte quid déderit, et inveniétis \
+quid émerit. Sanguis Christi prétium est. Tanti quid valet? quid, nisi totus orbis? quid, nisi \
+omnes gentes? Valde ingráti sunt prétio suo, aut multum supérbi sunt, qui dicunt, aut illud tam \
+parum esse ut solos Afros émerit, aut se tam magnos esse pro quibus solis illud sit datum. Non ergo \
+exsúltent, non supérbiant. Pro toto dedit, quantum dedit.")
+
+                   (:ref "Sermo 31, alias 344"
+                    :source "Sancti Augustíni Epíscopi"
+                    :text "\
+Hábuit ille sánguinem, unde nos redímeret; et ad hoc accépit sánguinem, ut esset quem pro nobis \
+rediméndis effúnderet. Sanguis Dómini tui, si vis, datus est pro te; si nolúeris esse, non est \
+datus pro te. Forte enim dicis: Hábuit sánguinem Deus meus, quo me redímeret, sed jam, cum passus \
+est, totum dedit; quid illi remánsit, quod det et pro me? Hoc est magnum, quia semel dedit, et pro \
+ómnibus dedit. Sanguis Christi volénti est salus, nolénti supplícium. Quid ergo dúbitas, qui mori \
+non vis, a secúnda pótius morte liberári? Qua liberáris, si vis tóllere crucem tuam, et sequi \
+Dóminum; quia ille tulit suam, et quæsívit servum."))
+
+                  :responsories
+                  ((:respond "Jesus, ut sanctificáret per suum sánguinem pópulum, extra portam passus est:"
+                    :verse "Nondum enim usque ad sánguinem restitístis advérsus peccátum repugnántes."
+                    :repeat "Exeámus ígitur ad eum extra castra, impropérium ejus portántes.")
+                   (:respond "Móyses sumptum sánguinem respérsit in pópulum:"
+                    :verse "Fide celebrávit Pascha et sánguinis effusióne, ne qui vastábat primitíva, tángeret eos."
+                    :repeat "Et ait: Hic est sanguis fœ́deris, quod pépigit Dóminus vobíscum.")
+                   (:respond "Vos, qui aliquándo erátis longe, facti estis prope in sánguine Christi:"
+                    :verse "Complácuit per eum reconciliáre ómnia in ipsum, pacíficans per sánguinem crucis ejus, sive quæ in cælis sunt."
+                    :repeat "Ipse enim est pax nostra, qui fecit útraque unum."
+                    :gloria t)
+                   (:respond "In timóre incolátus vestri témpore conversámini"
+                    :verse "Sed pretióso sánguine quasi agni immaculáti Christi."
+                    :repeat "Sciéntes quod non corruptibílibus auro vel argénto redémpti estis.")
+                   (:respond "Empti estis prétio magno:"
+                    :verse "Prétio empti estis: nolíte fíeri servi hóminum."
+                    :repeat "Glorificáte et portáte Deum in córpore vestro.")
+                   (:respond "Comméndat caritátem suam Deus in nobis:"
+                    :verse "Multo ígitur magis nunc justificáti in sánguine ipsíus, salvi érimus ab ira per ipsum."
+                    :repeat "Quóniam cum adhuc peccatóres essémus, secúndum tempus Christus pro nobis mórtuus est."
+                    :gloria t)
+                   (:respond "Hic est, qui venit per aquam et sánguinem, Jesus Christus:"
+                    :verse "In die illa erit fons patens dómui David et habitántibus Jerúsalem in ablutiónem peccatóris."
+                    :repeat "Non in aqua solum, sed in aqua et sánguine.")
+                   (:respond "Prædestinávit nos Deus in adoptiónem filiórum per Jesum Christum,"
+                    :verse "Remissiónem peccatórum secúndum divítias grátiæ ejus, quæ superabundávit in nobis."
+                    :repeat "In quo habémus redemptiónem per sánguinem ejus."
+                    :gloria t))))
 
     ((7 . 2) . (:name "Visitation of the Blessed Virgin Mary"
                   :latin "In Visitatione Beatæ Mariæ Virginis"
@@ -3308,7 +4830,155 @@ _
                   :latin "In Transfiguratione Domini Nostri Jesu Christi"
                   :rank duplex-ii
                   :commune nil
-                  :collect deus-qui-fidei-sacramenta-in))
+                  :collect deus-qui-fidei-sacramenta-in
+
+                  ;; ── Matins ──
+                  :invitatory summum-regem-gloriae
+                  :hymn quicumque-christum-quaeritis
+                  :psalms-1 ((paulo-minus-ab-angelis . 8)
+                             (revelavit-dominus-condensa . 28)
+                             (speciosus-forma . 44))
+                  :psalms-2 ((illuminans-tu-mirabiliter . 75)
+                             (melior-est-dies-una . 83)
+                             (gloriosa-dicta-sunt . 86))
+                  :psalms-3 ((thabor-et-hermon . 88)
+                             (lux-orta-est-justo-transfig . 96)
+                             (confessionem-et-decorem . 103))
+                  :versicle-1 ("Gloriósus apparuísti in conspéctu Dómini."
+                               "Proptérea decórem índuit te Dóminus.")
+                  :versicle-1-en ("Glorious hast thou appeared in the sight of the Lord."
+                                  "Therefore hath the Lord clothed thee with beauty.")
+                  :versicle-2 ("Glória et honóre coronásti eum, Dómine."
+                               "Et constituísti eum super ópera mánuum tuárum.")
+                  :versicle-2-en ("Thou hast crowned him with glory and honour, O Lord."
+                                  "And hast set him over the works of thy hands.")
+                  :versicle-3 ("Magna est glória ejus in salutári tuo."
+                               "Glóriam et magnum decórem impónes super eum.")
+                  :versicle-3-en ("Great is his glory in thy salvation."
+                                  "Glory and great beauty shalt thou lay upon him.")
+
+                  :lessons
+                  (;; ── Nocturn I: 2 Peter ──
+
+                   (:ref "2 Pet 1:10-14"
+                    :source "De Epístola secúnda beáti Petri Apóstoli"
+                    :text "\
+Fratres: Magis satágite, ut per bona ópera certam vestram vocatiónem et electiónem faciátis: hæc \
+enim faciéntes, non peccábitis aliquándo. Sic enim abundánter ministrábitur vobis intróitus in \
+ætérnum regnum Dómini nostri, et Salvatóris Jesu Christi. Propter quod incípiam vos semper commonére \
+de his: et quidem sciéntes et confirmátos vos in præsénti veritáte. Justum autem árbitror, quámdiu \
+sum in hoc tabernáculo, suscitáre vos in commonitióne: certus quod velox est deposítio tabernáculi \
+mei secúndum quod et Dóminus noster Jesus Christus significávit mihi.")
+
+                   (:ref "2 Pet 1:15-17"
+                    :text "\
+Dabo autem óperam et frequénter habére vos post óbitum meum, ut horum memóriam faciátis. Non enim \
+doctas fábulas secúti notam fécimus vobis Dómini nostri Jesu Christi virtútem et præséntiam, sed \
+speculatóres facti illíus magnitúdinis. Accípiens enim a Deo Patre honórem et glóriam, voce delápsa \
+ad eum hujuscémodi a magnífica glória: Hic est Fílius meus diléctus, in quo mihi complácui; ipsum audíte.")
+
+                   (:ref "2 Pet 1:18-21"
+                    :text "\
+Et hanc vocem nos audívimus de cælo allátam, cum essémus cum ipso in monte sancto. Et habémus \
+firmiórem prophéticum sermónem, cui bene fácitis attendéntes quasi lucérnæ lucénti in caliginóso \
+loco, donec dies elucéscat et lúcifer oriátur in córdibus vestris, hoc primum intellegéntes quod \
+omnis prophetía Scriptúræ própria interpretatióne non fit. Non enim voluntáte humána alláta est \
+aliquándo prophetía; sed Spíritu Sancto inspiráti locúti sunt sancti Dei hómines.")
+
+                   ;; ── Nocturn II: St. Leo, Sermo de Transfiguratione ──
+
+                   (:ref "Sermo de Transfig., ante med."
+                    :source "Sermo sancti Leónis Papæ"
+                    :text "\
+Aperit Dóminus coram eléctis téstibus glóriam suam, et commúnem illam cum céteris córporis formam \
+tanto splendóre claríficat, ut et fácies ejus solis fulgóri símilis, et vestítus candóri nívium esset \
+æquális. In qua transfiguratióne illud quidem principáliter agebátur, ut de córdibus discipulórum \
+crucis scándalum tollerétur; nec conturbáret eórum fidem voluntáriæ humílitas passiónis, quibus \
+reveláta esset abscónditæ excelléntia dignitátis. Sed non minóre providéntia spes sanctæ Ecclésiæ \
+fundabátur, ut totum Christi corpus agnósceret quali esset commutatióne donándum, ut ejus sibi honóris \
+consórtium membra promítterent, qui in cápite præfulsísset.")
+
+                   (:ref "Sermo de Transfig., ante med."
+                    :text "\
+Confirmándis vero Apóstolis et ad omnem sciéntiam provehéndis, ália quoque in illo miráculo accéssit \
+instrúctio. Móyses enim et Elías, lex scílicet et prophétæ apparuérunt cum Dómino loquéntes; ut \
+veríssime in illa quinque virórum præséntia complerétur quod dictum est: in duóbus vel tribus téstibus \
+stat omne verbum. Quid hoc stabílius, quid fírmius verbo, in cujus prædicatióne véteris et novi \
+Testaménti cóncinit tuba, et cum evangélica doctrína, antiquárum protestatiónum instruménta concúrrunt? \
+Astipulántur enim sibi ínvicem utriúsque Fœ́deris páginæ; et, quem sub velámine mysteriórum \
+præcedéntia signa promíserant, maniféstum atque perspícuum præséntis glóriæ splendor osténdit.")
+
+                   (:ref "Sermo de Transfig., ante med."
+                    :text "\
+His ergo sacramentórum revelatiónibus Petrus Apóstolus incitátus, mundána spernens et terréna \
+fastídiens, in æternórum desidérium quodam mentis rapiebátur excéssu; et, gáudio totíus visiónis \
+implétus, ibi cum Jesu optábat habitáre, ubi manifésta ejus glória lætabátur. Unde et ait: Dómine, \
+bonum est nos hic esse: si vis, faciámus hic tria tabernácula; tibi unum, Móysi unum et Elíæ unum. \
+Sed huic suggestióni Dóminus non respóndit, signíficans, non quidem ímprobum, sed inordinátum esse \
+quod cúperet; cum salvári mundus, nisi Christi morte, non posset, et exémplo Dómini in hoc vocarétur \
+credéntium fides, ut licet non oportéret de beatitúdinis promissiónibus dubitári, intellegerémus tamen \
+inter tentatiónes hujus vitæ prius nobis tolerántiam postulándam esse, quam glóriam.")
+
+                   ;; ── Nocturn III: St. John Chrysostom on Matthew 17 ──
+
+                   (:ref "Matt 17:1-9"
+                    :source "Homilía sancti Joánnis Chrysóstomi\nHomilia 57 in Matth., in init."
+                    :text "\
+Quóniam multa de perículis, multa de passióne sua, multa de morte et de cæde discipulórum locútus \
+est Dóminus, et áspera complúra atque árdua eis injúnxit; et illa quidem in præsénti vita, et jam \
+imminébant; bona vero in spe et exspectatióne erant: ut puta, quia servárent ánimam suam, si \
+pérderent eam; quia in glória Patris sui ventúrus sit, et prǽmia redditúrus: ut visu étiam certióres \
+fáceret, et osténderet quidnam sit illa glória, cum qua ventúrus sit, quantum cápere póterant in hac \
+præsénti vita, illis osténdit eámque détegit, ne aut sua aut Dómini morte dóleant, et máxime Petrus.")
+
+                   (:ref "Matt 17:1-9"
+                    :text "\
+Et vide quid agit, cum de regno et de gehénna disserúerit. Nam in eo quod dixit: Qui ínvenit ánimam \
+suam, perdet eam; et quicúmque perdet eam grátia mei, invéniet ipsam; et in eo quod ait: Reddet \
+unicuíque secúndum ópera sua; et regnum et gehénnam designávit. Cum ígitur de utrísque disserúerit, \
+regnum quidem ut óculis cernátur, concédit, gehénnam autem mínime; quóniam rudióribus atque \
+ineptióribus illud necessárium fuísset, sed, cum illi probi essent ac perspicáces, satis fuit eos a \
+melióribus confirmári. Hoc étiam multo magis ipsum decébat. Non tamen omníno illud prætermísit, sed \
+et aliquándo atrocitátem gehénnæ quasi ante óculos propónit, véluti cum Lázari imáginem descrípsit, \
+et ejus méminit qui denários centum repétiit.")
+
+                   (:ref "Matt 17:1-9"
+                    :text "\
+Tu vero Matthǽi philosophíam consídera, qui non celávit nómina eórum qui præpósiti fúerant. Quod \
+et Joánnes sǽpius facit, cum exímias Petri laudes veríssime ac diligentíssime descríbat. Nullum \
+enim in hoc Apostolórum consórtio livor aut inánis glória locum habébat. Primos ígitur Apostolórum \
+seórsum assúmpsit. Quam ob rem eos solos accépit? Quia excellentióres céteris vidélicet erant. Cur \
+autem non íllico, sed post sex dies hoc fecit? Ne céteri discípuli seu hómines moveréntur; qua de \
+re nec eos nominávit, quos acceptúrus erat."))
+
+                  :responsories
+                  ((:respond "Surge, illumináre, Jerúsalem, quia venit lumen tuum,"
+                    :verse "Et ambulábunt gentes in lúmine tuo, et reges in splendóre ortus tui."
+                    :repeat "Et glória Dómini super te orta est.")
+                   (:respond "In splendénte nube Spíritus Sanctus visus est, Patérna vox audíta est:"
+                    :verse "Appáruit nubes obúmbrans, et vox Patris intónuit."
+                    :repeat "Hic est Fílius meus diléctus, in quo mihi bene complácui; ipsum audíte.")
+                   (:respond "Vidéte qualem caritátem dedit nobis Deus Pater,"
+                    :verse "Scimus quóniam, cum apparúerit, símiles ei érimus, quóniam vidébimus eum sícuti est."
+                    :repeat "Ut fílii Dei nominémur et simus."
+                    :gloria t)
+                   (:respond "Inebriáti sunt ab ubertáte domus tuæ:"
+                    :verse "Quóniam apud te est fons vitæ, et in lúmine tuo vidébimus lumen."
+                    :repeat "Et torrénte voluptátis tuæ potásti eos.")
+                   (:respond "Præcéptor, bonum est nos hic esse:"
+                    :verse "Non enim sciébat quid díceret."
+                    :repeat "Faciámus hic tria tabernácula; tibi unum, Móysi unum et Elíæ unum.")
+                   (:respond "Si ministrátio mortis, lítteris deformáta in lapídibus, fuit in glória, ita ut non possent inténdere fílii Israël in fáciem Móysi propter glóriam vultus ejus, quæ evacuátur:"
+                    :verse "Amplióris enim glóriæ Christus præ Móyse dignus est hábitus, quanto ampliórem honórem habet domo, qui fabricávit eam."
+                    :repeat "Multo magis ministrátio spíritus, quæ manet, erit in glória."
+                    :gloria t)
+                   (:respond "Vocávit nos Deus vocatióne sua sancta, secúndum grátiam suam, quæ manifestáta est nunc;"
+                    :verse "Qui destrúxit mortem, illuminávit autem vitam in incorruptiónem."
+                    :repeat "Per illuminatiónem Salvatóris nostri Jesu Christi.")
+                   (:respond "Deus, qui fecit de ténebris lumen splendéscere, illúxit in córdibus nostris"
+                    :verse "Exórtum est in ténebris lumen rectis corde, miséricors et miserátor, et justus."
+                    :repeat "Ad illuminatiónem sciéntiæ claritátis Dei, in fácie Jesu Christi."
+                    :gloria t))))
 
     ((8 . 7) . (:name "St. Cajetan, C."
                   :latin "S. Cajetani Confessoris"
@@ -3508,7 +5178,165 @@ _
                   :latin "In Exaltatione Sanctæ Crucis"
                   :rank duplex-majus
                   :commune nil
-                  :collect deus-qui-nos-hodierna-die))
+                  :collect deus-qui-nos-hodierna-die
+
+                  ;; ── Matins ──
+                  ;; ex Sancti/05-03 base; own invitatory, antiphons, lessons;
+                  ;; shares hymn and most responsories with May 3 (R3 differs).
+                  :invitatory christum-regem-in-cruce-exaltatum
+                  :hymn pange-lingua-gloriosi
+                  :psalms-1 ((nobile-lignum-exaltatur . 1)
+                             (sancta-crux-extollitur . 2)
+                             (o-crux-venerabilis . 3))
+                  :psalms-2 ((o-crucis-victoria . 4)
+                             (funestae-mortis . 10)
+                             (rex-exaltatur . 20))
+                  :psalms-3 ((adoramus-te-christe-exalt . 95)
+                             (per-lignum-servi . 96)
+                             (salvator-mundi-salva-nos . 97))
+                  :versicle-1 ("Hoc signum Crucis erit in cælo."
+                               "Cum Dóminus ad judicándum vénerit.")
+                  :versicle-1-en ("This sign of the Cross shall be in heaven."
+                                  "When the Lord shall come to judge.")
+                  :versicle-2 ("Adorámus te, Christe, et benedícimus tibi."
+                               "Quia per Crucem tuam redemísti mundum.")
+                  :versicle-2-en ("We adore thee, O Christ, and we bless thee."
+                                  "Because by thy Cross thou hast redeemed the world.")
+                  :versicle-3 ("Omnis terra adóret te, et psallat tibi."
+                               "Psalmum dicat nómini tuo, Dómine.")
+                  :versicle-3-en ("Let all the earth adore thee, and sing unto thee."
+                                  "Let it sing a psalm to thy name, O Lord.")
+
+                  :lessons
+                  (;; ── Nocturn I: Numbers 21 (Brazen Serpent) ──
+
+                   (:ref "Num 21:1-3"
+                    :source "De libro Númeri"
+                    :text "\
+Cum audísset Chananǽus rex Arad, qui habitábat ad merídiem, venísse scílicet Israël per \
+exploratórum viam, pugnávit contra illum et victor exsístens duxit ex eo prædam. \
+At Israël, voto se Dómino óbligans, ait: Si tradíderis pópulum istum in manu mea, delébo urbes ejus. \
+Exaudivítque Dóminus preces Israël, et trádidit Chananǽum, quem ille interfécit, subvérsis úrbibus ejus, \
+et vocávit nomen loci illíus Horma, id est, anáthema.")
+
+                   (:ref "Num 21:4-6"
+                    :text "\
+Profécti sunt autem et de monte Hor per viam quæ ducit ad Mare Rubrum, ut circumírent terram Edom. \
+Et tædére cœpit pópulum itíneris ac labóris. \
+Locutúsque contra Deum et Móysen ait: Cur eduxísti nos de Ægýpto ut morerémur in solitúdine? \
+Deest panis, non sunt aquæ, ánima nostra jam náuseat super cibo isto levíssimo. \
+Quam ob rem misit Dóminus in pópulum ignítos serpéntes.")
+
+                   (:ref "Num 21:6-9"
+                    :text "\
+Ad quorum plagas et mortes plurimórum \
+venérunt ad Móysen atque dixérunt: Peccávimus, quia locúti sumus contra Dóminum et te: \
+ora ut tollat a nobis serpéntes. Oravítque Móyses pro pópulo. \
+Et locútus est Dóminus ad eum: Fac serpéntem ǽneum et pone eum pro signo: \
+qui percússus aspéxerit eum, vivet. \
+Fecit ergo Móyses serpéntem ǽneum et pósuit eum pro signo; quem cum percússi aspícerent, sanabántur.")
+
+                   ;; ── Nocturn II: Historical (Heraclius and Chosroas) ──
+
+                   (:ref "Hist."
+                    :source "Ex historia"
+                    :text "\
+Chósroas, Persárum rex, extrémis Phocæ impérii tempóribus, Ægýpto et Africa occupáta ac Jerosólyma \
+capta multísque ibi cæsis Christianórum míllibus, Christi Dómini Crucem, quam Hélena in monte Calváriæ \
+collocárat, in Pérsidem ábstulit. Itaque Heraclíus, qui Phocæ succésserat, multis belli incómmodis et \
+calamitátibus afféctus, pacem petébat; quam a Chósroa, victóriis insolénte, ne iníquis quidem \
+conditiónibus impetráre póterat. Quare in summo discrímine se assíduis jejúniis et oratiónibus exércens, \
+opem a Deo veheménter implorábat; cujus mónitu exércitu comparáto, signa cum hoste cóntulit, ac tres \
+duces Chósroæ cum tribus exercítibus superávit.")
+
+                   (:ref "Hist."
+                    :text "\
+Quibus cládibus fractus Chósroas, in fuga, qua traícere Tigrim parábat, Medársen fílium sócium regni \
+desígnat. Sed eam contuméliam cum Síroës, Chósroæ major natu fílius, ferret atróciter, patri simul et \
+fratri necem machinátur; quam paulo post utríque ex fuga retrácto áttulit, regnúmque ab Heraclío \
+impetrávit quibúsdam accéptis conditiónibus, quarum ea prima fuit, ut Crucem Christi Dómini restitúeret. \
+Ergo Crux, quatuórdecim annis postquam vénerat in potestátem Persárum, recépta est. Quam rédiens \
+Jerosólymam Heraclíus solémni celebritáte suis húmeris rétulit in eum montem, quo eam Salvátor túlerat.")
+
+                   (:ref "Hist."
+                    :text "\
+Quod factum illústri miráculo commendátum est. Nam Heraclíus, ut erat auro et gemmis ornátus, insístere \
+coáctus est in porta, quæ ad Calváriæ montem ducébat. Quo enim magis prógredi conabátur, eo magis \
+retinéri videbátur. Cumque ea re et ipse Heraclíus et réliqui omnes obstupéscerent; Zacharías, \
+Jerosolymórum antístes, Vide, inquit, imperátor, ne isto triumpháli ornátu, in Cruce ferénda parum \
+Jesu Christi paupertátem et humilitátem imitére. Tum Heraclíus, abjécto amplíssimo vestítu detractísque \
+cálceis ac plebéjo amíctu indútus, réliquum viæ fácile confécit, et in eódem Calváriæ loco Crucem \
+státuit, unde fúerat a Persis asportáta. Itaque Exaltatiónis sanctæ Crucis solémnitas, quæ hac die \
+quotánnis celebrabátur, illústrior habéri cœpit ob ejus rei memóriam, quod ibídem fúerit repósita ab \
+Heraclío, ubi Salvatóri primum fúerat constitúta.")
+
+                   ;; ── Nocturn III: St. Leo, Sermo 8 de Passione on John 12:31-36 ──
+
+                   (:ref "Joann 12:31-36"
+                    :source "Homilía sancti Leónis Papæ\nSermo 8 de Passione Domini, post medium"
+                    :text "\
+Exaltáto, dilectíssimi, per Crucem Christo, non illa tantum spécies aspéctui mentis occúrrat, quæ fuit \
+in óculis impiórum, quibus per Móysen dictum est: Et erit pendens vita tua ante óculos tuos, et timébis \
+die ac nocte, et non credes vitæ tuæ. Isti enim nihil in crucifíxo Dómino præter fácinus suum cogitáre \
+potuérunt, habéntes timórem, non quo fides vera justificátur, sed quo consciéntia iníqua torquétur. \
+Noster vero intelléctus, quem spíritus veritátis illúminat, glóriam Crucis, cælo terráque radiántem, \
+puro ac líbero corde suscípiat; et interióre ácie vídeat, quale sit quod Dóminus, cum de passiónis suæ \
+loquerétur instántia, dixit: Nunc judícium mundi est, nunc princeps hujus mundi eiciétur foras. Et ego, \
+si exaltátus fúero a terra, ómnia traham ad meípsum.")
+
+                   (:ref "Joann 12:31-36"
+                    :text "\
+O admirábilis poténtia Crucis! o ineffábilis glória Passiónis, in qua et tribúnal Dómini, et judícium \
+mundi, et potéstas est Crucifíxi! Traxísti enim, Dómine, ómnia ad te, et cum expandísses tota die \
+manus tuas ad pópulum non credéntem et contradicéntem, tibi, confiténdæ majestátis tuæ sensum totus \
+mundus accépit. Traxísti, Dómine, ómnia ad te, cum in exsecratiónem Judáici scéleris, unam protulérunt \
+ómnia eleménta senténtiam; cum, obscurátis lumináribus cæli et convérso in noctem die, terra quoque \
+mótibus quaterétur insólitis, univérsaque creatúra impiórum úsui se negáret. Traxísti, Dómine, ómnia \
+ad te, quóniam, scisso templi velo, Sancta sanctórum ab indígnis pontifícibus recessérunt; ut figúra in \
+veritátem, prophetía in manifestatiónem, et lex in Evangélium verterétur.")
+
+                   (:ref "Joann 12:31-36"
+                    :text "\
+Traxísti, Dómine, ómnia ad te, ut, quod in uno Judǽæ templo obumbrátis significatiónibus tegebátur, \
+pleno apertóque sacraménto universárum ubíque natiónum devótio celebráret. Nunc étenim et ordo clárior \
+levitárum, et dígnitas ámplior seniórum, et sacrátior est únctio sacerdótum: quia Crux tua ómnium fons \
+benedictiónum, ómnium est causa gratiárum; per quam credéntibus datur virtus de infirmitáte, glória de \
+oppróbrio, vita de morte. Nunc étiam, carnálium sacrificiórum varietáte cessánte, omnes differéntias \
+hostiárum una córporis et sánguinis tui implet oblátio: quóniam tu es verus Agnus Dei, qui tollis \
+peccáta mundi; et ita in te univérsa pérficis mystéria, ut sicut unum est pro omni víctima sacrifícium, \
+ita unum de omni gente sit regnum."))
+
+                  :responsories
+                  (;; R1-R2 same as May 3
+                   (:respond "Gloriósum diem sacra venerátur Ecclésia, dum triumphále reserátur lignum:"
+                    :verse "In ligno pendens nostræ salútis sémitam Verbum Patris invénit."
+                    :repeat "In quo Redémptor noster, mortis víncula rumpens, cállidum áspidem superávit.")
+                   (:respond "Crux fidélis, inter omnes arbor una nóbilis: nulla silva talem profert, fronde, flore, gérmine:"
+                    :verse "Super ómnia ligna cedrórum tu sola excélsior."
+                    :repeat "Dulce lignum, dulces clavos, dulce pondus sustínuit.")
+                   ;; R3: Heraclius variant (May 3 has Helena)
+                   (:respond "Hæc est arbor digníssima, in paradísi médio situáta,"
+                    :verse "Crux præcellénti decóre fúlgida, quam Heraclíus imperátor concupiscénti ánimo recuperávit."
+                    :repeat "In qua salútis auctor própria morte mortem ómnium superávit."
+                    :gloria t)
+                   ;; R4-R8 same as May 3
+                   (:respond "Nos autem gloriári opórtet in Cruce Dómini nostri Jesu Christi, in quo est salus, vita, et resurréctio nostra:"
+                    :verse "Tuam Crucem adorámus, Dómine, et recólimus tuam gloriósam passiónem."
+                    :repeat "Per quem salváti et liberáti sumus.")
+                   (:respond "Dum sacrum pignus cǽlitus exaltátur, Christi fides roborátur:"
+                    :verse "Ad Crucis contáctum resúrgunt mórtui, et Dei magnália reserántur."
+                    :repeat "Adsunt prodígia divína in virga Móysi prímitus figuráta.")
+                   (:respond "Hoc signum Crucis erit in cælo, cum Dóminus ad judicándum vénerit:"
+                    :verse "Cum séderit Fílius hóminis in sede majestátis suæ, et cœ́perit judicáre sǽculum per ignem."
+                    :repeat "Tunc manifésta erunt abscóndita cordis nostri."
+                    :gloria t)
+                   (:respond "Dulce lignum, dulces clavos, dulce pondus sustínuit:"
+                    :verse "Hoc signum Crucis erit in cælo cum Dóminus ad judicándum vénerit."
+                    :repeat "Quæ sola digna fuit portáre prétium hujus sǽculi.")
+                   (:respond "Sicut Móyses exaltávit serpéntem in desérto, ita exaltári opórtet Fílium hóminis:"
+                    :verse "Non misit Deus Fílium suum in mundum ut júdicet mundum, sed ut salvétur mundus per ipsum."
+                    :repeat "Ut omnis qui credit in ipsum, non péreat, sed hábeat vitam ætérnam."
+                    :gloria t))))
 
     ((9 . 15) . (:name "Seven Sorrows of the Blessed Virgin Mary"
                   :latin "Septem Dolorum Beatæ Mariæ Virginis"
@@ -3592,7 +5420,171 @@ _
                   :latin "In Dedicatione S. Michaëlis Archangelis"
                   :rank duplex-i
                   :commune nil
-                  :collect deus-qui-miro-ordine-angelorum-0929))
+                  :collect deus-qui-miro-ordine-angelorum-0929
+
+                  ;; ── Matins ──
+                  ;; Invitatory, hymn, and responsories same as May 8
+                  :invitatory regem-archangelorum-dominum
+                  :hymn te-splendor-et-virtus-patris
+                  :psalms-1 ((concussum-est-mare . 8)
+                             (laudemus-dominum . 10)
+                             (ascendit-fumus-aromatum . 14))
+                  :psalms-2 ((michael-archangele-veni . 18)
+                             (michael-praepositus-paradisi . 23)
+                             (gloriosus-apparuisti . 33))
+                  :psalms-3 ((angelus-archangelus-michael . 95)
+                             (data-sunt-ei-incensa . 96)
+                             (multa-magnalia . 102))
+                  :versicle-1 ("Stetit Angelus juxta aram templi."
+                               "Habens thuríbulum áureum in manu sua.")
+                  :versicle-1-en ("An Angel stood by the altar of the temple."
+                                  "Having a golden censer in his hand.")
+                  :versicle-2 ("Ascéndit fumus arómatum in conspéctu Dómini."
+                               "De manu Angeli.")
+                  :versicle-2-en ("The smoke of incense ascended before the Lord."
+                                  "From the hand of the Angel.")
+                  :versicle-3 ("In conspéctu Angelórum psallam tibi, Deus meus."
+                               "Adorábo ad templum sanctum tuum, et confitébor nómini tuo.")
+                  :versicle-3-en ("In the sight of the Angels I will sing unto thee, O my God."
+                                  "I will worship toward thy holy temple, and give thanks unto thy name.")
+
+                  :lessons
+                  (;; ── Nocturn I: Daniel (same as May 8) ──
+
+                   (:ref "Dan 7:9-11"
+                    :source "De Daniéle Prophéta"
+                    :text "\
+Aspiciébam donec throni pósiti sunt, et antíquus diérum sedit. Vestiméntum ejus cándidum quasi nix, \
+et capílli cápitis ejus quasi lana munda, thronus ejus flammæ ignis, rotæ ejus ignis accénsus. \
+Flúvius ígneus rapidúsque egrediebátur a fácie ejus; míllia míllium ministrábant ei, et décies \
+míllies centéna míllia assistébant ei. Judícium sedit, et libri apérti sunt. \
+Aspiciébam propter vocem sermónum grándium, quos cornu illud loquebátur; et vidi quóniam interfécta \
+esset béstia, et perísset corpus ejus, et tráditum esset ad comburéndum igni.")
+
+                   (:ref "Dan 10:4-8"
+                    :text "\
+Die autem vigésima et quarta mensis primi, eram juxta flúvium magnum, qui est Tigris. \
+Et levávi óculos meos, et vidi: et ecce vir unus vestítus líneis, et renes ejus accíncti auro obrýzo; \
+et corpus ejus quasi chrysólithus, et fácies ejus velut spécies fúlguris, et óculi ejus ut lampas ardens, \
+et brácchia ejus, et quæ deórsum sunt usque ad pedes, quasi spécies æris candéntis; et vox sermónum ejus \
+ut vox multitúdinis. \
+Vidi autem ego Dániel solus visiónem; porro viri qui erant mecum non vidérunt; sed terror nímius \
+írruit super eos, et fugérunt in abscónditum. \
+Ego autem, relíctus solus, vidi visiónem grandem hanc, et non remánsit in me fortitúdo, sed et spécies \
+mea immutáta est in me, et emárcui nec hábui quidquam vírium.")
+
+                   (:ref "Dan 10:9-14"
+                    :text "\
+Et audívi vocem sermónum ejus: et áudiens jacébam consternátus super fáciem meam, et vultus meus \
+hærébat terræ. Et ecce manus tétigit me, et eréxit me super génua mea et super artículos mánuum meárum. \
+Et dixit ad me: Dániel, vir desideriórum, intéllege verba quæ ego loquor ad te, et sta in gradu tuo; \
+nunc enim sum missus ad te. Cumque dixísset mihi sermónem istum, steti tremens. \
+Et ait ad me: Noli metúere, Dániel; quia, ex die primo quo posuísti cor tuum ad intellegéndum, \
+ut te afflígeres in conspéctu Dei tui, exaudíta sunt verba tua, et ego veni propter sermónes tuos. \
+Princeps autem regni Persárum réstitit mihi vigínti et uno diébus; et ecce Míchaël, unus de \
+princípibus primis, venit in adjutórium meum, et ego remánsi ibi juxta regem Persárum. \
+Veni autem ut docérem te quæ ventúra sunt pópulo tuo in novíssimis diébus, quóniam adhuc vísio in dies.")
+
+                   ;; ── Nocturn II: St. Gregory, Hom. 34 in Evang. ──
+
+                   (:ref "Hom. 34 in Evang. ante med."
+                    :source "Sermo sancti Gregórii Papæ"
+                    :text "\
+Novem Angelórum órdines dícimus, quia vidélicet esse, testánte sacro elóquio, scimus: Angelos, \
+Archángelos, Virtútes, Potestátes, Principátus, Dominatiónes, Thronos, Chérubim atque Séraphim. \
+Esse namque Angelos et Archángelos pene omnes sacri elóquii páginæ testántur. Chérubim vero atque \
+Séraphim sæpe, ut notum est, libri prophetárum loquúntur. Quátuor quoque órdinum nómina Paulus \
+Apóstolus ad Ephésios enúmerat, dicens: Supra omnem Principátum, et Potestátem, et Virtútem, et \
+Dominatiónem. Qui rursus ad Colossénses scribens, ait: Sive Throni, sive Potestátes, sive \
+Principátus, sive Dominatiónes. Dum ergo illis quátuor, quæ ad Ephésios dixit, conjungúntur Throni, \
+quinque sunt órdines; quibus dum Angeli et Archángeli, Chérubim atque Séraphim adjúncta sunt, procul \
+dúbio novem esse Angelórum órdines inveniúntur.")
+
+                   (:ref "Hom. 34 in Evang. ante med."
+                    :text "\
+Sciéndum vero quod Angelórum vocábulum nomen est offícii, non natúræ. Nam sancti illi cæléstis \
+pátriæ Spíritus, semper quidem sunt Spíritus, sed semper vocári Angeli nequáquam possunt; quia tunc \
+solum sunt Angeli, cum per eos áliqua nuntiántur. Unde et per Psalmístam dícitur: Qui facit Angelos \
+suos spíritus; ac si paténter dicat: Qui eos, quos semper habet Spíritus, étiam, cum volúerit, \
+Angelos facit. Hi autem qui mínima núntiant, Angeli; qui vero summa annúntiant, Archángeli vocántur. \
+Hinc est enim quod ad Maríam Vírginem non quílibet Angelus, sed Gábriel Archángelus míttitur. Ad \
+hoc quippe ministérium, summum Angelum veníre dignum fúerat, qui summum ómnium nuntiábat. Qui idcírco \
+étiam privátis nomínibus censéntur, ut signétur per vocábula, étiam in operatióne quid váleant. \
+Míchaël namque, Quis ut Deus? Gábriel autem, Fortitúdo Dei; Ráphaël vero dícitur Medicína Dei.")
+
+                   (:ref "Hom. 34 in Evang. ante med."
+                    :text "\
+Et quóties miræ virtútis áliquid ágitur, Míchaël mitti perhibétur; ut ex ipso actu et nómine detur \
+intéllegi quia nullus potest fácere, quod fácere prǽvalet Deus. Unde et ille antíquus hostis, qui \
+Deo esse per supérbiam símilis concupívit, dicens: In cælum conscéndam, super astra cæli exaltábo \
+sólium meum, símilis ero Altíssimo; dum in fine mundi in sua virtúte relinquétur extrémo supplício \
+periméndus, cum Michaéle Archángelo præliatúrus esse perhibétur, sicut per Joánnem dícitur: Factum \
+est prǽlium cum Michaéle Archángelo. Ad Maríam quoque Gábriel míttitur, qui Dei Fortitúdo nominátur; \
+illum quippe nuntiáre veniébat, qui ad debellándas aéreas potestátes húmilis apparére dignátus est. \
+Ráphaël quoque interpretátur, ut díximus, Medicína Dei; quia vidélicet, dum Tobíæ óculos quasi per \
+offícium curatiónis tétigit, cæcitátis ejus ténebras tersit.")
+
+                   ;; ── Nocturn III: St. Jerome on Matthew 18 ──
+
+                   (:ref "Matt 18:1-10"
+                    :source "Homilía sancti Hierónymi Presbýteri\nLib. 3 Comm. in cap. 18 Matth."
+                    :text "\
+Post invéntum statérem, post tribúta réddita, quid sibi vult Apostolórum repentína interrogátio, \
+Quis, putas, major est in regno cælórum? Quia víderant pro Petro et Dómino idem tribútum rédditum, \
+ex æqualitáte prétii arbitráti sunt Petrum ómnibus Apóstolis esse prælátum, qui in redditióne tribúti \
+Dómino fúerat comparátus; ídeo intérrogant quis major sit in regno cælórum. Vidénsque Jesus \
+cogitatiónes eórum, et causas erróris intéllegens, vult desidérium glóriæ, humilitátis contentióne, sanáre.")
+
+                   (:ref "Matt 18:1-10"
+                    :text "\
+Si autem manus tua vel pes tuus scandalízat te, abscínde eum et próice abs te. Necésse est quidem \
+veníre scándala; væ tamen ei est hómini, qui, quod necésse est ut fiat in mundo, vítio suo facit ut \
+per se fiat. Igitur omnis truncátur afféctus et univérsa propínquitas amputátur, ne per occasiónem \
+pietátis unusquísque credéntium scándalis páteat. Si, inquit, ita est quis tibi conjúnctus, ut manus, \
+pes, óculus; et est útilis atque sollícitus, et acútus ad perspiciéndum, scándalum autem tibi facit, \
+et propter dissonántiam morum te pértrahit in gehénnam: mélius est ut et propinquitáte ejus et \
+emoluméntis carnálibus cáreas, ne, dum vis lucri fácere cognátos et necessários, causam hábeas ruinárum.")
+
+                   (:ref "Matt 18:1-10"
+                    :text "\
+Dico vobis quia Angeli eórum in cælis semper vident fáciem Patris mei. Supra díxerat, per manum et \
+pedem et óculum, omnes propinquitátes et necessitúdines, quæ scándalum fácere póterant, amputándas; \
+austeritátem, ítaque senténtiæ subjécto præcépto témperat, dicens: Vidéte ne contemnátis unum ex \
+pusíllis istis. Sic, inquit, præcípio severitátem, ut commiscéri cleméntiam dóceam. Quia Angeli \
+eórum in cælis vident semper fáciem Patris. Magna dígnitas animárum, ut unaquǽque hábeat ab ortu \
+nativitátis, in custódiam sui, Angelum delegátum. Unde légimus in Apocalýpsi Joánnis: Angelo Ephesi, \
+et reliquárum ecclesiárum, scribe hæc. Apóstolus quoque prǽcipit velári cápita, in ecclésiis, \
+feminárum propter Angelos."))
+
+                  ;; Responsories same as May 8
+                  :responsories
+                  ((:respond "Factum est siléntium in cælo, dum commítteret bellum draco cum Michaéle Archángelo:"
+                    :verse "Míllia míllium ministrábant ei, et décies centéna míllia assistébant ei."
+                    :repeat "Audíta est vox míllia míllium dicéntium: Salus, honor et virtus omnipoténti Deo.")
+                   (:respond "Stetit Angelus juxta aram templi, habens thuríbulum áureum in manu sua, et data sunt ei incénsa multa:"
+                    :verse "In conspéctu Angelórum psallam tibi: adorábo ad templum sanctum tuum, et confitébor nómini tuo, Dómine."
+                    :repeat "Et ascéndit fumus arómatum de manu Angeli in conspéctu Dómini.")
+                   (:respond "In conspéctu Angelórum psallam tibi, et adorábo ad templum sanctum tuum:"
+                    :verse "Super misericórdia tua et veritáte tua: quóniam magnificásti super nos nomen sanctum tuum."
+                    :repeat "Et confitébor nómini tuo, Dómine."
+                    :gloria t)
+                   (:respond "Hic est Míchaël Archángelus, princeps milítiæ Angelórum,"
+                    :verse "Archángelus Míchaël præpósitus paradísi, quem honoríficant Angelórum cives."
+                    :repeat "Cujus honor præstat benefícia populórum, et orátio perdúcit ad regna cælórum.")
+                   (:respond "Venit Míchaël Archángelus cum multitúdine Angelórum, cui trádidit Deus ánimas Sanctórum,"
+                    :verse "Emítte, Dómine, Spíritum sanctum tuum de cælis, spíritum sapiéntiæ et intelléctus."
+                    :repeat "Ut perdúcat eas in paradísum exsultatiónis.")
+                   (:respond "In témpore illo consúrget Míchaël, qui stat pro fíliis vestris:"
+                    :verse "In témpore illo salvábitur pópulus tuus omnis, qui invéntus fúerit scriptus in libro vitæ."
+                    :repeat "Et véniet tempus, quale non fuit, ex quo gentes esse cœpérunt, usque ad illud."
+                    :gloria t)
+                   (:respond "In conspéctu géntium nolíte timére; vos enim in córdibus vestris adoráte et timéte Dóminum;"
+                    :verse "Stetit Angelus juxta aram templi, habens thuríbulum áureum in manu sua."
+                    :repeat "Angelus enim ejus vobíscum est.")
+                   (:respond "Míchaël Archángelus venit in adjutórium pópulo Dei,"
+                    :verse "Stetit Angelus juxta aram templi, habens thuríbulum áureum in manu sua."
+                    :repeat "Stetit in auxílium pro animábus justis."
+                    :gloria t))))
 
     ((9 . 30) . (:name "St. Jerome, Priest, C.D."
                   :latin "S. Hieronymi Presbyteris Confessoris et Ecclesiæ Doctoris"
@@ -3722,11 +5714,182 @@ _
                   :commune C5
                   :collect deus-qui-nos-beati-hilarionis))
 
-    ((10 . 24) . (:name "St. Raphael the Archangel;Duplex majus"
+    ((10 . 24) . (:name "St. Raphael the Archangel"
                   :latin "S. Raphaëlis Archangeli"
                   :rank duplex-majus
                   :commune nil
-                  :collect deus-qui-beatum-raphaelem-archangelum))
+                  :collect deus-qui-beatum-raphaelem-archangelum
+
+                  ;; ── Matins ──
+                  ;; ex Sancti/05-08 base; own antiphons, hymn, lessons, responsories.
+                  ;; Invitatory inherited from May 8.
+                  :invitatory regem-archangelorum-dominum
+                  :hymn christe-sanctorum-decus-angelorum
+                  :psalms-1 ((egressus-tobias . 8)
+                             (angelus-raphael-seipsum . 10)
+                             (sanum-ducam . 14))
+                  :psalms-2 ((dixit-autem-angelus-apprehende . 18)
+                             (obsecro-te-azaria . 23)
+                             (lumina-fel-sanat . 33))
+                  :psalms-3 ((est-hic-sara . 95)
+                             (septem-viros-habuit . 96)
+                             (per-tres-dies . 102))
+                  :versicle-1 ("Data sunt Angelo incénsa multa."
+                               "Ut adoléret ea ante altáre áureum, quod est ante óculos Dómini.")
+                  :versicle-1-en ("There was given to the Angel much incense."
+                                  "That he should offer it upon the golden altar, which is before the eyes of the Lord.")
+                  :versicle-2 ("Ascéndit fumus arómatum in conspéctu Dómini."
+                               "De manu Angeli.")
+                  :versicle-2-en ("The smoke of incense ascended before the Lord."
+                                  "From the hand of the Angel.")
+                  :versicle-3 ("Apprehéndit Angelus Ráphaël dæmónium."
+                               "Et religávit illud in desérto superióris Ægýpti.")
+                  :versicle-3-en ("The Angel Raphael seized the demon."
+                                  "And bound it in the desert of upper Egypt.")
+
+                  :lessons
+                  (;; ── Nocturn I: Tobit 12 ──
+
+                   (:ref "Tob 12:1-4"
+                    :source "De libro Tobíæ"
+                    :text "\
+Vocávit ad se Tobías fílium suum, dixítque ei: Quid póssumus dare viro isti sancto, qui venit tecum? \
+Respóndens Tobías, dixit patri suo: Pater, quam mercédem dábimus ei? aut quid dignum póterit esse \
+benefíciis ejus? Me duxit et redúxit sanum, pecúniam a Gabélo ipse recépit, uxórem ipse me habére \
+fecit, et dæmónium ab ea ipse compéscuit: gáudium paréntibus ejus fecit, meípsum a devoratióne piscis \
+erípuit, te quoque vidére fecit lumen cæli, et bonis ómnibus per eum repléti sumus. Quid illi ad hæc \
+potérimus dignum dare? Sed peto te, pater mi, ut roges eum, si forte dignábitur medietátem de ómnibus \
+quæ alláta sunt, sibi assúmere.")
+
+                   (:ref "Tob 12:5-13"
+                    :text "\
+Et vocántes eum, pater scílicet et fílius, tulérunt eum in partem; et rogáre cœpérunt ut dignarétur \
+dimídiam partem ómnium quæ attúlerant, accéptam habére. Tunc dixit eis occúlte: Benedícite Deum cæli, \
+et coram ómnibus vivéntibus confitémini ei, quia fecit vobíscum misericórdiam suam. Etenim sacraméntum \
+regis abscóndere bonum est, ópera autem Dei reveláre et confitéri honoríficum est. Bona est orátio cum \
+jejúnio, et eleemósyna magis quam thesáuros auri recóndere; quóniam eleemósyna a morte líberat, et ipsa \
+est quæ purgat peccáta, et facit inveníre misericórdiam et vitam ætérnam. Qui autem fáciunt peccátum et \
+iniquitátem, hostes sunt ánimæ suæ. Manifésto ergo vobis veritátem et non abscóndam a vobis occúltum \
+sermónem. Quando orábas cum lácrimis, et sepeliébas mórtuos, et derelinquébas prándium tuum, et mórtuos \
+abscondébas per diem in domo tua, et nocte sepeliébas eos, ego óbtuli oratiónem tuam Dómino. Et quia \
+accéptus eras Deo, necésse fuit ut tentátio probáret te.")
+
+                   (:ref "Tob 12:14-22"
+                    :text "\
+Et nunc misit me Dóminus ut curárem te, et Saram uxórem fílii tui a dæmónio liberárem; ego enim sum \
+Ráphaël Angelus, unus ex septem qui astámus ante Dóminum. Cumque hæc audíssent, turbáti sunt, et \
+treméntes cecidérunt super terram in fáciem suam. Dixítque eis Angelus: Pax vobis, nolíte timére. \
+Etenim cum essem vobíscum, per voluntátem Dei eram: ipsum benedícite, et cantáte illi. Vidébar quidem \
+vobíscum manducáre, et bíbere: sed ego cibo invisíbili, et potu, qui ab homínibus vidéri non potest, \
+utor. Tempus est ergo ut revértar ad eum, qui me misit: vos autem benedícite Deum, et narráte ómnia \
+mirabília ejus. Et cum hæc dixísset, ab aspéctu eórum ablátus est, et ultra eum vidére non potuérunt. \
+Tunc prostráti per horas tres in fáciem, benedixérunt Deum: et exsurgéntes narravérunt ómnia \
+mirabília ejus.")
+
+                   ;; ── Nocturn II: St. Bonaventure, De Sanctis Angelis Sermo 5 ──
+
+                   (:ref "Hom."
+                    :source "Sermo Sancti Bonaventuræ Epíscopi\nDe Sanctis Angelis Sermo 5, sub fine"
+                    :text "\
+Ráphaël interpretátur medicina Dei. Et debémus notare quod eductio a malo est per tria beneficia, a \
+Raphaéle nobis colláta medicante nos. Educit ergo nos Ráphaël médicus ab infirmitáte animi, inducéndo \
+nos ad amaritúdinem contritiónis; unde in Tobía dicit Ráphaël: Ubi introíeris domum tuam, lini super \
+óculos ejus ex felle. Sic fecit, et vidit. Quare Ráphaël non pótuit ipse fácere? Quia Angelus non dat \
+compunctiónem, sed osténdit viam. Per fel intellígitur amaritúdo contritiónis, quæ sanat óculos \
+interioris mentis; Psalmus: Qui sanat contritos corde. Hoc est optimum collyrium. In Júdicum secundo \
+dícitur quod Angelus ascéndit ad locum fléntium, et dixit pópulo: Eduxi vos de terra Ægypti, feci vobis \
+tot et tanta bona; et flevit omnis pópulus, ita ut locus ille appellarétur locus fléntium. Caríssimi, \
+Angeli tota die narrant nobis benefícia Dei, et reducunt ea nobis ad memóriam: Quis est qui te creávit, \
+qui te redémit? Quid fecísti, quem offendísti? Hoc si consideráveris, nullum habes remédium nisi flere.")
+
+                   (:ref "Hom."
+                    :text "\
+Secundo Ráphaël edúcit de servitute diaboli, persuadéndo nobis memóriam passiónis Christi; in cujus \
+figuram dictum est Tobíæ sexto: Cordis ejus particulam si super carbónes ponas, fumus ejus éxtricat \
+omne genus dæmoniórum. Dícitur Tobíæ octavo quod pósuit Tobías particulam cordis super carbónes, et \
+Ráphaël religávit dæmónium in desérto superioris Ægypti. Quid est hoc? Non poterat Ráphaël religare \
+dæmónium nisi ponerétur cor super carbónes? Numquid cor piscis dabat Angelo tantam virtútem? Nequaquam! \
+Nihil posset, nisi ibi mystérium esset. In hoc enim nobis datur intelligi quod nihil est quod ita nos \
+líberet hódie a servitute diaboli sicut passio Christi, quæ processit ex radíce cordis sive caritátis. \
+Cor enim fons est caloris cunctæ vitæ. Si ergo Cor Christi, hoc est passiónem quam sustinuit, \
+procedéntem ex radíce caritátis et fonte caloris, ponas super carbónes, hoc est super inflammatam \
+memóriam; statim dæmon religábitur, ut tibi nocére non possit.")
+
+                   (:ref "Hom."
+                    :text "\
+Tertio liberat nos a contrarietáte Dei, quam incurrimus per offensam Dei, et hoc inducéndo nos ad \
+instantiam oratiónis; et hoc est quod dixit angelus Ráphaël Tobíæ duodecimo: Quando orabas cum lácrimis, \
+ego óbtuli oratiónem tuam Dómino. Ipsi enim Angeli reconciliant nos Deo, quantum possunt. Accusatores \
+nostri coram Deo sunt dæmones. Angeli autem excusant nos, quando ófferunt oratiónes nostras, ad quas \
+devote faciendas nos inducunt; Apocalypsis octavo: Ascéndit fumus arómatum in conspéctu Dómini de manu \
+Angeli. Arómata ista suáviter redoléntia sunt oratiónes Sanctórum. Vis placare Deum, quem offendísti? \
+Ora devote. Offérunt Deo oratiónem tuam, ut te Deo reconcilient.")
+
+                   ;; ── Nocturn III: St. John Chrysostom on John 5:1-4 ──
+
+                   (:ref "Joann 5:1-4"
+                    :source "Homilía sancti Joánnis Chrysóstomi\nHomilia 36 in Joánnem, num. 1"
+                    :text "\
+Quis hic curatiónis modus? quale mystérium subindicátur? Neque enim sine causa hæc scripta sunt; sed \
+futura nobis quasi in figura et imagine describit, ne, si res stupenda accideret inexspéctata, \
+auditórum multórum fidem aliquátenus labefactáret. Quænam ígitur hæc descriptio? Futurum baptisma \
+dandum erat, plenum virtúte et grátia maxima, baptisma, quod peccáta ómnia ablúeret, quod ex mórtuis \
+vivos redderet. Hæc ergo ut in imagine depingúntur in piscina et in aliis multis. Et primo quidem aquam \
+dedit, quæ córporum máculas ablúeret, sordesque non veras, sed tales existimátas, ex funere nempe, \
+ex lepra, et similes; multaque vidére est eádem de causa in veteri lege per aquam mundata.")
+
+                   (:ref "Joann 5:1-4"
+                    :text "\
+Sed ad propositum jam redeamus. Primo ítaque, ut diximus, córporum maculas, deínde varias infirmitátes \
+per aquam solvi curat. Ut enim nos Deus ad baptismi grátiam propius reduceret, non jam maculas solum, \
+sed et morbos sanat. Imagines enim quæ propius ad veritátem accedunt, et in baptismate, et in passióne, \
+et in aliis magis conspicuæ sunt quam vetustiores. Quemádmodum enim qui prope regem sunt satéllites, \
+remotióribus sunt honoratiores; ita et in figuris factum est. Et Angelus descéndens turbábat aquam, et \
+sanándi vim indebat ipsi, ut discerent Judæi, Angelórum Dóminum multo magis posse ánimæ morbos omnes \
+curare. Sed, quemádmodum hic aquárum natúra non simpliciter curábat (alioquin enim semper id fáceret), \
+sed Angeli operatióne id fiebat; sic in nobis non aqua simpliciter operátur, sed, postquam Spíritus \
+grátiam accéperit, tunc ómnia solvit peccáta.")
+
+                   (:ref "Joann 5:1-4"
+                    :text "\
+Circa hanc piscinam jacebat multitúdo magna infirmórum, cæcórum, claudórum, aridórum, aquæ motum \
+exspectántium. Sed tunc infirmitas impediménto erat quóminus is qui vellet, sanarétur; nunc autem \
+unusquísque potestátem accedéndi habet. Non enim Angelus est qui aquam movet, sed Angelórum Dóminus \
+ómnia éfficit. Nec dicere póssumus: Dum ego accedo, alius ante me descéndit. Sed, si totus orbis \
+venerit, grátia non consúmitur, neque vis vel operátio déficit, sed semper éadem manet. Ac, quemádmodum \
+solares radii quotídie illúminant, nec absumúntur, neque, quod multis subministréntur, lucis quídpiam \
+amittunt; sic, immo multo minus, Spíritus operátio minúitur a multitúdine accipiéntium. Hoc autem \
+factum est ut qui díscerent in aqua curándos esse corporis morbos et hac in re diu exercitáti essent, \
+facílius crederent étiam morbos animi posse curari."))
+
+                  :responsories
+                  ((:respond "In illo témpore exaudítæ sunt preces ambórum in conspéctu glóriæ summi Dei:"
+                    :verse "Tobías et Sara in tribulatióne pósiti cum lácrimis oráre cœpérunt."
+                    :repeat "Et missus est Angelus Dómini sanctus Ráphaël, ut curáret eos ambos, quorum uno témpore sunt oratiónes in conspéctu Dómini recitátæ.")
+                   (:respond "Egréssus Tobías invénit júvenem spléndidum stantem præcínctum, et quasi parátum ad ambulándum, et salutávit eum, et dixit:"
+                    :verse "Et, ignórans quod Dómini Angelus esset, salutávit eum, et dixit."
+                    :repeat "Unde te habémus, bone júvenis?")
+                   (:respond "Ingréssus Angelus ad Tobíam, salutávit eum, et dixit: Gaudium sit tibi semper:"
+                    :verse "Et respondens Tobías, ait: Quale gáudium mihi erit, qui in ténebris sedeo, et lumen cæli non video?"
+                    :repeat "Forti animo esto, in próximo enim est, ut a Deo cureris."
+                    :gloria t)
+                   (:respond "Interrogávit Tobías Angelum: De qua domo, aut de qua tribu es tu? Qui respondens, ait:"
+                    :verse "Genus quæris mercenarii, an ipsum mercenárium, qui cum fílio tuo eat? Sed ne forte sollícitus sis."
+                    :repeat "Ego sum Azarías, Ananíæ magni fílius.")
+                   (:respond "Exívit Tobías ut lavaret pedes suos, et ecce piscis immanis exívit ad devorándum eum: qui expavéscens, clamávit voce magna, dicens: Dómine, invadit me. Et dixit ei Angelus: Apprehénde branchiam ejus, et trahe eum ad te."
+                    :verse "Attraxit autem Tobías piscem in siccum, et palpitare cœpit ante pedes ejus; et ait Angelus ei."
+                    :repeat "Exéntera hunc piscem, et cor ejus, et fel, et jecur repóne tibi: sunt enim necessaria ad medicaménta utíliter.")
+                   (:respond "Ubi introíeris domum tuam, dixit Angelus Ráphaël ad Tobíam, statim adora Dóminum Deum tuum, et, grátias agens ei, accede ad patrem tuum, et osculare eum:"
+                    :verse "Tolle tecum ex felle isto piscis; erit enim necessárium."
+                    :repeat "Statimque lini super óculos ejus ex felle isto piscis, quem portas tecum; sicas enim quóniam mox aperiéntur óculi ejus, et vidébit pater tuus lumen cæli, et in aspectu tuo gaudébit."
+                    :gloria t)
+                   (:respond "Benedícite Deum cæli, dixit Angelus Ráphaël et coram ómnibus vivéntibus confitémini ei:"
+                    :verse "Ipsum benedícite, et cantáte illi, et narráte ómnia mirabília ejus."
+                    :repeat "Quia fecit vobíscum misericórdiam suam.")
+                   (:respond "Tempus est ut revértar ad eum, qui me misit, dixit Angelus Ráphaël;"
+                    :verse "Confitémini ei coram ómnibus vivéntibus, quia fecit vobíscum misericórdiam suam."
+                    :repeat "Vos autem benedícite Dóminum, et narráte ómnia mirabília ejus."
+                    :gloria t))))
 
     ((10 . 25) . (:name "Sts. Chrysanthus and Daria, M.s"
                   :latin "Ss. Chrysanthi et Dariæ Martyrum"

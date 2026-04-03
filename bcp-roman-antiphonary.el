@@ -3684,6 +3684,1004 @@ Virgin, glorious and blessed!"))))
    :translations
    ((do . "She spreadeth out her hand to the poor, * yea, she reacheth forth her hands to the needy, and eateth not the bread of idleness."))))
 
+;;; ═══════════════════════════════════════════════════════════════════════════
+;;; Proprium Sanctorum — Matins antiphons for feasts with :commune nil
+;;; ═══════════════════════════════════════════════════════════════════════════
+
+;;; ─── May 3: Inventione Sanctæ Crucis — Invitatory ───────────────────────
+
+(bcp-roman-antiphonary-register
+ 'christum-regem-crucifixum
+ '(:latin "Christum Regem crucifíxum, * Veníte, adorémus."
+   :source composition
+   :translations
+   ((do . "Christ the King crucified, * O come, let us worship Him."))))
+
+;;; ─── May 3: Inventione Sanctæ Crucis — Nocturn antiphons ───────────────
+
+(bcp-roman-antiphonary-register
+ 'inventae-crucis
+ '(:latin "Invéntæ Crucis festa recólimus, cujus præcónium univérsum per orbem micánti lúmine fulget, allelúja."
+   :source composition
+   :translations
+   ((do . "We celebrate the feast of the Finding of the Cross, whose renown shineth with gleaming light throughout the whole world, alleluia."))))
+
+(bcp-roman-antiphonary-register
+ 'felix-ille-triumphus
+ '(:latin "Felix ille triúmphus fit salus ægris, vitæ lignum, mortis remédium, allelúja."
+   :source composition
+   :translations
+   ((do . "That blessed triumph becometh health to the sick, the tree of life, the remedy of death, alleluia."))))
+
+(bcp-roman-antiphonary-register
+ 'adoramus-te-christe-et-benedicimus
+ '(:latin "Adorámus te, Christe, et benedícimus tibi, quia per Crucem tuam redemísti mundum, allelúja."
+   :source composition
+   :translations
+   ((do . "We adore thee, O Christ, and we bless thee, because by thy Cross thou hast redeemed the world, alleluia."))))
+
+;;; ─── May 8: Apparitione S. Michaëlis — Invitatory ──────────────────────
+
+(bcp-roman-antiphonary-register
+ 'regem-archangelorum-dominum
+ '(:latin "Regem Archangelórum Dóminum, * Veníte, adorémus."
+   :source composition
+   :translations
+   ((do . "The Lord, King of the Archangels, * O come, let us worship Him."))))
+
+;;; ─── May 8: Apparitione S. Michaëlis — Nocturn antiphons ───────────────
+
+(bcp-roman-antiphonary-register
+ 'concussum-est-mare
+ '(:latin "Concússum est mare, et contrémuit terra, ubi Archángelus Míchaël descendébat de cælo, allelúja."
+   :source composition
+   :translations
+   ((do . "The sea was shaken, and the earth trembled, when the Archangel Michael came down from heaven, alleluia."))))
+
+(bcp-roman-antiphonary-register
+ 'michael-archangele-veni
+ '(:latin "Míchaël Archángele, veni in adjutórium pópulo Dei, allelúja."
+   :source composition
+   :translations
+   ((do . "Michael the Archangel, come to the help of the people of God, alleluia."))))
+
+(bcp-roman-antiphonary-register
+ 'angelus-archangelus-michael
+ '(:latin "Angelus Archángelus Míchaël, Dei núntius pro animábus justis, allelúja, allelúja."
+   :source composition
+   :translations
+   ((do . "The Angel, the Archangel Michael, God's messenger for the souls of the just, alleluia, alleluia."))))
+
+;;; ─── Jun 24: Nativitate S. Joannis Baptistæ — Invitatory ──────────────
+
+(bcp-roman-antiphonary-register
+ 'regem-praecursoris-dominum
+ '(:latin "Regem Præcursóris Dóminum, * Veníte, adorémus."
+   :source composition
+   :translations
+   ((do . "The Lord, King of the Forerunner, * O come, let us worship Him."))))
+
+;;; ─── Jun 24: Nativitate S. Joannis Baptistæ — Nocturn I antiphons ─────
+
+(bcp-roman-antiphonary-register
+ 'priusquam-te-formarem
+ '(:latin "Priúsquam te formárem in útero, novi te; et ántequam progrederéris, sanctificávi te."
+   :source vulgate
+   :ref "Jer 1:5"
+   :translations
+   ((do . "Before I formed thee in the womb, I knew thee; and before thou camest forth, I sanctified thee."))))
+
+(bcp-roman-antiphonary-register
+ 'ad-omnia-quae-mittam-te
+ '(:latin "Ad ómnia quæ mittam te, dicit Dóminus, ibis: ne tímeas, et quæ mandávero tibi, loquéris ad eos."
+   :source vulgate
+   :ref "Jer 1:7-8"
+   :translations
+   ((do . "To all that I shall send thee, saith the Lord, thou shalt go; be not afraid, and whatsoever I command thee, thou shalt speak unto them."))))
+
+(bcp-roman-antiphonary-register
+ 'ne-timeas-a-facie
+ '(:latin "Ne tímeas a fácie eórum, quia ego tecum sum, dicit Dóminus."
+   :source vulgate
+   :ref "Jer 1:8"
+   :translations
+   ((do . "Be not afraid of their faces, for I am with thee, saith the Lord."))))
+
+;;; ─── Jun 24: Nativitate S. Joannis Baptistæ — Nocturn II antiphons ────
+
+(bcp-roman-antiphonary-register
+ 'misit-dominus-manum-suam
+ '(:latin "Misit Dóminus manum suam, et tétigit os meum, et prophétam in géntibus dedit me Dóminus."
+   :source vulgate
+   :ref "Jer 1:9-10"
+   :translations
+   ((do . "The Lord put forth his hand, and touched my mouth, and the Lord gave me to be a prophet unto the nations."))))
+
+(bcp-roman-antiphonary-register
+ 'ecce-dedi-verba-mea
+ '(:latin "Ecce dedi verba mea in ore tuo: ecce constítui te super gentes et regna."
+   :source vulgate
+   :ref "Jer 1:9-10"
+   :translations
+   ((do . "Behold, I have put my words in thy mouth: behold, I have set thee over the nations and over the kingdoms."))))
+
+(bcp-roman-antiphonary-register
+ 'dominus-ab-utero-vocavit-me
+ '(:latin "Dóminus ab útero vocávit me, de ventre matris meæ recordátus est nóminis mei."
+   :source vulgate
+   :ref "Isa 49:1"
+   :translations
+   ((do . "The Lord hath called me from the womb; from the bowels of my mother hath he made mention of my name."))))
+
+;;; ─── Jun 24: Nativitate S. Joannis Baptistæ — Nocturn III antiphons ───
+
+(bcp-roman-antiphonary-register
+ 'posuit-os-meum
+ '(:latin "Pósuit os meum Dóminus quasi gládium acútum: sub umbra manus suæ protéxit me."
+   :source vulgate
+   :ref "Isa 49:2"
+   :translations
+   ((do . "The Lord hath made my mouth like a sharp sword; in the shadow of his hand hath he hid me."))))
+
+(bcp-roman-antiphonary-register
+ 'formans-me-ex-utero
+ '(:latin "Formans me ex útero servum sibi Dóminus, dicit: Dedi te in lucem géntium, ut sis salus mea usque ad extrémum terræ."
+   :source vulgate
+   :ref "Isa 49:5-6"
+   :translations
+   ((do . "The Lord that formed me from the womb to be his servant saith: I have given thee for a light of the Gentiles, that thou mayest be my salvation unto the end of the earth."))))
+
+(bcp-roman-antiphonary-register
+ 'reges-videbunt
+ '(:latin "Reges vidébunt, et consúrgent príncipes et adorábunt Dóminum Deum tuum, qui elégit te."
+   :source vulgate
+   :ref "Isa 49:7"
+   :translations
+   ((do . "Kings shall see and arise, princes also shall worship the Lord thy God, who hath chosen thee."))))
+
+;;; ─── Jul 1: Pretiosissimi Sanguinis D.N.J.C. — Invitatory ─────────────
+
+(bcp-roman-antiphonary-register
+ 'christum-dei-filium-qui-suo-nos
+ '(:latin "Christum Dei Fílium, qui suo nos redémit sánguine, * Veníte, adorémus."
+   :source composition
+   :translations
+   ((do . "Christ, the Son of God, who redeemed us with his Blood, * O come, let us worship Him."))))
+
+;;; ─── Jul 1: Pretiosissimi Sanguinis — Nocturn antiphons ────────────────
+
+(bcp-roman-antiphonary-register
+ 'postquam-consummati-sunt
+ '(:latin "Postquam consummáti sunt dies octo, ut circumciderétur Puer, vocátum est nomen ejus Jesus."
+   :source vulgate
+   :ref "Luc 2:21"
+   :translations
+   ((do . "When eight days were accomplished for the circumcising of the Child, his name was called Jesus."))))
+
+(bcp-roman-antiphonary-register
+ 'factus-in-agonia
+ '(:latin "Factus in agonía prolíxius orábat, et factus est sudor ejus sicut guttæ sánguinis decurréntis in terram."
+   :source vulgate
+   :ref "Luc 22:43-44"
+   :translations
+   ((do . "Being in an agony he prayed more earnestly, and his sweat was as it were great drops of blood falling down to the ground."))))
+
+(bcp-roman-antiphonary-register
+ 'judas-qui-eum-tradidit
+ '(:latin "Judas, qui eum trádidit, pœniténtia ductus rétulit trigínta argénteos, dicens: Peccávi tradens sánguinem justum."
+   :source vulgate
+   :ref "Matt 27:3-4"
+   :translations
+   ((do . "Judas, which had betrayed him, repented, and brought again the thirty pieces of silver, saying: I have sinned in that I have betrayed the innocent blood."))))
+
+(bcp-roman-antiphonary-register
+ 'pilatus-volens-populo
+ '(:latin "Pilátus, volens pópulo satisfácere, trádidit illis Jesum flagéllis cæsum."
+   :source vulgate
+   :ref "Marc 15:15"
+   :translations
+   ((do . "Pilate, willing to content the people, delivered Jesus, when he had scourged him."))))
+
+(bcp-roman-antiphonary-register
+ 'videns-autem-quia-nihil
+ '(:latin "Videns autem quia nihil profíceret, accépta aqua, lavit manus coram pópulo dicens: Innocens ego sum a sánguine Justi hujus."
+   :source vulgate
+   :ref "Matt 27:24"
+   :translations
+   ((do . "When he saw that he could prevail nothing, he took water, and washed his hands before the multitude, saying: I am innocent of the blood of this just person."))))
+
+(bcp-roman-antiphonary-register
+ 'et-respondens-universus-populus
+ '(:latin "Et respóndens univérsus pópulus dixit: Sanguis ejus super nos et super fílios nostros."
+   :source vulgate
+   :ref "Matt 27:25"
+   :translations
+   ((do . "Then answered all the people, and said: His blood be on us and on our children."))))
+
+(bcp-roman-antiphonary-register
+ 'exivit-ergo-jesus
+ '(:latin "Exívit ergo Jesus portans corónam spíneam et purpúreum vestiméntum. Et dixit eis: Ecce homo."
+   :source vulgate
+   :ref "Joann 19:5"
+   :translations
+   ((do . "Then came Jesus forth, wearing the crown of thorns and the purple robe. And he saith unto them: Behold the man."))))
+
+(bcp-roman-antiphonary-register
+ 'et-bajulans-sibi-crucem
+ '(:latin "Et bájulans sibi crucem, exívit in eum, qui dícitur Calváriæ, locum, ubi crucifixérunt eum."
+   :source vulgate
+   :ref "Joann 19:17-18"
+   :translations
+   ((do . "And he bearing his cross went forth unto a place called Calvary, where they crucified him."))))
+
+(bcp-roman-antiphonary-register
+ 'ut-viderunt-eum-jam-mortuum
+ '(:latin "Ut vidérunt eum jam mórtuum, non fregérunt ejus crura, sed unus mílitum láncea latus ejus apéruit, et contínuo exívit sanguis et aqua."
+   :source vulgate
+   :ref "Joann 19:33-34"
+   :translations
+   ((do . "When they saw that he was dead already, they brake not his legs, but one of the soldiers with a spear opened his side, and forthwith came there out blood and water."))))
+
+;;; ─── Aug 6: Transfiguratione D.N.J.C. — Invitatory ────────────────────
+
+(bcp-roman-antiphonary-register
+ 'summum-regem-gloriae
+ '(:latin "Summum Regem glóriæ, * Christum adorémus."
+   :source composition
+   :translations
+   ((do . "The most high King of glory, * Let us adore Christ."))))
+
+;;; ─── Aug 6: Transfiguratione D.N.J.C. — Nocturn antiphons ─────────────
+
+(bcp-roman-antiphonary-register
+ 'paulo-minus-ab-angelis
+ '(:latin "Paulo minus ab Angelis minorátus, glória et honóre coronátus est, et constitútus super ópera mánuum Dei."
+   :source gallican
+   :ref "Ps 8:6-7"
+   :translations
+   ((do . "Thou madest him a little lower than the Angels; thou crownedst him with glory and honour, and didst set him over the works of thy hands."))))
+
+(bcp-roman-antiphonary-register
+ 'revelavit-dominus-condensa
+ '(:latin "Revelávit Dóminus condénsa, et in templo ejus omnes dicent glóriam."
+   :source gallican
+   :ref "Ps 28:9"
+   :translations
+   ((do . "The Lord uncovereth the thick places, and in his temple doth every one speak of his glory."))))
+
+(bcp-roman-antiphonary-register
+ 'speciosus-forma
+ '(:latin "Speciósus forma præ fíliis hóminum, diffúsa est grátia in lábiis tuis."
+   :source gallican
+   :ref "Ps 44:3"
+   :translations
+   ((do . "Thou art fairer than the children of men; grace is poured into thy lips."))))
+
+(bcp-roman-antiphonary-register
+ 'illuminans-tu-mirabiliter
+ '(:latin "Illúminans tu mirabíliter a móntibus ætérnis: turbáti sunt omnes insipiéntes corde."
+   :source gallican
+   :ref "Ps 75:5-6"
+   :translations
+   ((do . "Thou dost wonderfully shine forth from the everlasting mountains; all the foolish of heart were troubled."))))
+
+(bcp-roman-antiphonary-register
+ 'melior-est-dies-una
+ '(:latin "Mélior est dies una in átriis tuis, super míllia."
+   :source gallican
+   :ref "Ps 83:11"
+   :translations
+   ((do . "One day in thy courts is better than a thousand."))))
+
+(bcp-roman-antiphonary-register
+ 'gloriosa-dicta-sunt
+ '(:latin "Gloriósa dicta sunt de te, cívitas Dei."
+   :source gallican
+   :ref "Ps 86:3"
+   :translations
+   ((do . "Glorious things are spoken of thee, O city of God."))))
+
+(bcp-roman-antiphonary-register
+ 'thabor-et-hermon
+ '(:latin "Thabor et Hermon in nómine tuo exsultábunt: tuum brácchium cum poténtia."
+   :source gallican
+   :ref "Ps 88:13-14"
+   :translations
+   ((do . "Tabor and Hermon shall rejoice in thy name; thy arm is with power."))))
+
+(bcp-roman-antiphonary-register
+ 'lux-orta-est-justo-transfig
+ '(:latin "Lux orta est justo, et rectis corde lætítia."
+   :source gallican
+   :ref "Ps 96:11"
+   :translations
+   ((do . "Light is risen to the just, and gladness to the right of heart."))))
+
+(bcp-roman-antiphonary-register
+ 'confessionem-et-decorem
+ '(:latin "Confessiónem et decórem índuit, amíctus lúmine sicut vestiménto."
+   :source gallican
+   :ref "Ps 103:1-2"
+   :translations
+   ((do . "He putteth on praise and beauty, and is clothed with light as with a garment."))))
+
+;;; ─── Sep 29: Dedicatione S. Michaëlis — Nocturn antiphons ─────────────
+;;; Invitatory, hymn, and responsories inherited from May 8.
+;;; Noc1 Ps1, Noc2 Ps1, Noc3 Ps1 reuse May 8 antiphons (already registered).
+
+(bcp-roman-antiphonary-register
+ 'laudemus-dominum
+ '(:latin "Laudémus Dóminum, quem laudant Ángeli, quem Chérubim et Séraphim, Sanctus, Sanctus, Sanctus proclámant."
+   :source composition
+   :translations
+   ((do . "Let us praise the Lord, whom the Angels praise, whom the Cherubim and Seraphim proclaim: Holy, Holy, Holy."))))
+
+(bcp-roman-antiphonary-register
+ 'ascendit-fumus-aromatum
+ '(:latin "Ascéndit fumus arómatum in conspéctu Dómini de manu Ángeli."
+   :source vulgate
+   :ref "Apo 8:4"
+   :translations
+   ((do . "The smoke of the incense ascended up before the Lord out of the Angel's hand."))))
+
+(bcp-roman-antiphonary-register
+ 'michael-praepositus-paradisi
+ '(:latin "Míchaël præpósitus paradísi, quem honoríficant Angelórum cives."
+   :source composition
+   :translations
+   ((do . "Michael, chief of paradise, whom the citizens of the Angels honour."))))
+
+(bcp-roman-antiphonary-register
+ 'gloriosus-apparuisti
+ '(:latin "Gloriósus apparuísti in conspéctu Dómini: proptérea decórem índuit te Dóminus."
+   :source gallican
+   :ref "Ps 20:6"
+   :translations
+   ((do . "Glorious hast thou appeared in the sight of the Lord; therefore hath the Lord clothed thee with beauty."))))
+
+(bcp-roman-antiphonary-register
+ 'data-sunt-ei-incensa
+ '(:latin "Data sunt ei incénsa multa, ut adoléret ea ante altáre áureum, quod est ante óculos Dómini."
+   :source vulgate
+   :ref "Apo 8:3"
+   :translations
+   ((do . "There was given unto him much incense, that he should offer it upon the golden altar, which is before the eyes of the Lord."))))
+
+(bcp-roman-antiphonary-register
+ 'multa-magnalia
+ '(:latin "Multa magnália de Michaéle Archángelo, qui, fortis in prǽlio, fecit victóriam."
+   :source composition
+   :translations
+   ((do . "Great are the wonders of Michael the Archangel, who, mighty in battle, won the victory."))))
+
+;;; ─── Sep 14: Exaltatione Sanctæ Crucis — Invitatory ───────────────────
+
+(bcp-roman-antiphonary-register
+ 'christum-regem-in-cruce-exaltatum
+ '(:latin "Christum Regem pro nobis in Cruce exaltátum, * Veníte, adorémus."
+   :source composition
+   :translations
+   ((do . "Christ the King for us exalted upon the Cross, * Come, let us adore him."))))
+
+;;; ─── Sep 14: Exaltatione Sanctæ Crucis — Nocturn antiphons ───────────
+
+(bcp-roman-antiphonary-register
+ 'nobile-lignum-exaltatur
+ '(:latin "Nóbile lignum exaltátur, Christi fides rútilat, dum Crux ab ómnibus venerátur."
+   :source composition
+   :translations
+   ((do . "The noble wood is exalted, the faith of Christ shineth bright, while the Cross is venerated by all."))))
+
+(bcp-roman-antiphonary-register
+ 'sancta-crux-extollitur
+ '(:latin "Sancta Crux extóllitur a cunctis régibus, virga régia erígitur, in qua Salvátor triumphávit."
+   :source composition
+   :translations
+   ((do . "The Holy Cross is lifted up by all kings, the royal rod is raised, on which the Saviour triumphed."))))
+
+(bcp-roman-antiphonary-register
+ 'o-crux-venerabilis
+ '(:latin "O Crux venerábilis, quæ salútem attulísti míseris, quibus te éfferam præcóniis, quóniam vitam nobis cǽlitem præparásti."
+   :source composition
+   :translations
+   ((do . "O venerable Cross, which didst bring salvation to the wretched, with what praises shall I extol thee, for thou hast prepared for us the life of heaven."))))
+
+(bcp-roman-antiphonary-register
+ 'o-crucis-victoria
+ '(:latin "O Crucis victória et admirábile signum, in cælésti cúria fac nos captáre triúmphum."
+   :source composition
+   :translations
+   ((do . "O victory of the Cross and wondrous sign, in the heavenly court make us to attain triumph."))))
+
+(bcp-roman-antiphonary-register
+ 'funestae-mortis
+ '(:latin "Funéstæ mortis damnátur supplícium, dum Christus, in Cruce, nostra destrúxit víncula críminum."
+   :source composition
+   :translations
+   ((do . "The punishment of grievous death is condemned, while Christ on the Cross destroyed the chains of our sins."))))
+
+(bcp-roman-antiphonary-register
+ 'rex-exaltatur
+ '(:latin "Rex exaltátur in ǽthera, cum nóbile trophǽum Crucis ab univérsis christícolis adorátur per sǽcula."
+   :source composition
+   :translations
+   ((do . "The King is exalted to the heavens, when the noble trophy of the Cross is adored by all Christians through the ages."))))
+
+(bcp-roman-antiphonary-register
+ 'adoramus-te-christe-exalt
+ '(:latin "Adorámus te, Christe, et benedícimus tibi, quia per Crucem tuam redemísti mundum."
+   :source composition
+   :translations
+   ((do . "We adore thee, O Christ, and we bless thee, because by thy Cross thou hast redeemed the world."))))
+
+(bcp-roman-antiphonary-register
+ 'per-lignum-servi
+ '(:latin "Per lignum servi facti sumus, et per sanctam Crucem liberáti sumus: fructus árboris sedúxit nos, Fílius Dei redémit nos, allelúja."
+   :source composition
+   :translations
+   ((do . "By wood we were made servants, and by the Holy Cross we are set free: the fruit of the tree seduced us, the Son of God redeemed us, alleluia."))))
+
+(bcp-roman-antiphonary-register
+ 'salvator-mundi-salva-nos
+ '(:latin "Salvátor mundi, salva nos: qui per Crucem et sánguinem tuum redemísti nos, auxiliáre nobis, te deprecámur, Deus noster."
+   :source composition
+   :translations
+   ((do . "Saviour of the world, save us: who by thy Cross and Blood hast redeemed us, help us, we beseech thee, our God."))))
+
+;;; ─── Oct 24: S. Raphaëlis Archangeli — Nocturn antiphons ─────────────
+;;; Invitatory inherited from May 8 (regem-archangelorum-dominum).
+
+(bcp-roman-antiphonary-register
+ 'egressus-tobias
+ '(:latin "Egréssus Tobías invénit júvenem præcínctum, et quasi parátum ad ambulándum, et, ignórans quod Angelus esset, salutávit eum."
+   :source vulgate
+   :ref "Tob 5:5-6"
+   :translations
+   ((do . "Tobias going forth found a young man girded, and as it were ready to walk, and not knowing him to be an Angel, saluted him."))))
+
+(bcp-roman-antiphonary-register
+ 'angelus-raphael-seipsum
+ '(:latin "Angelus Ráphaël seípsum occúltans, ait: Ego sum Azarías, magni Ananíæ fílius."
+   :source vulgate
+   :ref "Tob 5:18"
+   :translations
+   ((do . "The Angel Raphael, concealing himself, said: I am Azarias, the son of the great Ananias."))))
+
+(bcp-roman-antiphonary-register
+ 'sanum-ducam
+ '(:latin "Sanum ducam fílium tuum in regiónem Medórum, et sanum tibi redúcam, allelúja."
+   :source vulgate
+   :ref "Tob 5:21"
+   :translations
+   ((do . "I will lead thy son safe into the country of the Medes, and bring him back safe to thee, alleluia."))))
+
+(bcp-roman-antiphonary-register
+ 'dixit-autem-angelus-apprehende
+ '(:latin "Dixit autem Angelus: Apprehénde bránchiam piscis, et trahe eum extra aquas."
+   :source vulgate
+   :ref "Tob 6:4"
+   :translations
+   ((do . "And the Angel said: Take hold of the gill of the fish, and draw him out of the water."))))
+
+(bcp-roman-antiphonary-register
+ 'obsecro-te-azaria
+ '(:latin "Obsecro te, Azaría frater, ut dicas mihi, quod remédium habébunt ista, quæ de pisce serváre jussísti."
+   :source vulgate
+   :ref "Tob 6:7"
+   :translations
+   ((do . "I beseech thee, brother Azarias, tell me, what remedy shall these things have, which thou didst bid me keep of the fish."))))
+
+(bcp-roman-antiphonary-register
+ 'lumina-fel-sanat
+ '(:latin "Lúmina fel sanat, sed virtus cordis et jécoris diáboli expéllit potestátem."
+   :source vulgate
+   :ref "Tob 6:8-9"
+   :translations
+   ((do . "The gall cureth the eyes, but the virtue of the heart and liver driveth away the power of the devil."))))
+
+(bcp-roman-antiphonary-register
+ 'est-hic-sara
+ '(:latin "Est hic Sara Raguélis fília; quæ tibi conjúgio dábitur, et omnis substántia ejus."
+   :source vulgate
+   :ref "Tob 6:12"
+   :translations
+   ((do . "Here is Sara, the daughter of Raguel, who shall be given to thee in marriage, and all her substance."))))
+
+(bcp-roman-antiphonary-register
+ 'septem-viros-habuit
+ '(:latin "Septem viros hábuit, quos dæmónium oppréssit; tímeo ne mihi símile contíngat."
+   :source vulgate
+   :ref "Tob 6:14-15"
+   :translations
+   ((do . "She hath had seven husbands, whom a devil oppressed; I fear lest the like befall me."))))
+
+(bcp-roman-antiphonary-register
+ 'per-tres-dies
+ '(:latin "Per tres dies oratióni cum uxóre tua vacábis, ut in sémine Abrahæ benedictiónem in fíliis consequáris."
+   :source vulgate
+   :ref "Tob 6:22"
+   :translations
+   ((do . "For three days thou shalt give thyself to prayer with thy wife, that thou mayest obtain the blessing of children in the seed of Abraham."))))
+
+;;; ─── Jan 25: Conversione S. Pauli — Invitatory ───────────────────────
+
+(bcp-roman-antiphonary-register
+ 'laudemus-deum-nostrum-in-conversione
+ '(:latin "Laudémus Deum nostrum, * In conversióne Doctóris géntium."
+   :source composition
+   :translations
+   ((do . "Let us praise our God, * In the conversion of the Doctor of the Gentiles."))))
+
+;;; ─── Mar 19: S. Joseph Sponsi B.M.V. — Invitatory ────────────────────
+
+(bcp-roman-antiphonary-register
+ 'christum-dei-filium-putari
+ '(:latin "Christum Dei Fílium, qui putári dignátus est fílius Joseph, * Veníte adorémus."
+   :source composition
+   :translations
+   ((do . "Christ the Son of God, who deigned to be thought the son of Joseph, * Come, let us adore him."))))
+
+;;; ─── Mar 19: S. Joseph Sponsi B.M.V. — Nocturn antiphons ────────────
+
+(bcp-roman-antiphonary-register
+ 'ascendit-joseph-a-galilaea
+ '(:latin "Ascéndit Joseph, a Galilǽa de civitáte Názareth in Judǽam, in civitátem David, quæ vocátur Béthlehem, ut profiterétur cum María."
+   :source vulgate
+   :ref "Luc 2:4"
+   :translations
+   ((do . "Joseph went up from Galilee, out of the city of Nazareth, into Judea, unto the city of David, which is called Bethlehem, to be enrolled with Mary."))))
+
+(bcp-roman-antiphonary-register
+ 'venerunt-pastores
+ '(:latin "Venérunt pastóres festinántes; et invenérunt Maríam, et Joseph, et Infántem pósitum in præsépio."
+   :source vulgate
+   :ref "Luc 2:16"
+   :translations
+   ((do . "The shepherds came with haste, and found Mary and Joseph, and the Infant laid in a manger."))))
+
+(bcp-roman-antiphonary-register
+ 'ecce-angelus-domini-apparuit-joseph
+ '(:latin "Ecce Angelus Dómini appáruit in somnis Joseph, dicens: Surge, et áccipe Púerum et Matrem ejus, et fuge in Ægýptum."
+   :source vulgate
+   :ref "Matt 2:13"
+   :translations
+   ((do . "Behold, the Angel of the Lord appeared to Joseph in a dream, saying: Arise, and take the Child and his Mother, and flee into Egypt."))))
+
+(bcp-roman-antiphonary-register
+ 'consurgens-joseph
+ '(:latin "Consúrgens Joseph, accépit Púerum et Matrem ejus nocte, et secéssit in Ægýptum; et erat ibi usque ad óbitum Heródis."
+   :source vulgate
+   :ref "Matt 2:14-15"
+   :translations
+   ((do . "Joseph arose and took the Child and his Mother by night, and withdrew into Egypt; and was there until the death of Herod."))))
+
+(bcp-roman-antiphonary-register
+ 'defuncto-herode
+ '(:latin "Defúncto Heróde, Angelus Dómini appáruit in somnis Joseph in Ægýpto, dicens: Surge, et áccipe Púerum et Matrem ejus, et vade in terram Israël; defúncti sunt enim qui quærébant ánimam Púeri."
+   :source vulgate
+   :ref "Matt 2:19-20"
+   :translations
+   ((do . "When Herod was dead, the Angel of the Lord appeared in a dream to Joseph in Egypt, saying: Arise, and take the Child and his Mother, and go into the land of Israel; for they are dead who sought the life of the Child."))))
+
+(bcp-roman-antiphonary-register
+ 'accepit-joseph-puerum
+ '(:latin "Accépit Joseph Púerum et Matrem ejus, et venit in terram Israël."
+   :source vulgate
+   :ref "Matt 2:21"
+   :translations
+   ((do . "Joseph took the Child and his Mother, and came into the land of Israel."))))
+
+(bcp-roman-antiphonary-register
+ 'audiens-joseph
+ '(:latin "Audiens Joseph, quod Archeláus regnáret in Judǽa pro Heróde patre suo, tímuit illo ire."
+   :source vulgate
+   :ref "Matt 2:22"
+   :translations
+   ((do . "When Joseph heard that Archelaus reigned in Judea in the room of Herod his father, he was afraid to go thither."))))
+
+(bcp-roman-antiphonary-register
+ 'admonitus-in-somnis
+ '(:latin "Admónitus in somnis, Joseph secéssit in partes Galilǽæ: et véniens habitávit in civitáte, quæ vocátur Názareth; ut adimplerétur quod dictum est per prophétas: Quóniam Nazarǽus vocábitur."
+   :source vulgate
+   :ref "Matt 2:22-23"
+   :translations
+   ((do . "Being warned in a dream, Joseph withdrew into the parts of Galilee; and coming he dwelt in a city called Nazareth; that it might be fulfilled which was said by the prophets: He shall be called a Nazarene."))))
+
+(bcp-roman-antiphonary-register
+ 'erat-pater-jesu
+ '(:latin "Erat Pater Jesu et Mater mirántes super his, quæ dicebántur de illo; et benedíxit illis Símeon."
+   :source vulgate
+   :ref "Luc 2:33-34"
+   :translations
+   ((do . "His father and mother were wondering at those things which were spoken concerning him; and Simeon blessed them."))))
+
+;;; ─── Mar 24: S. Gabrielis Archangeli — Nocturn antiphons ─────────────
+;;; Invitatory inherited from May 8 (regem-archangelorum-dominum).
+
+(bcp-roman-antiphonary-register
+ 'dixit-angelus-gabriel-danieli
+ '(:latin "Dixit Angelus Gábriel ad Daniélem: Intéllige, fílii hóminis, quóniam in témpore finis implébitur vísio."
+   :source vulgate
+   :ref "Dan 8:17"
+   :translations
+   ((do . "The Angel Gabriel said to Daniel: Understand, O son of man, for in the time of the end the vision shall be fulfilled."))))
+
+(bcp-roman-antiphonary-register
+ 'ecce-vir-gabriel
+ '(:latin "Ecce vir Gábriel quem víderam in visióne cito volans tétigit me in témpore sacrifícii vespertíni et dócuit me."
+   :source vulgate
+   :ref "Dan 9:21-22"
+   :translations
+   ((do . "Behold the man Gabriel, whom I had seen in the vision, flying swiftly, touched me at the time of the evening sacrifice, and taught me."))))
+
+(bcp-roman-antiphonary-register
+ 'cumque-gabriel-loqueretur
+ '(:latin "Cumque Gábriel loquerétur ad me collápsus sum pronus in terram et tétigit me, et státuit me in gradu meo."
+   :source vulgate
+   :ref "Dan 8:18"
+   :translations
+   ((do . "And when Gabriel spoke to me, I fell on my face upon the ground; and he touched me, and set me upright."))))
+
+(bcp-roman-antiphonary-register
+ 'gabriel-angelus-apparuit-zachariae
+ '(:latin "Gábriel Angelus appáruit Zacharíæ, dicens: Uxor tua Elísabeth páriet tibi fílium, et vocábitur nomen ejus Joánnem."
+   :source vulgate
+   :ref "Luc 1:11-13"
+   :translations
+   ((do . "The Angel Gabriel appeared to Zacharias, saying: Thy wife Elizabeth shall bear thee a son, and thou shalt call his name John."))))
+
+(bcp-roman-antiphonary-register
+ 'et-dixit-zacharias
+ '(:latin "Et dixit Zacharías ad Angelum: Unde hoc sciam? ego enim sum senex, et uxor mea procéssit in diébus suis."
+   :source vulgate
+   :ref "Luc 1:18"
+   :translations
+   ((do . "And Zacharias said to the Angel: Whereby shall I know this? for I am an old man, and my wife is advanced in years."))))
+
+(bcp-roman-antiphonary-register
+ 'respondens-autem-angelus-gabriel
+ '(:latin "Respóndens autem Angelus dixit ei: Ego sum Gábriel, qui asto ante Deum: et missus sum loqui ad te, et hæc tibi evangelizáre."
+   :source vulgate
+   :ref "Luc 1:19"
+   :translations
+   ((do . "And the Angel answering, said to him: I am Gabriel, who stand before God: and am sent to speak to thee, and to bring thee these good tidings."))))
+
+(bcp-roman-antiphonary-register
+ 'missus-est-gabriel-angelus
+ '(:latin "Missus est Gábriel Angelus ad Maríam Vírginem desponsátam Joseph."
+   :source vulgate
+   :ref "Luc 1:26-27"
+   :translations
+   ((do . "The Angel Gabriel was sent to Mary, a Virgin espoused to Joseph."))))
+
+(bcp-roman-antiphonary-register
+ 'gabriel-angelus-mariae-dixit
+ '(:latin "Gábriel Angelus Maríæ dixit: Ecce Elísabeth cognáta tua, et ipsa concépit fílium in senectúte sua."
+   :source vulgate
+   :ref "Luc 1:36"
+   :translations
+   ((do . "The Angel Gabriel said to Mary: Behold thy cousin Elizabeth, she also hath conceived a son in her old age."))))
+
+(bcp-roman-antiphonary-register
+ 'suscipe-verbum-virgo-maria
+ '(:latin "Súscipe Verbum Virgo María, quod tibi a Dómino per Angelum Gabriélem transmíssum est."
+   :source composition
+   :translations
+   ((do . "Receive the Word, O Virgin Mary, which hath been sent to thee from the Lord by the Angel Gabriel."))))
+
+;;; ─── Jan 25 / Jun 30: S. Pauli Apostoli — Nocturn antiphons ─────────
+
+(bcp-roman-antiphonary-register
+ 'qui-operatus-est-petro
+ '(:latin "Qui operátus est Petro in apostolátum, operátus est et mihi inter gentes: et cognovérunt grátiam, quæ data est mihi a Christo Dómino."
+   :source vulgate
+   :ref "Gal 2:8-9"
+   :translations
+   ((do . "He who wrought in Peter to the apostleship, wrought also in me among the Gentiles: and they knew the grace which was given to me by Christ the Lord."))))
+
+(bcp-roman-antiphonary-register
+ 'scio-cui-credidi
+ '(:latin "Scio cui crédidi, et certus sum quia potens est depósitum meum serváre in illum diem justus judex."
+   :source vulgate
+   :ref "2 Tim 1:12"
+   :translations
+   ((do . "I know whom I have believed, and I am certain that he is able to keep that which I have committed unto him against that day, the just judge."))))
+
+(bcp-roman-antiphonary-register
+ 'mihi-vivere-christus-est
+ '(:latin "Mihi vívere Christus est, et mori lucrum: gloriári me opórtet in cruce Dómini nostri Jesu Christi."
+   :source vulgate
+   :ref "Phil 1:21; Gal 6:14"
+   :translations
+   ((do . "For me to live is Christ, and to die is gain: God forbid that I should glory, save in the cross of our Lord Jesus Christ."))))
+
+(bcp-roman-antiphonary-register
+ 'tu-es-vas-electionis
+ '(:latin "Tu es vas electiónis, sancte Paule Apóstole, prædicátor veritátis in univérso mundo."
+   :source composition
+   :translations
+   ((do . "Thou art a chosen vessel, holy Paul the Apostle, a preacher of the truth throughout the whole world."))))
+
+(bcp-roman-antiphonary-register
+ 'magnus-sanctus-paulus
+ '(:latin "Magnus sanctus Paulus vas electiónis, vere digne est glorificándus, qui et méruit thronum duodécimum possidére."
+   :source composition
+   :translations
+   ((do . "Great is the holy Paul, a chosen vessel, truly worthy to be glorified, who also merited to possess the twelfth throne."))))
+
+(bcp-roman-antiphonary-register
+ 'bonum-certamen
+ '(:latin "Bonum certámen certávi, cursum consummávi, fidem servávi."
+   :source vulgate
+   :ref "2 Tim 4:7"
+   :translations
+   ((do . "I have fought the good fight, I have finished my course, I have kept the faith."))))
+
+(bcp-roman-antiphonary-register
+ 'saulus-qui-et-paulus
+ '(:latin "Saulus, qui et Paulus, magnus prædicátor, a Deo confortátus convalescébat, et confundébat Judǽos."
+   :source vulgate
+   :ref "Act 9:22"
+   :translations
+   ((do . "Saul, who is also Paul, a great preacher, strengthened by God, increased in power, and confounded the Jews."))))
+
+(bcp-roman-antiphonary-register
+ 'ne-magnitudo-revelationum
+ '(:latin "Ne magnitúdo revelatiónum extóllat me, datus est mihi stímulus carnis meæ, ángelus sátanæ, qui me colaphízet: propter quod ter Dóminum rogávi ut auferrétur a me, et dixit mihi Dóminus: Súfficit tibi, Paule, grátia mea."
+   :source vulgate
+   :ref "2 Cor 12:7-9"
+   :translations
+   ((do . "Lest the greatness of the revelations should exalt me, there was given me a thorn in my flesh, an angel of Satan to buffet me: for which thing I thrice besought the Lord that it might depart from me, and the Lord said unto me: My grace is sufficient for thee, Paul."))))
+
+(bcp-roman-antiphonary-register
+ 'reposita-est-mihi
+ '(:latin "Repósita est mihi coróna justítiæ, quam reddet mihi Dóminus in illa die justus judex."
+   :source vulgate
+   :ref "2 Tim 4:8"
+   :translations
+   ((do . "There is laid up for me a crown of justice, which the Lord the just judge will render to me in that day."))))
+
+;;; ─── Corpus Christi — Nocturn antiphons ──────────────────────────────
+
+(bcp-roman-antiphonary-register
+ 'christum-regem-adoremus-dominantem
+ '(:latin "Christum Regem adorémus dominántem géntibus: qui se manducántibus dat spíritus pinguédinem."
+   :source composition
+   :translations
+   ((do . "O come, and let us worship Christ, Of all the nations Lord, Who doth, to them that feed on Him, The Bread of Life afford."))))
+
+(bcp-roman-antiphonary-register
+ 'fructum-salutiferum
+ '(:latin "Fructum salutíferum gustándum dedit Dóminus mortis suæ témpore."
+   :source composition
+   :translations
+   ((do . "The Lord brought forth His fruit in the season of His death, even that fruit whereof if any man eat, he shall live for ever."))))
+
+(bcp-roman-antiphonary-register
+ 'a-fructu-frumenti
+ '(:latin "A fructu fruménti et vini multiplicáti fidéles in pace Christi requiéscunt."
+   :source gallican
+   :ref "Ps 4:8-9"
+   :translations
+   ((do . "His faithful ones which are increased by the fruit of His corn and His wine do lay them down in peace and sleep in Christ."))))
+
+(bcp-roman-antiphonary-register
+ 'communione-calicis
+ '(:latin "Communióne cálicis, quo Deus ipse súmitur, non vitulórum sánguine, congregávit nos Dóminus."
+   :source composition
+   :translations
+   ((do . "Us, being many, hath the Lord made one body, for we are all partakers of that one cup, which is not the communion of the blood of bulls, but of God Himself."))))
+
+(bcp-roman-antiphonary-register
+ 'memor-sit-dominus
+ '(:latin "Memor sit Dóminus sacrifícii nostri: et holocáustum nostrum pingue fiat."
+   :source gallican
+   :ref "Ps 19:4"
+   :translations
+   ((do . "The Lord remember our offering, and accept our burnt-sacrifice."))))
+
+(bcp-roman-antiphonary-register
+ 'paratur-nobis-mensa
+ '(:latin "Parátur nobis mensa Dómini advérsus omnes, qui tríbulant nos."
+   :source gallican
+   :ref "Ps 22:5"
+   :translations
+   ((do . "The Lord prepareth His Table before us in the presence of our enemies."))))
+
+(bcp-roman-antiphonary-register
+ 'in-voce-exsultationis
+ '(:latin "In voce exsultatiónis résonent epulántes in mensa Dómini."
+   :source gallican
+   :ref "Ps 41:5"
+   :translations
+   ((do . "Let them that keep holiday around the table of the Lord make the voice of joy and praise to be heard."))))
+
+(bcp-roman-antiphonary-register
+ 'introibo-ad-altare-sumam
+ '(:latin "Introíbo ad altáre Dei: sumam Christum, qui rénovat juventútem meam."
+   :source gallican
+   :ref "Ps 42:4"
+   :translations
+   ((do . "I will go unto the Altar of God; I will feed on Christ, Which is the Renewer of my youth."))))
+
+(bcp-roman-antiphonary-register
+ 'cibavit-nos-dominus-ex-adipe
+ '(:latin "Cibávit nos Dóminus ex ádipe fruménti: et de petra, melle saturávit nos."
+   :source gallican
+   :ref "Ps 80:17"
+   :translations
+   ((do . "The Lord hath fed us with the finest of the wheat, and with honey out of the Rock hath He satisfied us."))))
+
+(bcp-roman-antiphonary-register
+ 'ex-altari-tuo-domine
+ '(:latin "Ex altári tuo, Dómine, Christum súmimus: in quem cor et caro nostra exsúltant."
+   :source gallican
+   :ref "Ps 83:4"
+   :translations
+   ((do . "It is at thine Altar, O Lord, that we do feed on Christ, for Whom our heart and our flesh crieth out."))))
+
+;;; ─── Sacred Heart — Nocturn antiphons ───────────────────────────────
+
+(bcp-roman-antiphonary-register
+ 'cor-jesu-amore-nostri
+ '(:latin "Cor Jesu amóre nostri vulnerátum: Veníte, adorémus."
+   :source composition
+   :translations
+   ((do . "The Sacred Heart of Jesus, which was wounded for love of us, O come, let us worship."))))
+
+(bcp-roman-antiphonary-register
+ 'cogitationes-cordis-ejus
+ '(:latin "Cogitatiónes Cordis ejus in generatióne et generatiónem."
+   :source gallican
+   :ref "Ps 32:11"
+   :translations
+   ((do . "The thoughts of his Heart shall endure from generation to generation."))))
+
+(bcp-roman-antiphonary-register
+ 'apud-te-est-fons-vitae
+ '(:latin "Apud te est fons vitæ; torrénte voluptátis tuæ potábis nos, Dómine."
+   :source gallican
+   :ref "Ps 35:10"
+   :translations
+   ((do . "For with thee is the well of life, O Lord; and thou shalt give them drink of thy pleasures."))))
+
+(bcp-roman-antiphonary-register
+ 'homo-pacis-meae
+ '(:latin "Homo pacis meæ, qui edébat panes meos, magnificávit super me supplantatiónem."
+   :source gallican
+   :ref "Ps 40:10"
+   :translations
+   ((do . "Even mine own familiar friend who did eat of my Bread, hath laid great wait for me."))))
+
+(bcp-roman-antiphonary-register
+ 'rex-omnis-terrae-deus
+ '(:latin "Rex omnis terræ Deus; regnábit super gentes."
+   :source gallican
+   :ref "Ps 46:8-9"
+   :translations
+   ((do . "God is King upon all the earth: he reigneth over the heathen."))))
+
+(bcp-roman-antiphonary-register
+ 'dum-anxiaretur-cor-meum
+ '(:latin "Dum anxiarétur Cor meum, in petra exaltásti me."
+   :source gallican
+   :ref "Ps 60:3"
+   :translations
+   ((do . "When my Heart was in heaviness, thou didst set me up upon a rock."))))
+
+(bcp-roman-antiphonary-register
+ 'secundum-multitudinem-dolorum
+ '(:latin "Secúndum multitúdinem dolórum meórum in Corde meo, consolatiónes tuæ lætificavérunt ánimam meam."
+   :source gallican
+   :ref "Ps 93:19"
+   :translations
+   ((do . "In the multitude of the sorrows that I had in my Heart, thy comforts have given joy to my soul."))))
+
+(bcp-roman-antiphonary-register
+ 'qui-diligitis-dominum-confitemini
+ '(:latin "Qui dilígitis Dóminum, confitémini memóriæ sanctificatiónis ejus."
+   :source gallican
+   :ref "Ps 96:12"
+   :translations
+   ((do . "O ye that love the Lord, give thanks for a remembrance of his holiness."))))
+
+(bcp-roman-antiphonary-register
+ 'viderunt-omnes-termini
+ '(:latin "Vidérunt omnes términi terræ salutáre Dei nostri."
+   :source gallican
+   :ref "Ps 97:3"
+   :translations
+   ((do . "All the ends of the world have seen the salvation of our God."))))
+
+(bcp-roman-antiphonary-register
+ 'psallam-tibi-in-nationibus
+ '(:latin "Psallam tibi in natiónibus, quia magna est super cælos misericórdia tua."
+   :source gallican
+   :ref "Ps 107:4"
+   :translations
+   ((do . "I will sing praises unto thee among the nations, for thy mercy is greater than the heavens."))))
+
+;;; ─── Christ the King — Nocturn antiphons ────────────────────────────
+
+(bcp-roman-antiphonary-register
+ 'jesum-christum-regem-regum
+ '(:latin "Jesum Christum, Regem regum: Veníte adorémus."
+   :source composition
+   :translations
+   ((do . "Jesus Christ, the King of kings: Come, let us adore!"))))
+
+(bcp-roman-antiphonary-register
+ 'ego-autem-constitutus-sum-rex
+ '(:latin "Ego autem constitútus sum Rex ab eo super Sion montem sanctum ejus, prǽdicans præcéptum ejus."
+   :source gallican
+   :ref "Ps 2:6-7"
+   :translations
+   ((do . "I have been set up as King by Him on Sion, His holy mountain, proclaiming His decree."))))
+
+(bcp-roman-antiphonary-register
+ 'gloria-et-honore-coronasti
+ '(:latin "Glória et honóre coronásti eum, Dómine: ómnia subjecísti sub pédibus ejus."
+   :source gallican
+   :ref "Ps 8:6-7"
+   :translations
+   ((do . "Thou hast crowned him with glory and honor, O Lord, putting all things under His feet."))))
+
+(bcp-roman-antiphonary-register
+ 'elevamini-portae-aeternales
+ '(:latin "Elevámini, portæ æternáles, et introíbit Rex glóriæ."
+   :source gallican
+   :ref "Ps 23:7"
+   :translations
+   ((do . "Reach up you ancient portals, that the King of glory may come in."))))
+
+(bcp-roman-antiphonary-register
+ 'sedebit-dominus-rex
+ '(:latin "Sedébit Dóminus Rex in ætérnum: Dóminus benedícet pópulo suo in pace."
+   :source gallican
+   :ref "Ps 28:10-11"
+   :translations
+   ((do . "The Lord is enthroned as King forever; may the Lord bless his people with peace."))))
+
+(bcp-roman-antiphonary-register
+ 'virga-directionis
+ '(:latin "Virga directiónis, virga regni tui: proptérea pópuli confitebúntur tibi in ætérnum, et in sǽculum sǽculi."
+   :source gallican
+   :ref "Ps 44:7,18"
+   :translations
+   ((do . "A tempered rod is thy royal scepter; therefore shall nations praise thee forever and ever."))))
+
+(bcp-roman-antiphonary-register
+ 'psallite-regi-nostro
+ '(:latin "Psállite Regi nostro, psállite: quóniam Rex magnus super omnem terram."
+   :source gallican
+   :ref "Ps 46:7-8"
+   :translations
+   ((do . "Sing praise to our King, sing praise; for he is the great King over all earth."))))
+
+(bcp-roman-antiphonary-register
+ 'benedicentur-in-ipso
+ '(:latin "Benedicéntur in ipso omnes tribus terræ; omnes gentes magnificábunt eum."
+   :source gallican
+   :ref "Ps 71:17"
+   :translations
+   ((do . "In Him shall all the tribes of the earth be blessed; all the nations shall proclaim His greatness."))))
+
+(bcp-roman-antiphonary-register
+ 'et-ego-primogenitum
+ '(:latin "Et ego primogénitum ponam illum: excélsum præ régibus terræ."
+   :source gallican
+   :ref "Ps 88:28"
+   :translations
+   ((do . "And I will make Him the firstborn, highest of the kings of the earth."))))
+
+(bcp-roman-antiphonary-register
+ 'thronus-ejus-sicut-sol
+ '(:latin "Thronus ejus sicut sol in conspéctu meo: et sicut luna perfécta in ætérnum."
+   :source gallican
+   :ref "Ps 88:37-38"
+   :translations
+   ((do . "His throne shall be like the sun before Me; like the moon, which remains forever."))))
+
 (provide 'bcp-roman-antiphonary)
 
 ;;; bcp-roman-antiphonary.el ends here

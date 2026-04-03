@@ -39,6 +39,8 @@
 
 (declare-function bcp-roman-lobvm--marian-season "bcp-roman-lobvm")
 (declare-function bcp-roman-render--render-office "bcp-roman-render")
+(declare-function bcp-roman-season-christmas-feast-matins "bcp-roman-season-christmas")
+(declare-function bcp-office-nav-init "bcp-office-nav")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Canticle data
@@ -203,22 +205,65 @@ END of nil means \\='to end of psalm\\='."
    (t
     `((,vulg-num ,v-start ,v-end)))))
 
+(defun bcp-roman-breviary--fetch-psalm-text (hebrew-num)
+  "Fetch psalm HEBREW-NUM via the active fetcher, returning text or nil.
+Uses `bible-commentary-psalm-translation' as the translation and
+spins the event loop up to `bcp-roman-render--fetch-timeout' seconds."
+  (let ((done nil) (result nil))
+    (bcp-fetcher-fetch
+     (format "Psalm %d" hebrew-num)
+     (lambda (text) (setq result text done t))
+     (and (boundp 'bible-commentary-psalm-translation)
+          bible-commentary-psalm-translation))
+    (let ((deadline (+ (float-time)
+                       (if (boundp 'bcp-roman-render--fetch-timeout)
+                           bcp-roman-render--fetch-timeout
+                         10))))
+      (while (and (not done) (< (float-time) deadline))
+        (accept-process-output nil 0.1)))
+    result))
+
 (defun bcp-roman-breviary--psalm-verses (spec)
   "Return verse list for psalm SPEC.
 SPEC is an integer (full psalm, Vulgate numbering) or a list
 \(PSALM-NUM START-VERSE END-VERSE\) for a subsection.
 Numbers >= 200 are treated as DO canticle numbers.
-Uses the Coverdale psalter when `bcp-roman-office-language' is \\='english."
+Uses the Coverdale psalter when the backend is \\='coverdale,
+the Vulgate psalter when the backend is \\='vulgate or language
+is \\='latin, and the active fetcher for any other backend."
   (let* ((vulg-num (if (listp spec) (car spec) spec))
-         (english (eq bcp-roman-office-language 'english)))
+         (latin   (eq bcp-roman-office-language 'latin))
+         (backend (and (boundp 'bcp-fetcher-backend) bcp-fetcher-backend)))
     (cond
      ;; Canticles: from DO files in the appropriate language
      ((>= vulg-num 200)
       (let ((all (bcp-roman-breviary--load-canticle
-                  vulg-num (if english 'english 'latin))))
+                  vulg-num (if latin 'latin 'english))))
         (when all (append all nil))))
-     ;; English: Coverdale psalter with BCP numbering
-     (english
+     ;; Non-Latin with a non-standard backend: fetch via the active fetcher
+     ((and (not latin)
+           (not (memq backend '(coverdale vulgate))))
+      (let* ((v-start (when (listp spec) (nth 1 spec)))
+             (v-end   (when (listp spec) (nth 2 spec)))
+             (lookups (bcp-roman-breviary--vulgate-to-coverdale
+                       vulg-num v-start v-end))
+             (result nil))
+        (dolist (lookup lookups)
+          (let* ((hebrew-num (nth 0 lookup))
+                 (start (nth 1 lookup))
+                 (end   (nth 2 lookup))
+                 (text (bcp-roman-breviary--fetch-psalm-text hebrew-num)))
+            (when text
+              (let* ((verses (split-string text "\n" t "[ \t]+"))
+                     (len (length verses))
+                     (from (1- (or start 1)))
+                     (to (if end (min end len) len)))
+                (setq result
+                      (nconc result
+                             (seq-subseq verses from to)))))))
+        result))
+     ;; Coverdale psalter with BCP numbering (English profile)
+     ((eq backend 'coverdale)
       (let* ((table (bcp-fetcher--coverdale-psalms))
              (v-start (when (listp spec) (nth 1 spec)))
              (v-end   (when (listp spec) (nth 2 spec)))
@@ -463,8 +508,81 @@ Only Thursday has proper Vespers; Friday and Saturday omit Vespers."
       ;; Oratio
       (:pre-oratio)
       ,(bcp-roman-breviary--collect-step date)
-      ;; Conclusio
-      (:conclusio))))
+      ;; Christus factus est (secreto) + Pater noster + Ps 50
+      (:rubric "[Secreto:]")
+      (:text christus-factus)
+      (:silent-prayers (pater-noster))
+      (:psalm 50)
+      ;; Concluding prayer (said silently)
+      ,(bcp-roman-breviary--collect-step date)
+      (:rubric "[Et sub silentio concluditur.]"))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Triduum Prime ordo builder
+;;
+;; During the Sacred Triduum, Prime uses Sunday psalms (Psalmi minores
+;; Dominica) without antiphon, hymn, capitulum, responsory, or preces.
+;; Concludes with Christus factus est.
+
+(defun bcp-roman-breviary--prime-triduum-ordo (date)
+  "Build Triduum Prime ordo for DATE.
+Sunday psalms, no antiphon/hymn/capitulum/responsory/preces.
+Ends with Christus factus est + Pater noster + Ps 50."
+  (let* ((data (bcp-roman-psalterium-prime-psalms 0))  ; Sunday psalms
+         (pss  (plist-get data :psalms)))
+    `((:text ave-maria :silent t)
+      (:incipit)
+      ;; NO Hymn — omitted in Triduum
+      ;; Psalmi (Sunday, no antiphon)
+      ,@(mapcar (lambda (ps) `(:psalm ,ps :no-gloria t)) pss)
+      ;; NO Capitulum, NO Responsory, NO Preces
+      ;; Oratio
+      (:pre-oratio)
+      ,(bcp-roman-breviary--collect-step date)
+      ;; Christus factus est (secreto) + Pater noster + Ps 50
+      (:rubric "[Secreto:]")
+      (:text christus-factus)
+      (:silent-prayers (pater-noster))
+      (:psalm 50)
+      ;; Concluding prayer (said silently)
+      ,(bcp-roman-breviary--collect-step date)
+      (:rubric "[Et sub silentio concluditur.]"))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Triduum minor hour ordo builder
+;;
+;; Terce, Sext, and None during the Sacred Triduum use Sunday psalms
+;; (Psalmi minores Dominica) without antiphon (Minores sine Antiphona),
+;; and omit hymn, capitulum, versicle, and preces.
+;; Conclude with Christus factus est.
+
+(defun bcp-roman-breviary--minor-hour-triduum-ordo (hour date)
+  "Build Triduum minor HOUR ordo for DATE.
+HOUR is terce, sext, or none.  Uses Sunday psalms, no antiphon/hymn/
+capitulum/versicle/preces.  Ends with Christus factus est."
+  (let* ((psalms-fn (pcase hour
+                      ('terce #'bcp-roman-psalterium-terce-psalms)
+                      ('sext  #'bcp-roman-psalterium-sext-psalms)
+                      ('none  #'bcp-roman-psalterium-none-psalms)))
+         (data      (funcall psalms-fn 0))  ; Sunday psalms
+         (pss       (plist-get data :psalms)))
+    `((:text ave-maria :silent t)
+      (:incipit)
+      ;; NO Hymn — omitted in Triduum
+      ;; Psalmi (Sunday, no antiphon)
+      ,@(mapcar (lambda (ps) `(:psalm ,ps :no-gloria t)) pss)
+      ;; NO Capitulum, NO Versicle, NO Preces
+      ;; Oratio
+      (:pre-oratio)
+      ,(bcp-roman-breviary--collect-step date)
+      ;; Christus factus est (secreto) + Pater noster + Ps 50
+      (:rubric "[Secreto:]")
+      (:text christus-factus)
+      (:silent-prayers (pater-noster))
+      (:psalm 50)
+      ;; Concluding prayer (said silently)
+      ,(bcp-roman-breviary--collect-step date)
+      (:rubric "[Et sub silentio concluditur.]"))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Triduum Special Compline ordo builder
@@ -1323,6 +1441,17 @@ Returns one of:
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Render dispatch
 
+(defconst bcp-roman-breviary--hour-entry-fns
+  '((vespers  . bcp-roman-breviary-vespers)
+    (compline . bcp-roman-breviary-compline)
+    (lauds    . bcp-roman-breviary-lauds)
+    (prime    . bcp-roman-breviary-prime)
+    (terce    . bcp-roman-breviary-terce)
+    (sext     . bcp-roman-breviary-sext)
+    (none     . bcp-roman-breviary-none)
+    (matins   . bcp-roman-breviary-matins))
+  "Map from hour symbol to public entry-point function.")
+
 (defun bcp-roman-breviary--render-hour (hour ordo buffer-name label &optional date data-fn)
   "Render HOUR with ORDO, BUFFER-NAME, LABEL, and optional DATE and DATA-FN.
 HOUR is a symbol (lauds, prime, terce, sext, none, vespers, compline).
@@ -1361,7 +1490,21 @@ DATA-FN is the resolver function; defaults to `bcp-roman-breviary--resolve'."
            :gloria-patri (plist-get bcp-common-prayers-gloria-patri
                                     (intern (format ":%s" lang)))
            :buffer-name buffer-name
-           :office-label label))))
+           :office-label label))
+    ;; Init navigation mode for refresh/day-navigation
+    (require 'bcp-office-nav)
+    (let ((entry-fn (alist-get hour bcp-roman-breviary--hour-entry-fns)))
+      (with-current-buffer (get-buffer buffer-name)
+        (bcp-office-nav-init
+         (decode-time (encode-time 0 0 12
+                                   (cadr date) (car date) (caddr date)))
+         'roman-breviary
+         (lambda ()
+           (let ((d (if (bound-and-true-p bcp-office-nav--override-time)
+                        (let ((dt bcp-office-nav--override-time))
+                          (list (nth 4 dt) (nth 3 dt) (nth 5 dt)))
+                      date)))
+             (funcall entry-fn d))))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Public entry points
@@ -1498,23 +1641,35 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (interactive)
   (let* ((date (or date (calendar-current-date)))
          (dow  (calendar-day-of-week date))
-         (feast (bcp-roman-proprium-feast date))
+         (season (bcp-roman-breviary--liturgical-season date))
+         (hw-triduum (pcase season
+                       ('triduum-thu (bcp-roman-season-holyweek-triduum 'thu))
+                       ('triduum-fri (bcp-roman-season-holyweek-triduum 'fri))
+                       ('triduum-sat (bcp-roman-season-holyweek-triduum 'sat))
+                       (_ nil)))
+         (feast (unless hw-triduum (bcp-roman-proprium-feast date)))
          (feast-p (and feast (bcp-roman-proprium--feast-wins-p feast date)))
-         (day  (if feast-p
-                   (plist-get feast :name)
-                 (nth dow bcp-roman-breviary--day-names)))
-         (ordo (if feast-p
-                   (bcp-roman-proprium--prime-ordo date feast)
-                 (bcp-roman-breviary--prime-ordo dow date)))
+         (day  (cond
+                (hw-triduum (plist-get hw-triduum :name-en))
+                (feast-p    (plist-get feast :name))
+                (t          (nth dow bcp-roman-breviary--day-names))))
+         (ordo (cond
+                (hw-triduum (bcp-roman-breviary--prime-triduum-ordo date))
+                (feast-p    (bcp-roman-proprium--prime-ordo date feast))
+                (t          (bcp-roman-breviary--prime-ordo dow date))))
          (bcp-roman-proprium--current-feast
           (when feast-p (bcp-roman-proprium--merged-data feast)))
-         (data-fn (when feast-p #'bcp-roman-proprium--resolve)))
+         (data-fn (cond
+                   (hw-triduum
+                    (bcp-roman-breviary--holyweek-resolver hw-triduum))
+                   (feast-p #'bcp-roman-proprium--resolve))))
     (bcp-roman-breviary--render-hour
      'prime ordo
      (format "*Breviary — %s Prime*" day)
-     (if feast-p
-         (plist-get feast :latin)
-       (bcp-roman-breviary--season-label date "Prima" "Prime"))
+     (cond
+      (hw-triduum (plist-get hw-triduum :name))
+      (feast-p    (plist-get feast :latin))
+      (t          (bcp-roman-breviary--season-label date "Prima" "Prime")))
      date data-fn)))
 
 (defun bcp-roman-breviary-terce (&optional date)
@@ -1536,27 +1691,42 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (bcp-roman-breviary--minor-hour-entry 'none "None" "Nona" date))
 
 (defun bcp-roman-breviary--minor-hour-entry (hour english-name latin-name &optional date)
-  "Dispatch minor HOUR with feast awareness.
+  "Dispatch minor HOUR with feast and Triduum awareness.
 ENGLISH-NAME and LATIN-NAME are for buffer/label formatting."
   (let* ((date (or date (calendar-current-date)))
          (dow  (calendar-day-of-week date))
-         (feast (bcp-roman-proprium-feast date))
+         (season (bcp-roman-breviary--liturgical-season date))
+         (hw-triduum (pcase season
+                       ('triduum-thu (bcp-roman-season-holyweek-triduum 'thu))
+                       ('triduum-fri (bcp-roman-season-holyweek-triduum 'fri))
+                       ('triduum-sat (bcp-roman-season-holyweek-triduum 'sat))
+                       (_ nil)))
+         (feast (unless hw-triduum (bcp-roman-proprium-feast date)))
          (feast-p (and feast (bcp-roman-proprium--feast-wins-p feast date)))
-         (day  (if feast-p
-                   (plist-get feast :name)
-                 (nth dow bcp-roman-breviary--day-names)))
-         (ordo (if feast-p
-                   (bcp-roman-proprium--minor-hour-ordo date feast hour)
-                 (bcp-roman-breviary--minor-hour-ordo dow hour date)))
+         (day  (cond
+                (hw-triduum (plist-get hw-triduum :name-en))
+                (feast-p    (plist-get feast :name))
+                (t          (nth dow bcp-roman-breviary--day-names))))
+         (ordo (cond
+                (hw-triduum
+                 (bcp-roman-breviary--minor-hour-triduum-ordo hour date))
+                (feast-p
+                 (bcp-roman-proprium--minor-hour-ordo date feast hour))
+                (t
+                 (bcp-roman-breviary--minor-hour-ordo dow hour date))))
          (bcp-roman-proprium--current-feast
           (when feast-p (bcp-roman-proprium--merged-data feast)))
-         (data-fn (when feast-p #'bcp-roman-proprium--resolve)))
+         (data-fn (cond
+                   (hw-triduum
+                    (bcp-roman-breviary--holyweek-resolver hw-triduum))
+                   (feast-p #'bcp-roman-proprium--resolve))))
     (bcp-roman-breviary--render-hour
      hour ordo
      (format "*Breviary — %s %s*" day english-name)
-     (if feast-p
-         (plist-get feast :latin)
-       (bcp-roman-breviary--season-label date latin-name english-name))
+     (cond
+      (hw-triduum (plist-get hw-triduum :name))
+      (feast-p    (plist-get feast :latin))
+      (t          (bcp-roman-breviary--season-label date latin-name english-name)))
      date data-fn)))
 
 (defconst bcp-roman-breviary--easter-sunday-labels

@@ -2913,5 +2913,767 @@ All glory as is ever meet,\n\
 To God, the holy Paraclete.\n\
 Amen."))))
 
+;;; ═══════════════════════════════════════════════════════════════════════════
+;;; Proprium Sanctorum — Matins hymns for feasts with :commune nil
+;;; ═══════════════════════════════════════════════════════════════════════════
+
+;;; ─── May 3: Inventione Sanctæ Crucis (= Passiontide Matins hymn) ───────
+
+(bcp-roman-hymnal-register
+ 'pange-lingua-gloriosi
+ '(:latin "\
+Pange, lingua, gloriósi\n\
+Láuream certáminis,\n\
+Et super Crucis trophǽo\n\
+Dic triúmphum nóbilem,\n\
+Quáliter Redémptor orbis\n\
+Immolátus vícerit.\n\
+\n\
+De paréntis protoplásti\n\
+Fraude Factor cóndolens,\n\
+Quando pomi noxiális\n\
+In necem morsu ruit,\n\
+Ipse lignum tunc notávit,\n\
+Damna ligni ut sólveret.\n\
+\n\
+Hoc opus nostræ salútis\n\
+Ordo depopóscerat,\n\
+Multifórmis proditóris\n\
+Ars ut artem fálleret,\n\
+Et medélam ferret inde,\n\
+Hostis unde lǽserat.\n\
+\n\
+Quando venit ergo sacri\n\
+Plenitúdo témporis,\n\
+Missus est ab arce Patris\n\
+Natus, orbis Cónditor,\n\
+Atque ventre virgináli\n\
+Carne amíctus pródiit.\n\
+\n\
+Glória et honor Deo\n\
+Usquequáque Altíssimo,\n\
+Una Patri, Filióque;\n\
+Inclyto Paráclito:\n\
+Cui laus est et potéstas,\n\
+Per ætérna sǽcula.\n\
+Amen."
+   :translations
+   ((britt . "\
+Sing, my tongue, the Saviour's glory,\n\
+Of his flesh the mystery sing;\n\
+Of the Blood, all price exceeding,\n\
+Shed by our immortal King,\n\
+Destined, for the world's redemption,\n\
+From a noble womb to spring.\n\
+\n\
+Of a pure and spotless Virgin\n\
+Born for us on earth below,\n\
+He, as Man, with man conversing,\n\
+Stayed, the seeds of truth to sow;\n\
+Then he closed in solemn order\n\
+Wondrously his life of woe.\n\
+\n\
+On the night of that last supper\n\
+Seated with his chosen band,\n\
+He the Paschal victim eating,\n\
+First fulfils the law's command;\n\
+Then as food to all his brethren\n\
+Gives himself with his own hand.\n\
+\n\
+Word made flesh, the bread of nature\n\
+By his word to flesh he turns;\n\
+Wine into his Blood he changes:\n\
+What though sense no change discerns?\n\
+Only be the heart in earnest,\n\
+Faith her lesson quickly learns.\n\
+\n\
+Glory let us give, and blessing\n\
+To the Father and the Son;\n\
+Honour, might, and praise addressing,\n\
+While eternal ages run;\n\
+Ever too his love confessing,\n\
+Who from both with both is one.\n\
+Amen."))))
+
+;;; ─── May 8: Apparitione S. Michaëlis Archangeli ────────────────────────
+
+(bcp-roman-hymnal-register
+ 'te-splendor-et-virtus-patris
+ '(:latin "\
+Te, splendor et virtus Patris,\n\
+Te vita, Jesu, córdium,\n\
+Ab ore qui pendent tuo,\n\
+Laudámus inter Angelos.\n\
+\n\
+Tibi mille densa míllium\n\
+Ducum coróna mílitat;\n\
+Sed éxplicat victor Crucem\n\
+Míchaël salútis sígnifer.\n\
+\n\
+Dracónis hic dirum caput\n\
+In ima pellit tártara,\n\
+Ducémque cum rebéllibus\n\
+Cælésti ab arce fúlminat.\n\
+\n\
+Contra ducem supérbiæ\n\
+Sequámur hunc nos príncipem,\n\
+Ut detur ex Agni throno\n\
+Nobis coróna glóriæ.\n\
+\n\
+Deo Patri sit glória,\n\
+Qui, quos redémit Fílius,\n\
+Et Sanctus unxit Spíritus,\n\
+Per Angelos custódiat.\n\
+Amen."
+   :translations
+   ((britt . "\
+Thee, O splendour, thee, O power,\n\
+Thee, O life of hearts, we praise;\n\
+We who from thy lips dependent,\n\
+Mid the Angels songs do raise;\n\
+Thousand thousands round thee standing,\n\
+Captain chiefs in war's array.\n\
+\n\
+But the warrior prince of heaven,\n\
+Michael, 'tis who bears the palm;\n\
+He unfurls the cross victorious,\n\
+Standard of our saving calm;\n\
+He the dragon's head infernal\n\
+Hurtles down to deepest realm.\n\
+\n\
+He from heaven's exalted citadel\n\
+Flings the rebel chief below,\n\
+With the leaders of his legions,\n\
+Lightning-smitten, down they go;\n\
+Against the prince of pride we follow\n\
+This our chief, to lay him low.\n\
+\n\
+That from the throne of the Lamb eternal\n\
+May be given the crown of glory;\n\
+Glory to God the Father be,\n\
+Who, whom the Son redeemed in love,\n\
+And the Spirit sanctified,\n\
+By Angels guards from above.\n\
+Amen."))))
+
+;;; ─── Jun 24: Nativitate S. Joannis Baptistæ ───────────────────────────
+
+(bcp-roman-hymnal-register
+ 'antra-deserti
+ '(:latin "\
+Antra desérti téneris sub annis,\n\
+Cívium turmas fúgiens, petísti,\n\
+Ne levi posses maculáre vitam\n\
+Crímine linguæ.\n\
+\n\
+Prǽbuit durum tégumen camélus\n\
+Artubus sacris, stróphium bidéntes;\n\
+Cui latex haustum, sociáta pastum\n\
+Mella locústis.\n\
+\n\
+Céteri tantum cecinére Vatum\n\
+Corde præságo jubar affutúrum;\n\
+Tu quidem mundi scelus auferéntem\n\
+Indice prodis.\n\
+\n\
+Non fuit vasti spátium per orbis\n\
+Sánctior quisquam génitus Joánne,\n\
+Qui nefas sæcli méruit lavántem\n\
+Tíngere lymphis.\n\
+\n\
+Sit decus Patri, genitǽque Proli,\n\
+Et tibi, compar utriúsque virtus,\n\
+Spíritus semper, Deus unus omni\n\
+Témporis ævo.\n\
+Amen."
+   :translations
+   ((britt . "\
+Midst the desert caves, while yet a stripling,\n\
+From the haunts of men thy footsteps straying,\n\
+Lest a word unkind should stain thy pure lips,\n\
+Silence thou didst cherish.\n\
+\n\
+Camel's hair around thy members girded,\n\
+And a belt of sheep-skin, were thy vesture;\n\
+Water was thy drink, and wild-born locusts\n\
+Mixed with honey.\n\
+\n\
+Other prophets only dimly saw him,\n\
+In their hearts foretelling his appearing;\n\
+Thou didst see him, Lamb of God, and show him\n\
+With thy finger.\n\
+\n\
+Holier birth hath none of woman's children;\n\
+Greater prophet none in earth's wide compass;\n\
+He was worthy him who cleansed the nations\n\
+Dip in waters.\n\
+\n\
+Glory to the Father, and the Son, who\n\
+Rose from death, and thee, O Holy Spirit,\n\
+Now and evermore be praise and honour\n\
+Through the ages.\n\
+Amen."))))
+
+;;; ─── Jul 1: Pretiosissimi Sanguinis D.N.J.C. ──────────────────────────
+
+(bcp-roman-hymnal-register
+ 'ira-justa-conditoris
+ '(:latin "\
+Ira justa Conditóris,\n\
+Imbre aquárum víndice,\n\
+Criminósum mersit orbem\n\
+Noë in arca sóspite:\n\
+Mira tandem vis amóris\n\
+Lavit orbem sánguine.\n\
+\n\
+Tam salúbri terra felix\n\
+Irrigáta plúvia,\n\
+Ante spinas quæ scatébat,\n\
+Germinávit flósculos;\n\
+Inque néctaris sapórem\n\
+Transiére absýnthia.\n\
+\n\
+Triste prótinus venénum\n\
+Dirus anguis pósuit,\n\
+Et cruénta belluárum\n\
+Désiit ferócia:\n\
+Mitis Agni vulneráti\n\
+Hæc fuit victória.\n\
+\n\
+O sciéntiæ supérnæ\n\
+Altitúdo impérvia!\n\
+O suávitas benígni\n\
+Prædicánda péctoris!\n\
+Servus erat morte dignus,\n\
+Rex luit pœnam óptimus.\n\
+\n\
+Quando culpis provocámus\n\
+Ultiónem júdicis,\n\
+Tunc loquéntis protegámur\n\
+Sánguinis præséntia;\n\
+Ingruéntium malórum\n\
+Tunc recédant ágmina.\n\
+\n\
+Te redémptus laudet orbis\n\
+Grata servans múnera,\n\
+O salútis sempitérnæ\n\
+Dux et Auctor ínclite,\n\
+Qui tenes beáta regna\n\
+Cum Parénte et Spíritu.\n\
+Amen."
+   :translations
+   ((britt . "\
+The just Creator's wrath once fell\n\
+On guilty man condemned to die;\n\
+Beneath the flood's avenging swell\n\
+All flesh was doomed, save Noë nigh;\n\
+But Love at last, by wondrous power,\n\
+In Blood hath washed the world's dark hour.\n\
+\n\
+The earth, refreshed by saving rain,\n\
+That once with thorns was overgrown,\n\
+Now blossoms forth in beauty's train,\n\
+And bitter things to sweet are grown;\n\
+The serpent's deadly venom dies,\n\
+The fierceness of the beast now lies.\n\
+\n\
+O depth of knowledge, passing height!\n\
+O sweetness of a loving breast!\n\
+The slave deserved death's bitter blight,\n\
+The noblest King paid all the rest;\n\
+When by our sins we rouse the Judge,\n\
+The speaking Blood doth intercede.\n\
+\n\
+Let all the ransomed world give praise,\n\
+Preserving gifts of grace divine;\n\
+O glorious Author of our days,\n\
+Who holdest blest the realms that shine\n\
+With Father and with Spirit blest,\n\
+Through endless ages, ever rest.\n\
+Amen."))))
+
+;;; ─── Aug 6: Transfiguratione D.N.J.C. ─────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'quicumque-christum-quaeritis
+ '(:latin "\
+Quicúmque Christum quǽritis,\n\
+Oculos in altum tóllite:\n\
+Illic licébit vísere\n\
+Signum perénnis glóriæ.\n\
+\n\
+Illústre quiddam cérnimus,\n\
+Quod nésciat finem pati,\n\
+Sublíme, celsum, intérminum,\n\
+Antíquius cælo et chao.\n\
+\n\
+Hic ille Rex est géntium\n\
+Populíque Rex judáici,\n\
+Promíssus Abrahæ patri\n\
+Ejúsque in ævum sémini.\n\
+\n\
+Hunc, et prophétis téstibus\n\
+Iisdémque signatóribus,\n\
+Testátor et Pater jubet\n\
+Audíre nos et crédere.\n\
+\n\
+Jesu, tibi sit glória,\n\
+Qui te revélas párvulis,\n\
+Cum Patre, et almo Spíritu,\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((britt . "\
+All ye who seek a comfort sure\n\
+In trouble and distress,\n\
+Whatever sorrow vex the mind,\n\
+Or guilt the soul oppress;\n\
+\n\
+Jesus, who gave himself for you\n\
+Upon the Cross to die,\n\
+Opens to you his sacred Heart;\n\
+O, to that Heart draw nigh.\n\
+\n\
+Ye hear how kindly he invites;\n\
+Ye hear his words so blest:\n\
+'All ye that labour come to me,\n\
+And I will give you rest.'\n\
+\n\
+O Jesus, joy of saints on high,\n\
+The hope of sinners here,\n\
+Attracted by those loving words\n\
+To thee I lift my prayer.\n\
+\n\
+To God the Father, and the Son,\n\
+All glory, praise be done;\n\
+And to the Holy Spirit, praise\n\
+While endless ages run.\n\
+Amen."))))
+
+;;; ─── Oct 24: S. Raphaëlis Archangeli ────────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'christe-sanctorum-decus-angelorum
+ '(:latin "\
+Christe, sanctórum decus Angelórum,\n\
+Gentis humánæ Sator et Redémptor,\n\
+Cǽlitum nobis tríbuas beátas\n\
+Scándere sedes.\n\
+\n\
+Angelus nostræ médicus salútis,\n\
+Adsit e cælo Ráphaël, ut omnes\n\
+Sanet ægrótos, dubiósque vitæ\n\
+Dírigat actus.\n\
+\n\
+Virgo dux pacis Genetríxque lucis,\n\
+Et sacer nobis chorus Angelórum\n\
+Semper assístat, simul et micántis\n\
+Régia cæli.\n\
+\n\
+Præstet hoc nobis Déitas beáta\n\
+Patris, ac Nati, paritérque Sancti\n\
+Spíritus, cujus résonat per omnem\n\
+Glória mundum.\n\
+Amen."
+   :translations
+   ((britt . "\
+O Christ, the glory of the Angel choir,\n\
+Of man the Maker and Redeemer blest,\n\
+Grant us one day to reach the seats of heaven\n\
+Among the blessed.\n\
+\n\
+Send Raphael, the Angel-healer, down,\n\
+That he from heaven may heal our every ill,\n\
+May guide our doubtful steps aright, and keep\n\
+Our lives from evil.\n\
+\n\
+May Mary, Virgin-guide to paths of peace,\n\
+The Mother-source of light, and Angels' band\n\
+Attend us ever, and the shining courts\n\
+Of heaven guard us.\n\
+\n\
+This grace on us bestow, O Godhead blest,\n\
+Of Father, Son, and Spirit, Love divine,\n\
+Whose glory through the universe resounds\n\
+For ever. Amen."))))
+
+;;; ─── Mar 19: S. Joseph Sponsi B.M.V. — Matins ──────────────────────────
+
+(bcp-roman-hymnal-register
+ 'caelitum-joseph-decus
+ '(:latin "\
+Cǽlitum Joseph, decus atque nostræ\n\
+Certa spes vitæ, columénque mundi,\n\
+Quas tibi læti cánimus, benígnus\n\
+Súscipe laudes.\n\
+\n\
+Te Sator rerum státuit pudícæ\n\
+Vírginis sponsum, voluítque Verbi\n\
+Te patrem dici, dedit et minístrum\n\
+Esse salútis.\n\
+\n\
+Tu Redemptórem stábulo jacéntem,\n\
+Quem chorus Vatum cécinit futúrum,\n\
+Aspicis gaudens, humilísque natum\n\
+Numen adóras.\n\
+\n\
+Rex Deus regum, Dominátor orbis,\n\
+Cujus ad nutum tremit inferórum\n\
+Turba, cui pronus famulátur æther,\n\
+Se tibi subdit.\n\
+\n\
+Laus sit excélsæ Tríadi perénnis,\n\
+Quæ tibi præbens súperos honóres,\n\
+Det tuis nobis méritis beátæ\n\
+Gáudia vitæ.\n\
+Amen."
+   :translations
+   ((britt . "\
+Joseph, the glory of the court of heaven,\n\
+The sure hope of our life, the prop and stay\n\
+Of all the world, accept the praise and homage\n\
+We gladly pay.\n\
+\n\
+The Lord of all chose thee to be the husband\n\
+Of the chaste Virgin; willed that thou be called\n\
+The Word's own father, made thee minister\n\
+Of our salvation.\n\
+\n\
+Thou gazedst on the Redeemer in the manger,\n\
+Whom prophets' voices had foretold would come,\n\
+And, humbly kneeling, didst adore the Godhead\n\
+Of that new-born Babe.\n\
+\n\
+The King of kings, the Ruler of the nations,\n\
+At whose dread nod the hosts of hell do tremble,\n\
+Whom heaven obeys with reverence bowing lowly,\n\
+Submitted to thee.\n\
+\n\
+Praise to the exalted Trinity for ever,\n\
+Who, granting thee the honours of the blessed,\n\
+Through thy dear merits may bestow upon us\n\
+The joys of heaven.\n\
+Amen."))))
+
+;;; ─── Mar 24: S. Gabrielis Archangeli ───────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'christe-sanctorum-gabriel
+ '(:latin "\
+Christe, sanctórum decus Angelórum,\n\
+Gentis humánæ Sator et Redémptor,\n\
+Cǽlitum nobis tríbuas beátas\n\
+Scándere sedes.\n\
+\n\
+Angelus fortis Gábriel, ut hostes\n\
+Pellat antíquos, et amíca cælo,\n\
+Quæ triumphátor státuit per orbem,\n\
+Templa revísat.\n\
+\n\
+Virgo dux pacis, Genitríxque lucis,\n\
+Et sacer nobis chorus Angelórum\n\
+Semper assístat, simul et micántis\n\
+Régia cæli.\n\
+\n\
+Præstet hoc nobis Déitas beáta\n\
+Patris, ac Nati, paritérque Sancti\n\
+Spíritus, cujus résonat per omnem\n\
+Glória mundum.\n\
+Amen."
+   :translations
+   ((britt . "\
+O Christ, the glory of the Angel choir,\n\
+Of man the Maker and Redeemer blest,\n\
+Grant us one day to reach the seats of heaven\n\
+Among the blessed.\n\
+\n\
+Send Gabriel, the Angel strong, to scatter\n\
+The ancient foe, and visit graciously\n\
+The temples which the Victor hath established\n\
+Throughout the world.\n\
+\n\
+May Mary, Virgin-guide to paths of peace,\n\
+The Mother-source of light, and Angels' band\n\
+Attend us ever, and the shining courts\n\
+Of heaven guard us.\n\
+\n\
+This grace on us bestow, O Godhead blest,\n\
+Of Father, Son, and Spirit, Love divine,\n\
+Whose glory through the universe resounds\n\
+For ever. Amen."))))
+
+;;; ─── Corpus Christi — Matins ─────────────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'sacris-solemniis
+ '(:latin "\
+Sacris solémniis juncta sint gáudia,\n\
+Et ex præcórdiis sonent præcónia;\n\
+Recédant vétera, nova sint ómnia,\n\
+Corda, voces, et ópera.\n\
+\n\
+Noctis recólitur cœna novíssima,\n\
+Qua Christus créditur agnum et ázyma\n\
+Dedísse frátribus, juxta legítima\n\
+Priscis indúlta pátribus.\n\
+\n\
+Post agnum týpicum, explétis épulis,\n\
+Corpus Domínicum datum discípulis,\n\
+Sic totum ómnibus, quod totum síngulis,\n\
+Ejus fatémur mánibus.\n\
+\n\
+Dedit fragílibus córporis férculum,\n\
+Dedit et trístibus sánguinis póculum,\n\
+Dicens: Accípite quod trado vásculum;\n\
+Omnes ex eo bíbite.\n\
+\n\
+Sic sacrifícium istud instítuit,\n\
+Cujus offícium commítti vóluit\n\
+Solis presbýteris, quibus sic cóngruit,\n\
+Ut sumant, et dent céteris.\n\
+\n\
+Panis angélicus fit panis hóminum;\n\
+Dat panis cǽlicus figúris términum;\n\
+O res mirábilis: mandúcat Dóminum\n\
+Pauper, servus et húmilis.\n\
+\n\
+Te, trina Déitas únaque, póscimus;\n\
+Sic nos tu vísita, sicut te cólimus:\n\
+Per tuas sémitas duc nos quo téndimus,\n\
+Ad lucem quam inhábitas.\n\
+Amen."
+   :translations
+   ((britt . "\
+At this our solemn feast,\n\
+Let holy joys abound,\n\
+And from the inmost breast\n\
+Let songs of praise resound;\n\
+Let ancient rites depart,\n\
+And all be new around,\n\
+In ev'ry act and voice and heart.\n\
+\n\
+Remember we that eve,\n\
+When, the last supper spread,\n\
+Christ, as we all believe,\n\
+The lamb, with leavenless bread,\n\
+Among his brethren shared,\n\
+And thus the law obeyed,\n\
+Of old unto their sires declared.\n\
+\n\
+The typic lamb consumed,\n\
+The legal feast complete,\n\
+The Lord unto the twelve\n\
+His body gave to eat;\n\
+The whole to all, no less\n\
+The whole to each, did mete\n\
+With his own hands, as we confess.\n\
+\n\
+He gave them, weak and frail,\n\
+His flesh, their food to be;\n\
+On them, downcast and sad,\n\
+His blood bestowed he:\n\
+And thus to them he spake,\n\
+'Receive this cup from me,\n\
+And all of you of this partake.'\n\
+\n\
+So he this sacrifice\n\
+To institute did will,\n\
+And charged his priests alone\n\
+That office to fulfil:\n\
+In them he did confide:\n\
+To whom pertaineth still\n\
+To take, and to the rest divide.\n\
+\n\
+Thus angels' bread is made\n\
+The bread of man today:\n\
+The living bread from heaven\n\
+With figures doth away:\n\
+O wondrous gift indeed!\n\
+The poor and lowly may\n\
+Upon their Lord and Master feed.\n\
+\n\
+O Triune Deity,\n\
+To thee we meekly pray,\n\
+So mayst thou visit us,\n\
+As we our homage pay;\n\
+Lead us on thine own paths\n\
+To where thou dwell'st in day,\n\
+The light wherein thou showest us.\n\
+Amen."))))
+
+;;; ─── Sacred Heart — Matins ──────────────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'auctor-beate-saeculi
+ '(:latin "\
+Auctor beáte sǽculi,\n\
+Christe, Redémptor ómnium,\n\
+Lumen Patris de lúmine,\n\
+Deúsque verus de Deo.\n\
+\n\
+Amor coégit te tuus\n\
+Mortále corpus súmere,\n\
+Ut novus Adam rédderes,\n\
+Quod vetus ille abstúlerat.\n\
+\n\
+Ille amor, almus ártifex\n\
+Terræ marísque, et síderum,\n\
+Erráta patrum míserans,\n\
+Et nostra rumpens víncula.\n\
+\n\
+Non Corde discédat tuo\n\
+Vis illa amóris íncliti:\n\
+Hoc fonte gentes háuriant\n\
+Remissiónis grátiam.\n\
+\n\
+Percússum ad hoc est láncea,\n\
+Passúmque ad hoc est vúlnera:\n\
+Ut nos laváret sórdibus,\n\
+Unda fluénte, et sánguine.\n\
+\n\
+Jesu, tibi sit glória,\n\
+Qui Corde fundis grátiam,\n\
+Cum Patre, et almo Spíritu,\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((britt . "\
+O Christ, the world's Creator bright,\n\
+Who didst mankind from sin redeem,\n\
+Light from the Father's glorious light,\n\
+True God of God, in bliss supreme.\n\
+\n\
+Thy love compelled thee to assume\n\
+A mortal body, man to save;\n\
+Reversing the old Adam's doom;\n\
+Our ransom the new Adam gave.\n\
+\n\
+That love which gloriously framed all\n\
+The earth, the stars, and wondrous sea\n\
+Took pity on our parents' fall,\n\
+Broke all our bonds and set us free.\n\
+\n\
+O Saviour, let thy potent love\n\
+Flow ever from thy bounteous heart;\n\
+To nations that pure fount above\n\
+The grace of pardon will impart.\n\
+\n\
+His heart for this was opened wide,\n\
+And wounded by the soldier's spear,\n\
+That freely from his sacred side\n\
+Might flow the streams our souls to clear.\n\
+\n\
+Glory to Father and to Son,\n\
+And to the Holy Ghost the same,\n\
+To whom all power, when time is done,\n\
+And endless rule, in endless fame.\n\
+Amen."))))
+
+;;; ─── Christ the King — Matins ───────────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'aeterna-imago-altissimi
+ '(:latin "\
+Ætérna Imago Altíssimi,\n\
+Lumen, Deus, de Lúmine,\n\
+Tibi, Redémptor glória,\n\
+Honor, potéstas régia.\n\
+\n\
+Tu solus ante sǽcula\n\
+Spes atque centrum témporum,\n\
+Cui jure sceptrum géntium\n\
+Pater suprémum crédidit.\n\
+\n\
+Tu flos pudícæ Vírginis,\n\
+Nostræ caput propáginis,\n\
+Lapis cadúcus vértice\n\
+Ac mole terras óccupans.\n\
+\n\
+Diro tyránno súbdita,\n\
+Damnáta stirps mortálium,\n\
+Per te refrégit víncula\n\
+Sibíque cælum víndicat.\n\
+\n\
+Doctor, Sacérdos, Légifer\n\
+Præfers notátum sánguine\n\
+In veste « Princeps príncipum\n\
+Regúmque Rex Altíssimus ».\n\
+\n\
+Tibi voléntes súbdimur,\n\
+Qui jure cunctis ímperas:\n\
+Hæc cívium beátitas\n\
+Tuis subésse légibus.\n\
+\n\
+Jesu, tibi sit glória,\n\
+Qui sceptra mundi témperas,\n\
+Cum Patre, et almo Spíritu,\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((britt . "\
+O thou eternal Image bright\n\
+Of God most high, thou Light of Light,\n\
+To thee, Redeemer, glory be,\n\
+And might and kingly majesty.\n\
+\n\
+Sole hope of all created things,\n\
+Thou art the Lord and King of kings,\n\
+Whom God, long ere creation's morn,\n\
+Had crowned to rule earth yet unborn.\n\
+\n\
+Fair flower from the Virgin's breast,\n\
+Our race's Head for ever blest,\n\
+The stone that Daniel saw on high,\n\
+Which falling, o'er the world doth lie.\n\
+\n\
+The race of men, condemned to lie\n\
+Beneath the direful tyrant's yoke,\n\
+By thee at length the shackles broke\n\
+And claimed the fatherland on high.\n\
+\n\
+Priest, Teacher, Giver of the law,\n\
+Thy Name the rapt Apostle saw\n\
+Writ on thy vesture and thy thigh:\n\
+The King Of Kings, The Lord Most High.\n\
+\n\
+Fain would we own thy blessed sway,\n\
+Whose rule all creatures must obey;\n\
+For happy is that state and throne\n\
+Whose subjects seek thy will alone.\n\
+\n\
+All praise, King Jesu, be to thee,\n\
+The Lord of all in majesty;\n\
+Whom with the Father we adore,\n\
+And Holy Ghost, for evermore.\n\
+Amen."))))
+
+;;; ─── Jan 25 / Jun 30: S. Pauli Apostoli ────────────────────────────────
+
+(bcp-roman-hymnal-register
+ 'egregie-doctor-paule
+ '(:latin "\
+Egrégie Doctor, Paule, mores ínstrue,\n\
+Et nostra tecum péctora in cælum trahe;\n\
+Veláta dum merídiem cernat fides,\n\
+Et solis instar sola regnet cáritas.\n\
+\n\
+Sit Trinitáti sempitérna glória,\n\
+Honor, potéstas atque jubilátio,\n\
+In unitáte, quæ gubérnat ómnia,\n\
+Per univérsa æternitátis sǽcula.\n\
+Amen."
+   :translations
+   ((britt . "\
+O glorious Doctor Paul, instruct our ways,\n\
+And draw our hearts with thine to heavenly heights;\n\
+Till faith, unveiled, behold the noonday blaze,\n\
+And love, like sunlight, reign o'er all our rights.\n\
+\n\
+To God the Trinity be glory paid,\n\
+Honour and power, and joyful praise be done,\n\
+In Unity that governs all things made,\n\
+Through everlasting ages, Three in One.\n\
+Amen."))))
+
 (provide 'bcp-roman-hymnal)
 ;;; bcp-roman-hymnal.el ends here
