@@ -1872,5 +1872,1046 @@ Adoring with the heavenly host,\n\
 The Father, Son, and Holy Ghost!\n\
 Amen."))))
 
+;;; ─── Jam Christus astra ascenderat ────────────────────────────────────────
+;; Pentecost Matins hymn.
+;; English: DO translation.
+
+(bcp-roman-hymnal-register
+ 'jam-christus-astra-ascenderat
+ '(:latin
+   "Jam Christus astra ascénderat,\n\
+Revérsus unde vénerat,\n\
+Promíssum Patris múnere,\n\
+Sanctum datúrus Spíritum.\n\
+\n\
+Solémnis urgébat dies,\n\
+Quo mýstico septémplici\n\
+Orbis volútus sépties,\n\
+Signat beáta témpora.\n\
+\n\
+Cum lucis hora tértia\n\
+Repénte mundus íntonat,\n\
+Orántibus Apóstolis\n\
+Deum venísse núntiat.\n\
+\n\
+De Patris ergo lúmine\n\
+Decórus ignis almus est,\n\
+Qui fida Christi péctora\n\
+Calóre Verbi cómpleat.\n\
+\n\
+Impléta gaudent víscera,\n\
+Affláta Sancto Spíritu,\n\
+Voces divérsas íntonant,\n\
+Fantur Dei magnália.\n\
+\n\
+Ex omni gente cógniti,\n\
+Græcis, Latínis, Bárbaris,\n\
+Cunctísque admirántibus,\n\
+Linguis loquúntur ómnium.\n\
+\n\
+Judǽa tunc incrédula,\n\
+Vesána torvo spíritu,\n\
+Ructáre musti crápulam,\n\
+Alúmnos Christi cóncrepat.\n\
+\n\
+Sed signis et virtútibus\n\
+Occúrrit, et docet Petrus,\n\
+Falsa profári pérfidos,\n\
+Joéle teste cómprobans.\n\
+\n\
+Glória Patri Dómino,\n\
+Natóque, qui a mórtuis\n\
+Surréxit, ac Paráclito,\n\
+In sæculórum sǽcula.\n\
+Amen."
+   :translations
+   ((do .
+     "Now Christ, ascending whence he came,\n\
+Had mounted o'er the starry frame,\n\
+The Holy Ghost on man below,\n\
+The Father's promise, to bestow.\n\
+\n\
+The solemn time was drawing nigh,\n\
+Replete with heav'nly mystery,\n\
+On seven days' sevenfold circles borne,\n\
+That first and blessèd Whitsun-morn.\n\
+\n\
+When the third hour shone all around,\n\
+There came a rushing mighty sound,\n\
+And told the Apostles, while in prayer,\n\
+That, as was promised, God was there.\n\
+\n\
+Forth from the Father's light it came,\n\
+That beautiful and kindly flame:\n\
+To fill with fervour of his word\n\
+The spirits faithful to their Lord.\n\
+\n\
+With joy the Apostles' breasts are fired,\n\
+By God the Holy Ghost inspired:\n\
+And straight, in diverse kinds of speech,\n\
+The wondrous works of God they preach.\n\
+\n\
+To men of every race they speak,\n\
+Alike barbarian, Roman, Greek:\n\
+From the same lips, with awe and fear,\n\
+All men their native accents hear.\n\
+\n\
+But Juda's sons, e'en faithless yet,\n\
+With mad infuriate rage beset,\n\
+To mock Christ's followers combine,\n\
+As drunken all with new-made wine.\n\
+\n\
+When lo! with signs and mighty deeds,\n\
+Stands Peter in the midst, and pleads;\n\
+Confounding their malignant lie\n\
+By Joel's ancient prophecy.\n\
+\n\
+To God the Father let us sing,\n\
+To God the Son, our risen King,\n\
+And equally let us adore\n\
+The Spirit, God forevermore.\n\
+Amen."))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Proper feast Matins hymns
+
+;;; ─── Christe Redemptor omnium (Christmas Matins) ─────────────────────────
+;; English: DO translation.
+
+(bcp-roman-hymnal-register
+ 'christe-redemptor-omnium
+ '(:latin
+   "Christe Redémptor ómnium,\n\
+Ex Patre Patris únice,\n\
+Solus ante princípium\n\
+Natus ineffabíliter.\n\
+\n\
+Tu lumen, tu splendor Patris,\n\
+Tu spes perénnis ómnium:\n\
+Inténde quas fundunt preces\n\
+Tui per orbem fámuli.\n\
+\n\
+Meménto salútis Auctor,\n\
+Quod nostri quondam córporis,\n\
+Ex illibáta Vírgine\n\
+Nascéndo, formam súmpseris.\n\
+\n\
+Sic præsens testátur dies,\n\
+Currens per anni círculum,\n\
+Quod solus a sede Patris\n\
+Mundi salus advéneris.\n\
+\n\
+Hunc cælum, terra, hunc mare,\n\
+Hunc omne quod in eis est,\n\
+Auctórem advéntus tui,\n\
+Laudans exsúltat cántico.\n\
+\n\
+Nos quoque, qui sancto tuo\n\
+Redémpti sánguine sumus,\n\
+Ob diem natális tui,\n\
+Hymnum novum concínimus.\n\
+\n\
+Glória tibi Dómine,\n\
+Qui natus es de Vírgine,\n\
+Cum Patre et Sancto Spíritu,\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((do .
+     "Jesus, the Ransomer of man,\n\
+Who, ere created light began,\n\
+Didst from the sovereign Father spring,\n\
+His power and glory equalling.\n\
+\n\
+The Father's light and splendour thou,\n\
+Their endless hope to thee that bow;\n\
+Accept the prayers and praise to-day\n\
+That through the world thy servants pay.\n\
+\n\
+Salvation's author, call to mind,\n\
+How, taking form of humankind,\n\
+Born of a Virgin undefiled,\n\
+Thou in man's flesh becam'st a child.\n\
+\n\
+Thus testifies the present day,\n\
+Through every year in long array,\n\
+That thou, salvation's source alone,\n\
+Proceededst from the Father's throne.\n\
+\n\
+Him heaven and earth, Him land and sea,\n\
+Him all that is both land and sea,\n\
+Salutes the Author of thy birth,\n\
+Singing a new glad song of mirth.\n\
+\n\
+And we who, by thy precious blood\n\
+From sin redeemed, are marked for God,\n\
+On this the day that saw thy birth,\n\
+Sing the new song of ransomed earth.\n\
+\n\
+All honour, laud, and glory be,\n\
+O Jesu, Virgin-born, to thee:\n\
+All glory, as is ever meet,\n\
+To Father, and to Paraclete.\n\
+Amen."))))
+
+;;; ─── Deus tuorum militum (Commune Martyris Matins) ───────────────────────
+;; English: DO translation.
+
+(bcp-roman-hymnal-register
+ 'deus-tuorum-militum
+ '(:latin
+   "Deus tuórum mílitum\n\
+Sors, et coróna, prǽmium,\n\
+Laudes canéntes Mártyris\n\
+Absólve nexu críminis.\n\
+\n\
+Hic nempe mundi gáudia,\n\
+Et blandiménta nóxia\n\
+Cadúca rite députans,\n\
+Pervénit ad cæléstia.\n\
+\n\
+Pœnas cucúrrit fórtiter,\n\
+Et sústulit viríliter,\n\
+Pro te effúndens sánguinem,\n\
+Ætérna dona póssidet.\n\
+\n\
+Ob hoc precátu súpplici\n\
+Te póscimus, piíssime;\n\
+In hoc triúmpho Mártyris\n\
+Dimítte noxam sérvulis.\n\
+\n\
+Deo Patri sit glória,\n\
+Et Fílio, qui a mórtuis\n\
+Surréxit, ac Paráclito,\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((do .
+     "O God, of those that fought thy fight,\n\
+Portion, and prize, and crown of light,\n\
+Break every bond of sin and shame\n\
+As now we praise thy martyr's name.\n\
+\n\
+He, counting earthly pleasures dross,\n\
+And all the lure of wanton joys,\n\
+Passed, rightly judging, from the earth,\n\
+And reached the home of heavenly mirth.\n\
+\n\
+With brave endurance, manfully,\n\
+He bore his torturer's cruelty;\n\
+For thee he poured his blood abroad,\n\
+And won an everlasting reward.\n\
+\n\
+We therefore pray thee, full of love,\n\
+Regard us from thy throne above;\n\
+On this thy Martyr's triumph day,\n\
+Wash every stain of sin away.\n\
+\n\
+To God the Father, laud and praise,\n\
+To God the Son, who rose again,\n\
+And Holy Ghost, whom both did raise,\n\
+In endless glory. Amen."))))
+
+;;; ─── Hostis Herodes impie (Epiphany Matins) ──────────────────────────────
+;; English: DO translation.
+
+(bcp-roman-hymnal-register
+ 'hostis-herodes-impie
+ '(:latin
+   "Hostis Heródes ímpie,\n\
+Christum veníre quid times?\n\
+Non éripit mortália,\n\
+Qui regna dat cæléstia.\n\
+\n\
+Ibant magi, quam víderant,\n\
+Stellam sequéntes prǽviam:\n\
+Lumen requírunt lúmine:\n\
+Deum faténtur múnere.\n\
+\n\
+Lavácra puri gúrgitis\n\
+Cæléstis Agnus áttigit:\n\
+Peccáta, quæ non détulit,\n\
+Nos abluéndo sústulit.\n\
+\n\
+Novum genus poténtiæ:\n\
+Aquæ rubéscunt hýdriæ,\n\
+Vinúmque jussa fúndere,\n\
+Mutávit unda oríginem.\n\
+\n\
+Jesu, tibi sit glória,\n\
+Qui apparuísti géntibus,\n\
+Cum Patre, et almo Spíritu,\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((do .
+     "Why, impious Herod, vainly fear\n\
+That Christ the Saviour cometh here?\n\
+He takes no earthly realms away\n\
+Who gives the crown that lasts for aye.\n\
+\n\
+The eastern sages saw from far\n\
+And followed on His guiding star;\n\
+By light their way to Light they trod,\n\
+And by their gifts confessed their God.\n\
+\n\
+Within the Jordan's sacred flood\n\
+The heavenly Lamb in meekness stood,\n\
+That He, to whom no sin was known,\n\
+Might cleanse His people from their own.\n\
+\n\
+And oh, what miracle divine,\n\
+When water reddened into wine!\n\
+He spake the word, and forth it flowed\n\
+In streams that nature ne'er bestowed.\n\
+\n\
+All glory, Jesu, be to Thee\n\
+For this Thy glad Epiphany:\n\
+Whom with the Father we adore,\n\
+And Holy Ghost, for evermore.\n\
+Amen."))))
+
+;;;; Commune Sanctorum hymns
+
+;;; ─── Aeterna Christi munera — Apostolorum (C1 Apostles Matins) ────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'aeterna-christi-munera-apostolorum
+ '(:latin
+   "Ætérna Christi múnera,\n\
+Apostolórum glóriam,\n\
+Palmas et hymnos débitos\n\
+Lætis canámus méntibus.\n\
+\n\
+Ecclesiárum Príncipes,\n\
+Belli triumpháles duces,\n\
+Cæléstis aulæ mílites,\n\
+Et vera mundi lúmina.\n\
+\n\
+Devóta Sanctórum fides,\n\
+Invícta spes credéntium,\n\
+Perfécta Christi cáritas\n\
+Mundi tyránnum cónterit.\n\
+\n\
+In his Patérna glória,\n\
+In his triúmphat Fílius,\n\
+In his volúntas Spíritus,\n\
+Cælum replétur gáudio.\n\
+\n\
+Patri, simúlque Fílio,\n\
+Tibíque Sancte Spíritus,\n\
+Sicut fuit, sit júgiter\n\
+Sæclum per omne glória.\n\
+Amen."
+   :translations
+   ((britt .
+     "The eternal gifts of Christ the King,\n\
+The Apostles' glory, let us sing;\n\
+And all, with hearts of gladness, raise\n\
+Due hymns of thankful love and praise.\n\
+\n\
+For they the Church's princes are,\n\
+Triumphant leaders in the war,\n\
+In heavenly courts a warrior band,\n\
+True lights to lighten every land.\n\
+\n\
+Theirs is the steadfast faith of Saints,\n\
+And hope that never yields nor faints,\n\
+And love of Christ in perfect glow\n\
+That lays the prince of this world low.\n\
+\n\
+In them the Father's glory shone,\n\
+In them the will of God the Son,\n\
+In them exults the Holy Ghost,\n\
+Through them rejoice the heavenly host.\n\
+\n\
+To Thee, Redeemer, now we cry,\n\
+That Thou wouldst join to them on high\n\
+Thy servants, who this grace implore,\n\
+For ever and for evermore.\n\
+Amen."))))
+
+;;; ─── Christo profusum sanguinem (C3 Many Martyrs Matins) ──────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'christo-profusum-sanguinem
+ '(:latin
+   "Christo profúsum sánguinem,\n\
+Et Mártyrum victórias,\n\
+Dignámque cælo láuream\n\
+Lætis sequámur vócibus.\n\
+\n\
+Terróre victo sǽculi,\n\
+Pœnísque spretis córporis,\n\
+Mortis sacræ compéndio\n\
+Vitam beátam póssident.\n\
+\n\
+Tradúntur igni Mártyres,\n\
+Et bestiárum déntibus;\n\
+Armáta sævit úngulis\n\
+Tortóris insáni manus.\n\
+\n\
+Nudáta pendent víscera,\n\
+Sanguis sacrátus fúnditur;\n\
+Sed pérmanent immóbiles,\n\
+Vitæ perénnis grátia.\n\
+\n\
+Te nunc, Redémptor, quǽsumus,\n\
+Ut mártyrum consórtio\n\
+Jungas precántes sérvulos\n\
+In sempitérna sǽcula.\n\
+Amen."
+   :translations
+   ((britt .
+     "The martyr's blood for Christ outpoured,\n\
+The martyrs' triumphs let us sing;\n\
+The garland worthy heaven's reward,\n\
+With joyful voices echoing.\n\
+\n\
+They conquered all the fears of earth,\n\
+Nor recked they of the body's pain;\n\
+Through blessed death they won new birth,\n\
+And life in bliss for aye to reign.\n\
+\n\
+To flames the Martyrs were consigned,\n\
+And torn by teeth of savage beasts;\n\
+With cruel claws of every kind\n\
+Were armed the hands of torturing priests.\n\
+\n\
+Their naked limbs were hung on high,\n\
+Their sacred blood was shed amain;\n\
+Yet they remained unmoved thereby,\n\
+By grace of life that doth not wane.\n\
+\n\
+Thee, now, Redeemer, we entreat,\n\
+Among thy Martyrs grant a place\n\
+To us thy suppliants at thy feet,\n\
+Through everlasting years of grace.\n\
+Amen."))))
+
+;;; ─── Iste Confessor (C4/C5 Confessor Matins) ─────────────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'iste-confessor
+ '(:latin
+   "Iste Conféssor Dómini, coléntes\n\
+Quem pie laudant pópuli per orbem,\n\
+Hac die lætus méruit beátas\n\
+Scándere sedes.\n\
+\n\
+Qui pius, prudens, húmilis, pudícus,\n\
+Sóbriam duxit sine labe vitam,\n\
+Donec humános animávit auræ\n\
+Spíritus artus.\n\
+\n\
+Cujus ob præstans méritum, frequénter,\n\
+Ægra quæ passim jacuére membra,\n\
+Víribus morbi dómitis, salúti\n\
+Restituúntur.\n\
+\n\
+Noster hinc illi chorus obsequéntem\n\
+Cóncinit laudem celebrésque palmas,\n\
+Ut piis ejus précibus juvémur\n\
+Omne per ævum.\n\
+\n\
+Sit salus illi, decus atque virtus,\n\
+Qui, super cæli sólio corúscans,\n\
+Tótius mundi sériem gubérnat,\n\
+Trinus et unus.\n\
+Amen."
+   :translations
+   ((britt .
+     "This the Confessor of the Lord, whose triumph\n\
+Now all the faithful celebrate, with gladness\n\
+On this feast day year by year receiving\n\
+Worthy the glory.\n\
+\n\
+Saintly and prudent, modest in behavior,\n\
+Peaceful and sober, chaste was he, and lowly,\n\
+While that life's vigor, coursing through his members,\n\
+Quickened his being.\n\
+\n\
+Sick ones of old time, to his tomb repairing,\n\
+Sorely by ailments manifold afflicted,\n\
+Oft-times have won the health for which they pleaded,\n\
+Healed by his merits.\n\
+\n\
+Whence we in chorus gladly do him honor,\n\
+Chanting his praises with devout affection,\n\
+That in his merits we may have a portion,\n\
+Now and for ever.\n\
+\n\
+His be the glory, power, and salvation,\n\
+Who over all things reigneth in the highest,\n\
+Earth's mighty fabric ruling and directing,\n\
+Onely and Trinal.\n\
+Amen."))))
+
+;;; ─── Virginis Proles (C6 Virgin Martyr Matins) ───────────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'virginis-proles
+ '(:latin
+   "Vírginis Proles Opiféxque Matris,\n\
+Virgo quem gessit, peperítque Virgo:\n\
+Vírginis partos cánimus decóra\n\
+Morte triúmphos.\n\
+\n\
+Hæc enim palmæ dúplicis beáta\n\
+Sorte, dum gestit frágilem domáre\n\
+Córporis sexum, dómuit cruéntum\n\
+Cæde tyránnum.\n\
+\n\
+Unde nec mortem, nec amíca mortis\n\
+Mille pœnárum génera expavéscens,\n\
+Sánguine effúso méruit serénum\n\
+Scándere cælum.\n\
+\n\
+Hujus orátu, Deus alme, nobis\n\
+Débitas pœnas scélerum remítte;\n\
+Ut tibi puro resonémus almum\n\
+Péctore carmen.\n\
+\n\
+Sit decus Patri, genitǽque Proli,\n\
+Et tibi, compar utriúsque virtus,\n\
+Spíritus semper, Deus unus, omni\n\
+Témporis ævo.\n\
+Amen."
+   :translations
+   ((britt .
+     "Son of a Virgin, Maker of thy Mother,\n\
+Thou, Rod of Jesse, whom the Virgin bore,\n\
+While yet in her was virginity kept spotless,\n\
+We sing thy triumphs in a virgin's death.\n\
+\n\
+Doubly blest she with the palms of glory,\n\
+For while she strove to curb the weaker body,\n\
+She overcame the blood-stained foe, and triumphed\n\
+In her own slaughter.\n\
+\n\
+Neither death itself, nor death's companion torments,\n\
+Thousand forms of cruelty could dismay her;\n\
+And by her blood outpoured she earned the glory\n\
+Of heaven's portal.\n\
+\n\
+By this virgin's prayer, O God almighty,\n\
+Free us from the punishment we merit;\n\
+That with pure heart we may to thee be singing\n\
+Songs everlasting.\n\
+\n\
+To the Father, glory, and the Son begotten,\n\
+Equal glory, Spirit, unto Thee be given,\n\
+Power coeternal, Godhead undivided,\n\
+Through every age.\n\
+Amen."))))
+
+;;; ─── Fortem virili pectore (C7 Holy Women Matins) ─────────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'fortem-virili-pectore
+ '(:latin
+   "Fortem viríli péctore\n\
+Laudémus omnes féminam,\n\
+Quæ sanctitátis glória\n\
+Ubíque fulget ínclita.\n\
+\n\
+Hæc sancto amóre sáucia,\n\
+Dum mundi amórem nóxium\n\
+Horréscit, ad cæléstia\n\
+Iter perégit árduum.\n\
+\n\
+Carnem domans jejúniis,\n\
+Dulcíque mentem pábulo\n\
+Oratiónis nútriens,\n\
+Cæli potítur gáudiis.\n\
+\n\
+Rex Christe, virtus fórtium,\n\
+Qui magna solus éfficis,\n\
+Hujus precátu, quǽsumus,\n\
+Audi benígnus súpplices.\n\
+\n\
+Deo Patri sit glória,\n\
+Ejúsque soli Fílio,\n\
+Cum Spíritu Paráclito,\n\
+Nunc, et per omne sǽculum.\n\
+Amen."
+   :translations
+   ((britt .
+     "With manly heart we praise aloud\n\
+This woman who for glory shone,\n\
+Whose holiness throughout the world\n\
+Is celebrated and well known.\n\
+\n\
+Wounded with love of God most high,\n\
+She shrank from earthly love's allure,\n\
+And, treading hard the heavenward way,\n\
+Won entrance to the realms secure.\n\
+\n\
+Her flesh she tamed with fasting hard,\n\
+Her mind she nourished with the sweet\n\
+And sacred food of prayer, and thus\n\
+Attained to joys of heaven's seat.\n\
+\n\
+O Christ the King, the strength of those\n\
+Who strive, who dost great deeds alone,\n\
+By this saint's prayers we beg of thee,\n\
+Hear us who humbly seek thy throne.\n\
+\n\
+To God the Father glory be,\n\
+And to his sole-begotten Son,\n\
+With God the Holy Paraclete,\n\
+Both now and evermore. Amen."))))
+
+;;;; Commune Non-Matins Hymns
+
+;;; ─── Exsultet orbis gaudiis (C1 Apostles Vespers/Lauds) ────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'exsultet-orbis-gaudiis
+ '(:latin
+   "Exsúltet orbis gáudiis:\n\
+Cælum resúltet láudibus:\n\
+Apostolórum glóriam\n\
+Tellus et astra cóncinunt.\n\
+\n\
+Vos sæculórum júdices,\n\
+Et vera mundi lúmina:\n\
+Votis precámur córdium,\n\
+Audíte voces súpplicum.\n\
+\n\
+Qui templa cæli cláuditis,\n\
+Serásque verbo sólvitis,\n\
+Nos a reátu nóxios\n\
+Solvi jubéte, quǽsumus.\n\
+\n\
+Præcépta quorum prótinus\n\
+Languor salúsque séntiunt:\n\
+Sanáte mentes lánguidas:\n\
+Augéte nos virtútibus.\n\
+\n\
+Ut, cum redíbit árbiter\n\
+In fine Christus sǽculi,\n\
+Nos sempitérni gáudii\n\
+Concédat esse cómpotes.\n\
+\n\
+Patri, simúlque Fílio,\n\
+Tibíque Sancte Spíritus,\n\
+Sicut fuit, sit júgiter\n\
+Sæclum per omne glória.\n\
+Amen."
+   :translations
+   ((britt .
+     "Now let the earth with joy resound,\n\
+And heaven the chant re-echo round;\n\
+Nor heaven nor earth too high can raise\n\
+The great Apostles' glorious praise.\n\
+\n\
+O ye who, throned in glory dread,\n\
+Shall judge the living and the dead,\n\
+Lights of the world forevermore!\n\
+To you the suppliant prayer we pour.\n\
+\n\
+Ye close the sacred gates on high;\n\
+At your command apart they fly:\n\
+Oh! loose for us the guilty chain\n\
+We strive to break, and strive in vain.\n\
+\n\
+Sickness and health your voice obey;\n\
+At your command they go or stay:\n\
+From sin's disease our souls restore;\n\
+In good confirm us more and more.\n\
+\n\
+So when the world is at its end,\n\
+And Christ to judgement shall descend,\n\
+May we be called those joys to see\n\
+Prepared from all eternity.\n\
+\n\
+Praise to the Father, with the Son,\n\
+And Holy Spirit, Three in One;\n\
+As ever was in ages past,\n\
+And so shall be while ages last.\n\
+Amen."))))
+
+;;; ─── Invicte Martyr unicum (C2 One Martyr Lauds) ───────────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'invicte-martyr-unicum
+ '(:latin
+   "Invícte Martyr, únicum\n\
+Patris secútus Fílium,\n\
+Victis triúmphas hóstibus,\n\
+Victor fruens cæléstibus.\n\
+\n\
+Tui precátus múnere\n\
+Nostrum reátum dílue,\n\
+Arcens mali contágium,\n\
+Vitæ repéllens tǽdium.\n\
+\n\
+Solúta sunt jam víncula\n\
+Tui sacráti córporis:\n\
+Nos solve vinclis sǽculi,\n\
+Dono supérni Núminis.\n\
+\n\
+Deo Patri sit glória,\n\
+Ejúsque soli Fílio,\n\
+Cum Spíritu Paráclito,\n\
+Nunc, et per omne sǽculum.\n\
+Amen."
+   :translations
+   ((britt .
+     "Martyr of God, whose strength was steeled\n\
+To follow close God's only Son,\n\
+Well didst thou brave thy battlefield,\n\
+And well thy heavenly bliss was won!\n\
+\n\
+Now join thy prayers with ours, who pray\n\
+That God may pardon us and bless;\n\
+For prayer keeps evil's plague away,\n\
+And draws from life its weariness.\n\
+\n\
+Long, long ago, were loosed the chains\n\
+That held thy body once in thrall;\n\
+For us how many a bond remains!\n\
+O love of God release us all.\n\
+\n\
+All praise to God the Father be,\n\
+All praise to thee, Eternal Son;\n\
+All praise, O Holy Ghost, to thee,\n\
+While never-ending ages run.\n\
+Amen."))))
+
+;;; ─── Sanctorum meritis (C3 Many Martyrs Vespers) ───────────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'sanctorum-meritis
+ '(:latin
+   "Sanctórum méritis ínclita gáudia\n\
+Pangámus, sócii, géstaque fórtia:\n\
+Gliscens fert ánimus prómere cántibus\n\
+Victórum genus óptimum.\n\
+\n\
+Hi sunt, quos fátue mundus abhórruit;\n\
+Hunc fructu vácuum, flóribus áridum\n\
+Contempsére tui nóminis ásseclæ\n\
+Jesu, Rex bone cǽlitum.\n\
+\n\
+Hi pro te fúrias, atque minas truces\n\
+Calcárunt hóminum, sǽvaque vérbera:\n\
+His cessit lácerans fórtiter úngula,\n\
+Nec carpsit penetrália.\n\
+\n\
+Cædúntur gládiis more bidéntium:\n\
+Non murmur résonat, non quærimónia;\n\
+Sed corde impávido mens bene cónscia\n\
+Consérvat patiéntiam.\n\
+\n\
+Quæ vox, quæ póterit lingua retéxere,\n\
+Quæ tu Martýribus múnera prǽparas?\n\
+Rubri nam flúido sánguine fúlgidis\n\
+Cingunt témpora láureis.\n\
+\n\
+Te, summa o Déitas, únaque póscimus;\n\
+Ut culpas ábigas, nóxia súbtrahas,\n\
+Des pacem fámulis; ut tibi glóriam,\n\
+Annórum in sériem, canant.\n\
+Amen."
+   :translations
+   ((britt .
+     "Sing, O sons of the Church sounding the martyrs' praise!\n\
+God's true soldiers applaud, who, in their weary days,\n\
+Won bright trophies of good, glad be the voice ye raise,\n\
+While these heroes of Christ ye sing!\n\
+\n\
+They, while yet in the world were by the world abhorred;\n\
+Felt how fading the joys, fleeting the wealth it stored;\n\
+Spurned all pleasure for thee, and at thy call, O Lord,\n\
+Came forth strong in thy name, as King.\n\
+\n\
+Lord, how bravely they bore fury and pain for thee!\n\
+Scourge, rod, sword, and the rack strongly endured; but free\n\
+Sang out, bold in thy love, longing on high to be;\n\
+Earth's might never their souls could bend.\n\
+\n\
+While they, shedding their blood, victims for Jesus fell,\n\
+No sound out of their lips came of their throes to tell;\n\
+Bowed low, patient and meek, loving the Lord so well,\n\
+Turned they still to the Christ, their friend.\n\
+\n\
+What joys, bright with the blood shed for thy love they share,\n\
+Those brave martyrs of thine crowned with thy laurels rare;\n\
+Man's tongue never can tell, never can half declare,\n\
+How pure now is their bliss above!\n\
+\n\
+Yet we, Father on high, God of eternal might,\n\
+Lift weak voices in prayer asking for peace and light;\n\
+Cleanse thou out of our hearts every stain and blight,\n\
+So our songs may be songs of love.\n\
+Amen."))))
+
+;;; ─── Rex gloriosae Martyrum (C3 Many Martyrs Lauds) ────────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'rex-gloriosae-martyrum
+ '(:latin
+   "Rex glorióse Mártyrum,\n\
+Coróna confiténtium,\n\
+Qui respuéntes térrea\n\
+Perdúcis ad cæléstia:\n\
+\n\
+Aurem benígnam prótinus\n\
+Inténde nostris vócibus:\n\
+Trophǽa sacra pángimus:\n\
+Ignósce quod delíquimus.\n\
+\n\
+Tu vincis inter Mártyres\n\
+Parcísque Confessóribus:\n\
+Tu vince nostra crímina,\n\
+Largítor indulgéntiæ.\n\
+\n\
+Deo Patri sit glória,\n\
+Ejúsque soli Fílio,\n\
+Cum Spíritu Paráclito,\n\
+Nunc, et per omne sǽculum.\n\
+Amen."
+   :translations
+   ((britt .
+     "O glorious King of martyr hosts,\n\
+Thou crown that each confessor boasts,\n\
+Who leadest to celestial day\n\
+Those who have cast earth's joys away:\n\
+\n\
+Thine ear in mercy, Saviour, lend,\n\
+While unto thee our prayers ascend;\n\
+And as we count their triumphs won,\n\
+Forgive the sins that we have done.\n\
+\n\
+Martyrs in thee their triumphs gain,\n\
+From thee confessors grace obtain;\n\
+O'ercome in us the lust of sin,\n\
+That we thy pardoning love may win.\n\
+\n\
+To thee who, dead, again dost live,\n\
+All glory, Lord, thy people give;\n\
+All glory, as is ever meet,\n\
+To Father and to Paraclete.\n\
+Amen."))))
+
+;;; ─── Jesu Redemptor omnium perpes (C4 Confessor Bishop Lauds) ──────────────
+;; English: Britt translation.
+;; NB: Distinguished from the Christmas "Jesu Redemptor omnium" by longer incipit.
+
+(bcp-roman-hymnal-register
+ 'jesu-redemptor-omnium-perpes
+ '(:latin
+   "Jesu Redémptor ómnium,\n\
+Perpes coróna Prǽsulum,\n\
+In hac die cleméntius\n\
+Indúlgeas precántibus.\n\
+\n\
+Tui sacri qua nóminis\n\
+Conféssor almus cláruit:\n\
+Hujus celébrat ánnua\n\
+Devóta plebs solémnia.\n\
+\n\
+Qui rite mundi gáudia\n\
+Hujus cadúca réspuens,\n\
+Æternitátis prǽmio\n\
+Potítur inter Ángelos.\n\
+\n\
+Hujus benígnus ánnue\n\
+Nobis sequi vestígia:\n\
+Hujus precátu, sérvulis\n\
+Dimítte noxam críminis.\n\
+\n\
+Sit Christe, Rex piíssime,\n\
+Tibi, Patríque glória,\n\
+Cum Spíritu Paráclito,\n\
+Nunc, et per omne sǽculum.\n\
+Amen."
+   :translations
+   ((britt .
+     "Jesu, the world's Redeemer, O hear;\n\
+thy bishops' fadeless crown, draw near:\n\
+Accept with gentlest love today\n\
+The prayers and praises that we pay.\n\
+\n\
+The meek confessor of thy name\n\
+Today attained a glorious fame;\n\
+Whose yearly feast, in solemn state,\n\
+Thy faithful people celebrate.\n\
+\n\
+The world and all its boasted good,\n\
+As vain and passing, he eschewed;\n\
+And therefore with angelic bands,\n\
+In endless joy forever stands.\n\
+\n\
+Grant then that we, most gracious God,\n\
+May follow in the steps he trod:\n\
+And, at his prayer, thy servants free\n\
+From stain of all iniquity.\n\
+\n\
+To thee, O Christ, our loving King,\n\
+All glory, praise, and thanks we bring:\n\
+All glory, as is ever meet,\n\
+To Father and to Paraclete.\n\
+Amen."))))
+
+;;; ─── Jesu corona celsior (C5 Confessor non-Bishop Lauds) ───────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'jesu-corona-celsior
+ '(:latin
+   "Jesu, coróna célsior,\n\
+Et véritas sublímior,\n\
+Qui confiténti sérvulo\n\
+Reddis perénne prǽmium:\n\
+\n\
+Da supplicánti cœ́tui,\n\
+Hujus rogátu, nóxii\n\
+Remissiónem críminis,\n\
+Rumpéndo nexum vínculi.\n\
+\n\
+Anni revérso témpore,\n\
+Dies refúlsit lúmine,\n\
+Quo Sanctus hic de córpore\n\
+Migrávit inter sídera.\n\
+\n\
+Hic vana terræ gáudia,\n\
+Et luculénta prǽdia,\n\
+Pollúta sorde députans,\n\
+Ovans tenet cæléstia.\n\
+\n\
+Te, Christe, Rex piíssime,\n\
+Hic confiténdo júgiter,\n\
+Calcávit artes dǽmonum,\n\
+Sævúmque avérni príncipem.\n\
+\n\
+Virtúte clarus, et fide,\n\
+Confessióne sédulus,\n\
+Jejúna membra déferens,\n\
+Dapes supérnas óbtinet.\n\
+\n\
+Proínde te piíssime\n\
+Precámur omnes súpplices:\n\
+Nobis ut hujus grátia\n\
+Pœnas remíttas débitas.\n\
+\n\
+Patri perénnis glória,\n\
+Natóque Patris único,\n\
+Sanctóque sit Paráclito,\n\
+Per omne semper sǽculum.\n\
+Amen."
+   :translations
+   ((britt .
+     "Jesu, eternal truth sublime,\n\
+Through endless years the same!\n\
+Thou crown of those who through all time\n\
+Confess thy holy name:\n\
+\n\
+Thy suppliant people, through the prayer\n\
+Of thy blest saint, forgive;\n\
+For his dear sake, thy wrath forbear,\n\
+And bid our spirits live.\n\
+\n\
+Again returns the sacred day,\n\
+With heavenly glory bright,\n\
+Which saw him go upon his way\n\
+Into the realms of light.\n\
+\n\
+All objects of our vain desire,\n\
+All earthly joys and gains,\n\
+To him were but as filthy mire;\n\
+And now with thee he reigns.\n\
+\n\
+Thee, Jesu, his all-gracious Lord,\n\
+Confessing to the last,\n\
+He trod beneath him Satan's fraud,\n\
+And stood forever fast.\n\
+\n\
+In holy deeds of faith and love,\n\
+In fastings and in prayers,\n\
+His days were spent; and now above\n\
+Thy heavenly feast he shares.\n\
+\n\
+Then, for his sake thy wrath lay by,\n\
+And hear us while we pray;\n\
+And pardon us, O thou most high,\n\
+On this his festal day.\n\
+\n\
+All glory to the Father be;\n\
+And sole Incarnate Son;\n\
+Praise, holy Paraclete, to thee;\n\
+While endless ages run.\n\
+Amen."))))
+
+;;; ─── Jesu corona Virginum (C6 Virgins Vespers/Lauds) ───────────────────────
+;; English: Britt translation.
+
+(bcp-roman-hymnal-register
+ 'jesu-corona-virginum
+ '(:latin
+   "Jesu, coróna Vírginum,\n\
+Quem Mater illa cóncipit\n\
+Quæ sola Virgo párturit,\n\
+Hæc vota clemens áccipe:\n\
+\n\
+Qui pergis inter lília\n\
+Septus choréis Vírginum,\n\
+Sponsus decórus glória\n\
+Sponsísque reddens prǽmia.\n\
+\n\
+Quocúmque tendis, Vírgines\n\
+Sequúntur, atque láudibus\n\
+Post te canéntes cúrsitant,\n\
+Hymnósque dulces pérsonant;\n\
+\n\
+Te deprecámur súpplices,\n\
+Nostris ut addas sénsibus\n\
+Nescíre prorsus ómnia\n\
+Corruptiónis vúlnera.\n\
+\n\
+Virtus, honor, laus, glória\n\
+Deo Patri cum Fílio,\n\
+Sancto simul Paráclito,\n\
+In sæculórum sǽcula.\n\
+Amen."
+   :translations
+   ((britt .
+     "Jesu, the virgins' crown, do thou\n\
+Accept us as in prayer we bow;\n\
+Born of that Virgin, whom alone\n\
+The mother and the maid we own.\n\
+\n\
+Amongst the lilies thou dost feed,\n\
+By virgin choirs accompanied;\n\
+With glory decked, the spotless brides\n\
+Whose bridal gifts thy love provides.\n\
+\n\
+They, wheresoe'er thy footsteps bend,\n\
+With hymns and praises still attend:\n\
+In blessèd troops they follow thee,\n\
+With dance, and song, and melody.\n\
+\n\
+We pray thee therefore to bestow\n\
+Upon our senses here below\n\
+Thy grace, that so we may endure\n\
+From taint of all corruption pure.\n\
+\n\
+All laud to God the Father be,\n\
+All praise, eternal Son, to thee;\n\
+All glory as is ever meet,\n\
+To God, the holy Paraclete.\n\
+Amen."))))
+
 (provide 'bcp-roman-hymnal)
 ;;; bcp-roman-hymnal.el ends here

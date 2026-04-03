@@ -174,6 +174,11 @@ et regnat in unitáte Spíritus Sancti, Deus, per ómnia sǽcula sæculórum. Am
 per ómnia sǽcula sæculórum. Amen."
   "Collect conclusion addressed to the Son: Qui vivis.")
 
+(defconst bcp-roman-per-dominum-eiusdem
+  "Per Dóminum nostrum Jesum Christum, Fílium tuum: qui tecum vivit \
+et regnat in unitáte ejúsdem Spíritus Sancti, Deus, per ómnia sǽcula sæculórum. Amen."
+  "Collect conclusion when the Holy Spirit is named: Per Dominum eiusdem.")
+
 (defconst bcp-roman-qui-tecum
   "Qui tecum vivit et regnat in unitáte Spíritus Sancti, Deus, \
 per ómnia sǽcula sæculórum. Amen."

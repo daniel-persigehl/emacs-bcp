@@ -574,13 +574,29 @@ Homilia 36 in Evangelia"
          )
         :responsories
         (
-         nil  ; R1 (not in file)
-         nil  ; R2 (not in file)
-         nil  ; R3 (not in file)
-         nil  ; R4 (not in file)
-         nil  ; R5 (not in file)
-         nil  ; R6 (not in file)
-         nil  ; R7 (not in file)
+         (:respond "Præparáte corda vestra Dómino, et servíte illi soli: * Et liberábit vos de mánibus inimicórum vestrórum."
+             :verse "Convertímini ad eum in toto corde vestro, et auférte deos aliénos de médio vestri."
+             :repeat "Et liberábit vos de mánibus inimicórum vestrórum.")  ; R1
+         (:respond "Deus ómnium exaudítor est: ipse misit Angelum suum, et tulit me de óvibus patris mei: * Et unxit me unctióne misericórdiæ suæ."
+             :verse "Dóminus, qui erípuit me de ore leónis, et de manu béstiæ liberávit me."
+             :repeat "Et unxit me unctióne misericórdiæ suæ.")  ; R2
+         (:respond "Dóminus, qui erípuit me de ore leónis, et de manu béstiæ liberávit me, * Ipse me erípiet de mánibus inimicórum meórum."
+             :verse "Misit Deus misericórdiam suam et veritátem suam: ánimam meam erípuit de médio catulórum leónum."
+             :repeat "Ipse me erípiet de mánibus inimicórum meórum."
+             :gloria t)  ; R3
+         (:respond "Percússit Saul mille, et David decem míllia: * Quia manus Dómini erat cum illo: percússit Philisthǽum, et ábstulit oppróbrium ex Israël."
+             :verse "Nonne iste est David, de quo canébant in choro, dicéntes: Saul percússit mille, et David decem míllia?"
+             :repeat "Quia manus Dómini erat cum illo: percússit Philisthǽum, et ábstulit oppróbrium ex Israël.")  ; R4
+         (:respond "Montes Gélboë, nec ros nec plúvia véniant super vos, * Ubi cecidérunt fortes Israël."
+             :verse "Omnes montes, qui estis in circúitu ejus, vísitet Dóminus: a Gélboë autem tránseat."
+             :repeat "Ubi cecidérunt fortes Israël.")  ; R5
+         (:respond "Ego te tuli de domo patris tui, dicit Dóminus, et pósui te páscere gregem pópuli mei: * Et fui tecum in ómnibus ubicúmque ambulásti, firmans regnum tuum in ætérnum."
+             :verse "Fecíque tibi nomen grande, juxta nomen magnórum, qui sunt in terra: et réquiem dedi tibi ab ómnibus inimícis tuis."
+             :repeat "Et fui tecum in ómnibus ubicúmque ambulásti, firmans regnum tuum in ætérnum."
+             :gloria t)  ; R6
+         (:respond "Peccávi super númerum arénæ maris, et multiplicáta sunt peccáta mea: et non sum dignus vidére altitúdinem cæli præ multitúdine iniquitátis meæ: quóniam irritávi iram tuam, * Et malum coram te feci."
+             :verse "Quóniam iniquitátem meam ego cognósco: et delíctum meum contra me est semper, quia tibi soli peccávi."
+             :repeat "Et malum coram te feci.")  ; R7
          (:respond "Homo quidam fecit cœnam magnam, et misit servum suum hora cœnæ dícere invitátis ut venírent,"
              :repeat "Quia paráta sunt ómnia."
              :verse "Veníte, comédite panem meum, et bíbite vinum quod míscui vobis."
@@ -618,14 +634,33 @@ Homilia 34 in Evangelium, n. 2-3, post initium"
          )
         :responsories
         (
-         nil  ; R1 (not in file)
-         nil  ; R2 (not in file)
-         nil  ; R3 (not in file)
-         nil  ; R4 (not in file)
-         nil  ; R5 (not in file)
-         nil  ; R6 (not in file)
-         nil  ; R7 (not in file)
-         nil  ; R8 (not in file)
+         (:respond "Præparáte corda vestra Dómino, et servíte illi soli: * Et liberábit vos de mánibus inimicórum vestrórum."
+             :verse "Convertímini ad eum in toto corde vestro, et auférte deos aliénos de médio vestri."
+             :repeat "Et liberábit vos de mánibus inimicórum vestrórum.")  ; R1
+         (:respond "Deus ómnium exaudítor est: ipse misit Angelum suum, et tulit me de óvibus patris mei: * Et unxit me unctióne misericórdiæ suæ."
+             :verse "Dóminus, qui erípuit me de ore leónis, et de manu béstiæ liberávit me."
+             :repeat "Et unxit me unctióne misericórdiæ suæ.")  ; R2
+         (:respond "Dóminus, qui erípuit me de ore leónis, et de manu béstiæ liberávit me, * Ipse me erípiet de mánibus inimicórum meórum."
+             :verse "Misit Deus misericórdiam suam et veritátem suam: ánimam meam erípuit de médio catulórum leónum."
+             :repeat "Ipse me erípiet de mánibus inimicórum meórum."
+             :gloria t)  ; R3
+         (:respond "Percússit Saul mille, et David decem míllia: * Quia manus Dómini erat cum illo: percússit Philisthǽum, et ábstulit oppróbrium ex Israël."
+             :verse "Nonne iste est David, de quo canébant in choro, dicéntes: Saul percússit mille, et David decem míllia?"
+             :repeat "Quia manus Dómini erat cum illo: percússit Philisthǽum, et ábstulit oppróbrium ex Israël.")  ; R4
+         (:respond "Montes Gélboë, nec ros nec plúvia véniant super vos, * Ubi cecidérunt fortes Israël."
+             :verse "Omnes montes, qui estis in circúitu ejus, vísitet Dóminus: a Gélboë autem tránseat."
+             :repeat "Ubi cecidérunt fortes Israël.")  ; R5
+         (:respond "Ego te tuli de domo patris tui, dicit Dóminus, et pósui te páscere gregem pópuli mei: * Et fui tecum in ómnibus ubicúmque ambulásti, firmans regnum tuum in ætérnum."
+             :verse "Fecíque tibi nomen grande, juxta nomen magnórum, qui sunt in terra: et réquiem dedi tibi ab ómnibus inimícis tuis."
+             :repeat "Et fui tecum in ómnibus ubicúmque ambulásti, firmans regnum tuum in ætérnum."
+             :gloria t)  ; R6
+         (:respond "Peccávi super númerum arénæ maris, et multiplicáta sunt peccáta mea: et non sum dignus vidére altitúdinem cæli præ multitúdine iniquitátis meæ: quóniam irritávi iram tuam, * Et malum coram te feci."
+             :verse "Quóniam iniquitátem meam ego cognósco: et delíctum meum contra me est semper, quia tibi soli peccávi."
+             :repeat "Et malum coram te feci.")  ; R7
+         (:respond "Duo Séraphim clamábant alter ad álterum: * Sanctus, sanctus, sanctus Dóminus Deus Sábaoth: * Plena est omnis terra glória ejus."
+             :verse "Tres sunt qui testimónium dant in cælo: Pater, Verbum, et Spíritus Sanctus: et hi tres unum sunt."
+             :repeat "Plena est omnis terra glória ejus."
+             :gloria t)  ; R8
          )))
 
     (4
@@ -1857,12 +1892,16 @@ with Nocturn III lessons from the Pent table.  Returns nil outside Per Annum."
                      (l7 (nth 6 pent-lessons))
                      (l8 (nth 7 pent-lessons))
                      (l9 (nth 8 pent-lessons))
-                     ;; R1-R6 from month-week, R7-R8 also from month-week
-                     ;; (Pent table R7/R8 are nil for these Sundays)
-                     (merged-resps (or (and mw-resps
-                                            (= (length mw-resps) 8)
-                                            mw-resps)
-                                       pent-resps)))
+                     ;; R1-R7 from month-week; R8 from Pent table if
+                     ;; available, otherwise from month-week
+                     (pent-r8 (nth 7 pent-resps))
+                     (merged-resps
+                      (if (and mw-resps (>= (length mw-resps) 8))
+                          (if pent-r8
+                              (append (cl-subseq mw-resps 0 7)
+                                      (list pent-r8))
+                            mw-resps)
+                        pent-resps)))
                 (list :lessons (list l1 l2 l3 l4 l5 l6 l7 l8 l9)
                       :responsories merged-resps)))))))))
 

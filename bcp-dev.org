@@ -139,8 +139,10 @@ Full internal dependency chain (for reference — all loaded transitively):
 ;;                        bcp-roman-responsory, bcp-roman-hymnal, bcp-liturgy-dispatch
 ;; bcp-roman-breviary   → bcp-common-roman, bcp-common-prayers, bcp-roman-antiphonary,
 ;;                        bcp-roman-hymnal, bcp-roman-collectarium,
-;;                        bcp-roman-psalterium, bcp-roman-tempora, bcp-fetcher,
-;;                        bcp-calendar
+;;                        bcp-roman-psalterium, bcp-roman-tempora,
+;;                        bcp-roman-season-lent, bcp-roman-season-easter,
+;;                        bcp-roman-season-advent, bcp-roman-season-christmas,
+;;                        bcp-roman-commune, bcp-fetcher, bcp-calendar
 ;; bcp-roman-render     → bcp-liturgy-render, bcp-common-roman, bcp-common-prayers,
 ;;                        bcp-common-canticles, bcp-roman-hymnal, bcp-roman-psalterium
 ;; bcp-notebook         → bcp-reader (→ bcp-fetcher, bcp-render)
@@ -171,13 +173,20 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-roman-ordo.el | bcp-roman- | Roman ordo step types + LOBVM Compline ordo | SETTLED |
 | bcp-roman-render.el | bcp-roman- | Roman Office renderer (step dispatch, office walker, language threading) | SETTLED |
 | bcp-roman-hymnal.el | bcp-roman- | Hymn registry: Latin texts + multiple English translators (Britt, Caswall, Neale) | SETTLED |
-| bcp-roman-antiphonary.el | bcp-roman- | Antiphon registry: incipit-keyed, multi-translator; shared resolver utility | SETTLED |
+| bcp-roman-antiphonary.el | bcp-roman- | Antiphon registry: incipit-keyed, multi-translator; shared resolver utility; source-tagged (411 antiphons: 293 gallican, 61 vulgate, 42 composition, 15 paraphrase) | SETTLED |
 | bcp-roman-collectarium.el | bcp-roman- | Collect registry: incipit-keyed, multi-translator; includes conclusion metadata | SETTLED |
+| bcp-roman-capitulary.el | bcp-roman- | Capitulum registry: incipit-keyed, multi-translator; includes scripture ref metadata | SETTLED |
 | bcp-roman-responsory.el | bcp-roman- | Responsory registry: incipit-keyed, nested plist shape (respond/verse/repeat) | SETTLED |
 | bcp-roman-lobvm.el | bcp-roman- | LOBVM data (all 8 hours) + entry points; resolver uses incipit-keyed registries | SETTLED |
 | bcp-roman-psalterium.el | bcp-roman- | Weekly psalter: psalm/antiphon assignments for all hours, capitula, versicles, preces, suffragium | SETTLED |
 | bcp-roman-tempora.el | bcp-roman- | Proper of the Time: 24 Per Annum Sunday collects + dominical Matins lessons/responsories | SETTLED |
-| bcp-roman-breviary.el | bcp-roman- | Full Breviary: ferial + dominical ordo builders, resolver, psalm-fn, auto-hour dispatch | SETTLED |
+| bcp-roman-season-lent.el | bcp-roman- | Lenten Proper of the Time: 5 Sunday collects + all hours (Matins + Lauds/Vespers antiphons, capitula, minor hr antiphons) | SETTLED |
+| bcp-roman-season-easter.el | bcp-roman- | Eastertide Proper of the Time: 8 Sunday collects + all hours (Matins + Vespers/Lauds antiphons, capitula; Pasc0/7 lauds antiphons) | SETTLED |
+| bcp-roman-season-advent.el | bcp-roman- | Advent Proper of the Time: 4 Sunday collects + all hours (Matins + Lauds/Vespers antiphons, capitula) | SETTLED |
+| bcp-roman-season-christmas.el | bcp-roman- | Christmastide Proper of the Time: 8 collects (Nat1-Epi6) + all hours (Matins + Vespers/Lauds antiphons, capitula; Epi1 lauds antiphons) | SETTLED |
+| bcp-roman-commune.el | bcp-roman- | Commune Sanctorum: 8 base communes (C1-C7), all hours (Matins + Vespers I/II, Lauds, Prime, Terce, Sext, None) | SETTLED |
+| bcp-roman-proprium.el | bcp-roman- | Proprium Sanctorum: 257 fixed feasts, 185 collects, rank system, merger, feast ordo builders, feast resolver | SETTLED |
+| bcp-roman-breviary.el | bcp-roman- | Full Breviary: ferial + dominical + feast ordo builders, resolver, psalm-fn, auto-hour dispatch | SETTLED |
 | bcp-liturgy-hours.el | bcp-liturgy- | Canonical hours framework, hour-grouping registry | SETTLED |
 | bcp-vulgate-collate.el | bcp- | One-time utility: collates 150 DO Latin psalm files into bcp-liturgy-psalter-vulgate.txt | SETTLED |
 
@@ -578,8 +587,10 @@ Parallel to Anglican side:
 | bcp-roman-breviary.el | Full Breviary: ferial + dominical ordo builders, resolver, psalm-fn |
 | bcp-common-roman.el | Shared Roman fixed texts (Latin + English) |
 | bcp-roman-hymnal.el | Hymn registry: multiple translators per hymn |
-| bcp-roman-antiphonary.el | Antiphon registry: incipit-keyed, multi-translator |
+| bcp-roman-antiphonary.el | Antiphon registry: incipit-keyed, multi-translator, source-tagged |
 | bcp-roman-collectarium.el | Collect registry: incipit-keyed, with conclusion metadata |
+| bcp-roman-commune.el | Commune Sanctorum: 8 base communes (C1-C7), all hours complete |
+| bcp-roman-proprium.el | Proprium Sanctorum: 257 fixed feasts (all ranks), 185 collects, rank system, merger |
 | bcp-roman-responsory.el | Responsory registry: incipit-keyed, nested plist shape |
 
 ** Roman ordo step types
@@ -621,11 +632,14 @@ All eight canonical hours implemented:
 Accessible from the Breviary transient submenu (B from main menu).
 
 Matins dispatches by day of week:
-- Mon–Sat (ferial): 1 nocturn, 12 psalms under 6 antiphons, lectio brevis
+- Mon–Sat (ferial): 1 nocturn, 9 psalms under 9 antiphons, lectio brevis
 - Sunday (dominical): 3 nocturns × 3 psalms, 9 lessons (scripture + patristic
   + homily), 8 responsories, Te Deum. Data from =bcp-roman-tempora.el=
   (24 Per Annum Sundays). Nocturn I lessons fetched via =bcp-fetcher=;
   Nocturns II–III embedded Latin. English absolutiones/benedictiones included.
+- Easter Sunday + Pentecost: special 1-nocturn offices with 3 proper psalms,
+  proper antiphons/invitatory/hymn, 3 lessons (homily), 2 responsories + Te Deum.
+  Data in =bcp-roman-season-easter.el= weeks 0 and 7.
 
 Each hour uses the weekly psalter cycle from =bcp-roman-psalterium.el=,
 proper collect from =bcp-roman-tempora.el= (Per Annum), ferial preces,
@@ -656,6 +670,13 @@ Three strategies by text type:
 3. *Scripture* (capitula, lessons): Store only the citation reference (:ref slot).
    English text resolved at render time via =bcp-fetcher-fetch= using the
    user's configured Bible translation. Latin Vulgate text stays embedded.
+4. *Antiphon scripture translation*: Optional =scripture= translator in
+   =bcp-roman-antiphonary-translators= chain fetches antiphon text from the
+   user's configured Bible via =bcp-fetcher=.  Only active for source types
+   in =bcp-roman-antiphonary-scripture-sources= (default: =(vulgate)= — the
+   61 NT/OT direct-quote antiphons).  Cached after first fetch.  Includes
+   Vulgate→KJV psalm versification conversion (=bcp-roman-render--vulgate-to-kjv=).
+   Usage: =(setq bcp-roman-antiphonary-translators '(scripture bute do))=
 
 All headings, rubrics, and structural text localised:
 Psalmus/Psalm, Hymnus/Hymn, Capitulum/Chapter, Lectio/Lesson,
@@ -693,8 +714,12 @@ implemented with Latin + English support. Auto-hour selector via =bcp-roman-lobv
 Roman liturgical books index texts by Latin incipit, not by structural
 slot. The hymnal already follows this pattern. Three parallel registries
 created, mirroring the hymnal architecture:
-- =bcp-roman-antiphonary.el= — ~20 antiphons keyed by incipit; also hosts
-  shared =bcp-roman-registry--resolve-translation= used by all registries
+- =bcp-roman-antiphonary.el= — 411 antiphons keyed by incipit; also hosts
+  shared =bcp-roman-registry--resolve-translation= used by all registries.
+  Each antiphon source-tagged with =:source= (vulgate/gallican/paraphrase/composition)
+  and =:ref= (scripture citation). Breakdown: 293 gallican (Psalter), 61 vulgate
+  (NT/OT direct quotes), 42 composition (liturgical originals), 15 paraphrase.
+  API: =bcp-roman-antiphonary-source=, =bcp-roman-antiphonary-ref=
 - =bcp-roman-collectarium.el= — 8 collects keyed by incipit, with
   =:conclusion= metadata (per-dominum, per-eumdem, qui-vivis, qui-tecum)
 - =bcp-roman-responsory.el= — 2 responsories keyed by incipit, nested
@@ -715,33 +740,163 @@ Completed:
 - Weekly psalter cycle (=bcp-roman-psalterium.el=): psalm/antiphon
   assignments for all hours including Matins, dominical/ferial capitula,
   versicles, ferial preces (Lauds/Vespers/Prime/minor), suffragium sanctorum
-- Per Annum collects (=bcp-roman-tempora.el=): 24 Sunday collects
-  (Pent01–Pent24), preceding-Sunday computation
+- Per Annum collects + dominical Matins (=bcp-roman-tempora.el=): 24 Sunday
+  collects (Pent01–Pent24), 24 complete Matins datasets (9 lessons +
+  8 responsories each), scriptura occurrens merger for Aug–Nov
 - Ferial Breviary (=bcp-roman-breviary.el=): ordo builders for all 8 hours,
-  resolver with dominical/ferial switching, psalm-fn with subsection support
-  and OT canticle loading, auto-hour dispatch
-- Ferial Matins: 12 psalms under 6 antiphons (Daya cursus), invitatory,
+  resolver with dominical/ferial switching + season-aware overrides, psalm-fn
+  with subsection support and OT canticle loading, auto-hour dispatch.
+  Registry fallback chain: antiphonary → hymnal → collectarium → capitulary.
+- Ferial Matins: 9 psalms under 9 antiphons (1911 DA cursus), invitatory,
   lectio brevis with responsory, capitulum — all days Mon–Sat
 - Dominical Matins: 3 nocturns × 3 psalms, 9 lessons, 8 responsories,
   Te Deum. 24 Per Annum Sunday datasets (=bcp-roman-tempora.el=).
   Nocturn I lessons fetched via =bcp-fetcher= (scripture refs);
   Nocturns II–III embedded Latin (patristic/homily).
   English absolutiones/benedictiones, Evangelica benediction for Nocturn III.
+- 1-nocturn Matins: Easter Sunday (Pasc0) and Pentecost (Pasc7) special offices
+  with 3 proper psalms, proper antiphons/invitatory/hymn, 3 lessons, 2 responsories
+  + Te Deum. Data in =bcp-roman-season-easter.el=.
 - Transient menu (=bcp-transient.el=): Breviary submenu with all hours
-- ~260 antiphons registered (psalter + Magnificat + Benedictus ferial + 9 dominical)
+- ~400 antiphons registered (psalter + ferial + temporale: ~130 from 4 season files)
 - 12 ferial hymns (Lauds Day0–6, Prime, Terce, Sext, None, + Matins per-day)
+- Lent season (=bcp-roman-season-lent.el=): 6 Sunday collects (Quad1–Quad5 +
+  Palm Sunday), dominical Matins (Quad1–Quad5), all non-Matins hours:
+  Lauds/Vespers antiphons (Magnificat I/II, Benedictus, 5 lauds psalm),
+  capitula (lauds + sext + none), minor hour antiphons (prime/terce/sext/none).
+  Suffragium suppression, season-aware labels.
+- Laudes2 (penitential Lauds): Ps 50 replaces first psalm + penitential
+  canticles (221-226) on Advent/Lent/Passiontide weekdays. 30 antiphons
+  registered. =bcp-roman-psalterium-lauds-psalms= with PENITENTIAL arg.
+- Eastertide season (=bcp-roman-season-easter.el=): 8 Sunday collects
+  (Easter 0-7), dominical Matins for all 8 Sundays (Easter 1-6 standard
+  3-nocturn + Easter 0/7 special 1-nocturn), all non-Matins hours:
+  Magnificat I/II + Benedictus antiphons, capitula (lauds + none);
+  Pasc0/Pasc7 also have 5 lauds psalm antiphons. Suffragium suppression,
+  season-aware labels, liturgical season detector.
+- Advent season (=bcp-roman-season-advent.el=): 4 Sunday collects,
+  dominical Matins (Advent 1-4), all non-Matins hours: Magnificat I/II +
+  Benedictus antiphons, 5 lauds psalm antiphons, capitula (lauds + none).
+  Season-aware labels.
+- Christmastide season (=bcp-roman-season-christmas.el=): 8 collects
+  (Nat1, Nat2/Holy Name, Epi1-6), dominical Matins for 5 post-Epiphany
+  Sundays (Epi2-6), 3 feast-grade Matins offices (Christmas, St Stephen,
+  Epiphany) with proper psalms/antiphons/lessons/responsories. Non-Matins:
+  Magnificat/Benedictus antiphons + capitula for Nat1/Epi1; Epi1 has 5 lauds
+  antiphons; Epi2-6 thin (canticle antiphons only, no capitula). Season-aware
+  labels, liturgical season detector for advent/christmastide.
+- Season-aware non-Matins dispatch: ordo builders for Vespers, Lauds, Prime,
+  and Terce/Sext/None check season data on Sundays and override psalterium
+  defaults for canticle antiphons (Magnificat I/II, Benedictus), lauds psalm
+  antiphons, minor hour antiphons, and capitula. Vespers distinguishes I Vespers
+  (Saturday evening → next Sunday's =:magnificat-antiphon=) from II Vespers
+  (Sunday evening → =:magnificat2-antiphon=). Capitulum resolver builds plists
+  from =bcp-roman-capitulary.el= with both Latin and English text (=:text-en=),
+  bypassing =bcp-fetcher= for registered translations.
+- Feast-grade Matins dispatch: breviary checks fixed feast dates before
+  day-of-week cursus, routes to proper 3-nocturn ordo builder with
+  feast-specific psalms, antiphons, versicles.  Epiphany omits invitatory/hymn.
+- Commune Sanctorum (=bcp-roman-commune.el=): 8 base communes (C1 Apostles,
+  C2 One Martyr Bishop, C2a One Martyr non-Bishop, C3 Many Martyrs,
+  C4 Confessor Bishop, C5 Confessor non-Bishop, C6 Virgin Martyr,
+  C7 Holy Women). All hours complete:
+  - Matins: invitatory, hymn, 9 psalm/antiphon pairs, 3 versicles, 9 lessons, 8 responsories
+  - Vespers I/II: 5 psalms with antiphons, hymn, capitulum, versicle, Magnificat antiphon
+  - Lauds: 5 psalms with antiphons, hymn, capitulum, versicle, Benedictus antiphon
+  - Prime: capitulum only (psalms from psalterium)
+  - Terce/Sext/None: responsory breves + capitula (Sext only; Terce=Lauds, None=Prime)
+  Omitted by rubric: Compline (invariable), minor-hour psalms/antiphons (derived).
+  Public API: =bcp-roman-commune-get=, =bcp-roman-commune-matins=,
+  =bcp-roman-commune-lesson=, =bcp-roman-commune-responsory=.
 
-Remaining:
-- Fill incomplete dominical data (responsories for Pent02–24, some Nocturn I–II lessons)
-- Proprium Sanctorum, Commune Sanctorum
-- Laudes2 penitential psalm set
-- Advent/Lent/Eastertide seasonal variations
+- Proprium Sanctorum (=bcp-roman-proprium.el=): fixed-feast calendar (Sanctorale)
+  following 1911 Divino Afflatu rubrics.  257 feasts covering all ranks:
+  9 Duplex I, 26 Duplex II, 24 Duplex majus, 128 Duplex, 41 Semiduplex,
+  29 Simplex.  185 collects registered (Latin + English).  Architecture:
+  - Calendar alist keyed by =(MONTH . DAY)=: each entry is a plist with =:name=,
+    =:latin=, =:rank=, =:commune=, =:collect=, plus optional hour overrides
+  - Rank system: =duplex-i= (6) through =simplex= (1); =bcp-roman-proprium--full-office-p=
+    returns t for semiduplex and above (simplex = commemoration only)
+  - Three-tier merger (=bcp-roman-proprium--merged-data=): feast proper → commune base,
+    with element-wise merge for =:lessons= / =:responsories=
+  - Feast ordo builders for all hours: =--vespers-ordo=, =--lauds-ordo=,
+    =--prime-ordo=, =--minor-hour-ordo=; pull psalms/antiphons from commune,
+    collect from proprium, suppress preces/suffragium on Duplex+
+  - Feast resolver (=bcp-roman-proprium--resolve=): handles feast-specific keys
+    then falls through to =bcp-roman-breviary--resolve=
+  - 185 collect registrations (Latin + English from DO) in collectarium
+  - Breviary integration: all 7 entry points (Vespers through Matins) check
+    proprium via =feast-wins-p= before building ferial ordo; =--collect-step=
+    checks proprium first; =--feast-matins-data= delegates to proprium after
+    Christmastide check
+  - Sunday interaction (=bcp-roman-proprium--sunday-class=, =--feast-wins-p=,
+    =--commemoration-collect=): I class Sundays (Advent I, Lent I-IV, Passion,
+    Palm, Easter, Low, Pentecost, Trinity) vs. II class (all others).
+    Duplex I always wins; Duplex II wins on II class Sundays; everything else
+    yields.  Displaced feasts get commemoration (rubric + collect) in Vespers
+    and Lauds via =bcp-roman-breviary--commemoration-steps=
+- Commune Sanctorum C11 (=bcp-roman-commune.el=): BVM commune with all hours:
+  Matins (BVM-specific antiphons, Prov 8-9 + Chrysostom + Bede lessons, 8 responsories),
+  Vespers I/II (Ave maris stella, BVM antiphons/versicle/Magnificat),
+  Lauds (O gloriosa virginum, Sir 24 capitulum, Benedictus ant),
+  Prime/Terce/Sext/None (Sir 24 capitula, C6-inherited responsory breves).
+  8 new BVM antiphons registered in antiphonary.
+
+- All 257 fixed feasts now have collects (66 commune-based with N. substitution,
+  185 proper from DO, 6 moveable feast collects = 312 total registered)
+- Moveable feasts (=bcp-roman-proprium--moveable-feasts=): Corpus Christi
+  (Easter+60), Sacred Heart (Easter+68), Christ the King (last Sunday of October);
+  all duplex-i; computed via =bcp-easter= from =bcp-calendar.el=
+- Transfer logic (=bcp-roman-proprium--transferred-feast=): impeded duplex+
+  feasts transfer to next free weekday; scans back 8 days; =--transfer-target=
+  finds first day without equal/higher native feast.  Semiduplex feasts get
+  commemoration only (not transferred).  2026: 26 transfers, 267/365 feast days.
+
+- Weekday collision commemorations: =--commemoration-collect= now returns
+  =(COLLECT . FEAST)= and handles both Sunday displacement (semiduplex loses
+  to Sunday) and weekday displacement (native feast displaced by incoming
+  transferred feast).  Rare in practice (~0 weekday collisions per year with
+  257 feasts on 365 days).
+
+- Octave system (=bcp-roman-proprium--octave-info=, =--octave-feast=):
+  6 fixed octaves (St John Baptist, Sts Peter & Paul, St Lawrence,
+  Assumption, Nativity of BVM, All Saints) + 2 moveable (Corpus Christi,
+  Sacred Heart).  Christmas/Easter/Pentecost octaves handled by season modules.
+  Infra-octave days (semiduplex) fill empty days; octave day (duplex/duplex-majus).
+  Displaced octaves get commemorations (Case 3 in =--commemoration-collect=).
+  2026: 18 infra-octave days, 1 octave day celebrated, 26 octave commemorations,
+  282 total feast days.
 
 ** TODO Prayerbook English translations for scripture-derived texts
 Antiphons drawn from scripture (psalms, canticles, gospels) should have
 Coverdale/KJVA renderings alongside the DO modern-English translations.
 Add =coverdale= and/or =kjva= translator keys to antiphonary entries.
 Low priority — DO English is functional for now.
+
+** TODO Holy Week and Sacred Triduum
+Tenebrae (Wed–Fri of Holy Week), Maundy Thursday, Good Friday, Holy Saturday.
+Structurally very different from normal hours: Tenebrae has unique candle
+ceremony rubrics, Lauds of the Triduum are joined to Matins, Good Friday has
+no Mass/Office of its own kind. Needs a dedicated season file
+(=bcp-roman-season-holyweek.el= or extension of =bcp-roman-season-lent.el=).
+
+** TODO Weekday propers for Advent and Lent
+Ferial days in Advent (~24) and Lent (~40) have their own proper antiphons,
+capitula, and collects distinct from the Sunday propers. Currently these
+weekdays fall back to psalterium defaults. Large data extraction task from
+DO =Tempora/= files.
+
+** TODO English patristic and homily lessons
+Nocturns II–III of dominical and feast Matins are embedded Latin only.
+English translations would require ~2300+ lesson texts. Could source from
+DO English =Tempora/= and =Sancti/= files, or from published Anglican
+Breviary translations.
+
+** TODO Feast-specific Matins lessons
+257 feasts reference commune lessons by default, but higher-ranked feasts
+(Duplex I/II, Duplex majus) have their own proper patristic readings and
+Gospel homilies. Audit which feasts need proper lesson data beyond what
+the commune provides.
 
 * Rejected Approaches
 :PROPERTIES:

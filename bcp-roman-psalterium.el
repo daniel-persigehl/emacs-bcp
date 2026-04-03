@@ -140,35 +140,73 @@ Each entry is (:antiphon INCIPIT :psalms (SPEC ...)).")
 Each entry is ((ANTIPHON-INCIPIT . PSALM-SPEC) ...).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Lauds psalm assignments — Laudes2 (penitential)
+;;
+;; Used on Advent weekdays and Lent/Passiontide weekdays (not Sundays).
+;; Psalm 50 (Miserere) replaces the first psalm; penitential canticles
+;; (221–226) replace the per-annum canticles (211–216).  Psalms 2–3 and
+;; the praise psalm remain the same but receive penitential antiphons.
+;; No Day 0 entry — Sundays always use Laudes1.
+;; Entry shape: ((ANTIPHON-INCIPIT . PSALM-SPEC) ...)
+
+(defconst bcp-roman-psalterium--lauds2
+  '((1 . ((miserere-mei-deus-secundum       . 50)
+          (deduc-me-in-justitia             . 5)
+          (dominus-dabit-virtutem           . 28)
+          (conversus-est-furor-tuus         . 221)
+          (laudate-dominum-quoniam-confirmata . 116)))
+    (2 . ((dele-iniquitatem-meam            . 50)
+          (discerne-causam-meam             . 42)
+          (deus-misereatur-nostri            . 66)
+          (corripies-me-domine              . 222)
+          (laudate-dominum-quia-benignus    . 134)))
+    (3 . ((amplius-lava-me                  . 50)
+          (impietatibus-nostris              . 64)
+          (in-innocentia-cordis             . 100)
+          (exsultavit-cor-meum              . 223)
+          (lauda-anima-mea-dominum          . 145)))
+    (4 . ((tibi-soli-peccavi                . 50)
+          (convertere-domine                . 89)
+          (multiplicasti-deus               . 35)
+          (fortitudo-mea-et-laus            . 224)
+          (laudate-dominum-qui-sanat        . 146)))
+    (5 . ((cor-contritum                    . 50)
+          (propter-nomen-tuum-domine        . 142)
+          (deus-tu-conversus                . 84)
+          (cum-iratus-fueris                . 225)
+          (lauda-deum-tuum-sion             . 147)))
+    (6 . ((benigne-fac-domine               . 50)
+          (rectus-dominus                   . 91)
+          (a-timore-inimici                 . 63)
+          (in-servis-suis                   . 226)
+          (laudate-dominum-secundum         . 150))))
+  "Lauds (Laudes2, penitential) psalm assignments by day of week.
+Each entry is ((ANTIPHON-INCIPIT . PSALM-SPEC) ...).
+Only days 1–6; Sundays always use Laudes1.")
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Prime psalm assignments
 ;;
-;; 3 psalms under one antiphon, plus a bracketed psalm-of-the-day.
-;; Entry shape: (:antiphon INCIPIT :psalms (SPEC ...) :psalm-of-day NUM)
+;; 3 psalms under one antiphon.
+;; Entry shape: (:antiphon INCIPIT :psalms (SPEC ...))
 
 (defconst bcp-roman-psalterium--prime
   '((0 . (:antiphon alleluia-confitemini-domino
           :psalms (117 (118 1 16) (118 17 32))))
     (1 . (:antiphon innocens-manibus
-          :psalms (23 (18 1 7) (18 8 16))
-          :psalm-of-day 46))
+          :psalms (23 (18 1 7) (18 8 16))))
     (2 . (:antiphon deus-meus-in-te-confido
-          :psalms ((24 1 8) (24 9 15) (24 16 23))
-          :psalm-of-day 95))
+          :psalms ((24 1 8) (24 9 15) (24 16 23))))
     (3 . (:antiphon misericordia-tua-domine
-          :psalms (25 51 52)
-          :psalm-of-day 96))
+          :psalms (25 51 52)))
     (4 . (:antiphon in-loco-pascuae
-          :psalms (22 (71 1 8) (71 9 20))
-          :psalm-of-day 97))
+          :psalms (22 (71 1 8) (71 9 20))))
     (5 . (:antiphon ne-discedas-a-me
-          :psalms ((21 1 11) (21 12 22) (21 23 34))
-          :psalm-of-day 98))
+          :psalms ((21 1 11) (21 12 22) (21 23 34))))
     (6 . (:antiphon exaltare-domine-qui-judicas
-          :psalms ((93 1 11) (93 12 23) 107)
-          :psalm-of-day 149)))
+          :psalms ((93 1 11) (93 12 23) 107))))
   "Prime psalm assignments by day of week.
-Each entry is (:antiphon INCIPIT :psalms (SPEC ...) [:psalm-of-day NUM]).
-The psalm-of-the-day is recited in addition to the three main psalms.")
+Each entry is (:antiphon INCIPIT :psalms (SPEC ...)).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Terce psalm assignments
@@ -447,9 +485,12 @@ pretióso sánguine quasi Agni immaculáti Christi."))
   "Return the Vespers hymn incipit for day-of-week DOW."
   (alist-get dow bcp-roman-psalterium--vespers-hymns))
 
-(defun bcp-roman-psalterium-lauds-psalms (dow)
-  "Return Lauds psalm/antiphon list for day-of-week DOW."
-  (alist-get dow bcp-roman-psalterium--lauds))
+(defun bcp-roman-psalterium-lauds-psalms (dow &optional penitential)
+  "Return Lauds psalm/antiphon list for day-of-week DOW.
+When PENITENTIAL is non-nil and DOW is 1-6, return Laudes2 set."
+  (if (and penitential (> dow 0))
+      (alist-get dow bcp-roman-psalterium--lauds2)
+    (alist-get dow bcp-roman-psalterium--lauds)))
 
 (defun bcp-roman-psalterium-lauds-hymn (dow)
   "Return the Lauds hymn incipit for day-of-week DOW."
@@ -744,52 +785,69 @@ Each element is a plist with :heading, :antiphon, :versicle,
             bcp-roman-psalterium--suffragium-de-pace))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Matins psalm assignments (ferial Daya cursus)
+;;;; Matins psalm assignments (ferial DA 1911 cursus)
 ;;
-;; Ferial weekday Matins (DA 1911): 1 nocturn, 12 psalms under 6 antiphons.
-;; Each antiphon covers 2 psalms.  Sunday uses the 3-nocturn dominical
-;; arrangement (deferred — Sundays are not ferial).
-;; Entry shape: ((ANTIPHON-INCIPIT . (PSALM-A PSALM-B)) ...)
+;; Ferial weekday Matins (DA 1911): 1 nocturn, 9 psalms each under its
+;; own antiphon.  Longer psalms are split into sections (PSALM START END).
+;; Entry shape: ((ANTIPHON-INCIPIT . PSALM-SPEC) ...)
 
 (defconst bcp-roman-psalterium--matins
-  '((1 . ((dominus-defensor               . (26 27))
-          (adorate-dominum-in-aula         . (28 29))
-          (in-tua-justitia                 . (30 31))
-          (rectos-decet                    . (32 33))
-          (expugna-impugnantes             . (34 35))
-          (revela-domino                   . (36 37))))
-    (2 . ((ut-non-delinquam               . (38 39))
-          (sana-domine-animam              . (40 41))
-          (eructavit-cor-meum              . (43 44))
-          (adjutor-in-tribulationibus      . (45 46))
-          (magnus-dominus-laudabilis       . (47 48))
-          (deus-deorum                     . (49 51))))
-    (3 . ((avertit-dominus                 . (52 54))
-          (quoniam-in-te-confidit          . (55 56))
-          (juste-judicate                  . (57 58))
-          (da-nobis-domine-auxilium        . (59 60))
-          (nonne-deo-subjecta              . (61 63))
-          (benedicite-gentes               . (65 67))))
-    (4 . ((domine-deus-in-adjutorium       . (68 69))
-          (esto-mihi-in-deum               . (70 71))
-          (liberasti-virgam                . (72 73))
-          (et-invocabimus-nomen            . (74 75))
-          (tu-es-deus-qui-facis            . (76 77))
-          (propitius-esto-peccatis         . (78 79))))
-    (5 . ((exsultate-deo-adjutori          . (80 81))
-          (tu-solus-altissimus             . (82 83))
-          (benedixisti-domine-terram       . (84 85))
-          (fundamenta-ejus                 . (86 87))
-          (benedictus-dominus-in-aeternum  . (88 93))
-          (cantate-domino-benedicite-nominis . (95 96))))
-    (6 . ((quia-mirabilia-fecit            . (97 98))
-          (jubilate-deo-omnis              . (99 100))
-          (clamor-meus-ad-te-veniat        . (101 102))
-          (benedic-anima-mea-domino        . (103 104))
-          (visita-nos-domine               . (105 106))
-          (confitebor-domino-nimis         . (107 108)))))
-  "Ferial Matins psalm assignments by day of week (Daya cursus).
-Each entry is ((ANTIPHON-INCIPIT . (PSALM-A PSALM-B)) ...).")
+  '((1 . ((dominus-de-caelo               . 13)
+          (qui-operatur-justitiam          . 14)
+          (inclina-domine-aurem            . 16)
+          (diligam-te                      . (17 2 16))
+          (retribuet-mihi-dominus          . (17 17 35))
+          (vivit-dominus                   . (17 36 51))
+          (exaudiat-te                     . 19)
+          (domine-in-virtute-tua           . 20)
+          (exaltabo-te                     . 29)))
+    (2 . ((expugna-domine-impugnantes      . (34 1 10))
+          (restitue-animam-meam            . (34 11 17))
+          (exsurge-domine-intende          . (34 18 28))
+          (noli-aemulari                   . (36 1 15))
+          (bracchia-peccatorum             . (36 16 29))
+          (custodi-innocentiam             . (36 30 40))
+          (ne-in-ira-tua                   . (37 2 11))
+          (intende-in-adjutorium           . (37 12 23))
+          (amove-domine                    . 38)))
+    (3 . ((speciosus-forma                 . (44 2 10))
+          (confitebuntur-tibi              . (44 11 18))
+          (adjutor-in-tribulationibus-deus . 45)
+          (magnus-dominus-laudabilis-nimis . 47)
+          (os-meum-loquetur                . (48 2 13))
+          (ne-timueris                     . (48 14 21))
+          (deus-deorum                     . (49 1 15))
+          (intelligite-qui-obliscimini     . (49 16 23))
+          (acceptabis-sacrificium          . 50)))
+    (4 . ((in-deo-salutare-meum            . 61)
+          (videte-opera-domini             . (65 1 12))
+          (audite-omnes                    . (65 13 20))
+          (exsurgat-deus                   . (67 2 11))
+          (deus-noster-deus-salvos         . (67 12 24))
+          (in-ecclesiis                    . (67 25 36))
+          (salvum-me-fac-deus              . (68 2 13))
+          (propter-inimicos-meos           . (68 14 29))
+          (quaerite-dominum                . (68 30 37))))
+    (5 . ((suscitavit-dominus              . (77 1 8))
+          (coram-patribus-eorum            . (77 9 16))
+          (januas-caeli                    . (77 17 31))
+          (deus-adjutor                    . (77 32 41))
+          (redemit-eos                     . (77 42 58))
+          (aedificavit-deus                . (77 59 72))
+          (adjuva-nos-deus                 . 78)
+          (ego-sum-dominus                 . 80)
+          (ne-taceas-deus                  . 82)))
+    (6 . ((memor-fuit-in-saeculum          . (104 1 15))
+          (auxit-dominus                   . (104 16 27))
+          (eduxit-deus                     . (104 28 45))
+          (salvavit-eos-dominus            . (105 1 15))
+          (obliti-sunt-deum                . (105 16 31))
+          (cum-tribularentur               . (105 32 48))
+          (clamaverunt-ad-dominum          . (106 1 14))
+          (ipsi-viderunt                   . (106 15 30))
+          (videbunt-recti                  . (106 31 43)))))
+  "Ferial Matins psalm assignments by day of week (DA 1911 cursus).
+Each entry is ((ANTIPHON-INCIPIT . PSALM-SPEC) ...).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Dominical (Sunday) Matins psalm data — 3 nocturns

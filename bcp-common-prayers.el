@@ -101,12 +101,15 @@ Append to `bcp-common-prayers-lords-prayer-1928' via the ordo step's :doxology k
 
 (defconst bcp-common-prayers-gloria-patri
   '(:english
-    "Glory be to the Father, and to the Son, and to the Holy Ghost;\n\
-As it was in the beginning, is now, and ever shall be, world without end. Amen."
+    "Glory be to the Father, and to the Son, * and to the Holy Ghost;\n\
+As it was in the beginning, is now, and ever shall be, * world without end. Amen."
     :latin
-    "Glória Patri, et Fílio, et Spirítui Sancto.\n\
-Sicut erat in princípio, et nunc, et semper, et in sǽcula sæculórum. Amen.")
-  "The Gloria Patri (Lesser Doxology).")
+    "Glória Patri, et Fílio, * et Spirítui Sancto.\n\
+Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen.")
+  "The Gloria Patri (Lesser Doxology).
+Pointed with * mediants for psalmody and responsories.
+For BCP canticle contexts (colon mediants), rendering functions
+use `bcp-liturgy-canticle-gloria-text' instead.")
 
 (defconst bcp-common-prayers-apostles-creed
   '(:english

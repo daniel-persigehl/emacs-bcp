@@ -44,17 +44,21 @@
     ("Sap"    . "Wisdom")
     ("Is."    . "Isaiah")
     ("Is"     . "Isaiah")
+    ("Isa"    . "Isaiah")
     ("Jer"    . "Jeremiah")
     ("Eccli"  . "Sirach")
     ("Eccl"   . "Ecclesiastes")
     ("Matt"   . "Matthew")
     ("Marc"   . "Mark")
     ("Joan"   . "John")
+    ("Joh"    . "John")
+    ("Act"    . "Acts")
     ("Rom"    . "Romans")
     ("Cor"    . "Corinthians")
     ("Gal"    . "Galatians")
     ("Eph"    . "Ephesians")
     ("Philip" . "Philippians")
+    ("Phil"   . "Philippians")
     ("Col"    . "Colossians")
     ("Thess"  . "Thessalonians")
     ("Tim"    . "Timothy")
@@ -63,31 +67,101 @@
     ("Heb"    . "Hebrews")
     ("Jac"    . "James")
     ("Petr"   . "Peter")
-    ("Apoc"   . "Revelation"))
+    ("Apoc"   . "Revelation")
+    ("Exod"   . "Exodus")
+    ("Gen"    . "Genesis")
+    ("Num"    . "Numbers")
+    ("Deut"   . "Deuteronomy")
+    ("Judith" . "Judith")
+    ("I Reg"  . "1 Samuel")
+    ("II Reg" . "2 Samuel")
+    ("III Reg" . "1 Kings")
+    ("IV Reg" . "2 Kings")
+    ("I Par"  . "1 Chronicles")
+    ("II Par" . "2 Chronicles")
+    ("Ps"     . "Psalm"))
   "Alist mapping Breviary abbreviations to fetcher book names.")
 
 (defun bcp-roman-render--normalize-ref (ref)
   "Normalize a Breviary scripture REF for the fetcher.
-Converts abbreviations like \"Sir 24:14\" to \"Sirach 24:14\"."
-  (if (string-match "^\\([A-Za-z.]+\\)\\([ \t]+.*\\)" ref)
-      (let* ((abbr (string-trim-right (match-string 1 ref) "\\."))
-             (rest (match-string 2 ref))
-             (full (cdr (assoc abbr bcp-roman-render--breviary-book-map))))
-        (if full
-            (concat full rest)
-          ref))
-    ref))
+Converts abbreviations like \"Sir 24:14\" to \"Sirach 24:14\",
+\"I Reg 2:1\" to \"1 Samuel 2:1\", and adjusts Vulgate versification
+to KJV/Hebrew numbering for Psalms and Canticles."
+  (let ((expanded
+         (if (string-match "^\\([IV]+ [A-Za-z.]+\\)\\([ \t]+.*\\)" ref)
+             ;; Multi-word abbreviation with Roman numeral prefix
+             (let* ((abbr (string-trim-right (match-string 1 ref) "\\."))
+                    (rest (match-string 2 ref))
+                    (full (cdr (assoc abbr bcp-roman-render--breviary-book-map))))
+               (if full (concat full rest) ref))
+           (if (string-match "^\\([A-Za-z.]+\\)\\([ \t]+.*\\)" ref)
+               (let* ((abbr (string-trim-right (match-string 1 ref) "\\."))
+                      (rest (match-string 2 ref))
+                      (full (cdr (assoc abbr bcp-roman-render--breviary-book-map))))
+                 (if full (concat full rest) ref))
+             ref))))
+    ;; Apply Vulgate→KJV versification conversion for Psalms/Canticles
+    (bcp-roman-render--vulgate-to-kjv expanded)))
+
+;;;; Vulgate → Hebrew/KJV versification conversion
+
+(defun bcp-roman-render--vulgate-to-kjv (ref)
+  "Convert a Vulgate scripture REF to KJV/Hebrew versification.
+REF should already have book names expanded (e.g. \"Psalm 109:1\").
+Handles the main Psalter numbering differences."
+  (cond
+   ;; Psalms: Vulgate (LXX) numbering → Hebrew (KJV) numbering
+   ;; LXX 1-8 = Heb 1-8 (same)
+   ;; LXX 9 = Heb 9-10 (split)
+   ;; LXX 10-112 = Heb 11-113 (+1)
+   ;; LXX 113 = Heb 114-115 (split)
+   ;; LXX 114-115 = Heb 116 (merged)
+   ;; LXX 116-145 = Heb 117-146 (+1)
+   ;; LXX 146-147 = Heb 147 (merged)
+   ;; LXX 148-150 = Heb 148-150 (same)
+   ((string-match "^Psalm \\([0-9]+\\)\\(.*\\)" ref)
+    (let* ((ps-num (string-to-number (match-string 1 ref)))
+           (rest (match-string 2 ref))
+           (kjv-num (cond
+                     ((<= ps-num 8) ps-num)
+                     ((= ps-num 9) 9)
+                     ((<= ps-num 112) (1+ ps-num))
+                     ((= ps-num 113) 114)
+                     ((= ps-num 114) 116)
+                     ((= ps-num 115) 116)
+                     ((<= ps-num 145) (1+ ps-num))
+                     ((= ps-num 146) 147)
+                     ((= ps-num 147) 147)
+                     (t ps-num))))
+      (format "Psalm %d%s" kjv-num rest)))
+   ;; All other books: versification matches
+   (t ref)))
+
+(defcustom bcp-roman-render--fetch-timeout 10
+  "Seconds to wait for async scripture fetch before giving up."
+  :type 'number
+  :group 'bcp-roman-render)
 
 (defun bcp-roman-render--fetch-scripture (ref)
   "Try to fetch scripture text for Breviary REF synchronously.
 Returns the text string, or nil if fetching is unavailable.
-Uses the active `bcp-fetcher' backend."
+Uses the active `bcp-fetcher' backend.  Spins the event loop
+for up to `bcp-roman-render--fetch-timeout' seconds to allow
+async backends (oremus) to complete."
   (condition-case nil
       (let* ((normalized (bcp-roman-render--normalize-ref ref))
+             (done nil)
              (result nil))
         (require 'bcp-fetcher nil t)
         (when (fboundp 'bcp-fetcher-fetch)
-          (bcp-fetcher-fetch normalized (lambda (text) (setq result text)))
+          (bcp-fetcher-fetch normalized
+                             (lambda (text)
+                               (setq result text
+                                     done t)))
+          ;; Spin event loop until callback fires or timeout
+          (let ((deadline (+ (float-time) bcp-roman-render--fetch-timeout)))
+            (while (and (not done) (< (float-time) deadline))
+              (accept-process-output nil 0.1)))
           result))
     (error nil)))
 
@@ -147,12 +221,15 @@ fetching is unavailable."
     (bcp-liturgy-render--insert-rubric
      ref #'bcp-roman-render--rubric-face)
     (if (eq language 'english)
-        (let ((fetched (bcp-roman-render--fetch-scripture ref)))
-          (if fetched
-              (insert fetched "\n")
-            (bcp-liturgy-render--insert-rubric
-             "(Scripture text from user's configured Bible translation)"
-             #'bcp-roman-render--rubric-face)))
+        (let ((text-en (plist-get data :text-en)))
+          (if text-en
+              (insert text-en "\n")
+            (let ((fetched (bcp-roman-render--fetch-scripture ref)))
+              (if fetched
+                  (insert fetched "\n")
+                (bcp-liturgy-render--insert-rubric
+                 "(Scripture text from user's configured Bible translation)"
+                 #'bcp-roman-render--rubric-face)))))
       (insert (plist-get data :text) "\n")))
   (insert (if (eq language 'english)
               "℟. Thanks be to God.\n"
@@ -163,20 +240,26 @@ fetching is unavailable."
 LANGUAGE is \\='latin or \\='english.
 Gloria Patri is suppressed when DATA contains :no-gloria t.
 When LANGUAGE is \\='english and DATA has a :canticle-key, fetches the
-English text from the canticle registry."
+English text from the canticle registry and uses the BCP-pointed
+Gloria Patri (colon mediants) to match."
   (let* ((ckey (plist-get data :canticle-key))
          (name (plist-get data :name))
          (ref  (plist-get data :ref))
-         (text (or (when (and (eq language 'english) ckey)
-                     (bcp-liturgy-canticle-get ckey 'english))
-                   (plist-get data :text))))
+         (from-registry (when (and (eq language 'english) ckey)
+                          (bcp-liturgy-canticle-get ckey 'english)))
+         (text (or from-registry (plist-get data :text)))
+         (gp (if from-registry
+                 ;; Canticle registry text uses BCP colon pointing;
+                 ;; match with the canticle-registry Gloria Patri.
+                 (bcp-liturgy-canticle-gloria-text language)
+               gloria-patri)))
     (insert "\n")
     (bcp-roman-render--insert-antiphon antiphon)
     (bcp-liturgy-render--insert-heading
      3 (format "%s (%s)" name ref))
     (insert text "\n")
-    (when (and gloria-patri (not (plist-get data :no-gloria)))
-      (insert gloria-patri "\n"))
+    (when (and gp (not (plist-get data :no-gloria)))
+      (insert gp "\n"))
     (bcp-roman-render--insert-antiphon antiphon t)))
 
 (defun bcp-roman-render--insert-marian-antiphon (data &optional language)
@@ -301,8 +384,7 @@ following the traditional Roman pattern."
          (ant2   (bcp-roman-render--invitatory-ant-half antiphon-text))
          (raw    (bcp-liturgy-canticle-get 'venite lang))
          (verses (when raw (split-string raw "\n" t "[ \t]+")))
-         (gloria (plist-get bcp-common-prayers-gloria-patri
-                            (intern (format ":%s" lang)))))
+         (gloria (bcp-liturgy-canticle-gloria-text lang)))
     (if (not verses)
         ;; Fallback if canticle text unavailable
         (progn
@@ -331,6 +413,39 @@ following the traditional Roman pattern."
   "Convert integer N (1-9) to a lowercase Roman numeral string."
   (nth n '("" "i" "ii" "iii" "iv" "v" "vi" "vii" "viii" "ix")))
 
+(defun bcp-roman-render--scripture-ref-p (ref)
+  "Return non-nil if REF looks like a scripture citation.
+Scripture refs have chapter:verse numbers (e.g. \"Sir 31:8-11\").
+Patristic refs like \"In Orat. de S. Philogonio\" are not scripture."
+  (and ref (string-match "[0-9]+:[0-9]\\|[0-9]+-[0-9]" ref)))
+
+(defun bcp-roman-render--fetch-multi-ref (ref)
+  "Fetch scripture for REF, which may contain semicolon-separated ranges.
+E.g. \"Sir 32:18-20; 32:28; 33:1-3\" is split into separate fetches
+with the book name carried forward, then results are concatenated."
+  (if (not (string-match ";" ref))
+      ;; Simple single reference
+      (bcp-roman-render--fetch-scripture ref)
+    ;; Multi-range: split on semicolons
+    (let* ((parts (split-string ref ";" t "[ \t]+"))
+           (book nil)
+           (results nil))
+      ;; Extract book name from the first part
+      (when (string-match "^\\([A-Za-z. ]+[A-Za-z]\\)\\s-+" (car parts))
+        (setq book (match-string 1 (car parts))))
+      (dolist (part parts)
+        (let* ((full-ref
+                (if (string-match "^[0-9]" part)
+                    ;; Bare chapter:verse — prepend the book name
+                    (concat book " " part)
+                  ;; Already has book name
+                  part))
+               (fetched (bcp-roman-render--fetch-scripture full-ref)))
+          (when fetched
+            (push fetched results))))
+      (when results
+        (mapconcat #'identity (nreverse results) "\n")))))
+
 (defun bcp-roman-render--insert-lesson (data n &optional language)
   "Insert a Matins lesson from DATA plist, lesson number N (1-based).
 DATA has :ref (scripture reference), :text (lesson body),
@@ -357,9 +472,12 @@ When LANGUAGE is \\='english, scripture lessons are fetched via `bcp-fetcher'."
       (insert incipit "\n"))
     ;; Lesson body
     (cond
-     ;; English: try to fetch scripture for lessons with a ref and no source
-     ((and (eq language 'english) ref (not source))
-      (let ((fetched (bcp-roman-render--fetch-scripture ref)))
+     ;; English: try to fetch scripture when ref is a scripture citation
+     ;; (has chapter:verse numbers) and not a patristic/homily source
+     ((and (eq language 'english)
+           (bcp-roman-render--scripture-ref-p ref)
+           (not source))
+      (let ((fetched (bcp-roman-render--fetch-multi-ref ref)))
         (if fetched
             (insert fetched "\n")
           (bcp-liturgy-render--insert-rubric
