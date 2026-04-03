@@ -761,7 +761,7 @@ Completed:
 - ~400 antiphons registered (psalter + ferial + temporale: ~130 from 4 season files)
 - 12 ferial hymns (Lauds Day0–6, Prime, Terce, Sext, None, + Matins per-day)
 - Lent season (=bcp-roman-season-lent.el=): 6 Sunday collects (Quad1–Quad5 +
-  Palm Sunday), dominical Matins (Quad1–Quad5), all non-Matins hours:
+  Palm Sunday), dominical Matins (Quad1–Quad6 incl Palm Sunday), all non-Matins hours:
   Lauds/Vespers antiphons (Magnificat I/II, Benedictus, 5 lauds psalm),
   capitula (lauds + sext + none), minor hour antiphons (prime/terce/sext/none).
   Suffragium suppression, season-aware labels.
@@ -867,18 +867,56 @@ Completed:
   2026: 18 infra-octave days, 1 octave day celebrated, 26 octave commemorations,
   282 total feast days.
 
+- Holy Week and Sacred Triduum (=bcp-roman-season-holyweek.el=): all 7 days
+  (Palm Sunday through Holy Saturday). Tenebrae Matins with proper psalmody,
+  Lamentations, patristic/scripture lessons; Triduum Lauds, Vespers, Special
+  Compline with Christus factus est accumulation. Mon–Wed weekday propers.
+  ~60 antiphons, 36 lessons, 36 responsories. Palm Sunday data extends
+  =bcp-roman-season-lent.el= (entry 6). See DONE entry below for details.
+
 ** TODO Prayerbook English translations for scripture-derived texts
 Antiphons drawn from scripture (psalms, canticles, gospels) should have
 Coverdale/KJVA renderings alongside the DO modern-English translations.
 Add =coverdale= and/or =kjva= translator keys to antiphonary entries.
 Low priority — DO English is functional for now.
 
-** TODO Holy Week and Sacred Triduum
-Tenebrae (Wed–Fri of Holy Week), Maundy Thursday, Good Friday, Holy Saturday.
-Structurally very different from normal hours: Tenebrae has unique candle
-ceremony rubrics, Lauds of the Triduum are joined to Matins, Good Friday has
-no Mass/Office of its own kind. Needs a dedicated season file
-(=bcp-roman-season-holyweek.el= or extension of =bcp-roman-season-lent.el=).
+** DONE Holy Week and Sacred Triduum
+=bcp-roman-season-holyweek.el= — all 7 days of Holy Week (Palm Sunday through
+Holy Saturday).  Palm Sunday data in =bcp-roman-season-lent.el= (entry 6).
+
+Implemented:
+- Palm Sunday: 9 lessons + 8 responsories in =bcp-roman-season-lent.el=, Lauds/Vespers
+  antiphons, capitula (Phil 2), minor hour antiphons. Uses existing dominical Matins path.
+- Mon–Wed Holy Week (=--weekday-propers=): 3 homily lessons + 3 responsories each,
+  proper Lauds antiphons (5 + Benedictus), Magnificat antiphon, Lauds + Vespers collects.
+  Uses =--matins-holyweek-weekday-ordo= builder (ferial structure with proper lessons).
+- Sacred Triduum (=--triduum=): Thu/Fri/Sat Tenebrae Matins — 9 proper psalms under
+  9 individual antiphons, no incipit/invitatory/hymn/Gloria Patri, Lamentations of
+  Jeremiah (Nocturn I), Augustine on the Psalms (Nocturn II), 1 Cor/Hebrews (Nocturn III),
+  no Te Deum.  Uses =--matins-tenebrae-ordo= and =--matins-tenebrae-nocturn= builders.
+- Triduum Lauds (=--lauds-triduum-ordo=): proper antiphons, no capitulum/hymn/preces,
+  proper versicle, Benedictus with proper antiphon, Christus factus est (rendered with
+  secreto rubric) + Pater noster + Ps 50 + concluding prayer (silent).
+- Triduum Vespers: Thursday has proper psalms (115, 119, 139, 140, 141) with
+  Magnificat antiphon. Friday/Saturday show rubric "Vesperæ hodie non dicuntur."
+- Triduum Special Compline (=--compline-triduum-ordo=): Confiteor + Pss 4, 30:1-6,
+  90, 133 (no Gloria Patri) + Christus factus est + Pater noster + Ps 50 +
+  Respice quaesumus (silent conclusion).
+- Christus factus est accumulation: "usque ad mortem" (Thu) → "+ mortem autem crucis"
+  (Fri) → "+ propter quod et Deus exaltávit illum..." (Sat).
+- ~60 antiphon registrations: 9 Matins × 3 days + 5 Lauds × 3 days + Benedictus × 3
+  + Magnificat × 2 + 5 Thu Vespers + 21 Mon–Wed + Palm Sunday.
+- 27 Tenebrae lessons (9 per day, embedded Latin), 27 responsories (R3/R6/R9 with Gloria).
+- 9 Mon–Wed lessons (3 per day, with :ref for scripture, :text for homilies).
+- Feast priority: Triduum and HW Mon–Wed are privileged feriae — always override
+  proprium sanctorum feasts in =--collect-step= and all entry point dispatchers.
+- Resolver (=--holyweek-resolver=): handles matins-lesson-N, matins-responsory-N,
+  tenebrae-versicle-N, lauds-versicle, christus-factus; English text swapping for
+  lessons (:text-en) and responsories (:respond-en/:verse-en/:repeat-en).
+
+Still TODO:
+- Minor hours (Prime, Terce, Sext, None): need Triduum dispatch + Christus factus est
+- Christus factus est at end of all hours (currently only Lauds + Compline)
 
 ** TODO Weekday propers for Advent and Lent
 Ferial days in Advent (~24) and Lent (~40) have their own proper antiphons,

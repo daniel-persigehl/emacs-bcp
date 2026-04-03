@@ -522,9 +522,10 @@ LANGUAGE is \\='latin or \\='english (default \\='latin)."
   "Alist mapping ordo hymn keys to hymnal incipit symbols.")
 
 (defconst bcp-roman-render--prayer-names
-  '((ave-maria    . "Ave Maria")
-    (pater-noster . "Pater Noster")
-    (credo        . "Credo"))
+  '((ave-maria        . "Ave Maria")
+    (pater-noster     . "Pater Noster")
+    (credo            . "Credo")
+    (christus-factus  . "Christus factus est"))
   "Alist mapping prayer key symbols to display names for rubrics.")
 
 (defun bcp-roman-render--prayer-name (key)
@@ -582,13 +583,15 @@ LANGUAGE is \\='latin or \\='english (default \\='latin)."
          (bcp-roman-render--insert-antiphon text repeat)))
 
       (:psalm
-       (let* ((num     (cadr step))
-              (ant-key (plist-get (cddr step) :antiphon))
-              (verses  (funcall psalm-fn num))
-              (ant     (when ant-key (funcall data-fn ant-key))))
+       (let* ((num      (cadr step))
+              (ant-key  (plist-get (cddr step) :antiphon))
+              (no-gp    (plist-get (cddr step) :no-gloria))
+              (verses   (funcall psalm-fn num))
+              (ant      (when ant-key (funcall data-fn ant-key))))
          (when ant
            (bcp-roman-render--insert-antiphon ant))
-         (bcp-roman-render--insert-psalm num verses gloria-patri language)
+         (bcp-roman-render--insert-psalm
+          num verses (unless no-gp gloria-patri) language)
          (when ant
            (bcp-roman-render--insert-antiphon ant t))))
 

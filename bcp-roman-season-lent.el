@@ -145,10 +145,11 @@ Through the same."))))
 ;;;; Lenten Sunday number computation
 
 (defun bcp-roman-season-lent--sunday-number (date)
-  "Return the Lent Sunday number (1–5) for the Sunday on or before DATE.
+  "Return the Lent Sunday number (1–6) for the Sunday on or before DATE.
 DATE is (MONTH DAY YEAR).  Returns nil if DATE is outside Lent/Passiontide.
 Lent 1 = first Sunday of Lent (Ash Wednesday + 4 days).
-Lent 5 = Passion Sunday (2 weeks before Easter)."
+Lent 5 = Passion Sunday (2 weeks before Easter).
+Lent 6 = Palm Sunday (1 week before Easter)."
   (let* ((year (caddr date))
          (feasts (bcp-moveable-feasts year))
          (easter (cdr (assq 'easter feasts)))
@@ -542,6 +543,108 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
    :translations
    ((do . "Then took the Jews up stones * to cast at Him, but Jesus hid Himself, and went out of the temple."))))
 
+;;; ─── Lent 6 (Palm Sunday) antiphons ──────────────────────────────────
+
+;; Benedictus antiphon (Ant 2 in DO Quad6-0)
+(bcp-roman-antiphonary-register
+ 'turba-multa
+ '(:latin "Turba multa, * quæ convénerat ad diem festum, clamábat Dómino: Benedíctus qui venit in nómine Dómini: Hosánna in excélsis."
+   :source composition
+   :translations
+   ((do . "Much people that were come to the Feast, cried * unto the Lord: Blessed is He That cometh in the Name of the Lord! Hosanna in the highest!"))))
+
+;; Magnificat antiphon for Vespers I (Ant 1 in DO Quad6-0)
+(bcp-roman-antiphonary-register
+ 'pater-juste-mundus
+ '(:latin "Pater juste, * mundus te non cognóvit: ego autem novi te, quia tu me misísti."
+   :source vulgate
+   :ref "John 17:25"
+   :translations
+   ((do . "O just Father, * the world has not known thee: I however have known thee, for thou hast sent me."))))
+
+;; Magnificat antiphon for Vespers II (Ant 3 in DO Quad6-0)
+(bcp-roman-antiphonary-register
+ 'scriptum-est-enim-percutiam
+ '(:latin "Scriptum est enim: * Percútiam pastórem, et dispergéntur oves gregis: postquam autem resurréxero, præcédam vos in Galilǽam: ibi me vidébitis, dicit Dóminus."
+   :source vulgate
+   :ref "Matt 26:31-32"
+   :translations
+   ((do . "It is written: I will smite the Shepherd, * and the sheep of the flock shall be scattered abroad, but after I am risen again, I will go before you into Galilee: there shall ye see Me, saith the Lord."))))
+
+;; Lauds antiphons (Ant Laudes 1–5 in DO Quad6-0)
+(bcp-roman-antiphonary-register
+ 'dominus-deus-auxiliator
+ '(:latin "Dóminus Deus * auxiliátor meus: et ídeo non sum confúsus."
+   :source vulgate
+   :ref "Isa 50:7"
+   :translations
+   ((do . "The Lord God will help me * and therefore I am not confounded."))))
+
+(bcp-roman-antiphonary-register
+ 'circumdantes-circumdederunt
+ '(:latin "Circumdántes * circumdedérunt me: et in nómine Dómini vindicábor in eis."
+   :source gallican
+   :ref "Ps 117:11-12"
+   :translations
+   ((do . "They compassed me about, * yea, they compassed me about but in the Name of the Lord! I will destroy them."))))
+
+(bcp-roman-antiphonary-register
+ 'judica-causam-meam
+ '(:latin "Júdica causam meam: * defénde, quia potens es, Dómine."
+   :source gallican
+   :ref "Ps 118:154"
+   :translations
+   ((do . "Judge Thou my cause, * and redeem me, O Lord, for Thou art mighty to save."))))
+
+(bcp-roman-antiphonary-register
+ 'cum-angelis-et-pueris
+ '(:latin "Cum Angelis * et púeris fidéles inveniámur, triumphatóri mortis clamántes: Hosánna in excélsis."
+   :source composition
+   :translations
+   ((do . "Fare we with Angels and men in faith to meet the Redeemer, * hailing the Slayer of death with joyful shouts of \"Hosanna in the highest!\""))))
+
+(bcp-roman-antiphonary-register
+ 'confundantur-qui-me-persequuntur
+ '(:latin "Confundántur * qui me persequúntur, et non confúndar ego, Dómine, Deus meus."
+   :source gallican
+   :ref "Jer 17:18"
+   :translations
+   ((do . "Let them be confounded that persecute me; * but let not me be confounded, O Lord my God."))))
+
+;; Prime antiphon
+(bcp-roman-antiphonary-register
+ 'pueri-hebraeorum-tollentes
+ '(:latin "Púeri Hebræórum * tolléntes ramos olivárum, obviavérunt Dómino clamántes et dicéntes: Hosánna in excélsis."
+   :source composition
+   :translations
+   ((do . "The Hebrew children took branches of olive-trees, * and went forth to meet the Lord, crying and saying: Hosanna in the highest!"))))
+
+;; Terce antiphon
+(bcp-roman-antiphonary-register
+ 'pueri-hebraeorum-vestimenta
+ '(:latin "Púeri Hebræórum * vestiménta prosternébant in via, et clamábant, dicéntes: Hosánna Fílio David: benedíctus qui venit in nómine Dómini."
+   :source composition
+   :translations
+   ((do . "The Hebrew children spread their garments in the way, * and cried, saying: Hosanna to the Son of David! Blessed is He that cometh in the Name of the Lord!"))))
+
+;; Sext antiphon
+(bcp-roman-antiphonary-register
+ 'tibi-revelavi-causam
+ '(:latin "Tibi revelávi * causam meam, defénsor vitæ meæ, Dómine, Deus meus."
+   :source gallican
+   :ref "Jer 20:12"
+   :translations
+   ((do . "Unto thee have I opened my cause, * O Lord my God, Which art the Redeemer of my life."))))
+
+;; None antiphon
+(bcp-roman-antiphonary-register
+ 'invocabo-nomen-tuum
+ '(:latin "Invocábo * nomen tuum, Dómine: ne avértas fáciem tuam a clamóre meo."
+   :source gallican
+   :ref "Lam 3:55-56"
+   :translations
+   ((do . "I will call * upon thy Name, O Lord: hide not thy face at my cry."))))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Lenten capitulum registrations
 
@@ -660,10 +763,33 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
    :translations
    ((do . "And therefore he is the mediator of the new testament: that by means of his death, for the redemption of those trangressions, which were under the former testament, they that are called may receive the promise of eternal inheritance."))))
 
+;;; ─── Lent 6 (Palm Sunday) capitula ───────────────────────────────────
+
+(bcp-roman-capitulary-register
+ 'hoc-enim-sentite
+ '(:latin "Fratres: Hoc enim sentíte in vobis, quod et in Christo Jesu: qui, cum in forma Dei esset, non rapínam arbitrátus est esse se æquálem Deo: sed semetípsum exinanívit, formam servi accípiens, in similitúdinem hóminum factus, et hábitu invéntus ut homo."
+   :ref "Phil 2:5-7"
+   :translations
+   ((do . "Brothers: For let this mind be in you, which was also in Christ Jesus: Who being in the form of God, thought it not robbery to be equal with God: But emptied himself, taking the form of a servant, being made in the likeness of men, and in habit found as a man."))))
+
+(bcp-roman-capitulary-register
+ 'humiliavit-semetipsum
+ '(:latin "Humiliávit semetípsum factus obédiens usque ad mortem, mortem autem crucis. Propter quod et Deus exaltávit illum, et donávit illi nomen, quod est super omne nomen."
+   :ref "Phil 2:8-9"
+   :translations
+   ((do . "He humbled himself, becoming obedient unto death, even to the death of the cross. For which cause God also hath exalted him, and hath given him a name which is above all names."))))
+
+(bcp-roman-capitulary-register
+ 'in-nomine-jesu
+ '(:latin "In nómine Jesu omne genu flectátur cæléstium, terréstrium, et infernórum: et omnis lingua confiteátur, quia Dóminus Jesus Christus in glória est Dei Patris."
+   :ref "Phil 2:10-11"
+   :translations
+   ((do . "That in the name of Jesus every knee should bow, of those that are in heaven, on earth, and under the earth: And that every tongue should confess that the Lord Jesus Christ is in the glory of God the Father."))))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
-;;;; Lenten dominical Matins lessons and responsories (Lent 1–5)
+;;;; Lenten dominical Matins lessons and responsories (Lent 1–6)
 ;;
-;; 5 Sunday datasets extracted from Divinum Officium Tempora files.
+;; 6 Sunday datasets extracted from Divinum Officium Tempora files.
 ;; Each entry: (WEEK . (:lessons (L1..L9) :responsories (R1..R8))).
 ;; Same structure as `bcp-roman-tempora--dominical-matins'.
 ;; Non-Matins antiphons and capitula use antiphonary/capitulary symbols.
@@ -695,6 +821,7 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
         (:respond "Paradísi portas apéruit nobis jejúnii tempus: suscipiámus illud orántes, et deprecántes: * Ut in die resurrectiónis cum Dómino gloriémur." :verse "In ómnibus exhibeámus nosmetípsos sicut Dei minístros in multa patiéntia." :repeat "Ut in die resurrectiónis cum Dómino gloriémur.")  ; R6
         (:respond "Scíndite corda vestra, et non vestiménta vestra: et convertímini ad Dóminum Deum vestrum: * Quia benígnus et miséricors est." :verse "Derelínquat ímpius viam suam, et vir iníquus cogitatiónes suas, et revertátur ad Dóminum, et miserébitur ejus." :repeat "Quia benígnus et miséricors est.")  ; R7
         (:respond "Frange esuriénti panem tuum, et egénos vagósque induc in domum tuam: * Tunc erúmpet quasi mane lumen tuum, et anteíbit fáciem tuam justítia tua." :verse "Cum víderis nudum, óperi eum, et carnem tuam ne despéxeris." :repeat "Tunc erúmpet quasi mane lumen tuum, et anteíbit fáciem tuam justítia tua.")  ; R8
+        (:respond "Angelis suis Deus mandávit de te, ut custódiant te in ómnibus viis tuis: * In mánibus portábunt te, ne umquam offéndas ad lápidem pedem tuum." :verse "Super áspidem et basilíscum ambulábis, et conculcábis leónem et dracónem." :repeat "In mánibus portábunt te, ne umquam offéndas ad lápidem pedem tuum.")  ; R9
         )
 
         ;; ── Vespers I ──────────────────────────────────────────────
@@ -748,6 +875,7 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
         (:respond "Erit mihi Dóminus in Deum, et lapis iste quem eréxi in títulum, vocábitur domus Dei: et de univérsis quæ déderis mihi, * Décimas et hóstias pacíficas ófferam tibi." :verse "Si revérsus fúero próspere ad domum patris mei." :repeat "Décimas et hóstias pacíficas ófferam tibi.")  ; R6
         (:respond "Dixit Angelus ad Jacob: * Dimítte me, auróra est. Respóndit ei: Non dimíttam te, nisi benedíxeris mihi. Et benedíxit ei in eódem loco." :verse "Cumque surrexísset Jacob, ecce vir luctabátur cum eo usque mane: et cum vidéret quod eum superáre non posset, dixit ad eum." :repeat "Dimítte me, auróra est. Respóndit ei: Non dimíttam te, nisi benedíxeris mihi. Et benedíxit ei in eódem loco.")  ; R7
         (:respond "Vidi Dóminum fácie ad fáciem: * Et salva facta est ánima mea." :verse "Et dixit mihi: Nequáquam vocáberis Jacob, sed Israël erit nomen tuum." :repeat "Et salva facta est ánima mea.")  ; R8
+        (:respond "Cum audísset Jacob quod Esau veníret contra eum, divísit fílios suos et uxóres, dicens: Si percússerit Esau unam turmam, salvábitur áltera. * Líbera me, Dómine, qui dixísti mihi: * Multiplicábo semen tuum sicut stellas cæli, et sicut arénam maris, quæ præ multitúdine numerári non potest." :verse "Dómine, qui dixísti mihi, Revértere in terram nativitátis tuæ: Dómine, qui pascis me a juventúte mea." :repeat "Líbera me, Dómine, qui dixísti mihi.")  ; R9
         )
 
         ;; ── Vespers I ──────────────────────────────────────────────
@@ -801,6 +929,7 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
         (:respond "Meménto mei, dum bene tibi fúerit: * Ut súggeras pharaóni, ut edúcat me de isto cárcere: * Quia furtim sublátus sum, et hic ínnocens in lacum missus sum." :verse "Tres enim adhuc dies sunt, post quos recordábitur phárao ministérii tui, et restítuet te in gradum prístinum: tunc meménto mei." :repeat "Quia furtim sublátus sum, et hic ínnocens in lacum missus sum.")  ; R6
         (:respond "Mérito hæc pátimur, quia peccávimus in fratrem nostrum, vidéntes angústias ánimæ ejus, dum deprecarétur nos, et non audívimus: * Idcírco venit super nos tribulátio." :verse "Dixit Ruben frátribus suis: Numquid non dixi vobis, Nolíte peccáre in púerum; et non audístis me?" :repeat "Idcírco venit super nos tribulatio.")  ; R7
         (:respond "Dixit Ruben frátribus suis: Numquid non dixi vobis, Nolíte peccáre in púerum, et non audístis me? * En sanguis ejus exquíritur." :verse "Mérito hæc pátimur, quia peccávimus in fratrem nostrum, vidéntes angústias ánimæ ejus, dum deprecarétur nos, et non audívimus." :repeat "En sanguis ejus exquíritur.")  ; R8
+        (:respond "Lamentabátur Jacob de duóbus fíliis suis: Heu me, dolens sum de Joseph pérdito, et tristis nimis de Bénjamin ducto pro alimóniis: * Precor cæléstem Regem, ut me doléntem nímium fáciat eos cérnere." :verse "Prostérnens se Jacob veheménter cum lácrimis pronus in terram, et adórans ait." :repeat "Precor cæléstem Regem, ut me doléntem nímium fáciat eos cérnere.")  ; R9
         )
 
         ;; ── Vespers I ──────────────────────────────────────────────
@@ -854,6 +983,7 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
         (:respond "Móyses fámulus Dei jejunávit quadragínta diébus et quadragínta nóctibus: * Ut legem Dómini mererétur accípere." :verse "Ascéndens Móyses in montem Sínai ad Dóminum, fuit ibi quadragínta diébus et quadragínta nóctibus." :repeat "Ut legem Dómini mererétur accípere.")  ; R6
         (:respond "Spléndida facta est fácies Móysi, dum respíceret in eum Dóminus: * Vidéntes senióres claritátem vultus ejus, admirántes timuérunt valde." :verse "Cumque descendísset de monte Sínai, portábat duas tábulas testimónii, ignórans quod cornúta esset fácies ejus ex consórtio sermónis Dei." :repeat "Vidéntes senióres claritátem vultus ejus, admirántes timuérunt valde.")  ; R7
         (:respond "Ecce mitto Angelum meum, qui præcédat te, et custódiat semper: * Obsérva et audi vocem meam, et inimícus ero inimícis tuis, et affligéntes te afflígam: et præcédet te Angelus meus." :verse "Israël, si me audíeris, non erit in te deus recens, neque adorábis deum aliénum: ego enim Dóminus." :repeat "Obsérva et audi vocem meam, et inimícus ero inimícis tuis, et affligéntes te afflígam: et præcédet te Angelus meus.")  ; R8
+        (:respond "Atténdite, pópule meus, legem meam: * Inclináte aurem vestram in verba oris mei." :verse "Apériam in parábolis os meum: loquar propositiónes ab inítio sǽculi." :repeat "Inclináte aurem vestram in verba oris mei.")  ; R9
         )
 
         ;; ── Vespers I ──────────────────────────────────────────────
@@ -907,6 +1037,7 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
         (:respond "In próximo est tribulátio mea, Dómine, et non est qui ádjuvet; ut fódiant manus meas et pedes meos: líbera me de ore leónis, * Ut enárrem nomen tuum frátribus meis." :verse "Erue a frámea, Deus, ánimam meam, et de manu canis únicam meam." :repeat "In próximo est tribulátio mea, Dómine, et non est qui ádjuvet; ut fódiant manus meas et pedes meos: líbera me de ore leónis, * Ut enárrem nomen tuum frátribus meis.")  ; R6
         (:respond "Tota die contristátus ingrediébar, Dómine: quóniam ánima mea compléta est illusiónibus: * Et vim faciébant, qui quærébant ánimam meam." :verse "Amíci mei et próximi mei advérsum me appropinquavérunt et stetérunt: et qui juxta me erant, de longe stetérunt." :repeat "Et vim faciébant, qui quærébant ánimam meam.")  ; R7
         (:respond "Ne avértas fáciem tuam a púero tuo, Dómine: * Quóniam tríbulor, velóciter exáudi me." :verse "Inténde ánimæ meæ, et líbera eam: propter inimícos meos éripe me." :repeat "Quóniam tríbulor, velóciter exáudi me.")  ; R8
+        (:respond "Quis dabit cápiti meo aquam, et óculis meis fontem lacrimárum, et plorábo die ac nocte? quia frater propínquus supplantávit me, * Et omnis amícus fraudulénter incéssit in me." :verse "Fiant viæ eórum ténebræ et lúbricum: et Angelus Dómini pérsequens eos." :repeat "Et omnis amícus fraudulénter incéssit in me.")  ; R9
         )
 
         ;; ── Vespers I ──────────────────────────────────────────────
@@ -936,8 +1067,62 @@ Lent includes per-Sunday minor hour antiphons (:prime-antiphon etc.)."
         :magnificat2-antiphon  abraham-pater-vester
         ))
 
+
+    (6
+     . (:lessons
+        (
+        (:ref "Jer 2:12-17" :source "De Jeremía Prophéta" :text "12 Obstupéscite, cæli, super hoc, et, portæ ejus, desolámini veheménter, dicit Dóminus. 13 Duo enim mala fecit pópulus meus: Me dereliquérunt fontem aquæ vivæ, et fodérunt sibi cistérnas, cistérnas dissipátas, quæ continére non valent aquas. 14 Numquid servus est Israël, aut vernáculus? Quare ergo factus est in prædam? 15 Super eum rugiérunt leónes, et dedérunt vocem suam, posuérunt terram ejus in solitúdinem: civitátes ejus exústæ sunt, et non est qui hábitet in eis. 16 Fílii quoque Mémpheos et Taphnes constupravérunt te usque ad vérticem. 17 Numquid non istud factum est tibi, quia dereliquísti Dóminum Deum tuum eo témpore, quo ducébat te per viam?")  ; L1
+        (:ref "Jer 2:18-22" :text "18 Et nunc quid tibi vis in via Ægýpti, ut bibas aquam túrbidam? et quid tibi cum via Assyriórum, ut bibas aquam flúminis? 19 Arguet te malítia tua, et avérsio tua increpábit te. Scito, et vide quia malum et amárum est reliquísse te Dóminum Deum tuum, et non esse timórem mei apud te, dicit Dóminus Deus exercítuum. 20 A sǽculo confregísti jugum meum, rupísti víncula mea, et dixísti: Non sérviam. In omni enim colle sublími, et sub omni ligno frondóso, tu prosternebáris méretrix. 21 Ego autem plantávi te víneam eléctam, omne semen verum: quómodo ergo convérsa es mihi in pravum, vínea aliéna? 22 Si láveris te nitro, et multiplicáveris tibi herbam borith, maculáta es in iniquitáte tua coram me, dicit Dóminus Deus.")  ; L2
+        (:ref "Jer 2:29-32" :text "29 Quid vultis mecum judício conténdere? Omnes dereliquístis me, dicit Dóminus. 30 Frustra percússi fílios vestros, disciplínam non recepérunt: devorávit gládius vester prophétas vestros, quasi leo vastátor 31 generátio vestra. Vidéte verbum Dómini: Numquid solitúdo factus sum Israéli, aut terra serótina? Quare ergo dixit pópulus meus: Recéssimus, non veniémus ultra ad te? 32 Numquid obliviscétur virgo ornaménti sui, aut sponsa fásciæ pectorális suæ? pópulus vero meus oblítus est mei diébus innúmeris.")  ; L3
+        (:ref "Sermo 11 de Passióne Dómini" :source "Sermo sancti Leónis Papæ" :text "Desideráta nobis, dilectíssimi, et univérso optábilis mundo adest festívitas Domínicæ passiónis, quæ nos inter exsultatiónes spirituálium gaudiórum silére non pátitur. Quia etsi diffícile est, de eádem solemnitáte sǽpius digne aptéque dissérere: non est tamen líberum sacerdóti in tanto divínæ misericórdiæ sacraménto fidélibus pópulis subtráhere sermónis offícium: cum ipsa matéria ex eo quod est ineffábilis, fandi tríbuat facultátem: nec possit defícere quod dicátur, dum numquam potest satis esse quod dícitur. Succúmbat ergo humána infírmitas glóriæ Dei, et in explicándis opéribus misericórdiæ ejus, ímparem se semper invéniat. Laborémus sensu, hæreámus ingénio, deficiámus elóquio: bonum est ut nobis parum sit, quod étiam recte de Dómini majestáte sentímus.")  ; L4
+        (:text "Dicénte enim prophéta: Quǽrite Dóminum, et confirmámini, quǽrite fáciem ejus semper: némini præsuméndum est, quod totum quod quærit, invénerit, ne désinat propinquáre, qui cessárit accédere. Quid autem inter ómnia ópera Dei, in quibus humánæ admiratiónis fatigátur inténtio, ita contemplatiónem mentis nostræ et obléctat et súperat, sicut pássio Salvatóris? Qui ut humánum genus vínculis mortíferæ prævaricatiónis absólveret, et sæviénti diábolo poténtiam suæ majestátis occúluit, et infirmitátem nostræ humilitátis objécit. Si enim crudélis et supérbus inimícus consílium misericórdiæ Dei nosse potuísset, Judæórum ánimos mansuetúdine pótius temperáre, quam injústis ódiis studuísset accéndere: ne ómnium captivórum amítteret servitútem, dum nihil sibi debéntis perséquitur libertátem.")  ; L5
+        (:text "Feféllit ergo illum malígnitas sua, íntulit supplícium Fílio Dei, quod cunctis fíliis hóminum in remédium verterétur. Fudit sánguinem justum, qui reconciliándo mundo et prétium esset, et póculum. Suscépit Dóminus, quod secúndum propósitum suæ voluntátis elégit. Admísit in se ímpias manus furéntium: quæ dum próprio incúmbunt scéleri, famulátæ sunt Redemptóri. Cujus étiam circa interfectóres suos tanta erat pietátis afféctio, ut de cruce súpplicans Patri, non se vindicári, sed illis postuláret ignósci.")  ; L6
+        (:ref "Matt 21:1-9" :source "Léctio sancti Evangélii secúndum Matthǽum" :text "In illo témpore: Cum appropinquásset Jesus Jerosólymis, et venísset Béthphage ad montem Olivéti: tunc misit duos discípulos, dicens eis. Et réliqua.\n\nHomilía sancti Ambrósii Epíscopi\n\nPulchre relíctis Judǽis, habitatúrus in afféctibus géntium, templum Dóminus ascéndit. Hoc enim templum est verum, in quo non in líttera, sed in spíritu Dóminus adorátur. Hoc Dei templum est, quod fídei séries, non lápidum structúra fundávit. Deserúntur ergo qui óderant: eligúntur qui amatúri erant. Et ídeo ad montem venit Olivéti, ut novéllas óleas in sublími virtúte plantáret, quarum mater est illa, quæ sursum est, Jerúsalem. In hoc monte est ille cæléstis agrícola: ut plantáti omnes in domo Dei, possint virítim dícere: Ego autem sicut olíva fructífera in domo Dómini.")  ; L7
+        (:text "Et fortásse ipse mons Christus est. Quis enim álius tales fructus ferret oleárum, non curvescéntium ubertáte baccárum, sed spíritus plenitúdine géntium fœcundárum? Ipse est per quem ascéndimus, et ad quem ascéndimus. Ipse est jánua, ipse est via, qui aperítur, et qui áperit: qui pulsátur ab ingrediéntibus, et ab eméritis adorátur. Ergo in castéllo erat, et ligátus erat pullus cum ásina: non póterat solvi nisi jussu Dómini. Solvit eum manus apostólica. Talis actus, talis vita, talis grátia. Esto talis et tu, ut possis ligátos sólvere.")  ; L8
+        (:text "Nunc considerémus qui fúerint illi, qui erróre detécto, de paradíso ejécti, in castéllum sint relegáti. Et vides, quemádmodum quos mors expúlerat, vita revocáverit. Et ídeo secúndum Matthǽum, et ásinam et pullum légimus: ut quia in duóbus homínibus utérque fúerat sexus expúlsus, in duóbus animálibus sexus utérque revocétur. Ergo illic in ásina matre quasi Hevam figurávit erróris: hic autem in pullo generalitátem pópuli Gentílis expréssit: et ídeo pullo sedétur ásinæ. Et bene, in quo nemo sedit: quia nullus, ántequam Christus, natiónum pópulos vocávit ad Ecclésiam. Dénique secúndum Marcum sic habes: Quem nemo adhuc sedit hóminum.")  ; L9
+        )
+        :responsories
+        (
+        (:respond "In die qua invocávi te, Dómine, dixísti: Noli timére: * Judicásti causam meam, et liberásti me, Dómine, Deus meus." :verse "In die tribulatiónis meæ clamávi ad te, quia exaudísti me." :repeat "Judicásti causam meam, et liberásti me, Dómine, Deus meus.")  ; R1
+        (:respond "Fratres mei elongavérunt se a me: et noti mei * Quasi aliéni recessérunt a me." :verse "Dereliquérunt me próximi mei, et qui me novérunt." :repeat "Quasi aliéni recessérunt a me.")  ; R2
+        (:respond "Atténde, Dómine, ad me, et audi voces adversariórum meórum: * Numquid rédditur pro bono malum, quia fodérunt fóveam ánimæ meæ?" :verse "Recordáre quod stéterim in conspéctu tuo, ut lóquerer pro eis bonum, et avérterem indignatiónem tuam ab eis." :repeat "Numquid rédditur pro bono malum, quia fodérunt fóveam ánimæ meæ?")  ; R3
+        (:respond "Conclúsit vias meas inimícus, insidiátor factus est mihi sicut leo in abscóndito, replévit et inebriávit me amaritúdine: deduxérunt in lacum mortis vitam meam, et posuérunt lápidem contra me. * Vide, Dómine, iniquitátes illórum: et júdica causam ánimæ meæ, defénsor vitæ meæ." :verse "Factus sum in derísum omni pópulo meo, cánticum eórum tota die." :repeat "Vide, Dómine, iniquitátes illórum: et júdica causam ánimæ meæ, defénsor vitæ meæ.")  ; R4
+        (:respond "Salvum me fac, Deus, quóniam intravérunt aquæ usque ad ánimam meam: ne avértas fáciem tuam a me: * Quóniam tríbulor, exáudi me, Dómine, Deus meus." :verse "Inténde ánimæ meæ, et líbera eam: propter inimícos meos éripe me." :repeat "Quóniam tríbulor, exáudi me, Dómine, Deus meus.")  ; R5
+        (:respond "Noli esse mihi, Dómine, aliénus: parce mihi in die mala: confundántur omnes qui me persequúntur, * Et non confúndar ego." :verse "Confundántur omnes inimíci mei, qui quærunt ánimam meam." :repeat "Et non confúndar ego.")  ; R6
+        (:respond "Dóminus mecum est tamquam bellátor fortis: proptérea persecúti sunt me, et intellégere non potuérunt: Dómine, probas renes et corda: * Tibi revelávi causam meam." :verse "Vidísti, Dómine, iniquitátes eórum advérsum me: júdica judícium meum." :repeat "Tibi revelávi causam meam.")  ; R7
+        (:respond "Dixérunt ímpii apud se, non recte cogitántes: Circumveniámus justum, quóniam contrárius est opéribus nostris: promíttit se sciéntiam Dei habére, Fílium Dei se nóminat, et gloriátur patrem se habére Deum: * Videámus si sermónes illíus veri sunt: et si est vere Fílius Dei, líberet eum de mánibus nostris: morte turpíssima condemnémus eum." :verse "Tamquam nugáces æstimáti sumus ab illo, et ábstinet se a viis nostris tamquam ab immundítiis: et præfert novíssima justórum." :repeat "Videámus si sermónes illíus veri sunt: et si est vere Fílius Dei, líberet eum de mánibus nostris: morte turpíssima condemnémus eum.")  ; R8
+        (:respond "Circumdedérunt me viri mendáces: sine causa flagéllis cecidérunt me: * Sed tu, Dómine defénsor, víndica me." :verse "Quóniam tribulátio próxima est, et non est qui ádjuvet." :repeat "Sed tu, Dómine defénsor, víndica me.")  ; R9
+        )
+
+        ;; ── Vespers I ──────────────────────────────────────────────
+        :magnificat-antiphon  pater-juste-mundus
+
+        ;; ── Lauds ──────────────────────────────────────────────────
+        :lauds-antiphons (dominus-deus-auxiliator
+                          circumdantes-circumdederunt
+                          judica-causam-meam
+                          cum-angelis-et-pueris
+                          confundantur-qui-me-persequuntur)
+        :benedictus-antiphon  turba-multa
+        :lauds-capitulum      hoc-enim-sentite
+
+        ;; ── Prime ──────────────────────────────────────────────────
+        :prime-antiphon        pueri-hebraeorum-tollentes
+        ;; ── Terce ──────────────────────────────────────────────────
+        :terce-antiphon        pueri-hebraeorum-vestimenta
+        ;; ── Sext ───────────────────────────────────────────────────
+        :sext-antiphon         tibi-revelavi-causam
+        :sext-capitulum        humiliavit-semetipsum
+        ;; ── None ───────────────────────────────────────────────────
+        :none-antiphon         invocabo-nomen-tuum
+        :none-capitulum        in-nomine-jesu
+
+        ;; ── Vespers II ─────────────────────────────────────────────
+        :magnificat2-antiphon  scriptum-est-enim-percutiam
+        ))
+
     )
-  "Lenten dominical Matins data, indexed by Lent Sunday number (1-5).
+  "Lenten dominical Matins data, indexed by Lent Sunday number (1-6).
 Scripture (L1-L3), patristic (L4-L6), and homily (L7-L9) lessons,
 plus 8 responsories per Sunday.  Non-Matins antiphons and capitula
 reference antiphonary/capitulary symbols.")
