@@ -224,6 +224,10 @@ bcp-preferences.el is always loaded last."
     ;; Reload bcp-preferences.el last (picks up this function itself)
     (load (file-name-sans-extension
            (expand-file-name "bcp-preferences.el" dir)) nil t)
+    ;; Drop lazy-loaded psalter/Bible caches so updates to the shipped
+    ;; text files (Coverdale, Tate & Brady, Vulgate, Bungo-yaku) take effect.
+    (when (fboundp 'bcp-fetcher-clear-cache)
+      (bcp-fetcher-clear-cache))
     (message "BCP reloaded (%d files)." (1+ (length files)))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
