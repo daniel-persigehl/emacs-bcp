@@ -739,12 +739,33 @@ capitulum/versicle/preces.  Ends with Christus factus est."
       ;; Conclusio
       (:conclusio))))
 
+(defun bcp-roman-breviary--ferial-matins-data (date)
+  "Return ferial Matins lesson data for DATE, or nil.
+Dispatches to the appropriate season-specific function.
+Returns a plist with :lessons and :responsories when proper
+ferial lessons are available."
+  (let ((season (bcp-roman-breviary--liturgical-season date)))
+    (pcase season
+      ('advent (bcp-roman-season-advent-ferial-matins date))
+      ((or 'lent 'passiontide)
+       (bcp-roman-season-lent-ferial-matins date))
+      ((or 'easter-octave 'eastertide)
+       (bcp-roman-season-easter-ferial-matins date))
+      ('christmastide
+       (bcp-roman-season-christmas-ferial-matins date))
+      ('per-annum
+       (bcp-roman-tempora-ferial-matins date))
+      (_ nil))))
+
 (defun bcp-roman-breviary--matins-ordo (dow date)
   "Build ferial Matins ordo for day-of-week DOW (1-6) on DATE.
-Uses the DA 1911 cursus: 1 nocturn, 9 psalms each under its own antiphon."
+Uses the DA 1911 cursus: 1 nocturn, 9 psalms each under its own antiphon.
+When proper ferial lessons are available (e.g. Advent), inserts absolutio,
+3 benedictions, 3 lessons, and 3 responsories instead of lectio brevis."
   (let ((psalms   (bcp-roman-psalterium-matins-psalms dow))
         (invit    (bcp-roman-psalterium-invitatory-antiphon dow))
-        (hymn     (bcp-roman-psalterium-matins-hymn dow)))
+        (hymn     (bcp-roman-psalterium-matins-hymn dow))
+        (has-lessons (bcp-roman-breviary--ferial-matins-data date)))
     `(;; Preparatory prayers (silent)
       (:silent-prayers (pater-noster ave-maria credo))
       ;; Incipit
@@ -760,8 +781,25 @@ Uses the DA 1911 cursus: 1 nocturn, 9 psalms each under its own antiphon."
                  collect `(:antiphon ,ant :repeat t))
       ;; Versus
       (:versicles matins-versicle)
-      ;; Lectio brevis
-      (:lectio-brevis matins-lectio-brevis)
+      ;; Lessons or lectio brevis
+      ,@(if has-lessons
+            ;; Proper ferial lessons: absolutio + 3x (benedictio, lesson, responsory)
+            ;; On Te Deum days (Easter/Pentecost octave), R3 is nil — emit Te Deum instead
+            (let ((te-deum-p (not (nth 2 (plist-get has-lessons :responsories)))))
+              `((:silent-prayers (pater-noster))
+                (:lesson-absolutio 0)
+                (:lesson-benedictio matins-benedictiones-nocturn-1 0)
+                (:lesson matins-lesson-1)
+                (:responsory matins-responsory-1)
+                (:lesson-benedictio matins-benedictiones-nocturn-1 1)
+                (:lesson matins-lesson-2)
+                (:responsory matins-responsory-2)
+                (:lesson-benedictio matins-benedictiones-nocturn-1 2)
+                (:lesson matins-lesson-3)
+                ,@(if te-deum-p
+                      '((:te-deum))
+                    '((:responsory matins-responsory-3)))))
+          `((:lectio-brevis matins-lectio-brevis)))
       ;; Capitulum et Versus
       (:capitulum matins-capitulum)
       (:versicles matins-capitulum-versicle)
@@ -1274,7 +1312,7 @@ Returns the appropriate text, plist, or data structure."
          bcp-roman-benedictiones-nocturn-3-dominical))
 
       ;; ── Matins: lessons (return plist with :ref, :text, etc.) ──
-      ;; Used by both dominical and feast-grade Matins.
+      ;; Used by dominical, ferial, and feast-grade Matins.
       ((and (pred symbolp)
             (let name (symbol-name key))
             (guard (string-match "\\`matins-lesson-\\([0-9]+\\)\\'" name)))
@@ -1282,6 +1320,8 @@ Returns the appropriate text, plist, or data structure."
               (feast-data (bcp-roman-breviary--feast-matins-data
                            bcp-roman-breviary--current-date))
               (data (or feast-data
+                        (bcp-roman-breviary--ferial-matins-data
+                         bcp-roman-breviary--current-date)
                         (let ((season (bcp-roman-breviary--liturgical-season
                                        bcp-roman-breviary--current-date)))
                           (pcase season
@@ -1303,7 +1343,7 @@ Returns the appropriate text, plist, or data structure."
          (nth (1- n) lessons)))
 
       ;; ── Matins: responsories (return plist with :respond, :verse, :repeat) ──
-      ;; Used by both dominical and feast-grade Matins.
+      ;; Used by dominical, ferial, and feast-grade Matins.
       ((and (pred symbolp)
             (let name (symbol-name key))
             (guard (string-match "\\`matins-responsory-\\([0-9]+\\)\\'" name)))
@@ -1311,6 +1351,8 @@ Returns the appropriate text, plist, or data structure."
               (feast-data (bcp-roman-breviary--feast-matins-data
                            bcp-roman-breviary--current-date))
               (data (or feast-data
+                        (bcp-roman-breviary--ferial-matins-data
+                         bcp-roman-breviary--current-date)
                         (let ((season (bcp-roman-breviary--liturgical-season
                                        bcp-roman-breviary--current-date)))
                           (pcase season
@@ -1967,9 +2009,11 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
     (bcp-roman-breviary--render-hour
      'matins ordo
      (format "*Breviary — %s Matins*" day)
-     (if proprium-p
-         (plist-get proprium-feast :latin)
-       (bcp-roman-breviary--season-label date "Matutinum" "Matins"))
+     (cond
+      (hw-data    (plist-get hw-data :name))
+      (hw-weekday (plist-get hw-weekday :name))
+      (proprium-p (plist-get proprium-feast :latin))
+      (t          (bcp-roman-breviary--season-label date "Matutinum" "Matins")))
      date data-fn)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

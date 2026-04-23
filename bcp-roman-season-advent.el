@@ -6,6 +6,8 @@
 ;; Covers the four Sundays of Advent (Adv1-0 through Adv4-0 in DO
 ;; terminology), providing collects, dominical Matins data (9 lessons,
 ;; 8 responsories), and non-Matins hour data (antiphons, capitula).
+;; Also covers 23 ferial (weekday) days with 3 lessons and 3
+;; responsories each, including 3 Ember Days (Quattuor Temporum).
 ;;
 ;; Lesson structure follows `bcp-roman-tempora.el' Per Annum pattern:
 ;;   Nocturn I  (L1-L3): Scripture with :ref, :source, :text
@@ -965,6 +967,732 @@ DATE is (MONTH DAY YEAR).  Returns the same plist as `dominical-matins'
 \(which contains both Matins and non-Matins keys), or nil outside Advent.
 Non-Matins keys are optional; absent means use psalterium default."
   (bcp-roman-season-advent-dominical-matins date))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Advent ferial Matins lessons and responsories
+;;
+;; Ferial (weekday) Matins in Advent have 3 scripture lessons and 3
+;; responsories in a single nocturn.  Ember Days (Quattuor Temporum,
+;; Week 3 Wed/Fri/Sat) have homily lessons instead of scripture.
+;; Adv4-6 (Saturday of Week 4) has no proper Matins and is omitted.
+;;
+;; Data extracted from Divinum Officium Latin Tempora/Adv*.txt files.
+;; Keys: (WEEK . DOW) where WEEK is 1-4, DOW is 1=Mon..6=Sat.
+
+(defconst bcp-roman-season-advent--ferial-matins
+  '(
+
+    ;; Adv1-1: Feria II infra Hebdomadam I Adventus
+    ((1 . 1) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 1:16-18"
+               :text "16 Lavámini, mundi estóte, auférte malum cogitatiónum vestrárum ab óculis meis: quiéscite ágere pervérse,
+17 díscite benefácere: quǽrite judícium, subveníte opprésso, judicáte pupíllo, deféndite víduam.
+18 Et veníte, et argúite me, dicit Dóminus: si fúerint peccáta vestra ut cóccinum, quasi nix dealbabúntur: et si fúerint rubra quasi vermículus, velut lana alba erunt.")
+               (:ref "Isa 1:19-23"
+               :text "19 Si voluéritis, et audiéritis me, bona terræ comedétis.
+20 Quod si noluéritis, et me ad iracúndiam provocavéritis, gládius devorábit vos, quia os Dómini locútum est.
+21 Quómodo facta est méretrix cívitas fidélis, plena judícii? Justítia habitávit in ea, nunc autem homicídæ.
+22 Argéntum tuum versum est in scóriam: vinum tuum mixtum est aqua.
+23 Príncipes tui infidéles, sócii furum: omnes díligunt múnera, sequúntur retributiónes. Pupíllo non júdicant: et causa víduæ non ingréditur ad illos.")
+               (:ref "Isa 1:24-28"
+               :text "24 Propter hoc ait Dóminus Deus exercítuum fortis Israël: Heu! consolábor super hóstibus meis, et vindicábor de inimícis meis.
+25 Et convértam manum meam ad te, et éxcoquam ad purum scóriam tuam, et áuferam omne stannum tuum.
+26 Et restítuam júdices tuos ut fuérunt prius, et consiliários tuos sicut antíquitus: post hæc vocáberis cívitas justi, urbs fidélis.
+27 Sion in judício redimétur, et redúcent eam in justítia:
+28 et cónteret sceléstos, et peccatóres simul: et qui dereliquérunt Dóminum, consuméntur."))
+              :responsories
+              ((:respond "Súscipe verbum, Virgo María, quod tibi a Dómino per Angelum transmíssum est: concípies et páries Deum páriter et hóminem,"
+                  :verse "Páries quidem fílium, et virginitátis non patiéris detriméntum: efficiéris grávida, et eris mater semper intácta."
+                  :repeat "Ut benedícta dicáris inter omnes mulíeres."
+                  :gloria nil)
+               (:respond "Læténtur cæli, et exsúltet terra, jubiláte, montes, laudem: quia Dóminus noster véniet,"
+                  :verse "Oriétur in diébus ejus justítia, et abundántia pacis."
+                  :repeat "Et páuperum suórum miserébitur."
+                  :gloria nil)
+               (:respond "Aliéni non transíbunt per Jerúsalem ámplius:"
+                  :verse "Deus a Líbano véniet, et Sanctus de monte umbróso et condénso."
+                  :repeat "Nam in illa die stillábunt montes dulcédinem, et colles fluent lac et mel, dicit Dóminus."
+                  :gloria t))))
+
+    ;; Adv1-2: Feria III infra Hebdomadam I Adventus
+    ((1 . 2) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 2:1-3"
+               :text "1 Verbum, quod vidit Isaías, fílius Amos, super Judam et Jerúsalem.
+2 Et erit in novíssimis diébus præparátus mons domus Dómini in vértice móntium, et elevábitur super colles; et fluent ad eum omnes gentes.
+3 Et ibunt pópuli multi, et dicent: Veníte, et ascendámus ad montem Dómini, et ad domum Dei Jacob, et docébit nos vias suas, et ambulábimus in sémitis ejus: quia de Sion exíbit lex, et verbum Dómini de Jerúsalem.")
+               (:ref "Isa 2:4-6"
+               :text "4 Et judicábit gentes, et árguet pópulos multos: et conflábunt gládios suos in vómeres, et lánceas suas in falces: non levábit gens contra gentem gládium, nec exercebúntur ultra ad prǽlium.
+5 Domus Jacob, veníte, et ambulémus in lúmine Dómini.
+6 Projecísti enim pópulum tuum, domum Jacob: quia repléti sunt ut olim, et áugures habuérunt ut Philísthiim, et púeris aliénis adhæsérunt.")
+               (:ref "Isa 2:7-9"
+               :text "7 Repléta est terra argénto et auro: et non est finis thesaurórum ejus:
+8 et repléta est terra ejus equis: et innumerábiles quadrígæ ejus. Et repléta est terra ejus idólis: opus mánuum suárum adoravérunt, quod fecérunt dígiti eórum.
+9 Et incurvávit se homo, et humiliátus est vir, ne ergo dimíttas eis."))
+              :responsories
+              ((:respond "Montes Israël, ramos vestros expándite, et floréte, et fructus fácite:"
+                  :verse "Roráte, cæli, désuper, et nubes pluant justum: aperiátur terra, et gérminet Salvatórem."
+                  :repeat "Prope est ut véniat dies Dómini."
+                  :gloria nil)
+               (:respond "Erúmpant montes jucunditátem, et colles justítiam:"
+                  :verse "De Sion exíbit lex, et verbum Dómini de Jerúsalem."
+                  :repeat "Quia lux mundi Dóminus cum poténtia venit."
+                  :gloria nil)
+               (:respond "Ecce ab Austro vénio, ego Dóminus Deus vester,"
+                  :verse "Aspíciam vos, et créscere fáciam: multiplicabímini, et firmábo pactum meum vobíscum."
+                  :repeat "Visitáre vos in pace."
+                  :gloria t))))
+
+    ;; Adv1-3: Feria IV infra Hebdomadam I Adventus
+    ((1 . 3) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 3:1-4"
+               :text "1 Ecce enim Dominátor Dóminus exercítuum áuferet a Jerúsalem et a Juda válidum et fortem, omne robur panis, et omne robur aquæ:
+2 fortem, et virum bellatórem, Júdicem, et prophétam, et aríolum, et senem:
+3 príncipem super quinquagínta, et honorábilem vultu, et consiliárium, et sapiéntem de architéctis, et prudéntem elóquii mýstici.
+4 Et dabo púeros príncipes eórum, et effemináti dominabúntur eis.")
+               (:ref "Isa 3:5-7"
+               :text "5 Et írruet pópulus vir ad virum, et unusquísque ad próximum suum: tumultuábitur puer contra senem, et ignóbilis contra nóbilem.
+6 Apprehéndet enim vir fratrem suum domésticum patris sui: Vestiméntum tibi est, princeps esto noster, ruína autem hæc sub manu tua.
+7 Respondébit in die illa, dicens: Non sum médicus, et in domo mea non est panis, neque vestiméntum: nolíte constitúere me príncipem pópuli.")
+               (:ref "Isa 3:8-11"
+               :text "8 Ruit enim Jerúsalem, et Judas cóncidit: quia lingua eórum et adinventiónes eórum contra Dóminum, ut provocárent óculos majestátis ejus.
+9 Agnítio vultus eórum respóndit eis: et peccátum suum quasi Sódoma prædicavérunt, nec abscondérunt: væ ánimæ eórum, quóniam réddita sunt eis mala.
+10 Dícite justo quóniam bene, quóniam fructum adinventiónum suárum cómedet.
+11 Væ ímpio in malum: retribútio enim mánuum ejus fiet ei."))
+              :responsories
+              ((:respond "Rex noster advéniet Christus,"
+                  :verse "Super ipsum continébunt reges os suum, ipsum gentes deprecabúntur."
+                  :repeat "Quem Joánnes prædicávit Agnum esse ventúrum."
+                  :gloria nil)
+               (:respond "Ante multum tempus prophetávit Ezéchiel: Vidi portam clausam; ecce Deus ante sǽcula ex ea procedébat pro salúte mundi:"
+                  :verse "Porta quam vidísti, Dóminus solus transíbit per illam."
+                  :repeat "Et erat íterum clausa, demónstrans Vírginem, quia post partum permánsit virgo."
+                  :gloria nil)
+               (:respond "Ecce dies véniunt, dicit Dóminus, et suscitábo David germen justum: et regnábit rex, et sápiens erit, et fáciet judícium et justítiam in terra:"
+                  :verse "In diébus illis salvábitur Juda, et Israël habitábit confidénter."
+                  :repeat "Et hoc est nomen quod vocábunt eum: * Dóminus justus noster."
+                  :gloria t))))
+
+    ;; Adv1-4: Feria V infra Hebdomadam I Adventus
+    ((1 . 4) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 4:1-3"
+               :text "1 Et apprehéndent septem mulíeres virum unum in die illa, dicéntes: Panem nostrum comedémus, et vestiméntis nostris operiémur: tantúmmodo invocétur nomen tuum super nos, aufer oppróbrium nostrum.
+2 In die illa erit germen Dómini in magnificéntia, et glória, et fructus terræ sublímis, et exsultátio his, qui salváti fúerint de Israël.
+3 Et erit: Omnis qui relíctus fúerit in Sion, et resíduus in Jerúsalem, sanctus vocábitur, omnis qui scriptus est in vita in Jerúsalem.")
+               (:ref "Isa 5:1-4"
+               :text "1 Cantábo dilécto meo cánticum patruélis mei víneæ suæ: Vínea facta est dilécto meo in cornu fílio ólei.
+2 Et sepívit eam, et lápides elégit ex illa, et plantávit eam eléctam, et ædificávit turrem in médio ejus, et tórcular exstrúxit in ea: et exspectávit ut fáceret uvas, et fecit labrúscas.
+3 Nunc ergo, habitatóres Jerúsalem, et viri Juda, judicáte inter me et víneam meam.
+4 Quid est quod débui ultra fácere víneæ meæ, et non feci ei? An quod exspectávi, ut fáceret uvas, et fecit labrúscas?")
+               (:ref "Isa 5:5-7"
+               :text "5 Et nunc osténdam vobis quid ego fáciam víneæ meæ: áuferam sepem ejus, et erit in direptiónem: díruam macériam ejus, et erit in conculcatiónem.
+6 Et ponam eam desértam: non putábitur, et non fodiétur. Et ascéndent vepres et spinæ; et núbibus mandábo ne pluant super eam imbrem.
+7 Vínea enim Dómini exercítuum domus Israël est: et vir Juda germen ejus delectábile: et exspectávi ut fáceret judícium, et ecce iníquitas: et justítiam, et ecce clamor."))
+              :responsories
+              ((:respond "Súscipe verbum, Virgo María, quod tibi a Dómino per Angelum transmíssum est: concípies et páries Deum páriter et hóminem,"
+                  :verse "Páries quidem fílium, et virginitátis non patiéris detriméntum: efficiéris grávida, et eris mater semper intácta."
+                  :repeat "Ut benedícta dicáris inter omnes mulíeres."
+                  :gloria nil)
+               (:respond "Aspiciébam in visu noctis, et ecce in núbibus cæli Fílius hóminis veniébat: et datum est ei regnum, et honor:"
+                  :verse "Potéstas ejus, potéstas ætérna, quæ non auferétur: et regnum ejus, quod non corrumpétur."
+                  :repeat "Et omnis pópulus, tribus, et linguæ sérvient ei."
+                  :gloria nil)
+               (:respond "Missus est Gábriel Angelus ad Maríam Vírginem desponsátam Joseph, núntians ei verbum; et expavéscit Virgo de lúmine: ne tímeas, María, invenísti grátiam apud Dóminum:"
+                  :verse "Dabit ei Dóminus Deus sedem David, patris ejus, et regnábit in domo Jacob in ætérnum."
+                  :repeat "Ecce concípies, et páries, et vocábitur Altíssimi Fílius."
+                  :gloria t))))
+
+    ;; Adv1-5: Feria VI infra Hebdomadam I Adventus
+    ((1 . 5) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 6:1-3"
+               :text "1 In anno, quo mórtuus est rex Ozías, vidi Dóminum sedéntem super sólium excélsum et elevátum: et ea, quæ sub ipso erant, replébant templum.
+2 Séraphim stabant super illud: sex alæ uni, et sex alæ álteri, duábus velábant fáciem ejus, et duábus velábant pedes ejus, et duábus volábant.
+3 Et clamábant alter ad álterum, et dicébant: Sanctus, sanctus, sanctus, Dóminus exercítuum, plena est omnis terra glória ejus.")
+               (:ref "Isa 6:4-7"
+               :text "4 Et commóta sunt superliminária cárdinum a voce clamántis, et domus repléta est fumo.
+5 Et dixi: Væ mihi, quia tácui, quia vir pollútus lábiis ego sum, et in médio pópuli pollúta lábia habéntis ego hábito, et Regem Dóminum exercítuum vidi óculis meis.
+6 Et volávit ad me unus de Séraphim, et in manu ejus cálculus, quem fórcipe túlerat de altári.
+7 Et tétigit os meum, et dixit: Ecce tétigit hoc lábia tua, et auferétur iníquitas tua, et peccátum tuum mundábitur.")
+               (:ref "Isa 6:8-10"
+               :text "8 Et audívi vocem Dómini dicéntis: Quem mittam? et quis ibit nobis? Et dixi: Ecce ego, mitte me.
+9 Et dixit: Vade, et dices pópulo huic: Audíte audiéntes, et nolíte intellégere: et vidéte visiónem, et nolíte cognóscere.
+10 Excǽca cor pópuli hujus, et aures ejus ággrava, et óculos ejus claude, ne forte vídeat óculis suis, et áuribus suis áudiat, et corde suo intéllegat, et convertátur, et sanem eum."))
+              :responsories
+              ((:respond "Ave, María, grátia plena, Dóminus tecum:"
+                  :verse "Quómodo fiet istud, quóniam virum non cognósco? Et respóndens Angelus, dixit ei."
+                  :repeat "Spíritus Sanctus supervéniet in te, et virtus Altíssimi obumbrábit tibi: quod enim ex te nascétur Sanctum, vocábitur Fílius Dei."
+                  :gloria nil)
+               (:respond "Salvatórem exspectámus, Dóminum Jesum Christum,"
+                  :verse "Sóbrie, et juste, et pie vivámus in hoc sǽculo, exspectántes beátam spem, et advéntum glóriæ magni Dei."
+                  :repeat "Qui reformábit corpus humilitátis nostræ configurátum córpori claritátis suæ."
+                  :gloria nil)
+               (:respond "Obsecro, Dómine, mitte quem missúrus es: vide afflictiónem pópuli tui:"
+                  :verse "Qui regis Israël, inténde, qui dedúcis velut ovem Joseph, qui sedes super Chérubim."
+                  :repeat "Sicut locútus es, veni, * Et líbera nos."
+                  :gloria t))))
+
+    ;; Adv1-6: Sabbato infra Hebdomadam I Adventus
+    ((1 . 6) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 7:1-3"
+               :text "1 Et factum est in diébus Achaz, fílii Jóatham, fílii Ozíæ, regis Juda, ascéndit Rasin, rex Sýriæ, et Phácee, fílius Romelíæ, rex Israël, in Jerúsalem, ad præliándum contra eam: et non potuérunt debelláre eam.
+2 Et nuntiavérunt dómui David, dicéntes: Requiévit Sýria super Ephraim, et commótum est cor ejus, et cor pópuli ejus, sicut movéntur ligna silvárum a fácie venti.
+3 Et dixit Dóminus ad Isaíam: Egrédere in occúrsum Achaz tu, et qui derelíctus est Jasub fílius tuus, ad extrémum aquædúctus piscínæ superióris in via Agri fullónis.")
+               (:ref "Isa 7:4-6"
+               :text "4 Et dices ad eum: Vide ut síleas: noli timére, et cor tuum ne formídet a duábus caudis titiónum fumigántium istórum, in ira furóris Rasin, regis Sýriæ, et fílii Romelíæ:
+5 eo quod consílium iníerit contra te Sýria in malum Ephraim, et fílius Romelíæ, dicéntes:
+6 Ascendámus ad Judam, et suscitémus eum, et avellámus eum ad nos, et ponámus regem in médio ejus fílium Tábeel.")
+               (:ref "Isa 7:10-15"
+               :text "10 Et adjécit Dóminus loqui ad Achaz, dicens:
+11 Pete tibi signum a Dómino Deo tuo in profúndum inférni, sive in excélsum supra.
+12 Et dixit Achaz: Non petam, et non tentábo Dóminum.
+13 Et dixit: Audíte ergo, domus David: Numquid parum vobis est, moléstos esse homínibus, quia molésti estis et Deo meo?
+14 Propter hoc dabit Dóminus ipse vobis signum. Ecce virgo concípiet, et páriet fílium, et vocábitur nomen ejus Emmánuel.
+15 Butýrum et mel cómedet, ut sciat reprobáre malum, et elígere bonum."))
+              :responsories
+              ((:respond "Ecce virgo concípiet, et páriet fílium, dicit Dóminus:"
+                  :verse "Super sólium David, et super regnum ejus sedébit in ætérnum."
+                  :repeat "Et vocábitur nomen ejus Admirábilis, Deus, Fortis."
+                  :gloria nil)
+               (:respond "Audíte verbum Dómini, gentes, et annuntiáte illud in fínibus terræ:"
+                  :verse "Annuntiáte, et audítum fácite: loquímini, et clamáte."
+                  :repeat "Et ínsulis, quæ procul sunt, dícite: Salvátor noster advéniet."
+                  :gloria nil)
+               (:respond "Ecce dies véniunt, dicit Dóminus, et suscitábo David germen justum: et regnábit rex, et sápiens erit, et fáciet judícium et justítiam in terra:"
+                  :verse "In diébus illis salvábitur Juda, et Israël habitábit confidénter."
+                  :repeat "Et hoc est nomen quod vocábunt eum: * Dóminus justus noster."
+                  :gloria t))))
+
+    ;; Adv2-1: Feria II infra Hebdomadam II Adventus
+    ((2 . 1) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 13:1-4"
+               :text "1 Onus Babylónis, quod vidit Isaías fílius Amos.
+2 Super montem caliginósum leváte signum, exaltáte vocem, leváte manum, et ingrediántur portas duces.
+3 Ego mandávi sanctificátis meis, et vocávi fortes meos in ira mea, exsultántes in glória mea.
+4 Vox multitúdinis in móntibus, quasi populórum frequéntium: vox sónitus regum, géntium congregatárum.")
+               (:ref "Isa 13:4-8"
+               :text "4 Dóminus exercítuum præcépit milítiæ belli,
+5 veniéntibus de terra procul a summitáte cæli: Dóminus, et vasa furóris ejus, ut dispérdat omnem terram.
+6 Ululáte, quia prope est dies Dómini: quasi vástitas a Dómino véniet.
+7 Propter hoc omnes manus dissolvéntur, et omne cor hóminis contabéscet,
+8 et conterétur. Torsiónes et dolóres tenébunt; quasi partúriens dolébunt: unusquísque ad próximum suum stupébit, fácies combústæ vultus eórum.")
+               (:ref "Isa 13:9-11"
+               :text "9 Ecce dies Dómini véniet, crudélis, et indignatiónis plenus, et iræ furorísque, ad ponéndam terram in solitúdinem, et peccatóres ejus conteréndos de ea.
+10 Quóniam stellæ cæli, et splendor eárum, non expándent lumen suum: obtenebrátus est sol in ortu suo, et luna non splendébit in lúmine suo.
+11 Et visitábo super orbis mala, et contra ímpios iniquitátem eórum, et quiéscere fáciam supérbiam infidélium, et arrogántiam fórtium humiliábo."))
+              :responsories
+              ((:respond "Súscipe verbum, Virgo María, quod tibi a Dómino per Angelum transmíssum est: concípies et páries Deum páriter et hóminem,"
+                  :verse "Páries quidem fílium, et virginitátis non patiéris detriméntum: efficiéris grávida, et eris mater semper intácta."
+                  :repeat "Ut benedícta dicáris inter omnes mulíeres."
+                  :gloria nil)
+               (:respond "Læténtur cæli, et exsúltet terra, jubiláte, montes, laudem: quia Dóminus noster véniet,"
+                  :verse "Oriétur in diébus ejus justítia, et abundántia pacis."
+                  :repeat "Et páuperum suórum miserébitur."
+                  :gloria nil)
+               (:respond "Aliéni non transíbunt per Jerúsalem ámplius:"
+                  :verse "Deus a Líbano véniet, et Sanctus de monte umbróso et condénso."
+                  :repeat "Nam in illa die stillábunt montes dulcédinem, et colles fluent lac et mel, dicit Dóminus."
+                  :gloria t))))
+
+    ;; Adv2-2: Feria III infra Hebdomadam II Adventus
+    ((2 . 2) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 14:1-2"
+               :text "1 Prope est ut véniat tempus ejus, et dies ejus non elongabúntur. Miserébitur enim Dóminus Jacob, et éliget adhuc de Israël, et requiéscere eos fáciet super humum suam: adjungétur ádvena ad eos, et adhærébit dómui Jacob.
+2 Et tenébunt eos pópuli, et addúcent eos in locum suum: et possidébit eos domus Israël super terram Dómini in servos et ancíllas: et erunt capiéntes eos, qui se céperant, et subícient exactóres suos.")
+               (:ref "Isa 14:3-6"
+               :text "3 Et erit in die illa, cum réquiem déderit tibi Deus a labóre tuo, et a concussióne tua, et a servitúte dura, qua ante servísti:
+4 sumes parábolam istam contra regem Babylónis, et dices: Quómodo cessávit exáctor, quiévit tribútum?
+5 Contrívit Dóminus báculum impiórum, virgam dominántium,
+6 cædéntem pópulos in indignatióne, plaga insanábili, subiciéntem in furóre gentes, persequéntem crudéliter.")
+               (:ref "Isa 14:12-15"
+               :text "12 Quómodo cecidísti de cælo, lúcifer, qui mane oriebáris? corruísti in terram, qui vulnerábas gentes?
+13 qui dicébas in corde tuo: In cælum conscéndam, super astra Dei exaltábo sólium meum, sedébo in monte testaménti, in latéribus Aquilónis.
+14 Ascéndam super altitúdinem núbium, símilis ero Altíssimo.
+15 Verúmtamen ad inférnum detrahéris in profúndum laci."))
+              :responsories
+              ((:respond "Montes Israël, ramos vestros expándite, et floréte, et fructus fácite:"
+                  :verse "Roráte, cæli, désuper, et nubes pluant justum: aperiátur terra, et gérminet Salvatórem."
+                  :repeat "Prope est ut véniat dies Dómini."
+                  :gloria nil)
+               (:respond "Erúmpant montes jucunditátem, et colles justítiam:"
+                  :verse "De Sion exíbit lex, et verbum Dómini de Jerúsalem."
+                  :repeat "Quia lux mundi Dóminus cum poténtia venit."
+                  :gloria nil)
+               (:respond "Ecce ab Austro vénio, ego Dóminus Deus vester,"
+                  :verse "Aspíciam vos, et créscere fáciam: multiplicabímini, et firmábo pactum meum vobíscum."
+                  :repeat "Visitáre vos in pace."
+                  :gloria t))))
+
+    ;; Adv2-3: Feria IV infra Hebdomadam II Adventus
+    ((2 . 3) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 16:1-4"
+               :text "1 Emítte Agnum, Dómine, Dominatórem terræ de Petra desérti ad montem fíliæ Sion.
+2 Et erit: Sicut avis fúgiens, et pulli de nido avolántes, sic erunt fíliæ Moab in transcénsu Arnon.
+3 Ini consílium, coge concílium: pone quasi noctem umbram tuam in merídie: abscónde fugiéntes, et vagos ne prodas.
+4 Habitábunt apud te prófugi mei: Moab esto latíbulum eórum a fácie vastatóris.")
+               (:ref "Isa 16:4-6"
+               :text "4 Fínitus est enim pulvis, consummátus est miser, defécit qui conculcábat terram.
+5 Et præparábitur in misericórdia sólium, et sedébit super illud in veritáte in tabernáculo David, júdicans et quærens judícium, et velóciter reddens quod justum est.
+6 Audívimus supérbiam Moab, supérbus est valde: supérbia ejus et arrogántia ejus, et indignátio ejus, plus quam fortitúdo ejus.")
+               (:ref "Isa 16:7-8"
+               :text "7 Idcírco ululábit Moab ad Moab, univérsus ululábit: his, qui lætántur super muros cocti láteris, loquímini plagas suas.
+8 Quóniam suburbána Hésebon desérta sunt, et víneam Sábama dómini géntium excidérunt: flagélla ejus usque ad Jazer pervenérunt: erravérunt in desérto, propágines ejus relictæ sunt, transiérunt mare."))
+              :responsories
+              ((:respond "Rex noster advéniet Christus,"
+                  :verse "Super ipsum continébunt reges os suum, ipsum gentes deprecabúntur."
+                  :repeat "Quem Joánnes prædicávit Agnum esse ventúrum."
+                  :gloria nil)
+               (:respond "Ante multum tempus prophetávit Ezéchiel: Vidi portam clausam; ecce Deus ante sǽcula ex ea procedébat pro salúte mundi:"
+                  :verse "Porta quam vidísti, Dóminus solus transíbit per illam."
+                  :repeat "Et erat íterum clausa, demónstrans Vírginem, quia post partum permánsit virgo."
+                  :gloria nil)
+               (:respond "Ecce Dóminus véniet cum splendóre descéndens, et virtus ejus cum eo,"
+                  :verse "Ecce Dóminus noster cum virtúte véniet."
+                  :repeat "Visitáre pópulum suum in pace, et constitúere super eum vitam sempitérnam."
+                  :gloria t))))
+
+    ;; Adv2-4: Feria V infra Hebdomadam II Adventus
+    ((2 . 4) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 19:1-2"
+               :text "1 Onus Ægýpti. Ecce Dóminus ascéndet super nubem levem, et ingrediétur Ægýptum, et commovebúntur simulácra Ægýpti a fácie ejus, et cor Ægýpti tabéscet in médio ejus.
+2 Et concúrrere fáciam Ægýptios advérsus Ægýptios: et pugnábit vir contra fratrem suum, et vir contra amícum suum, cívitas advérsus civitátem, regnum advérsus regnum.")
+               (:ref "Isa 19:3-6"
+               :text "3 Et dirumpétur spíritus Ægýpti in viscéribus ejus, et consílium ejus præcipitábo: et interrogábunt simulácra sua, et divínos suos, et pythónes, et aríolos.
+4 Et tradam Ægýptum in manu dominórum crudélium, et rex fortis dominábitur eórum, ait Dóminus Deus exercítuum.
+5 Et aréscet aqua de mari, et flúvius desolábitur, atque siccábitur.
+6 Et defícient flúmina: attenuabúntur, et siccabúntur rivi ággerum.")
+               (:ref "Isa 19:11-13"
+               :text "11 Stulti príncipes Táneos, sapiéntes consiliárii Pharaónis dedérunt consílium insípiens. Quómodo dicétis Pharaóni: Fílius sapiéntium ego, fílius regum antiquórum?
+12 Ubi nunc sunt sapiéntes tui? annúntient tibi, et índicent quid cogitáverit Dóminus exercítuum super Ægýptum.
+13 Stulti facti sunt príncipes Táneos, emarcuérunt príncipes Mémpheos, decepérunt Ægýptum, ángulum populórum ejus."))
+              :responsories
+              ((:respond "Jerúsalem, cito véniet salus tua: Quare mœróre consúmeris? numquid consiliárius non est tibi, quia innovávit te dolor?"
+                  :verse "Ego enim sum Dóminus, Deus tuus, Sanctus Israël, Redémptor tuus."
+                  :repeat "Salvábo te, et liberábo te, noli timére."
+                  :gloria nil)
+               (:respond "Ecce Dóminus véniet, et omnes Sancti ejus cum eo, et erit in die illa lux magna: et exíbunt de Jerúsalem sicut aqua munda: et regnábit Dóminus in ætérnum"
+                  :verse "Ecce Dóminus cum virtúte véniet: et regnum in manu ejus, et potéstas, et impérium."
+                  :repeat "Super omnes gentes."
+                  :gloria nil)
+               (:respond "Cívitas Jerúsalem, noli flere: quóniam dóluit Dóminus super te:"
+                  :verse "Ecce Dóminus in fortitúdine véniet: et brácchium ejus dominábitur."
+                  :repeat "Et áuferet a te omnem tribulatiónem."
+                  :gloria t))))
+
+    ;; Adv2-5: Feria VI infra Hebdomadam II Adventus
+    ((2 . 5) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 24:1-3"
+               :text "1 Ecce Dóminus dissipábit terram, et nudábit eam, et afflíget fáciem ejus, et dispérget habitatóres ejus.
+2 Et erit sicut pópulus, sic sacérdos: et sicut servus, sic dóminus ejus: sicut ancílla, sic dómina ejus: sicut emens, sic ille qui vendit: sicut fœnerátor, sic is qui mútuum áccipit: sicut qui répetit, sic qui debet.
+3 Dissipatióne dissipábitur terra, et direptióne prædábitur. Dóminus enim locútus est verbum hoc.")
+               (:ref "Isa 24:4-6"
+               :text "4 Luxit et deflúxit terra, et infirmáta est: deflúxit orbis, infirmáta est altitúdo pópuli terræ.
+5 Et terra infécta est ab habitatóribus suis: quia transgréssi sunt leges, mutavérunt jus, dissipavérunt fœdus sempitérnum.
+6 Propter hoc maledíctio vorábit terram, et peccábunt habitatóres ejus: ideóque insánient cultóres ejus, et relinquéntur hómines pauci.")
+               (:ref "Isa 24:7-16"
+               :text "7 Luxit vindémia, infirmáta est vitis, ingemuérunt omnes qui lætabántur corde.
+8 Cessávit gáudium tympanórum, quiévit sónitus lætántium, contícuit dulcédo cítharæ.
+9 Cum cántico non bibent vinum, amára erit pótio bibéntibus illam.
+10 Attríta est cívitas vanitátis, clausa est omnis domus, nullo introëúnte.
+11 Clamor erit super vino in platéis: desérta est omnis lætítia: translátum est gáudium terræ.
+12 Relícta est in urbe solitudo, et calámitas ópprimet portas.
+13 Quia hæc erunt in médio terræ, in médio populórum: quómodo si paucæ olívæ, quæ remansérunt, excutiántur ex ólea: et racémi, cum fúerit fínita vindémia.
+14 Hi levábunt vocem suam, atque laudábunt: cum glorificátus fúerit Dóminus, hínnient de mari.
+15 Propter hoc in doctrínis glorificáte Dóminum, in ínsulis maris nomen Dómini Dei Israël.
+16 A fínibus terræ laudes audívimus, glóriam justi."))
+              :responsories
+              ((:respond "Ecce véniet Dóminus, protéctor noster, Sanctus Israël,"
+                  :verse "Et dominábitur a mari usque ad mare, et a flúmine usque ad términos orbis terrárum."
+                  :repeat "Corónam regni habens in cápite suo."
+                  :gloria nil)
+               (:respond "Sicut mater consolátur fílios suos, ita consolábor vos, dicit Dóminus: et de Jerúsalem civitáte quam elégi, véniet vobis auxílium:"
+                  :verse "Dabo in Sion salútem, et in Jerúsalem glóriam meam."
+                  :repeat "Et vidébitis et gaudébit cor vestrum."
+                  :gloria nil)
+               (:respond "Jerúsalem, plantábis víneam in móntibus tuis: exsultábis, quóniam dies Dómini véniet: surge, Sion, convértere ad Dóminum Deum tuum: gaude et lætáre, Jacob:"
+                  :verse "Exsúlta satis, fília Sion: júbila, fília Jerúsalem."
+                  :repeat "Quia de médio géntium Salvátor tuus véniet."
+                  :gloria t))))
+
+    ;; Adv2-6: Sabbato infra Hebdomadam II Adventus
+    ((2 . 6) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 25:1-4"
+               :text "1 Dómine, Deus meus es tu; exaltábo te, et confitébor nómini tuo: quóniam fecísti mirabília, cogitatiónes antíquas fidéles. Amen.
+2 Quia posuísti civitátem in túmulum, urbem fortem in ruínam, domum alienórum: ut non sit cívitas, et in sempitérnum non ædificétur.
+3 Super hoc laudábit te pópulus fortis; cívitas géntium robustárum timébit te:
+4 quia factus es fortitúdo páuperi, fortitúdo egéno in tribulatióne sua, spes a túrbine, umbráculum ab æstu.")
+               (:ref "Isa 25:4-7"
+               :text "4 Spíritus enim robustórum quasi turbo impéllens paríetem.
+5 Sicut æstus in siti, tumúltum alienórum humiliábis; et quasi calóre sub nube torrénte, propáginem fórtium marcéscere fácies.
+6 Et fáciet Dóminus exercítuum ómnibus pópulis in monte hoc convívium píngujum, convívium vindémiæ, píngujum medullatórum, vindémiæ defæcátæ.
+7 Et præcipitábit in monte isto fáciem vínculi colligáti super omnes pópulos, et telam quam ordítus est super omnes natiónes.")
+               (:ref "Isa 25:8-12"
+               :text "8 Præcipitábit mortem in sempitérnum; et áuferet Dóminus Deus lácrimam ab omni fácie, et oppróbrium pópuli sui áuferet de univérsa terra: quia Dóminus locútus est.
+9 Et dicet in die illa: Ecce Deus noster iste; exspectávimus eum, et salvábit nos; iste Dóminus, sustinúimus eum: exsultábimus, et lætábimur in salutári ejus.
+10 Quia requiéscet manus Dómini in monte isto; et triturábitur Moab sub eo, sícuti terúntur páleæ in plaustro.
+11 Et exténdet manus suas sub eo sicut exténdit natans ad natándum; et humiliábit glóriam ejus cum allisióne mánuum ejus.
+12 Et muniménta sublímium murórum tuórum cóncident, et humiliabúntur, et detrahéntur in terram usque ad púlverem."))
+              :responsories
+              ((:respond "Egrediétur Dóminus de Samaría ad portam, quæ réspicit ad Oriéntem: et véniet in Béthlehem ámbulans super aquas redemptiónis Judæ:"
+                  :verse "Et præparábitur in misericórdia sólium ejus, et sedébit super illud in veritáte."
+                  :repeat "Tunc salvus erit omnis homo: quia ecce véniet."
+                  :gloria nil)
+               (:respond "Festína, ne tardáveris, Dómine:"
+                  :verse "Veni, Dómine, et noli tardáre: reláxa facínora plebi tuæ."
+                  :repeat "Et líbera pópulum tuum."
+                  :gloria nil)
+               (:respond "Ecce Dóminus véniet cum splendóre descéndens, et virtus ejus cum eo,"
+                  :verse "Ecce Dóminus noster cum virtúte véniet."
+                  :repeat "Visitáre pópulum suum in pace, et constitúere super eum vitam sempitérnam."
+                  :gloria t))))
+
+    ;; Adv3-1: Feria II infra Hebdomadam III Adventus
+    ((3 . 1) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 28:1-3"
+               :text "1 Væ corónæ supérbiæ, ébriis Ephraim, et flori decidénti, glóriæ exsultatiónis ejus, qui erant in vértice vallis pinguíssimæ, errántes a vino.
+2 Ecce válidus et fortis Dóminus, sicut ímpetus grándinis: turbo confríngens, sicut ímpetus aquárum multárum inundántium, et emissárum super terram spatiósam.
+3 Pédibus conculcábitur coróna supérbiæ ebriórum Ephraim.")
+               (:ref "Isa 28:4-7"
+               :text "4 Et erit flos décidens glóriæ exsultatiónis ejus, qui est super vérticem vallis píngujum, quasi temporáneum ante maturitátem autúmni: quod cum aspéxerit videns, statim ut manu tenúerit, devorábit illud.
+5 In die illa erit Dóminus exercítuum coróna glóriæ, et sertum exsultatiónis resíduo pópuli sui;
+6 et spíritus judícii sedénti super judícium, et fortitúdo reverténtibus de bello ad portam.
+7 Verum hi quoque præ vino nesciérunt, et præ ebrietáte erravérunt: sacérdos et prophéta nesciérunt præ ebrietáte, absórpti sunt a vino.")
+               (:ref "Isa 28:16-18"
+               :text "16 Idcírco hæc dicit Dóminus Deus: Ecce ego mittam in fundaméntis Sion lápidem, lápidem probátum, angulárem, pretiósum, in fundaménto fundátum. Qui credíderit, non festínet.
+17 Et ponam in póndere judícium, et justítiam in mensúra: et subvértet grando spem mendácii, et protectiónem aquæ inundábunt.
+18 Et delébitur fœdus vestrum cum morte, et pactum vestrum cum inférno non stabit."))
+              :responsories
+              ((:respond "Ecce apparébit Dóminus super nubem cándidam,"
+                  :verse "Apparébit in finem, et non mentiétur; si moram fécerit, exspécta eum, quia véniens véniet."
+                  :repeat "Et cum eo Sanctórum míllia: et habébit in vestiménto, et in fémore suo scriptum: Rex regum, et Dóminus dominántium."
+                  :gloria nil)
+               (:respond "Béthlehem cívitas Dei summi, ex te éxiet Dominátor Israël, et egréssus ejus sicut a princípio diérum æternitátis, et magnificábitur in médio univérsæ terræ:"
+                  :verse "Loquétur pacem in géntibus, et potéstas ejus a mari usque ad mare."
+                  :repeat "Et pax erit in terra nostra, dum vénerit."
+                  :gloria nil)
+               (:respond "Qui ventúrus est, véniet, et non tardábit: et jam non erit timor in fínibus nostris:"
+                  :verse "Depónet omnes iniquitátes nostras, et proíciet in profúndum maris ómnia peccáta nostra."
+                  :repeat "Quóniam ipse est Salvátor noster."
+                  :gloria t))))
+
+    ;; Adv3-2: Feria III infra Hebdomadam III Adventus
+    ((3 . 2) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 30:18-20"
+               :text "18 Exspéctat Dóminus ut misereátur vestri, et ídeo exaltábitur parcens vobis: quia Deus judícii Dóminus: beáti omnes qui exspéctant eum.
+19 Pópulus enim Sion habitábit in Jerúsalem: plorans nequáquam plorábis, míserans miserébitur tui: ad vocem clamóris tui statim ut audíerit, respondébit tibi.
+20 Et dabit vobis Dóminus panem arctum, et aquam brevem: et non fáciet avoláre a te ultra doctórem tuum: et erunt óculi tui vidéntes præceptórem tuum.")
+               (:ref "Isa 30:22-25"
+               :text "22 Egrédere, dices ei:
+23 Et dábitur plúvia sémini tuo, ubicúmque semináveris in terra: et panis frugum terræ erit ubérrimus et pinguis. Pascétur in possessióne tua in die illo agnus spatióse:
+24 et tauri tui, et pulli asinórum, qui operántur terram, commístum migma cómedent sicut in área ventilátum est.
+25 Et erunt super omnem montem excélsum, et super omnem collem elevátum, rivi curréntium aquárum, in die interfectiónis multórum, cum cecíderint turres.")
+               (:ref "Isa 30:26-28"
+               :text "26 Et erit lux lunæ sicut lux solis, et lux solis erit septemplíciter sicut lux septem diérum in die, qua alligáverit Dóminus vulnus pópuli sui, et percussúram plagæ ejus sanáverit.
+27 Ecce nomen Dómini venit de longínquo, ardens furor ejus, et gravis ad portándum: lábia ejus repléta sunt indignatióne, et lingua ejus quasi ignis dévorans.
+28 Spíritus ejus velut torrens inúndans usque ad médium colli, ad perdéndas gentes in níhilum, et frenum erróris, quod erat in maxíllis populórum."))
+              :responsories
+              ((:respond "Ægýpte, noli flere, quia Dominátor tuus véniet tibi, ante cujus conspéctum movebúntur abýssi,"
+                  :verse "Ecce véniet Dóminus exercítuum, Deus tuus cum potestáte magna."
+                  :repeat "Liberáre pópulum suum de manu poténtiæ."
+                  :gloria nil)
+               (:respond "Prope est ut véniat tempus ejus, et dies ejus non elongabúntur:"
+                  :verse "Revértere, virgo Israël, revértere ad civitátes tuas."
+                  :repeat "Miserébitur Dóminus Jacob, et Israël salvábitur."
+                  :gloria nil)
+               (:respond "Descéndet Dóminus sicut plúvia in vellus:"
+                  :verse "Et adorábunt eum omnes reges, omnes gentes sérvient ei."
+                  :repeat "Oriétur in diébus ejus justítia, et abundántia pacis."
+                  :gloria t))))
+
+    ;; Adv3-3: Feria IV Quattuor Temporum in Adventu
+    ((3 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Liber 2 in Lucam"
+               :text "In illo témpore: Missus est Angelus Gábriel a Deo in civitátem Galilǽæ, cui nomen Názareth, ad Vírginem desponsátam viro, cui nomen erat Joseph, de domo David, et nomen Vírginis María. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Latent quidem divína mystéria, nec fácile, juxta prophéticum dictum, quisquam hóminum potest scire consílium Dei. Sed tamen ex céteris factis, atque præcéptis Dómini Salvatóris póssumus intellégere, et hoc propensióris fuísse consílii, quod ea potíssimum elécta est, ut Dóminum páreret, quæ erat desponsáta viro. Cur autem non ántequam desponsarétur, impléta est? Fortásse ne dicerétur quod concéperat ex adultério.")
+               (:source "Et ingréssus ad eam Angelus. Disce vírginem móribus, disce vírginem verecúndia, disce oráculo, disce mystério. Trepidáre vírginum est, et ad omnes viri ingréssus pavére, omnes viri affátus veréri. Discant mulíeres propósitum pudóris imitári. Sola in penetrálibus, quam nemo virórum víderit, solus Angelus repérerit: sola sine cómite, sola sine teste, ne quo degénere depravarétur affátu, ab Angelo salutátur.")
+               (:source "Tanti namque mandáti mystérium non hóminis fuit, sed Angeli ore proméndum. Hódie primum audítur: Spíritus Sanctus supervéniet in te. Et audítur, et créditur. Dénique, Ecce, inquit, ancílla Dómini: contíngat mihi secúndum verbum tuum. Vide humilitátem, vide devotiónem. Ancíllam se dicit Dómini, quæ mater elígitur: nec repentíno exaltáta promísso est."))
+              :responsories
+              ((:respond "Clama in fortitúdine, qui annúntias pacem in Jerúsalem:"
+                  :verse "Supra montem excélsum ascénde tu, qui evangelízas Sion, exálta in fortitúdine vocem tuam."
+                  :repeat "Dic civitátibus Judæ, et habitatóribus Sion: Ecce Deus noster, quem exspectabámus, advéniet."
+                  :gloria nil)
+               (:respond "Oriétur stella ex Jacob, et exsúrget homo de Israël, et confrínget omnes duces alienigenárum:"
+                  :verse "Adorábunt eum omnes reges terræ, omnes gentes sérvient ei."
+                  :repeat "Et erit omnis terra posséssio ejus."
+                  :gloria nil)
+               (:respond "Modo véniet Dominátor Dóminus:"
+                  :verse "Oriétur in diébus ejus justítia, et abundántia pacis."
+                  :repeat "Et nomen ejus Emmánuel vocábitur."
+                  :gloria t))))
+
+    ;; Adv3-4: Feria V infra Hebdomadam III Adventus
+    ((3 . 4) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 33:1-2"
+               :text "1 Væ qui prædáris, nonne et ipse prædáberis? et qui spernis, nonne et ipse spernéris? cum consummáveris deprædatiónem, deprædáberis: cum fatigátus desíeris contémnere, contemnéris.
+2 Dómine, miserére nostri, te enim exspectávimus: esto brácchium nostrum in mane, et salus nostra in témpore tribulatiónis.")
+               (:ref "Isa 33:3-6"
+               :text "3 A voce Angeli fugérunt pópuli, et ab exaltatióne tua dispérsæ sunt gentes.
+4 Et congregabúntur spólia vestra sicut collígitur bruchus, velut cum fossæ plenæ fúerint de eo.
+5 Magnificátus est Dóminus, quóniam habitávit in excélso: implévit Sion judício et justítia.
+6 Et erit fides in tempóribus tuis: divítiæ salútis, sapiéntia, et sciéntia: timor Dómini ipse est thesáurus ejus.")
+               (:ref "Isa 33:14-17"
+               :text "14 Contérriti sunt in Sion peccatóres, possédit tremor hypócritas. Quis póterit habitáre de vobis cum igne devoránte? quis habitábit ex vobis cum ardóribus sempitérnis?
+15 Qui ámbulat in justítiis, et lóquitur veritátem, qui próicit avarítiam ex calúmnia, et éxcutit manus suas ab omni múnere, qui obtúrat aures suas ne áudiat sánguinem, et claudit óculos suos ne vídeat malum.
+16 Iste in excélsis habitábit muniménta saxórum sublímitas ejus: panis ei datus est, aquæ ejus fidéles sunt.
+17 Regem in decóre suo vidébunt óculi ejus, cernent terram de longe."))
+              :responsories
+              ((:respond "Egrediétur Dóminus, et præliábitur contra gentes:"
+                  :verse "Et elevábitur supra omnes colles, et fluent ad eum omnes gentes."
+                  :repeat "Et stabunt pedes ejus supra montes olivárum ad Oriéntem."
+                  :gloria nil)
+               (:respond "Præcúrsor pro nobis ingréditur Agnus sine mácula,"
+                  :verse "Ipse est rex justítiæ, cujus generátio non habet finem."
+                  :repeat "Secúndum órdinem Melchísedech Póntifex factus in ætérnum et in sǽculum sǽculi."
+                  :gloria nil)
+               (:respond "Vidébunt gentes justum tuum, et cuncti reges ínclitum tuum:"
+                  :verse "Et eris coróna glóriæ in manu Dómini, et diadéma regni in manu Dei tui."
+                  :repeat "Et vocábitur tibi nomen novum, quod os Dómini nominávit."
+                  :gloria t))))
+
+    ;; Adv3-5: Feria VI Quattuor Temporum in Adventu
+    ((3 . 5) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Lib. 2 in Luc. cap. 1 post init."
+               :text "In illo témpore: Exsúrgens María ábiit in montána cum festinatióne in civitátem Juda: et intrávit in domum Zacharíæ, et salutávit Elísabeth. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Morále est ómnibus, ut qui fidem éxigunt, fidem ástruant. Et ídeo Angelus, cum abscóndita nuntiáret, ut fidem astrúeret exémplo, senióris féminæ sterilísque concéptum Vírgini Maríæ nuntiávit: ut possíbile Deo omne, quod ei placúerit, asséreret. Ubi audívit hoc María, non quasi incrédula de oráculo, nec quasi incérta de núntio, nec quasi dúbitans de exémplo, sed quasi læta pro voto, religiósa pro offício, festína pro gáudio, in montána perréxit. Quo enim jam Deo plena, nisi ad superióra cum festinatióne conténderet? Nescit tarda molímina Sancti Spíritus grátia.")
+               (:source "Díscite et vos, sanctæ mulíeres, sedulitátem, quam prægnántibus debeátis exhibére cognátis. Maríam, quæ ante sola in íntimis penetrálibus versabátur, non a público virginitátis pudor, non ab stúdio aspéritas móntium, non ab offício prolíxitas itíneris retardávit. In montána Virgo cum festinatióne, Virgo offícii memor, injúriæ ímmemor, afféctu urgénte non sexu, relícta perréxit domo. Díscite, vírgines, non circumcursáre per aliénas ædes, non demorári in platéis, non áliquos in público miscére sermónes. María in domo sera, festína in público, mansit apud cognátam suam tribus ménsibus.")
+               (:source "Didicístis, vírgines, pudórem Maríæ: díscite humilitátem. Venit propínqua ad próximam, júnior ad seniórem: nec solum venit, sed étiam prior salutávit. Decet enim, ut quanto cástior virgo, tanto humílior sit. Nóverit deférre senióribus. Sit magístra humilitátis, in qua est proféssio castitátis. Est et causa pietátis, est étiam norma doctrínæ. Contuéndum est enim, quia supérior venit ad inferiórem, ut inférior adjuvétur: María ad Elísabeth, Christus ad Joánnem."))
+              :responsories
+              ((:respond "Emítte Agnum, Dómine, Dominatórem terræ,"
+                  :verse "Osténde nobis, Dómine, misericórdiam tuam, et salutáre tuum da nobis."
+                  :repeat "De Petra desérti ad montem fíliæ Sion."
+                  :gloria nil)
+               (:respond "Roráte, cæli, désuper, et nubes pluant justum:"
+                  :verse "Emítte Agnum, Dómine, Dominatórem terræ, de Petra desérti ad montem fíliæ Sion."
+                  :repeat "Aperiátur terra, et gérminet Salvatórem."
+                  :gloria nil)
+               (:respond "Germinavérunt campi erémi germen odóris Israël: quia ecce Deus noster cum virtúte véniet,"
+                  :verse "Ex Sion spécies decóris ejus: Deus noster maniféste véniet."
+                  :repeat "Et splendor ejus cum eo."
+                  :gloria t))))
+
+    ;; Adv3-6: Sabbato Quattuor Temporum in Adventu
+    ((3 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Homilia 20 in Evangelia"
+               :text "Anno quintodécimo impérii Tibérii Cǽsaris, procuránte Póntio Piláto Judǽam. Et réliqua.
+Homilía sancti Gregórii Papæ
+Redemptóris nostri Præcúrsor, quo témpore prædicatiónis offícium accéperit, memoráto Románæ reipúblicæ príncipe, et Judǽæ régibus, designátur. Quia enim illum prædicáre veniébat, qui et ex Judǽa quosdam, et multos ex géntibus redemptúrus erat: per regem géntium et príncipes Judæórum prædicatiónis ejus témpora designántur. Quia autem gentílitas colligénda erat, et Judǽa pro culpa perfídiæ dispergénda, ipsa quoque descríptio terréni principátus osténdit: quóniam et in Romána república unus præfuísse descríbitur, et in Judǽæ regno per quartam partem plúrimi principabántur.")
+               (:source "Voce étenim nostri Redemptóris dícitur: Omne regnum in seípsum divisum desolábitur. Liquet ergo, quod ad finem regni Judǽa pervénerat, quæ tot régibus divísa subjacébat. Apte quoque non solum quibus régibus, sed étiam quibus sacerdótibus actum sit, demonstrátur: et quia illum Joánnes Baptísta prædicáret, qui simul Rex et Sacérdos exsísteret, Lucas Evangelísta prædicatiónis ejus témpora per regnum et sacerdótium designávit.")
+               (:source "Et venit in omnem regiónem Jordánis, prǽdicans baptísmum pœniténtiæ in remissiónem peccatórum. Cunctis legéntibus liquet, quia Joánnes non solum baptísmum pœniténtiæ prædicávit, verum étiam quibúsdam dedit: sed tamen baptísmum suum in remissiónem peccatórum dare non pótuit. Remíssio étenim peccatórum in solo nobis baptísmo Christi tribúitur. Notándum ítaque, quod dícitur: Prǽdicans baptísmum pœniténtiæ in remissiónem peccatórum: quóniam baptísmum, quod peccáta sólveret, quia dare non póterat, prædicábat: ut sicut incarnátum Verbum Patris præcurrébat verbo prædicatiónis, ita baptísmum pœniténtiæ, quo peccáta solvúntur, præcúrreret suo baptísmate, quo peccáta solvi non possunt."))
+              :responsories
+              ((:respond "Egrediétur virga de radíce Jesse, et flos de radíce ejus ascéndet:"
+                  :verse "Et requiéscet super eum spíritus Dómini: spíritus sapiéntiæ, et intelléctus: spíritus consílii, et fortitúdinis."
+                  :repeat "Et erit justítia cíngulum lumbórum ejus, et fides cinctórium renum ejus."
+                  :gloria nil)
+               (:respond "Radix Jesse, qui exsúrget judicáre gentes, in eum gentes sperábunt:"
+                  :verse "Super ipsum continébunt reges os suum, ipsum gentes deprecabúntur."
+                  :repeat "Et erit nomen ejus benedíctum in sǽcula."
+                  :gloria nil)
+               (:respond "Veni, Dómine, et noli tardáre: reláxa facínora plebi tuæ,"
+                  :verse "Excíta, Dómine, poténtiam tuam, et veni, ut salvos fácias nos."
+                  :repeat "Et révoca dispérsos in terram suam."
+                  :gloria t))))
+
+    ;; Adv4-1: Feria II infra Hebdomadam IV Adventus
+    ((4 . 1) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 41:8-10"
+               :text "8 Et tu, Israël, serve meus, Jacob quem elégi, semen Abraham amíci mei:
+9 in quo apprehéndi te ab extrémis terræ, et a longinquis ejus vocávi te, et dixi tibi: Servus meus es tu, elégi te, et non abjéci te.
+10 Ne tímeas, quia ego tecum sum: ne declínes, quia ego Deus tuus: confortávi te, et auxiliátus sum tibi, et suscépit te déxtera justi mei.")
+               (:ref "Isa 41:11-13"
+               :text "11 Ecce confundéntur et erubéscent omnes, qui pugnant advérsum te: erunt quasi non sint, et períbunt viri, qui contradícunt tibi.
+12 Quæres eos, et non invénies, viros rebélles tuos: erunt quasi non sint, et véluti consúmptio hómines bellántes advérsum te.
+13 Quia ego Dóminus Deus tuus apprehéndens manum tuam, dicénsque tibi: Ne tímeas, ego adjúvi te.")
+               (:ref "Isa 41:14-16"
+               :text "14 Noli timére, vermis Jacob, qui mórtui estis ex Israël: ego auxiliátus sum tibi, dicit Dóminus: et redémptor tuus Sanctus Israël.
+15 Ego pósui te quasi plaustrum tritúrans novum, habens rostra serrántia: triturábis montes, et commínues: et colles quasi púlverem pones.
+16 Ventilábis eos, et ventus tollet, et turbo dispérget eos: et tu exsultábis in Dómino, in Sancto Israël lætáberis."))
+              :responsories
+              ((:respond "Cánite tuba in Sion, vocáte gentes, annuntiáte pópulis, et dícite:"
+                  :verse "Annuntiáte, et audítum fácite: loquímini, et clamáte."
+                  :repeat "Ecce Deus Salvátor noster advéniet."
+                  :gloria nil)
+               (:respond "Non auferétur sceptrum de Juda, et dux de fémore ejus, donec véniat qui mitténdus est:"
+                  :verse "Pulchrióres sunt óculi ejus vino, et dentes ejus lacte candidióres."
+                  :repeat "Et ipse erit exspectátio géntium."
+                  :gloria nil)
+               (:respond "Me opórtet mínui, illum autem créscere: qui autem post me venit, ante me factus est:"
+                  :verse "Ego baptizávi vos aqua: ille autem baptizábit vos Spíritu Sancto."
+                  :repeat "Cujus non sum dignus corrígiam calceamentórum sólvere."
+                  :gloria t))))
+
+    ;; Adv4-2: Feria III infra Hebdomadam IV Adventus
+    ((4 . 2) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 42:1-4"
+               :text "1 Ecce servus meus, suscípiam eum: eléctus meus, complácuit sibi in illo ánima mea: dedi spíritum meum super eum, judícium géntibus próferet.
+2 Non clamábit, neque accípiet persónam, nec audiétur vox ejus foris.
+3 Cálamum quassátum non cónteret, et linum fúmigans non exstínguet: in veritáte edúcet judícium.
+4 Non erit tristis, neque turbuléntus, donec ponat in terra judícium: et legem ejus ínsulæ exspectábunt.")
+               (:ref "Isa 42:5-7"
+               :text "5 Hæc dicit Dóminus Deus creans cælos, et exténdens eos: firmans terram, et quæ gérminant ex ea: dans flatum pópulo, qui est super eam, et spíritum calcántibus eam.
+6 Ego Dóminus vocávi te in justítia, et apprehéndi manum tuam, et servávi te. Et dedi te in fœdus pópuli, in lucem géntium:
+7 ut aperíres óculos cæcórum, et edúceres de conclusióne vinctum, de domo cárceris sedéntes in ténebris.")
+               (:ref "Isa 42:10-13"
+               :text "10 Cantáte Dómino cánticum novum, laus ejus ab extrémis terræ: qui descénditis in mare, et plenitúdo ejus, ínsulæ, et habitatóres eárum.
+11 Sublevétur desértum, et civitátes ejus; in dómibus habitábit Cedar: laudáte habitatóres Petræ, de vértice móntium clamábunt.
+12 Ponent Dómino glóriam, et laudem ejus in ínsulis nuntiábunt.
+13 Dóminus sicut fortis egrediétur, sicut vir præliátor suscitábit zelum: vociferábitur, et clamábit: super inimícos suos confortábitur."))
+              :responsories
+              ((:respond "Nascétur nobis párvulus, et vocábitur Deus, Fortis:"
+                  :verse "In ipso benedicéntur omnes tribus terræ, omnes gentes sérvient ei."
+                  :repeat "Ipse sedébit super thronum David patris sui, et imperábit: cujus potéstas super húmerum ejus."
+                  :gloria nil)
+               (:respond "Ecce jam venit plenitúdo témporis, in quo misit Deus Fílium suum in terras, natum de Vírgine, factum sub lege:"
+                  :verse "Propter nímiam caritátem suam, qua diléxit nos Deus, Fílium suum misit in similitúdinem carnis peccáti."
+                  :repeat "Ut eos, qui sub lege erant, redímeret."
+                  :gloria nil)
+               (:respond "Virgo Israël, revértere ad civitátes tuas:"
+                  :verse "In caritáte perpétua diléxi te: ídeo attráxi te míserans tui."
+                  :repeat "Usquequo dolens avertéris? generábis Dóminum Salvatórem, oblatiónem novam in terra: * Ambulábunt hómines in salvatiónem."
+                  :gloria t))))
+
+    ;; Adv4-3: Feria IV infra Hebdomadam IV Adventus
+    ((4 . 3) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 51:1-3"
+               :text "1 Audíte me, qui sequímini quod justum est, et quǽritis Dóminum: atténdite ad petram unde excísi estis, et ad cavérnam laci, de qua præcísi estis.
+2 Atténdite ad Abraham patrem vestrum, et ad Saram, quæ péperit vos, quia unum vocávi eum, et benedíxi ei, et multiplicávi eum.
+3 Consolábitur ergo Dóminus Sion, et consolábitur omnes ruínas ejus: et ponet desértum ejus quasi delícias, et solitúdinem ejus quasi hortum Dómini. Gáudium et lætítia inveniétur in ea, gratiárum áctio et vox laudis.")
+               (:ref "Isa 51:4-6"
+               :text "4 Atténdite ad me, pópule meus, et tribus mea, me audíte: quia lex a me éxiet, et judícium meum in lucem populórum requiéscet.
+5 Prope est justus meus, egréssus est salvátor meus, et brácchia mea pópulos judicábunt: me ínsulæ exspectábunt, et brácchium meum sustinébunt.
+6 Leváte in cælum óculos vestros, et vidéte sub terra deórsum: quia cæli sicut fumus liquéscent, et terra sicut vestiméntum atterétur, et habitatóres ejus sicut hæc interíbunt: Salus autem mea in sempitérnum erit, et justítia mea non defíciet.")
+               (:ref "Isa 51:7-8"
+               :text "7 Audíte me, qui scitis justum, pópulus meus, lex mea in corde eórum: nolíte timére oppróbrium hóminum, et blasphémias eórum ne metuátis.
+8 Sicut enim vestiméntum, sic cómedet eos vermis: et sicut lanam, sic devorábit eos tínea: Salus autem mea in sempitérnum erit, et justítia mea in generatiónes generatiónum."))
+              :responsories
+              ((:respond "Jurávi, dicit Dóminus, ut ultra jam non iráscar super terram: montes enim et colles suscípient justítiam meam,"
+                  :verse "Juxta est salus mea, ut véniat: et justítia mea, ut revelétur."
+                  :repeat "Et testaméntum pacis erit in Jerúsalem."
+                  :gloria nil)
+               (:respond "Non discédimus a te, vivificábis nos, Dómine, et nomen tuum invocábimus:"
+                  :verse "Meménto nostri, Dómine, in beneplácito pópuli tui: vísita nos in salutári tuo."
+                  :repeat "Osténde nobis fáciem tuam, et salvi érimus."
+                  :gloria nil)
+               (:respond "Intuémini, quantus sit iste, qui ingréditur ad salvándas gentes: ipse est Rex justítiæ,"
+                  :verse "Præcúrsor pro nobis ingréditur, secúndum órdinem Melchísedech Póntifex factus in ætérnum."
+                  :repeat "Cujus generátio non habet finem."
+                  :gloria t))))
+
+    ;; Adv4-4: Feria V infra Hebdomadam IV Adventus
+    ((4 . 4) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 64:1-4"
+               :text "1 Utinam dirúmperes cælos, et descénderes: a fácie tua montes deflúerent.
+2 Sicut exústio ignis tabéscerent, aquæ ardérent igni, ut notum fíeret nomen tuum inimícis tuis: a fácie tua gentes turbaréntur.
+3 Cum féceris mirabília, non sustinébimus: descendísti, et a fácie tua montes defluxérunt.
+4 A sǽculo non audiérunt, neque áuribus percepérunt: óculus non vidit, Deus absque te, quæ præparásti exspectántibus te.")
+               (:ref "Isa 64:5-7"
+               :text "5 Occurrísti lætánti, et faciénti justítiam: in viis tuis recordabúntur tui: ecce tu irátus es, et peccávimus: in ipsis fúimus semper, et salvábimur.
+6 Et facti sumus ut immúndus omnes nos, et quasi pannus menstruátæ univérsæ justítiæ nostræ: et cecídimus quasi fólium univérsi, et iniquitátes nostræ quasi ventus abstulérunt nos.
+7 Non est qui ínvocet nomen tuum: qui consúrgat, et téneat te: abscondísti fáciem tuam a nobis, et allisísti nos in manu iniquitátis nostræ.")
+               (:ref "Isa 64:8-11"
+               :text "8 Et nunc, Dómine, pater noster es tu, nos vero lutum: et fictor noster tu, et ópera mánuum tuárum omnes nos.
+9 Ne irascáris, Dómine, satis, et ne ultra memíneris iniquitátis nostræ: ecce réspice, pópulus tuus omnes nos.
+10 Cívitas sancti tui facta est desérta, Sion desérta facta est, Jerúsalem desoláta est.
+11 Domus sanctificatiónis nostræ, et glóriæ nostræ, ubi laudavérunt te patres nostri, facta est in exustiónem ignis, et ómnia desiderabília nostra versa sunt in ruínas."))
+              :responsories
+              ((:respond "Cánite tuba in Sion, vocáte gentes, annuntiáte pópulis, et dícite:"
+                  :verse "Annuntiáte, et audítum fácite: loquímini, et clamáte."
+                  :repeat "Ecce Deus Salvátor noster advéniet."
+                  :gloria nil)
+               (:respond "Non auferétur sceptrum de Juda, et dux de fémore ejus, donec véniat qui mitténdus est:"
+                  :verse "Pulchrióres sunt óculi ejus vino, et dentes ejus lacte candidióres."
+                  :repeat "Et ipse erit exspectátio géntium."
+                  :gloria nil)
+               (:respond "Me opórtet mínui, illum autem créscere: qui autem post me venit, ante me factus est:"
+                  :verse "Ego baptizávi vos aqua: ille autem baptizábit vos Spíritu Sancto."
+                  :repeat "Cujus non sum dignus corrígiam calceamentórum sólvere."
+                  :gloria t))))
+
+    ;; Adv4-5: Feria VI infra Hebdomadam IV Adventus
+    ((4 . 5) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 66:5-8"
+               :text "5 Audíte verbum Dómini, qui trémitis ad verbum ejus: dixérunt fratres vestri odiéntes vos, et abiciéntes propter nomen meum: glorificétur Dóminus, et vidébimus in lætítia vestra: ipsi autem confundéntur.
+6 Vox pópuli de civitáte, vox de templo, vox Dómini reddéntis retributiónem inimícis suis.
+7 Antequam parturíret, péperit: ántequam veníret partus ejus, péperit másculum.
+8 Quis audívit umquam tale? et quis vidit huic símile? Numquid partúriet terra in die una? aut pariétur gens simul, quia parturívit et péperit Sion fílios suos?")
+               (:ref "Isa 66:9-12"
+               :text "9 Numquid ego, qui álios párere fácio, ipse non páriam, dicit Dóminus? si ego, qui generatiónem céteris tríbuo, stérilis ero, ait Dóminus, Deus tuus?
+10 Lætámini cum Jerúsalem, et exsultáte in ea, omnes qui dilígitis eam: gaudéte cum ea gáudio, univérsi qui lugétis super eam,
+11 ut sugátis, et repleámini ab úbere consolatiónis ejus: ut mulgeátis, et delíciis affluátis ab omnímoda glória ejus.
+12 Quia hæc dicit Dóminus: Ecce ego declinábo super eam quasi flúvium pacis, et quasi torréntem inundántem glóriam géntium, quam sugétis: ad úbera portabímini, et super génua blandiéntur vobis.")
+               (:ref "Isa 66:13-16"
+               :text "13 Quómodo si cui mater blandiátur, ita ego consolábor vos, et in Jerúsalem consolabímini.
+14 Vidébitis, et gaudébit cor vestrum, et ossa vestra quasi herba germinábunt, et cognoscétur manus Dómini servis ejus, et indignábitur inimícis suis.
+15 Quia ecce Dóminus in igne véniet, et quasi turbo quadrígæ ejus: réddere in indignatióne furórem suum, et increpatiónem suam in flamma ignis,
+16 quia in igne Dóminus dijudicábit, et in gládio suo ad omnem carnem, et multiplicabúntur interfécti a Dómino."))
+              :responsories
+              ((:respond "Nascétur nobis párvulus, et vocábitur Deus, Fortis:"
+                  :verse "In ipso benedicéntur omnes tribus terræ, omnes gentes sérvient ei."
+                  :repeat "Ipse sedébit super thronum David patris sui, et imperábit: cujus potéstas super húmerum ejus."
+                  :gloria nil)
+               (:respond "Ecce jam venit plenitúdo témporis, in quo misit Deus Fílium suum in terras, natum de Vírgine, factum sub lege:"
+                  :verse "Propter nímiam caritátem suam, qua diléxit nos Deus, Fílium suum misit in similitúdinem carnis peccáti."
+                  :repeat "Ut eos, qui sub lege erant, redímeret."
+                  :gloria nil)
+               (:respond "Virgo Israël, revértere ad civitátes tuas:"
+                  :verse "In caritáte perpétua diléxi te: ídeo attráxi te míserans tui."
+                  :repeat "Usquequo dolens avertéris? generábis Dóminum Salvatórem, oblatiónem novam in terra: * Ambulábunt hómines in salvatiónem."
+                  :gloria t))))
+
+    ;; Adv4-6: Sabbato in Hebdomadam IV Adventus — no Matins lessons, skipped
+    )
+  "Ferial Matins data for Advent weekdays.
+Each entry is ((WEEK . DOW) . (:lessons (L1 L2 L3) :responsories (R1 R2 R3))).
+Weeks 1-3 have 6 ferial days each (Mon-Sat); Week 4 has 5 (Mon-Fri).
+Ember Days (Week 3 Wed/Fri/Sat) have homily-style lessons.")
+
+(defun bcp-roman-season-advent--ferial-week-dow (date)
+  "Return (WEEK . DOW) for DATE within Advent, or nil outside Advent.
+WEEK is 1-4, DOW is 1=Mon..6=Sat.  Returns nil on Sundays (DOW=0)."
+  (let* ((year (caddr date))
+         (adv1 (bcp-advent-1 year))
+         (adv1-abs (calendar-absolute-from-gregorian adv1))
+         (date-abs (calendar-absolute-from-gregorian date))
+         (dow (calendar-day-of-week date))
+         (days-since (- date-abs adv1-abs))
+         (week (1+ (/ days-since 7))))
+    (when (and (> dow 0) (>= days-since 0) (<= week 4))
+      (cons week dow))))
+
+(defun bcp-roman-season-advent-ferial-matins (date)
+  "Return ferial Matins data for DATE if it is an Advent weekday.
+DATE is (MONTH DAY YEAR).  Returns a plist with :lessons and :responsories,
+or nil if DATE is a Sunday or outside Advent."
+  (let ((key (bcp-roman-season-advent--ferial-week-dow date)))
+    (when key
+      (cdr (assoc key bcp-roman-season-advent--ferial-matins)))))
 
 (provide 'bcp-roman-season-advent)
 

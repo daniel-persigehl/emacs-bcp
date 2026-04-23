@@ -1127,6 +1127,851 @@ Scripture (L1-L3), patristic (L4-L6), and homily (L7-L9) lessons,
 plus 8 responsories per Sunday.  Non-Matins antiphons and capitula
 reference antiphonary/capitulary symbols.")
 
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Ferial Matins lessons and responsories
+
+;; Lent ferial Matins (DA 1911): 1 nocturn, 3 homily lessons + 3 responsories.
+;; Lesson 1 typically has Gospel incipit + patristic homily; lessons 2-3 are
+;; homily continuations.
+;;
+;; Key: (WEEK . DOW) where WEEK is 0 (Ash Wed week), 1-4 (Lent), 5 (Passion);
+;;      DOW is 1=Mon..6=Sat (week 0 starts at DOW 3=Wed).
+;; Holy Week Mon-Wed (Quad6) excluded — handled by bcp-roman-season-holyweek.
+
+(defconst bcp-roman-season-lent--ferial-matins
+  '(
+    ;; Quadp3-3: Feria IV Cinerum
+    ((0 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 2 de Serm. Domini in monte, cap. 12 tom. 4"
+               :text "In illo témpore: Dixit Jesus discípulis suis: Cum jejunátis, nolíte fíeri sicut hypócritæ, tristes. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Maniféstum est, his præcéptis omnem nostram intentiónem in interióra gáudia dírigi: ne foris quæréntes mercédem, huic sǽculo conformémur, et amittámus promissiónem tanto solidióris atque firmióris, quanto interióris beatitúdinis, qua nos elégit Deus confórmes fíeri imáginis Fílii sui. In hoc autem capítulo máxime adverténdum est, non in solo rerum corporeárum nitóre atque pompa, sed étiam in ipsis sórdibus luctuósis esse posse jactántiam et eo periculosiórem, quo sub nómine servitútis Dei décipit.")
+               (:text "Qui ergo immoderáto cultu córporis atque vestítu, vel ceterárum rerum nitóre præfúlget, fácile convíncitur rebus ipsis, pompárum sǽculi esse sectátor, nec quemquam fallit dolósa imágine sanctitátis. Qui autem in professióne christianitátis, inusitáto squalóre ac sórdibus inténtos in se óculos hóminum facit, cum id voluntáte fáciat, non necessitáte patiátur: ex céteris ejus opéribus potest cónici, utrum hoc contémptu supérflui cultus, an ambitióne áliqua fáciat: quia et sub ovína pelle cavéndos lupos Dóminus præcépit: Sed ex frúctibus, inquit, eórum cognoscétis eos.")
+               (:text "Cum enim cœ́perint alíquibus tentatiónibus ea ipsa scílicet illis súbtrahi, vel negári, quæ isto velámine vel consecúti sunt, vel cónsequi cúpiunt: tunc necésse est ut appáreat, utrum lupus in ovína pelle sit, an ovis in sua. Non tamen proptérea ornátu supérfluo debet aspéctus hóminum mulcére Christiánus, quia illum parcum hábitum ac necessárium étiam simulatóres sǽpius usúrpant, ut incáutos decípiant: quia et illæ oves non debent pelles suas depónere, si aliquándo eis lupi se cóntegant."))
+              :responsories
+              ((:respond "Veni hódie ad fontem aquæ, et orávi Dóminum, dicens:"
+                  :verse "Igitur puélla, cui díxero, Da mihi aquam de hýdria tua, ut bibam: et illa díxerit, Bibe, dómine, et camélis tuis potum tríbuam: ipsa est, quam præparávit Dóminus fílio dómini mei."
+                  :repeat "Dómine, Deus Abraham, tu prósperum fecísti desidérium meum."
+                  :gloria nil)
+               (:respond "Factus est sermo Dómini ad Abram, dicens:"
+                  :verse "Ego enim sum Dóminus Deus tuus, qui edúxi te de Ur Chaldæórum."
+                  :repeat "Noli timére, Abram: ego protéctor tuus sum, et merces tua magna nimis."
+                  :gloria nil)
+               (:respond "Movens Abram tabernáculum suum, venit et habitávit juxta convállem Mambre:"
+                  :verse "Dixit autem Dóminus ad eum: Leva óculos tuos, et vide: omnem terram, quam cónspicis tibi dabo, et sémini tuo in sempitérnum."
+                  :repeat "Ædificavítque ibi altáre Dómino."
+                  :gloria nil))))
+
+    ;; Quadp3-4: Feria V post Cineres
+    ((0 . 4) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 2 de Consensu Evangelist. cap. 20, tom. 4"
+               :text "In illo témpore: Cum introísset Jesus Caphárnaum, accéssit ad eum centúrio, rogans eum, et dicens: Dómine, puer meus jacet in domo paralýticus, et male torquétur. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Videámus, utrum sibi de hoc servo centuriónis Matthǽus Lucásque conséntiant. Matthǽus enim dicit: Accéssit ad eum centúrio, rogans eum, et dicens: Puer meus jacet in domo paralýticus. Cui vidétur repugnáre quod ait Lucas: Et cum audísset de Jesu, misit ad eum senióres Judæórum, rogans eum ut veníret, et sanáret servum ejus. At illi cum veníssent ad Jesum, rogábant eum sollícite, dicéntes ei: Quia dignus est ut hoc illi præstes: díligit enim gentem nostram, et synagógam ipse ædificávit nobis. Jesus autem ibat cum illis: et cum jam non longe esset a domo, misit ad eum centúrio amícos, dicens: Dómine, noli vexári: non enim dignus sum ut sub tectum meum intres.")
+               (:text "Si enim hoc ita gestum est, quómodo erit verum, quod Matthǽus narrat: Accéssit ad eum quidam centúrio, cum ipse non accésserit, sed amícos míserit: nisi diligénter adverténtes intellegámus Matthǽum non omnímodo deseruísse usitátum morem loquéndi? Non solum enim dícere solémus, accessísse áliquem étiam antequam pervéniat illuc, quo dícitur accessísse: unde étiam dícimus: Parum accéssit, vel multum accéssit eo, quo áppetit perveníre: verum étiam ipsam perventiónem cujus adipiscéndi causa accéditur, dícimus plerúmque factam, etsi eum, ad quem pérvenit, non vídeat ille qui pérvenit, cum per amícum pérvenit ad áliquem, cujus ei favor est necessárius. Quod ita ténuit consuetúdo, ut jam étiam vulgo perventóres appelléntur, qui poténtium quorúmlibet tamquam inaccessíbiles ánimos, per conveniéntium personárum interpositiónem, ambitiónis arte pertíngunt.")
+               (:text "Non ergo absúrde Matthǽus, étiam quod vulgo possit intéllegi, per álios facto accéssu centuriónis ad Dóminum, compéndio dícere vóluit: Accéssit ad eum centúrio. Verúmtamen non negligénter intuénda est étiam sancti Evangelístæ altitúdo mýsticæ locutiónis, secúndum quam scriptum est in Psalmo: Accédite ad eum, et illuminámini. Proínde quia fidem centuriónis, qua vere accéditur ad Jesum, ipse ita laudávit, ut díceret: Non invéni tantam fidem in Israël: ipsum pótius accessísse ad Christum dícere vóluit prudens Evangelísta, quam illos, per quos verba sua míserat."))
+              :responsories
+              ((:respond "Dómine, puer meus jacet paralýticus in domo, et male torquétur:"
+                  :verse "Dómine, non sum dignus ut intres sub tectum meum: sed tantum dic verbo, et sanábitur puer meus."
+                  :repeat "Amen dico tibi, ego véniam, et curábo eum."
+                  :gloria nil)
+               (:respond "Dum staret Abraham ad ílicem Mambre, vidit tres viros ascendéntes per viam:"
+                  :verse "Ecce Sara uxor tua páriet tibi fílium, et vocábis nomen ejus Isaac."
+                  :repeat "Tres vidit, et unum adorávit."
+                  :gloria nil)
+               (:respond "Tentávit Dóminus Abraham, et dixit ad eum:"
+                  :verse "Vocátus quoque a Dómino, respóndit, Adsum: et ait ei Dóminus."
+                  :repeat "Tolle fílium tuum, quem díligis, Isaac, et offer illum ibi in holocáustum super unum móntium, quem díxero tibi."
+                  :gloria t))))
+
+    ;; Quadp3-5: Feria VI post Cineres
+    ((0 . 5) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 1 Comm. in cap. 5 et 6 Matth."
+               :text "In illo témpore: Dixit Jesus discípulis suis: Audístis quia dictum est: Díliges próximum tuum, et ódio habébis inimícum tuum. Et réliqua.
+Homilía sancti Hierónymi Presbýteri
+Ego autem dico vobis: Dilígite inimícos vestros; benefácite his qui odérunt vos. Multi præcépta Dei, imbecillitáte sua, non Sanctórum víribus æstimántes, putant esse impossibília quæ præcépta sunt: et dicunt suffícere virtútibus, non odísse inimícos: céterum dilígere, plus prǽcipi, quam humána natúra patiátur. Sciéndum est ergo, Christum non impossibília præcípere, sed perfécta. Quæ fecit David in Saul, et in Absalom: Stéphanus quoque Martyr pro inimícis lapidántibus deprecátus est: et Paulus anáthema cupit esse pro persecutóribus suis. Hæc autem Jesus et dócuit et fecit, dicens: Pater, ignósce illis: quod enim fáciunt, nésciunt.")
+               (:text "Ut sitis fílii Patris vestri, qui in cælis est. Si Dei præcépta custódiens, fílius quis effícitur Dei: ergo non est natúra fílius, sed arbítrio suo. Cum ergo facis eleemósynam, noli tuba cánere ante te, sicut hypócritæ fáciunt in synagógis et in vicis, ut honorificéntur ab homínibus. Qui tuba canit, eleemósynam fáciens, hypócrita est. Qui jejúnans demolítur fáciem suam, ut ventris inanitátem monstret in vultu, et hic hypócrita est. Qui in synagógis et in ángulis plateárum orat, ut videátur ab homínibus, hypócrita est.")
+               (:text "Ex quibus ómnibus collígitur hypócritas esse, qui quódlibet fáciunt ut ab homínibus glorificéntur. Mihi vidétur et ille, qui dicit fratri suo: Dimítte ut tollam festúcam de óculo tuo: nam propter glóriam hoc fácere vidétur, ut ipse justus esse videátur. Unde dícitur ei a Dómino: Hypócrita, éice primum trabem de óculo tuo. Non ítaque virtus, sed causa virtútis apud Deum mercédem habet. Et si a recta via páululum declináveris, non ínterest, utrum ad déxteram vadas, an ad sinístram, cum verum iter amíseris."))
+              :responsories
+              ((:respond "Angelus Dómini vocávit Abraham, dicens:"
+                  :verse "Cumque extendísset manum ut immoláret fílium, ecce Angelus Dómini de cælo clamávit, dicens."
+                  :repeat "Ne exténdas manum tuam super púerum, eo quod tímeas Dóminum."
+                  :gloria nil)
+               (:respond "Vocávit Angelus Dómini Abraham de cælo, secúndo, dicens: Benedícam tibi,"
+                  :verse "Possidébit semen tuum portas inimicórum tuórum, et benedicéntur in sémine tuo omnes tribus terræ."
+                  :repeat "Et multiplicábo te sicut stellas cæli."
+                  :gloria nil)
+               (:respond "Deus dómini mei Abraham, dírige viam meam:"
+                  :verse "Obsecro, Dómine, fac misericórdiam cum servo tuo."
+                  :repeat "Ut cum salúte revértar in domum dómini mei."
+                  :gloria t))))
+
+    ;; Quadp3-6: Sabbato post Cineres
+    ((0 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Marcum"
+               :ref "Lib. 2, cap. 28 in cap. 6 Marci, tom. 4"
+               :text "In illo témpore: Cum sero esset, erat navis in médio mari, et Jesus solus in terra. Et réliqua.
+Homilía sancti venerábilis Bedæ Presbýteri
+Labor discipulórum in remigándo, et contrárius eis ventus, labóres sanctæ Ecclésiæ varios desígnat: quæ inter undas sǽculi adversántis, et immundórum flatus spirítuum, ad quiétem pátriæ cæléstis, quasi ad fidam líttoris statiónem, perveníre conátur. Ubi bene dícitur, quia navis erat in médio mari, et ipse solus in terra: quia nonnúnquam Ecclésia tantis gentílium pressúris non solum afflícta, sed et fœdáta est, ut, si fíeri posset, Redémptor ipsíus eam prorsus deseruísse ad tempus viderétur.")
+               (:text "Unde est illa vox ejus inter undas procellásque tentatiónum irruéntium deprehénsæ, atque auxílium protectiónis illíus gemebúndo clamóre quæréntis: Ut quid, Dómine, recessísti longe, déspicis in opportunitátibus, in tribulatióne? Quæ páriter vocem inimíci persequéntibus expónit, in sequéntibus Psalmi subíciens: Dixit enim in corde suo: Oblítus est Deus, avértit fáciem suam, ne vídeat usque in finem.")
+               (:text "Verum ille non oblivíscitur oratiónem páuperum, neque avértit fáciem suam a sperántibus in se: quin pótius et certántes cum hóstibus, ut vincant, ádjuvat, et victóres in ætérnum corónat. Unde hic quoque apérte dícitur, quia vidit eos laborántes in remigándo. Videt quippe Dóminus laborántes in mari, quamvis ipse pósitus in terra: quia etsi ad horam différre videátur auxílium tribulátis impéndere, nihilóminus eos, ne in tribulatiónibus defíciant, suæ respéctu pietátis corróborat: et aliquándo étiam manifésto adjutório, victis adversitátibus, quasi calcátis sedatísque flúctuum volumínibus líberat."))
+              :responsories
+              ((:respond "Veni hódie ad fontem aquæ, et orávi Dóminum, dicens:"
+                  :verse "Igitur puélla, cui díxero, Da mihi aquam de hýdria tua, ut bibam: et illa díxerit, Bibe, dómine, et camélis tuis potum tríbuam: ipsa est, quam præparávit Dóminus fílio dómini mei."
+                  :repeat "Dómine, Deus Abraham, tu prósperum fecísti desidérium meum."
+                  :gloria nil)
+               (:respond "Factus est sermo Dómini ad Abram, dicens:"
+                  :verse "Ego enim sum Dóminus Deus tuus, qui edúxi te de Ur Chaldæórum."
+                  :repeat "Noli timére, Abram: ego protéctor tuus sum, et merces tua magna nimis."
+                  :gloria nil)
+               (:respond "Movens Abram tabernáculum suum, venit et habitávit juxta convállem Mambre:"
+                  :verse "Dixit autem Dóminus ad eum: Leva óculos tuos, et vide: omnem terram, quam cónspicis tibi dabo, et sémini tuo in sempitérnum."
+                  :repeat "Ædificavítque ibi altáre Dómino."
+                  :gloria nil))))
+
+    ;; Quad1-1: Feria Secunda infra Hebdomadam I in Quadragesima
+    ((1 . 1) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. de fide et operibus. cap. 15 tom. 4, circa medium"
+               :text "In illo témpore: Dixit Jesus discípulis suis: Cum vénerit Fílius hóminis in majestáte sua, et omnes Angeli cum eo, tunc sedébit super sedem majestátis suæ: et congregabúntur ante eum omnes gentes. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Si mandátis non servátis, ad vitam veníri potest per solam fidem, quæ sine opéribus mórtua est: illud deínde quómodo verum erit, quod eis, quos ad sinístram positúrus est, dicet: Ite in ignem ætérnum, qui parátus est diábolo, et ángelis ejus: nec íncrepat, quia in eum non credidérunt; sed quia bona ópera non fecérunt? Nam profécto, ne sibi quisquam de fide, quæ sine opéribus mórtua est, promíttat ætérnam vitam; proptérea omnes gentes segregatúrum se dixit, quæ permíxtæ eisdem páscuis utebántur: ut appáreat, eos illi dictúros: Dómine, quando te vídimus illa et illa patiéntem, et non ministrávimus tibi? qui in eum credíderant, sed bona operári non curáverant, tamquam de ipsa fide mórtua ad vitam pervenirétur ætérnam.")
+               (:text "An forte ibunt in ignem ætérnum, qui ópera misericórdiæ non fecérunt: et non ibunt, qui aliéna rapuérunt? vel corrumpéndo in se templum Dei, in seípsos immisericórdes fuérunt: quasi ópera misericórdiæ prosint áliquid sine dilectióne, dicénte Apóstolo: Si distríbuam ómnia mea paupéribus, caritátem autem non hábeam, nihil mihi prodest? Aut díligat quisquam próximum sicut seípsum, qui non díligit seípsum? Qui enim díligit iniquitátem, odit ánimam suam.")
+               (:text "Neque illud dici hic póterit, in quo nonnúlli seípsos sedúcunt, ignem ætérnum dictum, non ipsam combustiónem ætérnam. Per ignem quippe, qui ætérnus erit, transitúros arbitrántur eos, quibus propter fidem mórtuam per ignem promíttunt salútem: ut vidélicet ipse ignis ætérnus sit, combústio vero eórum, hoc est, operátio ignis, non sit in eos ætérna: cum et hoc prǽvidens Dóminus senténtiam suam conclúsit ita dicens: Sic ibunt illi in combustiónem ætérnam, justi autem in vitam ætérnam. Erit ergo ætérna combústio, sicut ignis: et eos in illam itúros Véritas dicit, quorum non fidem, sed bona ópera defuísse declarávit."))
+              :responsories
+              ((:respond "Ecce nunc tempus acceptábile, ecce nunc dies salútis: commendémus nosmetípsos in multa patiéntia, in jejúniis multis,"
+                  :verse "In ómnibus exhibeámus nosmetípsos sicut Dei minístros, in multa patiéntia, in jejúniis multis."
+                  :repeat "Per arma justítiæ virtútis Dei."
+                  :gloria nil)
+               (:respond "In ómnibus exhibeámus nosmetípsos sicut Dei minístros in multa patiéntia:"
+                  :verse "Ecce nunc tempus acceptábile, ecce nunc dies salútis: commendémus nosmetípsos in multa patiéntia."
+                  :repeat "Ut non vituperétur ministérium nostrum."
+                  :gloria nil)
+               (:respond "In jejúnio et fletu orábunt sacerdótes, dicéntes:"
+                  :verse "Inter vestíbulum et altáre plorábunt sacerdótes, dicéntes."
+                  :repeat "Parce, Dómine, parce pópulo tuo; et ne des hereditátem tuam in perditiónem."
+                  :gloria t))))
+
+    ;; Quad1-2: Feria Tertia infra Hebdomadam I in Quadragesima
+    ((1 . 2) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Homil. 7 in Quadrag. tom. 7"
+               :text "In illo témpore: Cum intrásset Jesus Jerosólymam, commóta est univérsa cívitas, dicens: Quis est hic? Et réliqua.
+Homilía sancti Bedæ Venerábilis Presbýteri
+Quod maledicéndo ficum infructuósam per figúram fecit Dóminus, hoc idem mox apértius osténdit, eiciéndo ímprobos e templo. Neque enim áliquid peccávit arbor, quod esuriénte Dómino poma non hábuit, quorum necdum tempus advénerat: sed peccavére sacerdótes, qui in domo Dómini negótia sæculária gerébant, et fructum pietátis, quem debúerant, quemque in eis Dóminus esuriébat, ferre superséderant. Arefécit Dóminus árborem maledícto, ut hómines hæc vidéntes, sive audiéntes, multo magis intellégerent sese divíno condemnándos esse judício, si absque óperum fructu, de plausu tantum sibi religiósi sermónis, velut de sónitu et teguménto blandiréntur viridántium foliórum.")
+               (:text "Verum quia non intellexérunt, in ipsos consequénter districtiónem méritæ ultiónis exércuit: et ejécit commércia rerum humanárum de domo illa, in qua divínas tantum res agi, hóstias et oratiónes Dei offérri, verbum Dei legi, audíri, et decantári præcéptum erat. Et quidem credéndum est, quia ea tantum vendi vel emi repérerit in templo quæ ad ministérium necessária essent ejúsdem templi, juxta hoc quod álias factum légimus, cum idem templum ingrédiens, invénit in eo vendéntes et eméntes oves, et boves, et colúmbas: quia nimírum hæc ómnia non nisi ut offerréntur in domo Dómini, eos qui de longe vénerant, ab indígenis comparáre credéndum est.")
+               (:text "Si ergo Dóminus nec ea volébat venúmdari in templo, quæ in templo volébat offérri, vidélicet propter stúdium avarítiæ, sive fraudis, quod próprium solet esse negotiántium fácinus: quanta putas animadversióne puníret, si invenísset ibi áliquos rísui vel vanilóquio vacántes aut álii cuílibet vítio mancipátos? Si enim ea quæ álibi líbere geri póterant, Dóminus in domo sua temporália negótia geri non pátitur: quanto magis ea quæ nusquam fíeri licet, plus cæléstis iræ meréntur, si in ǽdibus Deo sacrátis agúntur? Verum quia Spíritus Sanctus in colúmba super Dóminum appáruit, recte per colúmbas Sancti Spíritus charísmata signántur. Qui autem sunt in templo Dei hódie, qui colúmbas vendunt, nisi qui in Ecclésia prétium de impositióne manus accípiunt, per quam vidélicet impositiónem Spíritus Sanctus cǽlitus datur?"))
+              :responsories
+              ((:respond "Emendémus in mélius, quæ ignoránter peccávimus: ne súbito præoccupáti die mortis, quærámus spátium pœniténtiæ, et inveníre non possímus:"
+                  :verse "Adjuva nos, Deus salutáris noster, et propter honórem nóminis tui, Dómine, líbera nos."
+                  :repeat "Atténde, Dómine, et miserére, quia peccávimus tibi."
+                  :gloria nil)
+               (:respond "Derelínquat ímpius viam suam, et vir iníquus cogitatiónes suas, et revertátur ad Dóminum, et miserébitur ejus:"
+                  :verse "Non vult Dóminus mortem peccatóris, sed ut convertátur et vivat."
+                  :repeat "Quia benígnus et miséricors est, et præstábilis super malítia Dóminus Deus noster."
+                  :gloria nil)
+               (:respond "Paradísi portas apéruit nobis jejúnii tempus: suscipiámus illud orántes, et deprecántes:"
+                  :verse "In ómnibus exhibeámus nosmetípsos sicut Dei minístros in multa patiéntia."
+                  :repeat "Ut in die resurrectiónis cum Dómino gloriémur."
+                  :gloria t))))
+
+    ;; Quad1-3: Feria Quarta Quattuor Temporum Quadragesimæ
+    ((1 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 7 in Lucæ cap. 11"
+               :text "In illo témpore: Respondérunt Jesu quidam de scribis et pharisǽis, dicéntes: Magíster, vólumus a te signum vidére. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Judæórum plebe damnáta, Ecclésiæ mystérium evidénter exprímitur, quæ in Ninivítis per pœniténtiam, et in regína Austri per stúdium percipiéndæ sapiéntiæ, de totíus orbis fínibus congregátur, ut pacífici Salomónis verba cognóscat. Regína plane, cujus regnum est indivísum, de divérsis et distántibus pópulis in unum corpus assúrgens.")
+               (:text "Itaque sacraméntum illud magnum est de Christo et Ecclésia. Sed tamen hoc majus est, quia illud in figúra ante præcéssit, nunc autem plenum in veritáte mystérium est. Illic enim Sálomon typus, hic autem Christus in suo córpore est. Ex duóbus ígitur constat Ecclésia: ut aut peccáre nésciat, aut peccáre désinat. Pœniténtia enim delíctum ábolet, sapiéntia cavet.")
+               (:text "Céterum Jonæ signum, ut typus Domínicæ passiónis, ita étiam grávium, quæ Judǽi commíserint, testificátio peccatórum est. Simul advértere licet et majestátis oráculum, et pietátis indícium. Namque Ninivitárum exémplo et denuntiátur supplícium, et remédium demonstrátur. Unde étiam Judǽi debent non desperáre indulgéntiam, si velint ágere pœniténtiam."))
+              :responsories
+              ((:respond "Scíndite corda vestra, et non vestiménta vestra: et convertímini ad Dóminum Deum vestrum:"
+                  :verse "Derelínquat ímpius viam suam, et vir iníquus cogitatiónes suas, et revertátur ad Dóminum, et miserébitur ejus."
+                  :repeat "Quia benígnus et miséricors est."
+                  :gloria nil)
+               (:respond "Frange esuriénti panem tuum, et egénos vagósque induc in domum tuam:"
+                  :verse "Cum víderis nudum, óperi eum, et carnem tuam ne despéxeris."
+                  :repeat "Tunc erúmpet quasi mane lumen tuum, et anteíbit fáciem tuam justítia tua."
+                  :gloria nil)
+               (:respond "Abscóndite eleemósynam in sinu páuperum, et ipsa orábit pro vobis ad Dóminum:"
+                  :verse "Date eleemósynam, et ecce ómnia munda sunt vobis."
+                  :repeat "Quia sicut aqua extínguit ignem, ita eleemósyna extínguit peccátum."
+                  :gloria t))))
+
+    ;; Quad1-4: Feria Quinta infra Hebdomadam I in Quadragesima
+    ((1 . 4) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Liber 2 Comm. in cap. 15. Matthæi"
+               :text "In illo témpore: Egréssus Jesus secéssit in partes Tyri et Sidónis. Et réliqua.
+Homilía sancti Hierónymi Presbýteri
+Scribis et pharisǽis calumniatóribus derelíctis, transgréditur in partes Tyri et Sidónis, ut Týrios Sidoniósque curáret. Múlier autem Chananǽa egréditur de fínibus prístinis, ut clamans fíliæ ímpetret sanitátem. Obsérva quod in quintodécimo loco fília Chananǽæ sanétur. Miserére mei, Dómine, Fili David. Inde novit vocáre Fílium David, quia egréssa jam fúerat de fínibus suis, et errórem Tyriórum ac Sidoniórum loci et fídei commutatióne dimíserat.")
+               (:text "Fília mea male a dæmónio vexátur. Ego fíliam Chananǽæ puto ánimas esse credéntium, quæ male a dæmónio vexabántur, ignorántes Creatórem, et adorántes lápidem. Qui non respóndit ei verbum: non de supérbia pharisáica, nec de scribárum supercílio: sed ne ipse senténtiæ suæ viderétur esse contrárius, per quam jússerat: In viam géntium ne abiéritis, et in civitátes Samaritanórum ne intravéritis. Nolébat enim occasiónem calumniatóribus dare: perfectámque salútem géntium passiónis et resurrectiónis témpori reservábat.")
+               (:text "Et accedéntes discípuli ejus, rogábant eum, dicéntes: Dimítte eam, quia clamat post nos. Discípuli illo adhuc témpore mystéria Dómini nesciéntes, vel misericórdia commóti, rogábant pro Chananǽa mulíere, quam alter Evangelísta Syrophœníssam appéllat: vel importunitáte ejus carére cupiéntes, quia non ut cleméntem, sed ut durum médicum crébrius inclamáret. Ipse autem respóndens ait: Non sum missus, nisi ad oves quæ periérunt domus Israël. Non quo et ad gentes non missus sit, sed quo primum missus sit ad Israël: ut illis non recipiéntibus Evangélium, justa fíeret ad gentes transmigrátio."))
+              :responsories
+              ((:respond "Tribulárer, si nescírem misericórdias tuas, Dómine; tu dixísti: Nolo mortem peccatóris, sed ut magis convertátur et vivat:"
+                  :verse "Secúndum multitúdinem dolórum meórum in corde meo, consolatiónes tuæ lætificavérunt ánimam meam."
+                  :repeat "Qui Chananǽam et publicánum vocásti ad pœniténtiam."
+                  :gloria nil)
+               (:respond "In ómnibus exhibeámus nosmetípsos sicut Dei minístros in multa patiéntia:"
+                  :verse "Ecce nunc tempus acceptábile, ecce nunc dies salútis: commendémus nosmetípsos in multa patiéntia."
+                  :repeat "Ut non vituperétur ministérium nostrum."
+                  :gloria nil)
+               (:respond "In jejúnio et fletu orábunt sacerdótes, dicéntes:"
+                  :verse "Inter vestíbulum et altáre plorábunt sacerdótes, dicéntes."
+                  :repeat "Parce, Dómine, parce pópulo tuo; et ne des hereditátem tuam in perditiónem."
+                  :gloria t))))
+
+    ;; Quad1-5: Feria Sexta Quattuor Temporum Quadragesimæ
+    ((1 . 5) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tractatus 17 in Joannem, post initium"
+               :text "In illo témpore: Erat dies festus Judæórum, et ascéndit Jesus Jerosólymam. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Videámus quid volúerit significáre in illo uno, quem étiam ipse servans unitátis mystérium, de tot languéntibus unum sanáre dignátus est. Invénit in annis ejus númerum quemdam languóris: trigínta et octo annos habébat in infirmitáte. Hic númerus quómodo magis ad languórem pertíneat, quam ad sanitátem, paulo diligéntius exponéndum est. Inténtos vos volo: áderit Dóminus, ut cóngrue loquar, et sufficiénter audiátis. Quadragenárius númerus sacrátus nobis in quadam perfectióne commendátur; notum esse árbitror caritáti vestræ: testántur sæpíssime divínæ Scriptúræ: jejúnium hoc número consecrátum esse, bene nostis. Nam et Móyses quadragínta diébus jejunávit, et Elías tótidem: et ipse Dóminus noster et Salvátor Jesus Christus hunc jejúnii númerum implévit. Per Móysen significátur Lex, per Elíam significántur Prophétæ, per Dóminum significátur Evangélium. Ideo in illo monte tres apparuérunt, ubi se discípulis osténdit in claritáte vultus et vestis suæ: appáruit enim médius inter Móysen et Elíam, tamquam Evangélium testimónium habéret a Lege et Prophétis.")
+               (:text "Sive ergo in Lege, sive in Prophétis, sive in Evangélio, quadragenárius númerus nobis in jejúnio commendátur. Jejúnium autem magnum et generále est, abstinére ab iniquitátibus et illícitis voluptátibus sǽculi, quod est perféctum jejúnium: Ut abnegántes impietátem et sæculáres cupiditátes, temperánter et juste et pie vivámus in hoc sǽculo. Huic jejúnio quam mercédem addit Apóstolus? Séquitur et dicit: Exspectántes illam beátam spem, et manifestatiónem glóriæ beáti Dei et Salvatóris nostri Jesu Christi. In hoc ergo sǽculo quasi quadragésimam abstinéntiæ celebrámus, cum bene vívimus, cum ab iniquitátibus et ab illícitis voluptátibus abstinémus: sed quia hæc abstinéntia sine mercéde non erit, exspectámus beátam illam spem, et revelatiónem glóriæ magni Dei et Salvatóris nostri Jesu Christi. In illa spe, cum fúerit de spe facta res, acceptúri sumus mercédem denárium. Ipsa enim merces rédditur operáriis in vínea laborántibus, secúndum Evangélium, quod vos credo reminísci: neque enim ómnia commemoránda sunt tamquam rúdibus et imperítis. Denárius ergo, qui accépit nomen a número decem, rédditur, et conjúnctus quadragenário fit quinquagenárius: unde cum labóre celebrámus Quadragésimam ante Pascha; cum lætítia vero, tamquam accépta mercéde, Quinquagésimam post Pascha.")
+               (:text "Mementóte quod proposúerim númerum trigínta octo annórum in illo lánguido. Volo expónere, quare númerus ille trigésimus et octávus, languóris sit pótius quam sanitátis. Ergo, ut dicébam, cáritas implet Legem: ad plenitúdinem Legis in ómnibus opéribus pértinet quadragenárius númerus. In caritáte autem duo præcépta nobis commendántur: Díliges Dóminum Deum tuum ex toto corde tuo, et ex tota ánima tua, et ex tota mente tua: et díliges próximum tuum sicut teípsum. In his duóbus præcéptis tota Lex pendet, et Prophétæ. Mérito et illa vídua omnes facultátes suas, duo minúta misit in dona Dei: mérito et pro illo lánguido a latrónibus sauciáto stabulárius duos nummos accépit, unde sanarétur: mérito apud Samaritános bíduum fecit Jesus, ut eos caritáte firmáret. Binário ergo isto número cum áliquid boni significátur, máxime bipertíta cáritas commendátur. Si ergo quadragenárius númerus habet perfectiónem Legis, et Lex non implétur nisi in gémino præcépto caritátis: quid miráris, quia languébat, qui ad quadragínta, duo minus habébat?"))
+              :responsories
+              ((:respond "Emendémus in mélius, quæ ignoránter peccávimus: ne súbito præoccupáti die mortis, quærámus spátium pœniténtiæ, et inveníre non possímus:"
+                  :verse "Adjuva nos, Deus salutáris noster, et propter honórem nóminis tui, Dómine, líbera nos."
+                  :repeat "Atténde, Dómine, et miserére, quia peccávimus tibi."
+                  :gloria nil)
+               (:respond "Derelínquat ímpius viam suam, et vir iníquus cogitatiónes suas, et revertátur ad Dóminum, et miserébitur ejus:"
+                  :verse "Non vult Dóminus mortem peccatóris, sed ut convertátur et vivat."
+                  :repeat "Quia benígnus et miséricors est, et præstábilis super malítia Dóminus Deus noster."
+                  :gloria nil)
+               (:respond "Paradísi portas apéruit nobis jejúnii tempus: suscipiámus illud orántes, et deprecántes:"
+                  :verse "In ómnibus exhibeámus nosmetípsos sicut Dei minístros in multa patiéntia."
+                  :repeat "Ut in die resurrectiónis cum Dómino gloriémur."
+                  :gloria t))))
+
+    ;; Quad1-6: Sabbato Quattuor Temporum Quadragesimæ
+    ((1 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Homilia de Transfiguratione Domini"
+               :text "In illo témpore: Assúmpsit Jesus Petrum, et Jacóbum, et Joánnem fratrem ejus, et duxit illos in montem excélsum seórsum: et transfigurátus est ante eos. Et réliqua.
+Homilía sancti Leónis Papæ
+Evangélica lectio, dilectíssimi, quæ per aures córporis interiórem méntium nostrárum pulsávit audítum, ad magni sacraménti nos intellegéntiam vocat: quam, aspiránte grátia Dei, facílius assequémur, si consideratiónem nostram ad ea, quæ paulo supérius sunt narráta, referámus. Salvátor enim humáni géneris Jesus Christus, condens eam fidem, quæ et ímpios ad justítiam, et mórtuos révocat ad vitam, ad hoc discípulos suos doctrínæ mónitis, et óperum miráculis imbuébat, ut idem Christus et Unigénitus Dei, et hóminis Fílius crederétur. Nam unum horum sine áltero non próderat ad salútem: et æquális erat perículi, Dóminum Jesum Christum aut Deum tantúmmodo sine hómine, aut sine Deo solum hóminem credidísse: cum utrúmque esset páriter confiténdum: quia sicut Deo vera humánitas, ita hómini ínerat vera divínitas.")
+               (:text "Ad confírmandam ergo hujus fídei salubérrimam cognitiónem interrogáverat discípulos suos Dóminus, inter divérsas aliórum opiniónes quid ipsi de eo créderent, quidve sentírent. Ubi Petrus Apóstolus, per revelatiónem summi Patris corpórea súperans, et humána transcéndens, vidit mentis óculis Fílium Dei vivi, et conféssus est glóriam Deitátis; quia non ad solam respéxit substántiam carnis et sánguinis: tantúmque in hac fídei sublimitáte complácuit, ut beatitúdinis felicitáte donátus, sacram inviolábilis petræ accíperet firmitátem: super quam fundáta Ecclésia, portis ínferi et mortis légibus prævaléret: nec in solvéndis aut ligándis quorumcúmque causis áliud ratum esset in cælis, quam quod Petri sedísset arbítrio.")
+               (:text "Hæc autem, dilectíssimi, laudátæ intellegéntiæ celsitúdo instruénda erat de inferióris substántiæ sacraménto: ne apostólica fides ad glóriam confiténdæ in Christo Deitátis evécta, infirmitátis nostræ receptiónem indígnam impassíbili Deo atque incóngruam judicáret: et ita jam in Christo humánam créderet glorificátam esse natúram, ut nec supplício posset áffici, nec morte dissólvi. Et ídeo dicénte Dómino, quod oportéret eum ire Jerosólymam, et multa pati a senióribus et scribis, ac princípibus sacerdótum, et occídi, et tértia die resúrgere: cum beátus Petrus, qui supérno illustrátus lúmine, de ardentíssima Fílii Dei confessióne fervébat, contumélias illusiónum et crudelíssimæ mortis oppróbrium religióso, ut putábat, et líbero fastídio respuísset; benígna a Jesu increpatióne corréptus, et ad cupiditátem participándæ cum eo passiónis animátus est."))
+              :responsories
+              ((:respond "Scíndite corda vestra, et non vestiménta vestra: et convertímini ad Dóminum Deum vestrum:"
+                  :verse "Derelínquat ímpius viam suam, et vir iníquus cogitatiónes suas, et revertátur ad Dóminum, et miserébitur ejus."
+                  :repeat "Quia benígnus et miséricors est."
+                  :gloria nil)
+               (:respond "Frange esuriénti panem tuum, et egénos vagósque induc in domum tuam:"
+                  :verse "Cum víderis nudum, óperi eum, et carnem tuam ne despéxeris."
+                  :repeat "Tunc erúmpet quasi mane lumen tuum, et anteíbit fáciem tuam justítia tua."
+                  :gloria nil)
+               (:respond "Abscóndite eleemósynam in sinu páuperum, et ipsa orábit pro vobis ad Dóminum:"
+                  :verse "Date eleemósynam, et ecce ómnia munda sunt vobis."
+                  :repeat "Quia sicut aqua extínguit ignem, ita eleemósyna extínguit peccátum."
+                  :gloria t))))
+
+    ;; Quad2-1: Feria Secunda infra Hebdomadam II in Quadragesima
+    ((2 . 1) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 38 in Joann. post init."
+               :text "In illo témpore: Dixit Jesus turbis Judæórum: Ego vado, et quærétis me, et in peccáto vestro moriémini. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Locútus est Dóminus Judǽis, dicens: Ego vado. Christo enim Dómino mors proféctio fuit illo, unde vénerat, et unde non discésserat. Ego, inquit, vado, et quærétis me, non desidério, sed ódio. Nam illum póstea quam abscéssit ab óculis hóminum, inquisiérunt et qui óderant, et qui amábant: illi persequéndo, isti habére cupiéndo. In Psalmis ait ipse Dóminus per Prophétam: Périit fuga a me, et non est qui requírat ánimam meam. Et íterum ait álio loco in Psalmo: Confundántur et revereántur requiréntes ánimam meam.")
+               (:text "Culpávit, qui non requírerent: damnávit requiréntes. Bonum est enim quǽrere ánimam Christi, sed quo modo eam quæsiérunt discípuli: et malum est quǽrere ánimam Christi, sed quo modo eam Judǽi quæsiérunt: illi enim ut habérent, isti ut pérderent. Dénique istis, quia sic quærébant more malo, corde pervérso, quid secutus adjúnxit? Quærétis me; et ne putétis, quia bene me quærétis, in peccáto vestro moriémini. Hoc est Christum male quǽrere, in peccáto suo mori: hoc est illum odísse, per quem possit solum salvus esse.")
+               (:text "Cum enim hómines, quorum spes in Deo est, non débeant mala réddere nec pro malis; reddébant isti mala pro bonis. Prænuntiávit ergo illis Dóminus, dixítque senténtiam prǽscius, quod in suo peccáto moreréntur. Deínde adjúnxit: Quo ego vado, vos non potéstis veníre. Hoc et discípulis suis álio loco dixit: nec tamen eis dixit: In peccáto vestro moriémini. Quid autem dixit? quod et istis: Quo ego vado, vos non potéstis veníre. Non ábstulit spem, sed prædíxit dilatiónem. Quando enim hoc discípulis Dóminus loquebátur, tunc non póterant veníre, quo ille ibat, sed póstea ventúri erant: isti autem nunquam, quibus prǽscius dixit, In peccáto vestro moriémini."))
+              :responsories
+              ((:respond "Dum iret Jacob de Bersabée, et pérgeret Haram, locútus est ei Dóminus, dicens:"
+                  :verse "Ædificávit ex lapídibus altáre in honórem Dómini, fundens óleum désuper: et benedíxit eum Deus, dicens."
+                  :repeat "Terram, in qua dormis, tibi dabo, et sémini tuo."
+                  :gloria nil)
+               (:respond "Appáruit Deus Jacob, et benedíxit eum, et dixit: Ego sum Deus Bethel, ubi unxísti lápidem, et votum vovísti mihi:"
+                  :verse "Vere Dóminus est in loco isto, et ego nesciébam."
+                  :repeat "Créscere te fáciam, et multiplicábo te."
+                  :gloria nil)
+               (:respond "Det tibi Deus de rore cæli et de pinguédine terræ abundántiam: sérviant tibi tribus et pópuli:"
+                  :verse "Et incurvéntur ante te fílii matris tuæ."
+                  :repeat "Esto dóminus fratrum tuórum."
+                  :gloria t))))
+
+    ;; Quad2-2: Feria Tertia infra Hebdomadam II in Quadragesima
+    ((2 . 2) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 4 Comment. in cap. 23 Matthæi"
+               :text "In illo témpore: Locútus est Jesus ad turbas, et ad discípulos suos, dicens: Super cáthedram Móysi sedérunt scribæ et pharisǽi. Omnia ergo quæcúmque díxerint vobis, serváte, et fácite: secúndum ópera vero eórum nolíte fácere. Et réliqua.
+Homilía sancti Hierónymi Presbýteri
+Quid mansuétius, quid benígnius Dómino? Tentátur a pharisǽis, confringúntur insídiæ eórum, et secúndum Psalmístam: Sagíttæ parvulórum factæ sunt plagæ eórum: et nihilóminus propter sacerdótii et nóminis dignitátem hortátur pópulos, ut subiciántur eis, non ópera, sed doctrínam considerántes. Quod autem ait, Super cáthedram Móysi sedérunt scribæ et pharisǽi: per cáthedram, doctrínam Legis osténdit. Ergo et illud quod dícitur in Psalmo: In cáthedra pestiléntiæ non sedit: et, Cáthedras vendéntium colúmbas evértit: doctrínam debémus accípere.")
+               (:text "Alligant enim ónera grávia et importabília, et impónunt in húmeros hóminum, dígito autem suo nolunt ea movére. Hoc generáliter advérsus omnes magístros, qui grávia jubent, et minóra non fáciunt. Notándum autem, quod et húmeri, et dígitus, et ónera, et víncula quibus alligántur ónera, spirituáliter intellegénda sunt. Omnia vero ópera sua fáciunt, ut videántur ab homínibus. Quicúmque ígitur ita facit quódlibet, ut videátur ab homínibus, scriba et pharisǽus est.")
+               (:text "Dilátant enim phylactéria sua, et magníficant fímbrias. Amant quoque primos recúbitus in cenis, et primas cáthedras in synagógis, et salutatiónes in foro, et vocári ab homínibus Rabbi. Væ nobis míseris, ad quos pharisæórum vítia transiérunt. Dóminus cum dedísset mandáta Legis per Móysen, ad extrémum íntulit: Ligábis ea in manu tua, et erunt immóta ante óculos tuos. Et est sensus: Præcépta mea sint in manu tua, ut ópere compleántur: sint ante óculos tuos, ut die ac nocte meditéris in eis. Hoc pharisǽi male interpretántes, scribébant in membránis decálogum Móysi, id est, decem verba Legis, complicántes ea et ligántes in fronte, et quasi corónam cápiti faciéntes: ut semper ante óculos moveréntur."))
+              :responsories
+              ((:respond "Dum exíret Jacob de terra sua, vidit glóriam Dei, et ait: Quam terríbilis est locus iste!"
+                  :verse "Vere Deus est in loco isto, et ego nesciébam."
+                  :repeat "Non est hic áliud, nisi domus Dei, et porta cæli."
+                  :gloria nil)
+               (:respond "Si Dóminus Deus meus fúerit mecum in via ista, per quam ego ámbulo, et custodíerit me, et déderit mihi panem ad edéndum, et vestiméntum quo opériar, et revocáverit me cum salúte:"
+                  :verse "Surgens ergo mane Jacob, tulit lápidem quem supposúerat cápiti suo, et eréxit in títulum, fundénsque óleum désuper, dixit."
+                  :repeat "Erit mihi Dóminus in refúgium, et lapis iste in signum."
+                  :gloria nil)
+               (:respond "Erit mihi Dóminus in Deum, et lapis iste quem eréxi in títulum, vocábitur domus Dei: et de univérsis quæ déderis mihi,"
+                  :verse "Si revérsus fúero próspere ad domum patris mei."
+                  :repeat "Décimas et hóstias pacíficas ófferam tibi."
+                  :gloria t))))
+
+    ;; Quad2-3: Feria Quarta infra Hebdomadam II in Quadragesima
+    ((2 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 5 de Fide ad Gratianum, cap. 2, post initium"
+               :text "In illo témpore: Ascéndens Jesus Jerosólymam, assúmpsit duódecim discípulos secréto, et ait illis: Ecce ascéndimus Jerosólymam, et Fílius hóminis tradétur princípibus sacerdótum, et scribis, et condemnábunt eum morte. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Consideráte, quæ mater filiórum Zebedǽi cum fíliis et pro fíliis petat: mater est útique, cui pro filiórum honóre sollícitæ, immoderátior quidem, sed tamen ignoscénda mensúra votórum est. Atque mater ætáte longǽva, stúdio religiósa, solátio destitúta, quæ tunc témporis, quando vel juvánda, vel alénda foret válidæ prolis auxílio, abésse sibi líberos patiebátur, et voluptáti suæ mercédem sequéntium Christum prætúlerat filiórum. Qui prima voce vocáti a Dómino (ut légimus) relíctis rétibus et patre, secúti sunt eum.")
+               (:text "Hæc ígitur, stúdio matérnæ sedulitátis indulgéntior, obsecrábat Salvatórem, dicens: Ut sédeant hi duo fílii mei, unus ad déxteram tuam, et alter ad sinístram in regno tuo. Etsi error, pietátis tamen error est. Nésciunt enim matérna víscera patiéntiam: etsi voti avára, tamen veniábilis cupíditas, quæ non pecúniæ est ávida, sed grátiæ. Nec inverecúnda petítio, quæ non sibi, sed líberis consulébat. Matrem consideráte, matrem cogitáte.")
+               (:text "Considerábat Christus matris dilectiónem, quæ filiórum mercéde grandǽvam solabátur senéctam: et desidériis licet fessa matérnis, carissimórum pignórum tolerábat abséntiam. Consideráte étiam féminam, hoc est, sexum fragiliórem, quem Dóminus própria nondum confirmáverat passióne. Consideráte, inquam, Hevæ illíus primæ mulíeris herédem, transfúsa in omnes immoderátæ cupiditátis successióne labéntem: quam Dóminus adhuc próprio sánguine non redémerat, nondum inólitam afféctibus ómnium immódici contra fas honóris appeténtiam suo Christus cruóre dilúerat. Hereditário ígitur múlier delinquébat erróre."))
+              :responsories
+              ((:respond "Dixit Angelus ad Jacob:"
+                  :verse "Cumque surrexísset Jacob, ecce vir luctabátur cum eo usque mane: et cum vidéret quod eum superáre non posset, dixit ad eum."
+                  :repeat "Dimítte me, auróra est. Respóndit ei: Non dimíttam te, nisi benedíxeris mihi. Et benedíxit ei in eódem loco."
+                  :gloria nil)
+               (:respond "Vidi Dóminum fácie ad fáciem:"
+                  :verse "Et dixit mihi: Nequáquam vocáberis Jacob, sed Israël erit nomen tuum."
+                  :repeat "Et salva facta est ánima mea."
+                  :gloria nil)
+               (:respond "Cum audísset Jacob quod Esau veníret contra eum, divísit fílios suos et uxóres, dicens: Si percússerit Esau unam turmam, salvábitur áltera."
+                  :verse "Dómine, qui dixísti mihi, Revértere in terram nativitátis tuæ: Dómine, qui pascis me a juventúte mea."
+                  :repeat "Líbera me, Dómine, qui dixísti mihi: * Multiplicábo semen tuum sicut stellas cæli, et sicut arénam maris, quæ præ multitúdine numerári non potest."
+                  :gloria t))))
+
+    ;; Quad2-4: Feria Quinta infra Hebdomadam II in Quadragesima
+    ((2 . 4) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Homilia 40 in Evangelia"
+               :text "In illo témpore: Dixit Jesus pharisǽis: Homo quidam erat dives, qui induebátur púrpura et bysso: et epulabátur cotídie spléndide. Et réliqua.
+Homilía sancti Gregórii Papæ
+Quem, fratres caríssimi, quem dives iste, qui induebátur púrpura et bysso, et epulabátur cotídie spléndide, nisi Judáicum pópulum signat: qui cultum vitæ extérius hábuit, qui accéptæ legis delíciis ad nitórem usus est, non ad utilitátem? Quem vero Lázarus ulcéribus plenus, nisi gentílem pópulum figuráliter éxprimit? Qui dum convérsus ad Deum peccáta confitéri sua non erúbuit, huic vulnus in cute fuit. In cutis quippe vúlnere virus a viscéribus tráhitur, et foras erúmpit.")
+               (:text "Quid est ergo peccatórum conféssio, nisi quædam vúlnerum rúptio? Quia peccáti virus salúbriter aperítur in confessióne, quod pestífere latébat in mente. Vúlnera étenim cutis in superfíciem trahunt humórem putrédinis. Et confiténdo peccáta, quid áliud ágimus, nisi malum, quod in nobis latébat, aperímus? Sed Lázarus vulnerátus cupiébat saturári de micis, quæ cadébant de mensa dívitis, et nemo illi dabat: quia gentílium quemque ad cognitiónem legis admíttere supérbus ille pópulus despiciébat.")
+               (:text "Qui dum doctrínam legis non ad caritátem hábuit, sed ad elatiónem, quasi de accéptis ópibus túmuit: et quia ei verba defluébant de sciéntia, quasi micæ cadébant de mensa. At contra, jacéntis páuperis vúlnera lingébant canes. Nonnúnquam solent in sacro elóquio, per canes prædicatóres intéllegi. Canum étenim lingua, vulnus dum lingit, curat: quia et doctóres sancti, dum in confessióne peccáti nostri nos ínstruunt, quasi vulnus mentis per linguam tangunt."))
+              :responsories
+              ((:respond "Tolle arma tua, pháretram et arcum, et affer de venatióne tua, ut cómedam:"
+                  :verse "Cumque venátu áliquid attúleris, fac mihi inde pulméntum, ut cómedam."
+                  :repeat "Et benedícat tibi ánima mea."
+                  :gloria nil)
+               (:respond "Ecce odor fílii mei sicut odor agri pleni, cui benedíxit Dóminus: créscere te fáciat Deus meus sicut arénam maris:"
+                  :verse "Deus autem omnípotens benedícat tibi, atque multíplicet."
+                  :repeat "Et donet tibi de rore cæli benedictiónem."
+                  :gloria nil)
+               (:respond "Det tibi Deus de rore cæli et de pinguédine terræ abundántiam: sérviant tibi tribus et pópuli:"
+                  :verse "Et incurvéntur ante te fílii matris tuæ."
+                  :repeat "Esto dóminus fratrum tuórum."
+                  :gloria t))))
+
+    ;; Quad2-5: Feria Sexta infra Hebdomadam II in Quadragesima
+    ((2 . 5) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 9 in cap. 20 Lucæ"
+               :text "In illo témpore: Dixit Jesus turbis Judæórum, et princípibus sacerdótum parábolam hanc: Homo erat paterfamílias, qui plantávit víneam, et sepem circúmdedit ei. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Pleríque várias significatiónes de víneæ appellatióne derívant: sed evidénter Isaías víneam Dómini Sábaoth, domum Israël esse memorávit. Hanc víneam quis álius, nisi Deus, cóndidit? Hic est ergo qui eam locávit colónis, et ipse péregre fuit: non quia ex loco ad locum proféctus est Dóminus, qui ubíque semper præsens est: sed quia est præséntior diligéntibus, negligéntibus abest. Multis tempóribus ábfuit, ne præprópera viderétur exáctio. Nam quo indulgéntior liberálitas, eo inexcusabílior pervicácia.")
+               (:text "Unde bene secúndum Matthǽum habes, quia et sepem circúmdedit: hoc est, divínæ custódiæ munitióne vallávit, ne fácile spiritálium patéret incúrsibus bestiárum. Et fodit in ea tórcular. Quómodo intellégimus quid sit tórcular, nisi forte quia Psalmi pro torculáribus inscribúntur; eo quod in his mystéria Domínicæ passiónis, modo musti Sancto fervéntis Spíritu, redundántius æstuáverint? Unde ébrii putabántur, quibus Spíritus Sanctus inundábat. Ergo et hic fodit tórcular, in quod uvæ rationábilis fructus intérior spiritáli infusióne deflúeret.")
+               (:text "Ædificávit turrim, vérticem scílicet legis attóllens: atque ita hanc víneam munítam, instrúctam, ornátam, locávit Judǽis. Et témpore frúctuum sérvulos misit. Bene tempus frúctuum pósuit, non provéntuum. Nullus enim fructus éxstitit Judæórum, nullus víneæ hujus provéntus, de qua Dóminus ait: Exspectávi ut fáceret uvas, fecit autem spinas. Itaque non lætítiæ vino, non spiritáli musto, sed cruénto Prophetárum sánguine torculária redundárunt."))
+              :responsories
+              ((:respond "Dum exíret Jacob de terra sua, vidit glóriam Dei, et ait: Quam terríbilis est locus iste!"
+                  :verse "Vere Deus est in loco isto, et ego nesciébam."
+                  :repeat "Non est hic áliud, nisi domus Dei, et porta cæli."
+                  :gloria nil)
+               (:respond "Si Dóminus Deus meus fúerit mecum in via ista, per quam ego ámbulo, et custodíerit me, et déderit mihi panem ad edéndum, et vestiméntum quo opériar, et revocáverit me cum salúte:"
+                  :verse "Surgens ergo mane Jacob, tulit lápidem quem supposúerat cápiti suo, et eréxit in títulum, fundénsque óleum désuper, dixit."
+                  :repeat "Erit mihi Dóminus in refúgium, et lapis iste in signum."
+                  :gloria nil)
+               (:respond "Erit mihi Dóminus in Deum, et lapis iste quem eréxi in títulum, vocábitur domus Dei: et de univérsis quæ déderis mihi,"
+                  :verse "Si revérsus fúero próspere ad domum patris mei."
+                  :repeat "Décimas et hóstias pacíficas ófferam tibi."
+                  :gloria t))))
+
+    ;; Quad2-6: Sabbato infra Hebdomadam II in Quadragesima
+    ((2 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Lib. 8 Comment. in cap. 15 Lucæ, post initium"
+               :text "In illo témpore: Dixit Jesus pharisǽis et scribis parábolam istam: Homo quidam hábuit duos fílios: et dixit adolescéntior ex illis patri: Pater, da mihi portiónem substántiæ, quæ me contíngit. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Vides, quod divínum patrimónium peténtibus datur. Nec putes culpam patris, quod adolescentióri dedit. Nulla Dei regno infírma ætas: nec fides gravátur annis. Ipse certe se judicávit idóneum, qui popóscit. Atque útinam non recessísset a patre, impediméntum nescísset ætátis. Sed posteáquam domum pátriam derelínquens péregre proféctus est, cœpit egére. Mérito ergo prodégit patrimónium, qui recéssit ab Ecclésia.")
+               (:text "Péregre proféctus est in regiónem longínquam. Quid longínquius, quam a se recédere: nec regiónibus, sed móribus separári: stúdiis discrétum esse, non terris; et quasi interfúso luxúriæ sæculáris æstu, divórtia habére sanctórum? Etenim qui se a Christo séparat, exsul est pátriæ, civis est mundi. Sed nos non sumus ádvenæ atque peregríni, sed cives sumus Sanctórum, et doméstici Dei. Qui enim erámus longe, facti sumus prope in sánguine Christi. Non invideámus de longínqua regióne remeántibus: quia et nos fúimus in regióne longínqua, sicut Isaías docet. Sic enim habes: Qui sedébant in regióne umbræ mortis, lux orta est illis. Régio ergo longínqua, umbra est mortis.")
+               (:text "Nos autem, quibus spíritus ante fáciem Christus est Dóminus, in umbra vívimus Christi. Et ídeo dicit Ecclésia: In umbra ejus concupívi, et sedi. Ille ígitur vivéndo luxurióse, consúmpsit ómnia ornaménta natúræ. Unde tu, qui accepísti imáginem Dei, qui habes similitúdinem ejus, noli eam irrationábili fœditáte consúmere. Opus Dei es: noli ligno dícere, Pater meus es tu: ne accípias similitúdinem ligni, quia scriptum est: Símiles illis fiant qui fáciunt ea."))
+              :responsories
+              ((:respond "Pater, peccávi in cælum, et coram te: jam non sum dignus vocári fílius tuus:"
+                  :verse "Quanti mercenárii in domo patris mei abúndant pánibus, ego autem hic fame péreo! Surgam, et ibo ad patrem meum, et dicam ei."
+                  :repeat "Fac me sicut unum ex mercenáriis tuis."
+                  :gloria nil)
+               (:respond "Vidi Dóminum fácie ad fáciem:"
+                  :verse "Et dixit mihi: Nequáquam vocáberis Jacob, sed Israël erit nomen tuum."
+                  :repeat "Et salva facta est ánima mea."
+                  :gloria nil)
+               (:respond "Cum audísset Jacob quod Esau veníret contra eum, divísit fílios suos et uxóres, dicens: Si percússerit Esau unam turmam, salvábitur áltera."
+                  :verse "Dómine, qui dixísti mihi, Revértere in terram nativitátis tuæ: Dómine, qui pascis me a juventúte mea."
+                  :repeat "Líbera me, Dómine, qui dixísti mihi: * Multiplicábo semen tuum sicut stellas cæli, et sicut arénam maris, quæ præ multitúdine numerári non potest."
+                  :gloria t))))
+
+    ;; Quad3-1: Feria Secunda infra Hebdomadam III in Quadragesima
+    ((3 . 1) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Lib. 4 in c. 4 Lucæ, post med."
+               :text "In illo témpore: Dixit Jesus pharisǽis: Utique dicétis mihi hanc similitúdinem: Médice, cura te ipsum: quanta audívimus facta in Caphárnaum, fac et hic in pátria tua. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Non medíocris invídia próditur, quæ cívicæ caritátis oblíta, in acérba ódia causas amóris infléctit. Simul hoc exémplo páriter et oráculo declarátur, quod frustra opem misericórdiæ cæléstis exspéctes, si aliénæ frúctibus virtútis invídeas. Aspernátor enim Dóminus invidórum est: et ab iis qui divína benefícia in áliis persequúntur, mirácula suæ potestátis avértit. Domínicæ quippe carnis actus, divinitátis exémplum est: et invisibília nobis ejus, per ea quæ sunt visibília, demonstrántur.")
+               (:text "Non otióse ítaque Salvátor excúsat, quod nulla in pátria sua mirácula virtútis operátus sit: ne fortássis áliquis viliórem pátriæ nobis esse debére putáret afféctum. Neque enim cives póterat non amáre, qui amáret omnes: sed ipsi se caritáte pátriæ, dum ínvident, abdicárunt. In veritáte dico vobis: multæ víduæ fuérunt in diébus Elíæ. Non quia Elíæ dies fuérunt, sed in quibus Elías operátus est: aut quia Elías dies faciébat illis, qui in ejus opéribus lucem vidébant grátiæ spiritális, et convertebántur ad Dóminum. Et ídeo aperiebátur cælum vidéntibus ætérna et divína mystéria: claudebátur, et fames erat, quando nulla erat cognoscéndæ divinitátis ubértas. Sed de hoc plénius díximus, cum de víduis scriberémus.")
+               (:text "Et multi leprósi erant in Judǽa tempóribus Eliséi prophétæ: et nemo eórum mundátus est, nisi Náaman Syrus. Evidénter hic sermo nos Dómini salutáris infórmat, et ad stúdium venerándæ divinitátis hortátur: quod nemo sanátus osténditur, et maculósi morbo córporis absolútus, nisi qui religióso offício stúduit sanitáti. Non enim dormiéntibus divína benefícia, sed observántibus deferúntur. Díximus in libro álio, in vídua illa, ad quam Elías diréctus est, typum Ecclésiæ præmíssum. Pópulus Ecclésiam congregávit, ut sequátur pópulus ille ex alienígenis congregátus. Pópulus ille ante leprósus, pópulus ille ante maculósus, priúsquam mýstico baptizarétur in flúmine: idem post sacraménta baptísmatis máculis córporis et mentis ablútus, jam non lepra, sed immaculáta virgo cœpit esse sine ruga."))
+              :responsories
+              ((:respond "Tóllite hinc vobíscum múnera, et ite ad dóminum terræ: et cum invenéritis, adoráte eum super terram:"
+                  :verse "Súmite de óptimis terræ frúgibus in vasis vestris, et deférte viro múnera."
+                  :repeat "Deus autem meus fáciat eum vobis placábilem: et remíttat et hunc fratrem vestrum vobíscum, et eum quem tenet in vínculis."
+                  :gloria nil)
+               (:respond "Iste est frater vester mínimus, de quo dixerátis mihi? Deus misereátur tibi, fili mi."
+                  :verse "Attóllens autem Joseph óculos, vidit Bénjamin stantem: et commóta sunt ómnia víscera ejus super fratre suo."
+                  :repeat "Festinavítque in domum, et plorávit: quia erumpébant lácrimæ, et non póterat se continére."
+                  :gloria nil)
+               (:respond "Dixit Joseph úndecim frátribus suis: Ego sum Joseph, quem vendidístis in Ægýptum: adhuc vivit pater noster sénior, de quo dixerátis mihi?"
+                  :verse "Biénnium enim est, quod cœpit esse fames in terra: et adhuc restant anni quinque, quibus nec arári póterit, nec meti."
+                  :repeat "Ite, addúcite eum ad me, ut possit vívere."
+                  :gloria t))))
+
+    ;; Quad3-2: Feria Tertia infra Hebdomadam III in Quadragesima
+    ((3 . 2) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Sermo 16 de Verbis Domini, tomus 10, post initium"
+               :text "In illo témpore: Dixit Jesus discípulis suis: Si peccáverit in te frater tuus, vade, et córripe eum inter te et ipsum solum. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Quare illum córripis? Quia tu doles, quod peccáverit in te? Absit. Si amóre tui id facis, nihil facis: si amóre illíus facis, óptime facis. Dénique in ipsis verbis atténde, cujus amóre id fácere débeas, utrum tui, an illíus. Si te audíerit, inquit, lucrátus es fratrem tuum. Ergo propter illum fac, ut lucréris illum. Sic faciéndo lucráris: nisi fecísses, períerat. Quid est ergo, quod pleríque hómines ista peccáta contémnunt, et dicunt: Quid magnum feci? In hóminem peccávi. Noli contémnere: in hóminem peccásti.")
+               (:text "Vis nosse, quia in hóminem peccándo perísti? Si te ille, in quem peccásti, corripúerit inter te et ipsum solum, et audíeris illum, lucrátus est te. Quid est, Lucrátus est te; nisi quia períeras, si non lucrarétur te? Nam si non períeras, quómodo te lucrátus est? Nemo ergo contémnat, quando peccat in fratrem. Ait enim quodam loco Apóstolus: Sic autem peccántes in fratres, et percutiéntes consciéntiam eórum infírmam, in Christum peccátis: ídeo quia membra Christi omnes facti sumus. Quómodo non peccas in Christum, qui peccas in membrum Christi?")
+               (:text "Nemo ergo dicat, quia non peccávi in Deum, sed peccávi in fratrem: in hóminem peccávi, leve, vel nullum peccátum est. Forte inde dicis: Leve est, quia cito curátur. Peccásti in fratrem: fac satis, et sanátus es. Cito fecísti mortíferam rem, sed remédium cito invenísti. Quis nostrum speret regnum cælórum, fratres mei, quando dicit Evangélium: Qui díxerit fratri suo, Fátue: reus erit gehénnæ ignis? Magnus terror: sed vide ibi remédium. Si obtúleris munus tuum ad altáre, et ibi recordátus fúeris, quia frater tuus habet áliquid advérsum te, relínque ibi munus tuum ante altáre. Non iráscitur Deus, quia differs impónere munus tuum: te quærit Deus magis, quam munus tuum."))
+              :responsories
+              ((:respond "Nuntiavérunt Jacob dicéntes: Joseph fílius tuus vivit, et ipse dominátur in tota terra Ægýpti: quo audíto revíxit spíritus ejus, et dixit:"
+                  :verse "Cumque audísset Jacob quod fílius ejus víveret, quasi de gravi somno evígilans, ait."
+                  :repeat "Súfficit mihi, vadam et vidébo eum ántequam móriar."
+                  :gloria nil)
+               (:respond "Joseph dum intráret in terram Ægýpti, linguam quam non nóverat, audívit: manus ejus in labóribus serviérunt:"
+                  :verse "Humiliavérunt in compédibus pedes ejus: ferrum petránsiit ánimam ejus, donec veníret verbum ejus."
+                  :repeat "Et lingua ejus inter príncipes loquebátur sapiéntiam."
+                  :gloria nil)
+               (:respond "Meménto mei, dum bene tibi fúerit:"
+                  :verse "Tres enim adhuc dies sunt, post quos recordábitur phárao ministérii tui, et restítuet te in gradum prístinum: tunc meménto mei."
+                  :repeat "Ut súggeras pharaóni, ut edúcat me de isto cárcere: * Quia furtim sublátus sum, et hic ínnocens in lacum missus sum."
+                  :gloria t))))
+
+    ;; Quad3-3: Feria Quarta infra Hebdomadam III in Quadragesima
+    ((3 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Matthǽum"
+               :ref "Lib. 2 Comment. in cap. 15 Matthæi"
+               :text "In illo témpore: Accessérunt ad Jesum ab Jerosólymis scribæ et pharisǽi, dicéntes: Quare discípuli tui transgrediúntur traditiónem seniórum? Et réliqua.
+Homilía sancti Hierónymi Presbýteri
+Mira pharisæórum scribarúmque stultítia. Dei Fílium árguunt, quare hóminum traditiónes et præcépta non servet: Non enim lavant manus suas, cum panem mandúcant. Manus, id est ópera, non córporis útique, sed ánimæ lavándæ sunt, ut fiat in illis verbum Dei. Ipse autem respóndens ait illis: Quare et vos transgredímini mandátum Dei propter traditiónem vestram? Falsam calúmniam vera responsióne confútat. Cum, inquit, vos propter traditiónem hóminum præcépta Dómini negligátis: quare discípulos meos arguéndos putátis, quod seniórum jussa parvipéndant, ut Dei scita custódiant?")
+               (:text "Nam Deus dixit: Honóra patrem et matrem; et, Qui maledíxerit patri, vel matri, morte moriátur. Vos autem dícitis: Quicúmque díxerit patri, vel matri: Munus quodcúmque est ex me, tibi próderit: et non honorificábit patrem suum, aut matrem suam. Honor in Scriptúris non tantum in salutatiónibus et offíciis deferéndis, quantum in eleemósynis, ac múnerum oblatióne sentítur. Honóra, inquit Apóstolus, víduas, quæ vere víduæ sunt. Hic honor donum intellégitur. Et in álio loco: Presbýteri dúplici honóre honorándi sunt, máxime qui labórant in verbo et doctrína Dei. Et per hoc mandátum jubémur bovi trituránti os non cláudere: et dignus sit operárius mercéde sua.")
+               (:text "Præcéperat Dóminus, vel imbecillitátes, vel ætátes, vel penúrias paréntum consíderans, ut fílii honorárent, étiam in vitæ necessáriis ministrándis, paréntes suos. Hanc providentíssimam Dei legem voléntes scribæ et pharisǽi subvértere, ut impietátem sub nómine pietátis indúcerent, docuérunt péssimos fílios, ut si quis ea, quæ paréntibus offerénda sunt, Deo vovére volúerit, qui verus est pater, oblátio Dómini præponátur paréntum munéribus: vel certe ipsi paréntes, quæ Deo consecráta cernébant, ne sacrilégii crimen incúrrerent, declinántes, egestáte conficiebántur. Atque ita fiébat, ut oblátio liberórum sub occasióne templi et Dei, in sacerdótum lucra céderet."))
+              :responsories
+              ((:respond "Mérito hæc pátimur, quia peccávimus in fratrem nostrum, vidéntes angústias ánimæ ejus, dum deprecarétur nos, et non audívimus:"
+                  :verse "Dixit Ruben frátribus suis: Numquid non dixi vobis, Nolíte peccáre in púerum; et non audístis me?"
+                  :repeat "Idcírco venit super nos tribulátio."
+                  :gloria nil)
+               (:respond "Dixit Ruben frátribus suis: Numquid non dixi vobis, Nolíte peccáre in púerum, et non audístis me?"
+                  :verse "Mérito hæc pátimur, quia peccávimus in fratrem nostrum, vidéntes angústias ánimæ ejus, dum deprecarétur nos, et non audívimus."
+                  :repeat "En sanguis ejus exquíritur."
+                  :gloria nil)
+               (:respond "Lamentabátur Jacob de duóbus fíliis suis: Heu me, dolens sum de Joseph pérdito, et tristis nimis de Bénjamin ducto pro alimóniis:"
+                  :verse "Prostérnens se Jacob veheménter cum lácrimis pronus in terram, et adórans ait."
+                  :repeat "Precor cæléstem Regem, ut me doléntem nímium fáciat eos cérnere."
+                  :gloria t))))
+
+    ;; Quad3-4: Feria Quinta infra Hebdomadam III in Quadragesima
+    ((3 . 4) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Liber 4 in cap. 4 Lucæ, circa finem"
+               :text "In illo témpore: Surgens Jesus de synagóga, introívit in domum Simónis. Socrus autem Simónis tenebátur magnis fébribus. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Vide cleméntiam Dómini Salvatóris: nec indignatióne commótus nec scélere offénsus, nec injúria violátus Judǽam déserit: quin étiam ímmemor injúriæ, memor cleméntiæ, nunc docéndo, nunc liberándo, nunc sanándo, infídæ plebis corda demúlcet. Et bene sanctus Lucas virum ab spíritu nequítiæ liberátum ante præmísit, et subdit féminæ sanitátem. Utrúmque enim sexum Dóminus curatúrus advénerat: sed prior sanári débuit, qui prior creátus est; nec prætermítti illa, quæ mobilitáte magis ánimi, quam pravitáte peccáverat.")
+               (:text "Sábbato medicínæ Domínicæ ópera cœpta signíficat, ut inde nova creatúra cœ́perit, ubi vetus creatúra ante desívit: nec sub lege esse Dei Fílium, sed supra legem in ipso princípio designáret: nec solvi legem, sed impléri. Neque enim per legem, sed verbo factus est mundus, sicut légimus: Verbo Dómini cæli firmáti sunt. Non sólvitur ergo lex, sed implétur: ut fiat renovátio hóminis jam labéntis. Unde et Apóstolus ait: Exspoliántes vos véterem hóminem, indúite novum, qui secúndum Deum creátus est.")
+               (:text "Et bene sábbato cœpit, ut ipsum se osténderet Creatórem, qui ópera opéribus intéxeret, et prosequerétur opus, quod ipse jam cœ́perat: ut si domum faber renováre dispónat, non a fundaméntis, sed a culmínibus íncipit sólvere vetustátem. Itaque ibi prius manum ádmovet, ubi ante desíerat: deínde a minóribus íncipit, ut ad majóra pervéniat. Liberáre a dǽmone et hómines, sed in verbo Dei possunt: resurrectiónem mórtuis imperáre, divínæ solíus est potestátis. Fortássis étiam in typo mulíeris illíus socrus Simónis et Andréæ, váriis críminum fébribus caro nostra languébat, et diversárum cupiditátum immódicis æstuábat illécebris. Nec minórem febrem amóris esse díxerim, quam calóris. Itaque illa ánimum, hæc corpus inflámmat. Febris enim nostra, avarítia est: febris nostra, libído est: febris nostra, luxúria est: febris nostra, ambítio est: febris nostra, iracúndia est."))
+              :responsories
+              ((:respond "Vidéntes Joseph a longe, loquebántur mútuo fratres, dicéntes: Ecce somniátor venit:"
+                  :verse "Cumque vidíssent Joseph fratres sui, quod a patre cunctis frátribus plus amarétur, óderant eum, nec póterant ei quidquam pacífice loqui, unde et dicébant."
+                  :repeat "Veníte, occidámus eum, et videámus si prosint illi sómnia sua."
+                  :gloria nil)
+               (:respond "Dixit Judas frátribus suis: Ecce Ismaëlítæ tránseunt; veníte, venumdétur, et manus nostræ non polluántur:"
+                  :verse "Quid enim prodest, si occidérimus fratrem nostrum, et celavérimus sánguinem ipsíus? mélius est ut venumdétur."
+                  :repeat "Caro enim et frater noster est."
+                  :gloria nil)
+               (:respond "Extrahéntes Joseph de lacu, vendidérunt Ismaëlítæ vigínti argénteis:"
+                  :verse "At illi, intíncta túnica Joseph in sánguine hædi, misérunt qui ferret eam ad patrem, et díceret: Vide, si túnica fílii tui sit, an non."
+                  :repeat "Reversúsque Ruben ad púteum, cum non invenísset eum, scidit vestiménta sua cum fletu, et dixit: Puer non compáret, et ego quo ibo?"
+                  :gloria nil))))
+
+    ;; Quad3-5: Feria Sexta infra Hebdomadam III in Quadragesima
+    ((3 . 5) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 15 in Joánnem, post init."
+               :text "In illo témpore: Venit Jesus in civitátem Samaríæ, quæ dícitur Sichar: juxta prǽdium, quod dedit Jacob Joseph fílio suo. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Jam incípiunt mystéria. Non enim frustra fatigátur Jesus: non enim frustra fatigátur virtus Dei: non enim frustra fatigátur, per quem fatigáti recreántur: non enim frustra fatigátur, quo deserénte fatigámur, quo præsénte firmámur. Fatigátur tamen Jesus, et fatigátur ab itínere, et sedet, et juxta púteum sedet, et hora sexta fatigátus sedet. Omnia ista ínnuunt áliquid, indicáre volunt áliquid: ut pulsémus, hortántur. Ipse ergo apériat et nobis et vobis, qui dignátus est ita hortári, ut díceret: Pulsáte, et aperiétur vobis.")
+               (:text "Tibi fatigátus est ab itínere Jesus. Invenímus virtútem Jesum, et invenímus infírmum Jesum: fortem, et infírmum. Fortem, quia in princípio erat Verbum, et Verbum erat apud Deum, et Deus erat Verbum: hoc erat in princípio apud Deum. Vis vidére quam iste Fílius Dei fortis sit? Omnia per ipsum facta sunt, et sine ipso factum est nihil: et sine labóre facta sunt. Quid ergo illo fórtius, per quem sine labóre facta sunt ómnia? Infírmum vis nosse? Verbum caro factum est, et habitávit in nobis. Fortitúdo Christi te creávit: infírmitas Christi te recreávit. Fortitúdo Christi fecit, ut quod non erat, esset: infírmitas Christi fecit, ut quod erat, non períret. Cóndidit nos fortitúdine sua, quæsívit nos infirmitáte sua.")
+               (:text "Nutrit ergo ipse infírmus infírmos, tamquam gallína pullos suos: huic enim se símilem fecit. Quóties vólui, inquit ad Jerúsalem, congregáre fílios tuos sub alas tamquam gallína pullos suos, et noluísti? Vidétis autem, fratres, quemádmodum gallína infirmétur cum pullis suis. Nulla enim ália avis, quod sit mater, agnóscitur. Vidémus nidificáre pásseres quóslibet ante óculos nostros: hirúndines, cicónias, colúmbas cotídie vidémus nidificáre: quos, nisi quando in nidis vidémus, paréntes esse non agnóscimus. Gallína vero sic infirmátur in pullis suis, ut étiam si ipsi pulli non sequántur, fílios non vídeas, matrem tamen intéllegas."))
+              :responsories
+              ((:respond "Videns Jacob vestiménta Joseph, scidit vestiménta sua cum fletu, et dixit:"
+                  :verse "Tulérunt autem fratres ejus túnicam illíus, mitténtes ad patrem: quam cum cognovísset pater, ait."
+                  :repeat "Fera péssima devorávit fílium meum Joseph."
+                  :gloria nil)
+               (:respond "Joseph dum intráret in terram Ægýpti, linguam quam non nóverat, audívit: manus ejus in labóribus serviérunt:"
+                  :verse "Humiliavérunt in compédibus pedes ejus: ferrum petránsiit ánimam ejus, donec veníret verbum ejus."
+                  :repeat "Et lingua ejus inter príncipes loquebátur sapiéntiam."
+                  :gloria nil)
+               (:respond "Meménto mei, dum bene tibi fúerit:"
+                  :verse "Tres enim adhuc dies sunt, post quos recordábitur phárao ministérii tui, et restítuet te in gradum prístinum: tunc meménto mei."
+                  :repeat "Ut súggeras pharaóni, ut edúcat me de isto cárcere: * Quia furtim sublátus sum, et hic ínnocens in lacum missus sum."
+                  :gloria t))))
+
+    ;; Quad3-6: Sabbato infra Hebdomadam III in Quadragesima
+    ((3 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 33 in Joannem, post init."
+               :text "In illo témpore: Perréxit Jesus in montem Olivéti, et dilúculo íterum venit in templum. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Jesus perréxit in montem Olivéti, in montem fructuósum, in montem unguénti, in montem chrísmatis. Ubi enim decébat docére Christum, nisi in monte Olivéti? Christi enim nomen a chrísmate dictum est: chrisma autem Græce, Latíne únctio nominátur. Ideo autem nos unxit, quia luctatóres contra diábolum fecit. Et dilúculo íterum venit in templum, et omnis pópulus venit ad eum: et sedens docébat eos, et non tenebátur, quia nondum pati dignabátur. Nunc jam atténdite, ubi ab inimícis tentáta sit Dómini mansuetúdo.")
+               (:text "Addúcunt autem illi scribæ et pharisǽi mulíerem in adultério deprehénsam, et statuérunt eam in médio, et dixérunt ei: Magíster, hæc múlier modo deprehénsa est in adultério: in lege autem Móyses mandávit nobis hujúsmodi lapidáre: tu ergo quid dicis? Hæc autem dicébant tentántes eum: ut possent accusáre eum. Unde accusáre? Numquid ipsum in áliquo facínore deprehénderant, aut illa múlier ad eum áliquo modo pertinuísse dicebátur?")
+               (:text "Intellegámus, fratres, admirábilem mansuetúdinem in Dómino fuísse. Animadvertérunt eum nímium esse mitem, nímium esse mansuétum. De illo quippe fúerat ante prædíctum: Accíngere gládio tuo circa femur tuum, potentíssime. Spécie tua et pulchritúdine tua inténde, próspere procéde, et regna: propter veritátem, et mansuetúdinem, et justítiam. Ergo áttulit veritátem ut doctor, mansuetúdinem ut liberátor, justítiam ut cógnitor. Propter hæc eum esse regnatúrum in Spíritu Sancto prophéta prædíxerat. Cum loquerétur, véritas agnoscebátur: cum advérsus inimícos non moverétur, mansuetúdo laudabátur. Cum ergo de duóbus istis, id est, de veritáte et mansuetúdine ejus, inimíci livóre et invídia torqueréntur; in tértio, id est justítia, scándalum posuérunt."))
+              :responsories
+              ((:respond "Mérito hæc pátimur, quia peccávimus in fratrem nostrum, vidéntes angústias ánimæ ejus, dum deprecarétur nos, et non audívimus:"
+                  :verse "Dixit Ruben frátribus suis: Numquid non dixi vobis, Nolíte peccáre in púerum; et non audístis me?"
+                  :repeat "Idcírco venit super nos tribulátio."
+                  :gloria nil)
+               (:respond "Dixit Ruben frátribus suis: Numquid non dixi vobis, Nolíte peccáre in púerum, et non audístis me?"
+                  :verse "Mérito hæc pátimur, quia peccávimus in fratrem nostrum, vidéntes angústias ánimæ ejus, dum deprecarétur nos, et non audívimus."
+                  :repeat "En sanguis ejus exquíritur."
+                  :gloria nil)
+               (:respond "Lamentabátur Jacob de duóbus fíliis suis: Heu me, dolens sum de Joseph pérdito, et tristis nimis de Bénjamin ducto pro alimóniis:"
+                  :verse "Prostérnens se Jacob veheménter cum lácrimis pronus in terram, et adórans ait."
+                  :repeat "Precor cæléstem Regem, ut me doléntem nímium fáciat eos cérnere."
+                  :gloria t))))
+
+    ;; Quad4-1: Feria Secunda infra Hebdomadam IV in Quadragesima
+    ((4 . 1) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 10 in Joannem, post init."
+               :text "In illo témpore: Prope erat Pascha Judæórum, et ascéndit Jesus Jerosólymam: et invénit in templo vendéntes boves, et oves, et colúmbas. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Quid audívimus, fratres? Ecce templum illud figúra adhuc erat, et ejécit inde Dóminus omnes qui sua quærébant, qui ad núndinas vénerant. Et quæ ibi vendébant illi? Quæ opus habébant hómines in sacrifíciis illíus témporis. Novit enim cáritas vestra, quod sacrifícia illi pópulo pro ejus carnalitáte, et corde adhuc lapídeo, tália data sunt, quibus tenerétur, ne in idóla deflúeret: et immolábant ibi sacrifícia, boves, oves et colúmbas. Nostis, quia legístis.")
+               (:text "Non ergo magnum peccátum, si hoc vendébant in templo, quod emebátur ut offerétur in templo: et tamen ejécit inde illos. Quid si ibi ebriósos inveníret, quid fáceret Dóminus, si vendéntes ea quæ lícita sunt, et contra justítiam non sunt (quæ enim honéste emúntur, non illícite vendúntur) éxpulit tamen, et non est passus domum oratiónis fíeri domum negotiatiónis?")
+               (:text "Si negotiatiónis domus non debet fíeri domus Dei, potatiónis debet fíeri? Nos autem quando ista dícimus, strident déntibus suis advérsus nos: et consolátur nos Psalmus, quem audístis: Stridérunt in me déntibus suis. Nóvimus et nos audíre unde curémur: etsi ingeminántur flagélla Christo, quia flagellátur sermo ipsíus. Congregáta sunt, inquit, in me flagélla, et nesciébant. Flagellátus est flagéllis Judæórum: flagellátur blasphémiis falsórum Christianórum: multíplicant flagélla Dómino Deo suo, et nésciunt. Faciámus nos, quantum ipse ádjuvat. Ego autem, cum mihi molésti essent, induébam me cilício, et humiliábam in jejúnio ánimam meam."))
+              :responsories
+              ((:respond "Vos, qui transitúri estis Jordánem, ædificáte altáre Dómino"
+                  :verse "Cumque intravéritis terram, quam Dóminus datúrus est vobis, ædificáte ibi altáre Dómino."
+                  :repeat "De lapídibus, quos ferrum non tétigit: et offérte super illud holocáusta, et hóstias pacíficas Deo vestro."
+                  :gloria nil)
+               (:respond "Audi, Israël, præcépta Dómini, et ea in corde tuo quasi in libro scribe:"
+                  :verse "Obsérva ígitur, et audi vocem meam: et inimícus ero inimícis tuis."
+                  :repeat "Et dabo tibi terram fluéntem lac et mel."
+                  :gloria nil)
+               (:respond "Sicut fui cum Moyse ita ero tecum, dicit Dóminus:"
+                  :verse "Noli timére, quóniam tecum sum: ad quæcúmque perréxeris, non dimíttam te, neque derelínquam."
+                  :repeat "Confortáre, et esto robústus: introdúces pópulum meum ad terram lacte et melle manántem."
+                  :gloria t))))
+
+    ;; Quad4-2: Feria Tertia infra Hebdomadam IV in Quadragesima
+    ((4 . 2) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 29 in Joannem, sub init."
+               :text "In illo témpore: Jam die festo mediánte, ascéndit Jesus in templum, et docébat. Et mirabántur Judǽi. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Ille qui latébat, docébat, et palam loquebátur, et non tenebátur. Illud enim ut latéret, erat causa exémpli, hoc potestátis. Sed cum docéret, mirabántur Judǽi. Omnes quidem, quantum árbitror, mirabántur, sed non omnes convertebántur. Et unde admirátio? Quia multi nóverant ubi natus, quemádmodum fúerit educátus. Nunquam eum víderant lítteras discéntem: audiébant autem de lege disputántem, legis testimónia proferéntem, quæ nemo posset proférre, nisi legísset, nemo légeret, nisi lítteras didicísset: et ídeo mirabántur. Eórum autem admirátio, magístro facta est insinuándæ áltius veritátis occásio.")
+               (:text "Ex eórum quippe admiratióne et verbis, dixit Dóminus profúndum áliquid, et diligéntius ínspici et discúti dignum. Quid ergo Dóminus respóndit eis, admirántibus quómodo sciret lítteras, quas non didícerat? Mea, inquit, doctrína non est mea, sed ejus qui misit me. Hæc est profúnditas prima: vidétur enim paucis verbis quasi contrária locútus. Non enim ait: Ista doctrína non est mea: sed, Mea doctrína non est mea. Si non tua, quómodo tua? si tua, quómodo non tua? Tu enim dicis utrúmque: et mea doctrína, et non mea.")
+               (:text "Si ergo intueámur diligénter quod ipse in exórdio dicit sanctus Evangelísta: In princípio erat Verbum, et Verbum erat apud Deum, et Deus erat Verbum: inde pendet hujus solútio quæstiónis. Quæ est doctrína Patris, nisi Verbum Patris? Ipse ergo Christus doctrína Patris, si Verbum Patris. Sed quia Verbum, non potest esse nullíus, sed alicújus: et suam doctrínam dixit seípsum, et non suam, quia Patris est Verbum. Quid enim tam tuum quam tu? Et quid tam non tuum quam tu, si alicújus est, quod es?"))
+              :responsories
+              ((:respond "Quid me quǽritis interfícere, hóminem qui vera locútus sum vobis?"
+                  :verse "Multa bona ópera operátus sum vobis: propter quod opus vultis me occídere?"
+                  :repeat "Si male locútus sum, testimónium pérhibe de malo: si autem bene, cur me cædis?"
+                  :gloria nil)
+               (:respond "Addúxi vos per desértum quadragínta annis ego Dóminus, et non sunt attríta vestiménta vestra:"
+                  :verse "Ego addúxi vos de terra Ægýpti, et de domo servitútis liberávi vos."
+                  :repeat "Manna de cælo plui vobis, et oblíti estis me, dicit Dóminus."
+                  :gloria nil)
+               (:respond "Móyses fámulus Dei jejunávit quadragínta diébus et quadragínta nóctibus:"
+                  :verse "Ascéndens Móyses in montem Sínai ad Dóminum, fuit ibi quadragínta diébus et quadragínta nóctibus."
+                  :repeat "Ut legem Dómini mererétur accípere."
+                  :gloria t))))
+
+    ;; Quad4-3: Feria Quarta infra Hebdomadam IV in Quadragesima
+    ((4 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 44 in Joannem, circa initium"
+               :text "In illo témpore: Prætériens Jesus, vidit hóminem cæcum a nativitáte: et interrogavérunt eum discípuli ejus: Rabbi, quis peccávit, hic, aut paréntes ejus, ut cæcus nascerétur? Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Ea quæ fecit Dóminus noster Jesus Christus, stupénda atque miránda, et ópera, et verba sunt: ópera, quia facta sunt: verba, quia signa sunt. Si ergo quid signíficet hoc quod factum est, cogitémus: genus humánum est iste cæcus. Hæc enim cǽcitas cóntigit in primo hómine per peccátum, de quo omnes oríginem dúximus, non solum mortis, sed étiam iniquitátis. Si enim cǽcitas est infidélitas, et illuminátio fides: quem fidélem, quando venit Christus, invénit? Quandóquidem Apóstolus natus in gente prophetárum dicit: Fúimus et nos aliquándo natúra fílii iræ, sicut et céteri. Si fílii iræ, fílii vindíctæ, fílii pœnæ, fílii gehénnæ: quómodo natúra, nisi quia peccánte primo hómine vítium pro natúra inolévit? Si vítium pro natúra inolévit, secúndum mentem omnis homo cæcus natus est.")
+               (:text "Venit Dóminus: quid fecit? Magnum mystérium commendávit. Exspuit in terram, de salíva sua lutum fecit: quia Verbum caro factum est, et inúnxit óculos cæci. Inúnctus erat, et nondum vidébat. Misit illum ad piscínam, quæ vocátur Síloë. Pertínuit autem ad Evangelístam commendáre nobis nomen hujus piscínæ, et ait: Quod interpretátur Missus. Jam quis sit missus agnóscitis. Nisi enim ille fuísset missus, nemo nostrum esset ab iniquitáte dimíssus. Lavit ergo óculos in ea piscína, quæ interpretátur Missus; baptizátus est in Christo. Si ergo quando eum in seípso quodámmodo baptizávit, tunc illuminávit: quando inúnxit, fortásse catechúmenum fecit.")
+               (:text "Audístis grande mystérium. Intérroga hóminem: Christiánus es? Respóndet tibi: Non sum. Si pagánus es, aut Judǽus? Si autem díxerit, Non sum: adhuc quæris ab eo, Catechúmenus, an fidélis? Si respónderit tibi, Catechúmenus: inúnctus est, nondum lotus. Sed unde inúnctus? Quære, et respóndet. Quære ab illo, in quem credat? Eo ipso quo catechúmenus est, dicit: In Christum. Ecce modo loquor et fidélibus et catechúmenis. Quid dixi de sputo et luto? Quia Verbum caro factum est; hoc catechúmeni áudiunt: sed non eis súfficit ad quod inúncti sunt: festínent ad lavácrum, si lumen inquírunt."))
+              :responsories
+              ((:respond "Spléndida facta est fácies Móysi, dum respíceret in eum Dóminus:"
+                  :verse "Cumque descendísset de monte Sínai, portábat duas tábulas testimónii, ignórans quod cornúta esset fácies ejus ex consórtio sermónis Dei."
+                  :repeat "Vidéntes senióres claritátem vultus ejus, admirántes timuérunt valde."
+                  :gloria nil)
+               (:respond "Ecce mitto Angelum meum, qui præcédat te, et custódiat semper:"
+                  :verse "Israël, si me audíeris, non erit in te deus recens, neque adorábis deum aliénum: ego enim Dóminus."
+                  :repeat "Obsérva et audi vocem meam, et inimícus ero inimícis tuis, et affligéntes te afflígam: et præcédet te Angelus meus."
+                  :gloria nil)
+               (:respond "Atténdite, pópule meus, legem meam:"
+                  :verse "Apériam in parábolis os meum: loquar propositiónes ab inítio sǽculi."
+                  :repeat "Inclináte aurem vestram in verba oris mei."
+                  :gloria t))))
+
+    ;; Quad4-4: Feria Quinta infra Hebdomadam IV in Quadragesima
+    ((4 . 4) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Lib. 5 Comment. in Lucæ cap. 7, post initium"
+               :text "In illo témpore: Ibat Jesus in civitátem, quæ vocátur Naim: et ibant cum eo discípuli ejus, et turba copiósa. Et réliqua.
+Homilía sancti Ambrósii Epíscopi
+Et hic locus ad utrámque redúndat grátiam; et ut cito flecti divínam misericórdiam matris víduæ lamentatióne credámus, ejus præcípue, quæ únici fílii vel labóre, vel morte frangátur; cui tamen víduæ gravitátis méritum exsequiárum turba concíliet: et ut hanc víduam populórum turba septam, plus vidéri esse quam féminam, quæ resurrectiónem únici et adolescéntis fílii suis lácrimis merúerit impetráre: eo quod sancta Ecclésia pópulum juniórem a pompa fúneris atque a suprémis sepúlcri, suárum révocet ad vitam contemplatióne lacrimárum: quæ flere prohibétur eum, cui resurréctio debebátur.")
+               (:text "Qui quidem mórtuus in lóculo materiálibus quátuor ad sepúlcrum ferebátur eleméntis, sed spem resurgéndi habébat, quia ferebátur in ligno. Quod etsi nobis ante non próderat, tamen posteáquam Jesus id tétigit, profícere cœpit ad vitam: ut esset indício, salútem pópulo per crucis patíbulum refundéndam. Audíto ígitur Dei verbo, stetérunt acérbi illi fúneris portitóres, qui corpus humánum letháli fluxu natúræ materiális urgébant. Quid enim áliud, nisi quasi in quodam féretro, hoc est, suprémi fúneris instruménto, jacémus exánimes, cum vel ignis immódicæ cupiditátis exǽstuat, vel frígidus humor exúndat, vel pigra quadam terréni córporis habitúdine vigor hebetátur animórum; vel concréta noster spíritus labe, puræ lucis vácuus mentem alit? Hi sunt nostri fúneris portitóres.")
+               (:text "Sed quamvis supréma mortis spem vitæ omnis aboléverint, et túmulo próxima córpora jáceant defunctórum: verbo tamen Dei jam mórtua resúrgunt cadávera: vox redit, rédditur fílius matri, revocátur a túmulo, erípitur a sepúlcro. Quis iste est túmulus tuus, nisi mali mores? Túmulus tuus perfídia est: sepúlcrum tuum guttur est. Sepúlcrum enim patens, est guttur eórum, unde verba mórtua proferúntur. Ab hoc sepúlcro te líberat Christus: ab hoc túmulo surges, si áudias verbum Dei. Et si grave peccátum est, quod pœniténtiæ lácrimis ipse laváre non possis; fleat pro te mater Ecclésia, quæ pro síngulis tamquam pro únicis fíliis vídua mater intérvenit. Compátitur enim quodam spiritáli dolóre natúræ, cum suos líberos lethálibus vítiis ad mortem cernit urgéri."))
+              :responsories
+              ((:respond "Locútus est Dóminus ad Móysen, dicens: Descénde in Ægýptum, et dic Pharaóni:"
+                  :verse "Clamor filiórum Israël venit ad me, vidíque afflictiónem eórum: sed veni, mittam te ad Pharaónem."
+                  :repeat "Ut dimíttat pópulum meum: indurátum est cor Pharaónis: non vult dimíttere pópulum meum, nisi in manu forti."
+                  :gloria nil)
+               (:respond "Stetit Móyses coram Pharaóne, et dixit: Hæc dicit Dóminus:"
+                  :verse "Dóminus Deus Hebræórum misit me ad te, dicens."
+                  :repeat "Dimítte pópulum meum, ut sacríficet mihi in desérto."
+                  :gloria nil)
+               (:respond "Cantémus Dómino: glorióse enim honorificátus est, equum et ascensórem projécit in mare:"
+                  :verse "Dóminus quasi vir pugnátor, Omnípotens nomen ejus."
+                  :repeat "Adjútor et protéctor factus est mihi Dóminus in salútem."
+                  :gloria t))))
+
+    ;; Quad4-5: Feria Sexta infra Hebdomadam IV in Quadragesima
+    ((4 . 5) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 49 in Joannem, post init."
+               :text "In illo témpore: Erat quidam languens Lázarus a Bethánia, de castéllo Maríæ et Marthæ soróris ejus. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+In superióri lectióne meminístis, quod Dóminus éxiit de mánibus eórum, qui lapidáre illum volúerant, et discéssit trans Jordánem, ubi Joánnes baptizábat. Ibi ergo Dómino constitúto, infirmabátur in Bethánia Lázarus: quod castéllum erat próximum Jerosólymis. María autem erat, quæ unxit Dóminum unguénto, et extérsit pedes ejus capíllis suis, cujus frater Lázarus infirmabátur. Misérunt ergo soróres ejus ad eum. Jam intellégimus quo misérunt, ubi erat Jesus: quóniam absens erat, trans Jordánem scílicet. Misérunt ad Dóminum, nuntiántes quod ægrotáret frater eárum, ut si dignarétur, veníret, et eum ab ægritúdine liberáret. Ille dístulit sanáre, ut posset resuscitáre.")
+               (:text "Quid ergo nuntiavérunt soróres ejus? Dómine, ecce quem amas, infirmátur. Non dixérunt: Veni: amánti enim tantúmmodo nuntiándum fuit. Non ausæ sunt dícere: Veni, et sana. Non ausæ sunt dícere: Ibi jube, et hic fiet. Cur enim non et istæ, si fides illíus centuriónis inde laudátur? Ait enim: Non sum dignus ut intres sub tectum meum; sed tantum dic verbo, et sanábitur puer meus. Nihil horum istæ, sed tantúmmodo: Dómine, ecce quem amas, infirmátur. Súfficit ut nóveris: non enim amas, et déseris.")
+               (:text "Dicit áliquis: Quómodo per Lázarum peccátor significabátur, et a Dómino sic amabátur? Audiat enim dicéntem: Non veni vocáre justos, sed peccatóres. Si enim peccatóres Deus non amáret, de cælo ad terram non descénderet. Audiens autem Jesus, dixit eis: Infírmitas hæc non est ad mortem, sed pro glória Dei, ut glorificétur Fílius Dei. Talis glorificátio ipsíus non ipsum auxit, sed nobis prófuit. Hoc est ergo quod ait: Non est ad mortem, sed pótius ad miráculum: quo facto créderent hómines in Christum, et vitárent veram mortem. Sane vidéte quemádmodum tamquam ex oblíquo Dóminus Deum se dixit: propter quosdam qui negant Fílium Dei Deum esse."))
+              :responsories
+              ((:respond "In mare viæ tuæ, et sémitæ tuæ in aquis multis:"
+                  :verse "Transtulísti illos per mare Rubrum, et transvexísti eos per aquam nímiam."
+                  :repeat "Deduxísti sicut oves pópulum tuum in manu Móysi et Aaron."
+                  :gloria nil)
+               (:respond "Qui persequebántur pópulum tuum, Dómine, demersísti eos in profúndum:"
+                  :verse "Deduxísti sicut oves pópulum tuum in manu Móysi et Aaron."
+                  :repeat "Et in colúmna nubis ductor eórum fuísti."
+                  :gloria nil)
+               (:respond "Móyses fámulus Dei jejunávit quadragínta diébus et quadragínta nóctibus:"
+                  :verse "Ascéndens Móyses in montem Sínai ad Dóminum, fuit ibi quadragínta diébus et quadragínta nóctibus."
+                  :repeat "Ut legem Dómini mererétur accípere."
+                  :gloria t))))
+
+    ;; Quad4-6: Sabbato infra Hebdomadam IV in Quadragesima
+    ((4 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 34 in Joannem, post init."
+               :text "In illo témpore: Locútus est Jesus turbis Judæórum, dicens: Ego sum lux mundi: qui séquitur me, non ámbulat in ténebris, sed habébit lumen vitæ. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Quod ait Dóminus: Ego sum lux mundi: clarum puto esse eis, qui habent óculos, unde hujus lucis partícipes fiant: qui autem non habent óculos, nisi in sola carne, mirántur quod dictum est a Dómino Jesu Christo: Ego sum lux mundi. Et forte non desit qui dicat apud semetípsum: Numquid forte Dóminus Christus est sol iste, qui ortu et occásu péragit diem? Non enim defuérunt hærétici, qui ista sensérunt. Manichǽi solem istum óculis cárneis visíbilem, expósitum et públicum non tantum homínibus, sed étiam pecóribus ad vidéndum, Christum Dóminum esse putavérunt.")
+               (:text "Sed cathólicæ Ecclésiæ recta fides ímprobat tale comméntum, et diabólicam doctrínam esse cognóscit: nec solum agnóscit credéndo, sed in quibus potest convíncit étiam disputándo. Improbémus ítaque hujúsmodi errórem, quem sancta ab inítio anathematizávit Ecclésia. Non arbitrémur Dóminum Jesum Christum hunc esse solem, quem vidémus oríri ab Oriénte, occídere in Occidénte: cujus cúrsui nox succédit, cujus rádii nube obumbrántur: qui certa de loco in locum motióne cómmigrat. Non est hoc Dóminus Christus. Non est Dóminus Christus sol factus, sed per quem sol factus est. Omnia enim per ipsum facta sunt, et sine ipso factum est nihil.")
+               (:text "Est ergo lux, quæ fecit hanc lucem. Hanc amémus, hanc intellégere cupiámus, ipsam sitíamus, ut ad ipsam duce ipsa aliquándo veniámus: et in illa ita vivámus, ut nunquam omníno moriámur. Ista enim lux est, de qua prophetía olim præmíssa ita in Psalmo cécinit: Quóniam apud te est fons vitæ, et in lúmine tuo vidébimus lumen. Advértite quid de tali luce antíquus sanctórum hóminum Dei sermo præmíserit. Hómines, inquit, et juménta salvos fácies, Dómine: sicut multiplicáta est misericórdia tua, Deus."))
+              :responsories
+              ((:respond "Spléndida facta est fácies Móysi, dum respíceret in eum Dóminus:"
+                  :verse "Cumque descendísset de monte Sínai, portábat duas tábulas testimónii, ignórans quod cornúta esset fácies ejus ex consórtio sermónis Dei."
+                  :repeat "Vidéntes senióres claritátem vultus ejus, admirántes timuérunt valde."
+                  :gloria nil)
+               (:respond "Ecce mitto Angelum meum, qui præcédat te, et custódiat semper:"
+                  :verse "Israël, si me audíeris, non erit in te deus recens, neque adorábis deum aliénum: ego enim Dóminus."
+                  :repeat "Obsérva et audi vocem meam, et inimícus ero inimícis tuis, et affligéntes te afflígam: et præcédet te Angelus meus."
+                  :gloria nil)
+               (:respond "Atténdite, pópule meus, legem meam:"
+                  :verse "Apériam in parábolis os meum: loquar propositiónes ab inítio sǽculi."
+                  :repeat "Inclináte aurem vestram in verba oris mei."
+                  :gloria t))))
+
+    ;; Quad5-1: Feria Secunda infra Hebdomadam Passionis
+    ((5 . 1) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tract. 31 in Joannem, circa medium"
+               :text "In illo témpore: Misérunt príncipes et pharisǽi minístros, ut apprehénderent Jesum. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Quómodo apprehénderent adhuc noléntem? Quia ergo non póterant apprehéndere noléntem, missi sunt, ut audírent docéntem. Quid docéntem? Dicit ergo Jesus: Adhuc módicum tempus vobíscum sum. Quod modo vultis fácere, factúri estis; sed non modo, quia modo nolo. Quare adhuc modo nolo? Quia adhuc módicum tempus vobíscum sum, et tunc vado ad eum qui me misit. Implére débeo dispensatiónem meam, et sic perveníre ad passiónem meam.")
+               (:text "Quærétis me, et non inveniétis, et ubi sum ego, vos non potéstis veníre. Hic jam resurrectiónem suam prædíxit: noluérunt enim agnóscere præséntem, et póstea quæsiérunt, cum vidérent in eum multitúdinem jam credéntem. Magna enim signa facta sunt étiam cum Dóminus resurréxit, et ascéndit in cælum. Tunc per discípulos facta sunt magna: sed ille per illos, qui et per seípsum: ipse quippe illis díxerat: Sine me nihil potéstis fácere. Quando claudus ille, qui sedébat ad portam, ad vocem Petri surréxit, et suis pédibus ambulávit, ita ut hómines miraréntur, sic eos allocútus est Petrus, quia non in sua potestáte ista fecit, sed in virtúte illíus, quem ipsi occidérunt. Multi compúncti dixérunt: Quid faciémus?")
+               (:text "Vidérunt enim se ingénti crímine impietátis adstríctos, quando illum occidérunt, quem venerári et adoráre debuérunt: et hoc putábant esse inexpiábile. Magnum enim fácinus erat, cujus considerátio illos fáceret desperáre: sed non debébant desperáre, pro quibus in cruce pendens Dóminus est dignátus oráre. Díxerat enim: Pater, ignósce illis, quia nésciunt quid fáciunt. Vidébat quosdam suos inter multos aliénos: illis jam petébat véniam, a quibus adhuc accipiébat injúriam. Non enim attendébat quod ab ipsis moriebátur, sed quia pro ipsis moriebátur."))
+              :responsories
+              ((:respond "Deus meus, éripe me de manu peccatóris: et de manu contra legem agéntis, et iníqui:"
+                  :verse "Deus meus, ne elongéris a me: Deus meus, in auxílium meum réspice."
+                  :repeat "Quóniam tu es patiéntia mea."
+                  :gloria nil)
+               (:respond "Qui custodiébant ánimam meam, consílium fecérunt in unum, dicéntes: Deus derelíquit eum,"
+                  :verse "Omnes inimíci advérsum me cogitábant mala mihi: verbum iníquum mandavérunt advérsum me, dicéntes."
+                  :repeat "Persequímini et comprehéndite eum: quia non est qui líberet eum: Deus meus, ne elongéris a me: Deus meus, in adjutórium meum inténde."
+                  :gloria nil)
+               (:respond "Pacífice loquebántur mihi inimíci mei, et in ira molésti erant mihi:"
+                  :verse "Ego autem cum mihi molésti essent, induébam me cilício, et humiliábam in jejúnio ánimam meam."
+                  :repeat "Vidísti, Dómine, ne síleas, ne discédas a me."
+                  :gloria t))))
+
+    ;; Quad5-2: Feria Tertia infra Hebdomadam Passionis
+    ((5 . 2) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tractatus 28 in Joannem"
+               :text "In illo témpore: Ambulábat Jesus in Galilǽam: non enim volébat in Judǽam ambuláre, quia quærébant eum Judǽi interfícere. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+In isto Evangélii capítulo, fratres, Dóminus noster Jesus Christus secúndum hóminem se plúrimum commendávit fídei nostræ. Etenim semper hoc egit dictis et factis suis, ut Deus credátur et homo: Deus qui nos fecit, homo qui nos quæsívit: Deus cum Patre semper, homo nobíscum ex témpore. Non enim quǽreret quem fécerat, nisi fíeret ipse quod fécerat. Verum hoc mementóte, et de córdibus vestris nolíte dimíttere: sic esse Christum hóminem factum, ut non destíterit Deus esse. Manens Deus accépit hóminem, qui fecit hóminem.")
+               (:text "Quando ergo látuit ut homo, non poténtiam perdidísse putándus est, sed exémplum infirmitáti præbuísse. Ille enim quando vóluit, deténtus est: quando vóluit, occísus est. Sed quóniam futúra erant membra ejus, id est, fidéles ejus, qui non habérent illam potestátem, quam habébat ipse Deus noster: quod latébat, quod se tamquam ne occiderétur, occultábat, hoc indicábat factúra esse membra sua, in quibus útique membris suis ipse erat.")
+               (:text "Non enim Christus in cápite, et non in córpore: sed Christus totus in cápite, et in córpore. Quod ergo membra ejus, ipse: quod autem ipse, non contínuo membra ejus. Nam si non ipsi essent membra ejus, non díceret Saulo: Quid me perséqueris? Non enim Saulus ipsum, sed membra ejus, id est, fidéles ejus, in terra persequebátur. Nóluit tamen dícere sanctos meos, servos meos, postrémo honorabílius, fratres meos: sed me, hoc est membra mea, quibus ego sum caput."))
+              :responsories
+              ((:respond "Adjútor et suscéptor meus es tu, Dómine: et in verbum tuum sperávi:"
+                  :verse "Iníquos ódio hábui: et legem tuam diléxi."
+                  :repeat "Declináte a me, malígni: et scrutábor mandáta Dei mei."
+                  :gloria nil)
+               (:respond "Docébo iníquos vias tuas: et ímpii ad te converténtur:"
+                  :verse "Dómine, lábia mea apéries: et os meum annuntiábit laudem tuam."
+                  :repeat "Líbera me de sanguínibus, Deus, Deus salútis meæ."
+                  :gloria nil)
+               (:respond "Ne perdas cum ímpiis, Deus, ánimam meam, et cum viris sánguinum vitam meam:"
+                  :verse "Eripe me, Dómine, ab hómine malo, a viro iníquo líbera me."
+                  :repeat "Rédime me, Dómine."
+                  :gloria t))))
+
+    ;; Quad5-3: Feria Quarta infra Hebdomadam Passionis
+    ((5 . 3) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tractatus 48 in Joannem, circa init."
+               :text "In illo témpore: Facta sunt encǽnia in Jerosólymis: et hiems erat. Et ambulábat Jesus in templo, in pórticu Salomónis. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Encǽnia festívitas erat dedicatiónis templi. Græce enim cænon dícitur novum. Quandocúmque novum áliquid fúerit dedicátum, encǽnia vocántur. Jam et usus habet hoc verbum. Si quis nova túnica induátur, encæniáre dícitur. Illum enim diem, quo templum dedicátum est, Judǽi solémniter celebrábant: ipse dies festus agebátur, cum ea quæ lecta sunt, locútus est Dóminus.")
+               (:text "Hiems erat, et ambulábat Jesus in templo, in pórticu Salomónis. Circumdedérunt ergo eum Judǽi, et dicébant ei: Quoúsque ánimam nostram tollis? Si tu es Christus, dic nobis palam. Non veritátem desiderábant, sed calúmniam præparábant. Hiems erat, et frígidi erant: ad illum enim divínum ignem accédere pigri erant. Si accédere est crédere: qui credit, accédit: qui negat, recédit. Non movétur ánima pédibus, sed afféctibus.")
+               (:text "Frigúerant diligéndi caritáte, et ardébant nocéndi cupiditáte. Longe áberant, et ibi erant: non accedébant credéndo, et premébant persequéndo. Quærébant audíre a Dómino, Ego sum Christus: et fortásse de Christo secúndum hóminem sapiébant. Prædicavérunt enim prophétæ Christum: sed divinitátem Christi et in prophétis et in ipso Evangélio nec hærétici intéllegunt: quanto minus Judǽi, quámdiu velámen est super cor eórum?"))
+              :responsories
+              ((:respond "Tota die contristátus ingrediébar, Dómine: quóniam ánima mea compléta est illusiónibus:"
+                  :verse "Amíci mei et próximi mei advérsum me appropinquavérunt et stetérunt: et qui juxta me erant, de longe stetérunt."
+                  :repeat "Et vim faciébant, qui quærébant ánimam meam."
+                  :gloria nil)
+               (:respond "Ne avértas fáciem tuam a púero tuo, Dómine:"
+                  :verse "Inténde ánimæ meæ, et líbera eam: propter inimícos meos éripe me."
+                  :repeat "Quóniam tríbulor, velóciter exáudi me."
+                  :gloria nil)
+               (:respond "Quis dabit cápiti meo aquam, et óculis meis fontem lacrimárum, et plorábo die ac nocte? quia frater propínquus supplantávit me,"
+                  :verse "Fiant viæ eórum ténebræ et lúbricum: et Angelus Dómini pérsequens eos."
+                  :repeat "Et omnis amícus fraudulénter incéssit in me."
+                  :gloria t))))
+
+    ;; Quad5-4: Feria Quinta infra Hebdomadam Passionis
+    ((5 . 4) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Lucam"
+               :ref "Homilia 33 in Evangelia"
+               :text "In illo témpore: Rogábat Jesum quidam de pharisǽis, ut manducáret cum illo. Et ingréssus domum pharisǽi discúbuit. Et réliqua.
+Homilía sancti Gregórii Papæ
+Cogitánti mihi de Maríæ Magdalénæ pœniténtia, flere magis libet, quam áliquid dícere. Cujus enim vel sáxeum pectus illæ hujus peccatrícis lácrimæ ad exémplum pœniténdi non emólliant? Considerávit namque quid fecit, et nóluit moderári quid fáceret. Super convivántes ingréssa est, non jussa venit, inter épulas lácrimas óbtulit. Díscite, quo dolóre ardet, quæ flere et inter épulas non erubéscit.")
+               (:text "Hanc vero, quam Lucas peccatrícem mulíerem, Joánnes Maríam nóminat, illam esse Maríam crédimus, de qua Marcus septem dæmónia ejécta fuísse testátur. Et quid per septem dæmónia, nisi univérsa vítia designántur? Quia enim septem diébus omne tempus comprehénditur, recte septenário número univérsitas figurátur. Septem ergo dæmónia María hábuit, quæ univérsis vítiis plena fuit.")
+               (:text "Sed ecce quia turpitúdinis suæ máculas aspéxit, lavánda ad fontem misericórdiæ cucúrrit, convivántes non erúbuit. Nam quia semetípsam gráviter erubescébat intus, nihil esse crédidit, quod verecundarétur foris. Quid ergo mirámur, fratres? Maríam veniéntem, an Dóminum suscipiéntem? Suscipiéntem dicam, an trahéntem? Sed mélius trahéntem dicam, et suscipiéntem: quia nimírum ipse eam per misericórdiam traxit intus, qui per mansuetúdinem suscépit foris."))
+              :responsories
+              ((:respond "Deus meus, éripe me de manu peccatóris: et de manu contra legem agéntis, et iníqui:"
+                  :verse "Deus meus, ne elongéris a me: Deus meus, in auxílium meum réspice."
+                  :repeat "Quóniam tu es patiéntia mea."
+                  :gloria nil)
+               (:respond "Multiplicáti sunt qui tríbulant me, et dicunt: Non est salus illi in Deo ejus:"
+                  :verse "Nequándo dicat inimícus meus: Præválui advérsus eum."
+                  :repeat "Exsúrge, Dómine, salvum me fac, Deus meus."
+                  :gloria nil)
+               (:respond "Usquequo exaltábitur inimícus meus super me?"
+                  :verse "Qui tríbulant me, exsultábunt si motus fúero: ego autem in misericórdia tua sperábo."
+                  :repeat "Réspice, et exáudi me, Dómine, Deus meus."
+                  :gloria t))))
+
+    ;; Quad5-5: Septem Dolorum Beatæ Mariæ Virginis
+    ((5 . 5) . (:lessons
+              ((:source "De Isaía Prophéta"
+               :ref "Isa 53:1-5"
+               :text "1 Quis crédidit audítui nostro? et bráchium Dómini cui revelátum est?
+2 Et ascéndet sicut virgúltum coram eo, et sicut radix de terra sitiénti. Non est spécies ei, neque decor, et vídimus eum, et non erat aspéctus, et desiderávimus eum:
+3 despéctum, et novíssimum virórum, virum dolórum, et sciéntem infirmitátem, et quasi abscónditus vultus ejus et despéctus, unde nec reputávimus eum.
+4 Vere languóres nostros ipse tulit, et dolóres nostros ipse portávit; et nos putávimus eum quasi leprósum, et percússum a Deo, et humiliátum.
+5 Ipse autem vulnerátus est propter iniquitátes nostras; attrítus est propter scélera nostra: disciplína pacis nostræ super eum, et livóre ejus sanáti sumus.")
+               (:ref "Isa 53:6-9"
+               :text "6 Omnes nos quasi oves errávimus, unusquísque in viam suam declinávit: et pósuit Dóminus in eo iniquitátem ómnium nostrum.
+7 Oblátus est quia ipse vóluit, et non apéruit os suum; sicut ovis ad occisiónem ducétur, et quasi agnus coram tondénte se obmutéscet, et non apériet os suum.
+8 De angústia, et de judício sublátus est. Generatiónem ejus quis enarrábit? quia abscíssus est de terra vivéntium: propter scelus pópuli mei percússi eum.
+9 Et dabit ímpios pro sepultúra, et dívitem pro morte sua, eo quod iniquitátem non fécerit, neque dolus fúerit in ore ejus.")
+               (:ref "Isa 53:10-12"
+               :text "10 Et Dóminus vóluit contérere eum in infirmitáte. Si posúerit pro peccáto ánimam suam, vidébit semen longǽvum, et volúntas Dómini in manu ejus dirigétur.
+11 Pro eo quod laborávit ánima ejus, vidébit et saturábitur. In sciéntia sua justificábit ipse justus servus meus multos, et iniquitátes eórum ipse portábit.
+12 Ideo dispértiam ei plúrimos, et fórtium dívidet spólia, pro eo quod trádidit in mortem ánimam suam, et cum scelerátis reputátus est, et ipse peccáta multórum tulit, et pro transgressóribus rogávit."))
+              :responsories
+              ((:respond "Diléctus meus cándidus, et rubicúndus, et totus desiderábilis:"
+                  :verse "Piis, o Virgo, spectas eum óculis, contémplans in eo non tam vúlnerum livórem, quam mundi salútem."
+                  :repeat "Omnis enim figúra ejus amórem spirat, et ad redamándum próvocat caput inclinátum, manus expánsæ, pectus apértum."
+                  :gloria nil)
+               (:respond "Manus ejus tornátiles, clavórum cúspide terebrátæ,"
+                  :verse "Córnua in mánibus ejus: ibi abscóndita est fortitúdo ejus: sunt enim manus ejus."
+                  :repeat "Humánæ salútis prétio quasi hyacínthis refértæ."
+                  :gloria nil)
+               (:respond "Diligébat Jesus Joánnem, quóniam speciális prærogatíva castitátis amplióri dilectióne fécerat dignum:"
+                  :verse "In cruce dénique moritúrus huic Matrem suam vírginem vírgini commendávit."
+                  :repeat "Quia virgo eléctus ab ipso, virgo in ævum permánsit."
+                  :gloria t))))
+
+    ;; Quad5-6: Sabbato infra Hebdomadam Passionis
+    ((5 . 6) . (:lessons
+              ((:source "Léctio sancti Evangélii secúndum Joánnem"
+               :ref "Tractatus 50 in Joannem, in fine"
+               :text "In illo témpore: Cogitavérunt príncipes sacerdótum ut et Lázarum interfícerent: quia multi propter illum abíbant ex Judǽis, et credébant in Jesum. Et réliqua.
+Homilía sancti Augustíni Epíscopi
+Viso Lázaro resuscitáto, quia tantum miráculum Dómini tanta erat evidéntia diffamátum, tanta manifestatióne declarátum, ut non possent vel occultáre quod factum est, vel negáre: quid invenérunt, vidéte. Cogitavérunt autem príncipes sacerdótum ut et Lázarum interfícerent. O stulta cogitátio, et cæca sævítia! Dóminus Christus, qui suscitáre pótuit mórtuum, non posset occísum! Quando Lázaro inferebátis necem, numquid auferebátis Dómino potestátem? Si áliud vobis vidétur mórtuus, áliud occísus: ecce Dóminus utrúmque fecit, et Lázarum mórtuum, et seípsum suscitávit occísum.")
+               (:text "In crástinum autem turba multa, quæ vénerat ad diem festum, cum audíssent quia venit Jesus Jerosólymam: accepérunt ramos palmárum, et processérunt óbviam ei, et clamábant: Hosánna, benedíctus qui venit in nómine Dómini, Rex Israël. Rami palmárum laudes sunt, significántes victóriam: quia erat Dóminus mortem moriéndo superatúrus, et trophǽo crucis de diábolo mortis príncipe triumphatúrus. Vox autem obsecrántis est Hosánna, sicut nonnúlli dicunt, qui Hebrǽam linguam novérunt, magis afféctum índicans, quam rem áliquam signíficans, sicut sunt in lingua Latína, quas interjectiónes vocant: velut cum doléntes dícimus, heu; vel cum delectámur, vah dícimus.")
+               (:text "Has ei laudes turba dicébat: Hosánna, benedíctus, qui venit in nómine Dómini, Rex Israël. Quam crucem mentis invidéntia príncipum Judæórum pérpeti potúerat, quando Regem suum Christum tanta multitúdo clamábat? Sed quid fuit Dómino Regem esse Israël? Quid magnum fuit Regi sæculórum, Regem fíeri hóminum? Non enim Rex Israël Christus ad exigéndum tribútum, vel exércitum ferro armándum, hostésque visibíliter debellándos: sed Rex Israël, quod mentes regat, quod in ætérnum cónsulat, quod in regnum cælórum credéntes, sperántes, amantésque perdúcat."))
+              :responsories
+              ((:respond "Tota die contristátus ingrediébar, Dómine: quóniam ánima mea compléta est illusiónibus:"
+                  :verse "Amíci mei et próximi mei advérsum me appropinquavérunt et stetérunt: et qui juxta me erant, de longe stetérunt."
+                  :repeat "Et vim faciébant, qui quærébant ánimam meam."
+                  :gloria nil)
+               (:respond "Ne avértas fáciem tuam a púero tuo, Dómine:"
+                  :verse "Inténde ánimæ meæ, et líbera eam: propter inimícos meos éripe me."
+                  :repeat "Quóniam tríbulor, velóciter exáudi me."
+                  :gloria nil)
+               (:respond "Quis dabit cápiti meo aquam, et óculis meis fontem lacrimárum, et plorábo die ac nocte? quia frater propínquus supplantávit me,"
+                  :verse "Fiant viæ eórum ténebræ et lúbricum: et Angelus Dómini pérsequens eos."
+                  :repeat "Et omnis amícus fraudulénter incéssit in me."
+                  :gloria t))))
+    )
+  "Ferial Matins data for Lent and Passiontide weekdays.
+Each entry is ((WEEK . DOW) . (:lessons (L1 L2 L3) :responsories (R1 R2 R3))).
+WEEK 0 = Ash Wednesday week (DOW 3-6), weeks 1-4 = Lent proper,
+week 5 = Passion week.  Holy Week excluded.")
+
+(defun bcp-roman-season-lent--ferial-week-dow (date)
+  "Return (WEEK . DOW) for DATE within Lent/Passiontide feriae, or nil.
+WEEK is 0 (Ash Wed week), 1-4 (Lent), or 5 (Passion week).
+DOW is 1=Mon..6=Sat.  Returns nil on Sundays and outside Lent/Passiontide.
+Holy Week Mon-Wed are excluded (handled by holyweek module)."
+  (let* ((year (caddr date))
+         (feasts (bcp-moveable-feasts year))
+         (easter (cdr (assq 'easter feasts)))
+         (easter-abs (calendar-absolute-from-gregorian easter))
+         (ash-abs (- easter-abs 46))
+         (date-abs (calendar-absolute-from-gregorian date))
+         (dow (calendar-day-of-week date))
+         (diff (- date-abs ash-abs)))
+    ;; Skip Sundays
+    (when (and (> dow 0) (>= diff 0))
+      (cond
+       ;; Week 0: Ash Wed (diff=0, Wed) through Sat (diff=3)
+       ((< diff 4)
+        (cons 0 dow))
+       ;; Weeks 1-5: Lent 1 Mon through Passion Sat
+       ;; Lent 1 Sunday = diff 4; Mon = diff 5
+       (t
+        (let* ((days-from-lent1 (- diff 4))
+               (week (1+ (/ days-from-lent1 7))))
+          (when (<= week 5)
+            (cons week dow))))))))
+
+(defun bcp-roman-season-lent-ferial-matins (date)
+  "Return ferial Matins data for DATE if it is a Lent/Passiontide weekday.
+DATE is (MONTH DAY YEAR).  Returns a plist with :lessons and :responsories,
+or nil if DATE is a Sunday, outside Lent, or in Holy Week."
+  (let ((key (bcp-roman-season-lent--ferial-week-dow date)))
+    (when key
+      (cdr (assoc key bcp-roman-season-lent--ferial-matins)))))
+
+
 (provide 'bcp-roman-season-lent)
 
 ;;; bcp-roman-season-lent.el ends here
