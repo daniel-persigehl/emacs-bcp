@@ -257,37 +257,42 @@ Individual settings can be overridden while keeping the profile as a base:
 
 ### Fetch backend and psalter
 
-Normally set by the language profile. To override manually:
+Normally set by the language profile. The Bible backend and the
+fallback backend are independent; the active psalter is **derived**
+from the psalm translation — pick a translation name served by a
+registered psalter (Coverdale, Tate & Brady, Vulgate) and psalms
+will route through that psalter automatically. Any other name (NRSV,
+KJVA, Bungo-yaku, …) leaves the Bible backend to serve psalms.
 
 ```elisp
 ;; Default: Oremus for lessons, Coverdale for psalms
+;; (psalter is derived from the "Coverdale" psalm translation)
 (setq bcp-fetcher-backend 'oremus
-      bcp-fetcher-psalter 'coverdale
+      bible-commentary-psalm-translation "Coverdale"
       bcp-fetcher-fallback-backend 'oremus)
 
 ;; Tate & Brady metrical psalms, Oremus for lessons
 (setq bcp-fetcher-backend 'oremus
-      bcp-fetcher-psalter 'tate-brady)
+      bible-commentary-psalm-translation "Tate & Brady")
 
 ;; Latin Vulgate psalms, Oremus for lessons
 (setq bcp-fetcher-backend 'oremus
-      bcp-fetcher-psalter 'vulgate)
+      bible-commentary-psalm-translation "Vulgate")
 
 ;; Japanese: Bungo-yaku for everything including psalms (no psalter layer)
 (setq bcp-fetcher-backend 'bungo-yaku
-      bcp-fetcher-psalter nil
+      bible-commentary-psalm-translation "Bungo-yaku"
       bcp-fetcher-fallback-backend 'oremus)
 
-;; Fully online (Oremus only, psalms from Oremus)
+;; Fully online (Oremus only, NRSV psalms from Oremus)
 (setq bcp-fetcher-backend 'oremus
-      bcp-fetcher-psalter nil
-      bcp-fetcher-fallback-backend nil)
-
-;; Fully offline (eBible chapter files + local Coverdale psalter)
-(setq bcp-fetcher-backend 'ebible
-      bcp-fetcher-psalter 'coverdale
+      bible-commentary-psalm-translation "NRSV"
       bcp-fetcher-fallback-backend nil)
 ```
+
+If you bypass the profile layer entirely, you can still set
+`bcp-fetcher-psalter` directly; it is a symbol (e.g. `'coverdale`,
+`'tate-brady`, `'vulgate`, or `nil`).
 
 ### Officiant order
 

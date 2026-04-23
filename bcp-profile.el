@@ -15,9 +15,8 @@
 ;;
 ;; Override variables:
 ;;   `bcp-profile-lesson-translation'
-;;   `bcp-profile-psalm-translation'
+;;   `bcp-profile-psalm-translation'   — also drives `bcp-fetcher-psalter'
 ;;   `bcp-profile-backend'
-;;   `bcp-profile-psalter'
 ;;   `bcp-profile-fallback-backend'
 ;;   `bcp-profile-roman-language'
 ;;   `bcp-profile-canticle-language'
@@ -39,7 +38,6 @@
   '((ENG . (:lesson-translation       "KJVA"
             :psalm-translation        "Coverdale"
             :backend                  oremus
-            :psalter                  coverdale
             :fallback-backend         oremus
             :roman-language           english
             :canticle-language        english
@@ -48,7 +46,6 @@
     (ENG-TB . (:lesson-translation    "KJVA"
                :psalm-translation     "Tate & Brady"
                :backend               oremus
-               :psalter               tate-brady
                :fallback-backend      oremus
                :roman-language        english
                :canticle-language     english
@@ -57,7 +54,6 @@
     (LAT . (:lesson-translation       "Vulgate"
             :psalm-translation        "Vulgate"
             :backend                  oremus
-            :psalter                  vulgate
             :fallback-backend         oremus
             :roman-language           latin
             :canticle-language        latin
@@ -66,32 +62,31 @@
     (JAP . (:lesson-translation       "Bungo-yaku"
             :psalm-translation        "Bungo-yaku"
             :backend                  bungo-yaku
-            :psalter                  nil
             :fallback-backend         oremus
             :roman-language           english
             :canticle-language        english
             :canticle-gloria          nil
             :furigana                 rubi)))
   "Built-in language profile definitions.
-Each profile maps setting keywords to their default values.")
+Each profile maps setting keywords to their default values.
+The active psalter is derived from `:psalm-translation' at apply time.")
 
 (defconst bcp-profile--setting-to-variable
   '((:lesson-translation  . bible-commentary-translation)
     (:psalm-translation   . bible-commentary-psalm-translation)
     (:backend             . bcp-fetcher-backend)
-    (:psalter             . bcp-fetcher-psalter)
     (:fallback-backend    . bcp-fetcher-fallback-backend)
     (:roman-language      . bcp-roman-office-language)
     (:canticle-language   . bcp-liturgy-canticle-language)
     (:canticle-gloria     . bcp-liturgy-canticle-append-gloria)
     (:furigana            . bcp-fetcher-furigana-display))
-  "Mapping from profile setting keywords to the real variables they govern.")
+  "Mapping from profile setting keywords to the real variables they govern.
+`bcp-fetcher-psalter' is derived from `:psalm-translation', not listed here.")
 
 (defconst bcp-profile--setting-to-override
   '((:lesson-translation  . bcp-profile-lesson-translation)
     (:psalm-translation   . bcp-profile-psalm-translation)
     (:backend             . bcp-profile-backend)
-    (:psalter             . bcp-profile-psalter)
     (:fallback-backend    . bcp-profile-fallback-backend)
     (:roman-language      . bcp-profile-roman-language)
     (:canticle-language   . bcp-profile-canticle-language)
@@ -133,14 +128,6 @@ settings can be overridden in the Advanced Overrides menu."
 Psalters are selected separately via `bcp-profile-psalter'."
   :type '(choice (const :tag "Profile default" default)
                  (const bungo-yaku) (const oremus) (const ebible))
-  :group 'bcp-profile)
-
-(defcustom bcp-profile-psalter 'default
-  "Override for the active psalter, or `default'.
-Nil means no psalter override — the Bible backend serves psalms."
-  :type '(choice (const :tag "Profile default" default)
-                 (const :tag "None (backend serves psalms)" nil)
-                 (const coverdale) (const tate-brady) (const vulgate))
   :group 'bcp-profile)
 
 (defcustom bcp-profile-fallback-backend 'default
@@ -195,6 +182,13 @@ Call this after changing `bcp-language-profile' or any override variable."
     (let ((setting (car entry))
           (real-var (cdr entry)))
       (set real-var (bcp-profile-effective setting))))
+  ;; Derive the active psalter from the psalm translation: if a registered
+  ;; psalter serves that translation, route through it; otherwise the Bible
+  ;; backend serves psalms directly.
+  (when (fboundp 'bcp-fetcher--psalter-for-translation)
+    (set 'bcp-fetcher-psalter
+         (bcp-fetcher--psalter-for-translation
+          (bcp-profile-effective :psalm-translation))))
   ;; Auto-promote furigana when backend is bungo-yaku but furigana would
   ;; be hidden and the user hasn't explicitly overridden it.
   (when (and (eq (symbol-value 'bcp-fetcher-backend) 'bungo-yaku)

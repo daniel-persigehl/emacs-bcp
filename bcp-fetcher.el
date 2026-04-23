@@ -412,6 +412,22 @@ Searches all registered backends (including psalters) case-insensitively."
   (and (stringp passage)
        (string-match-p "\\`Psalms? [0-9]" passage)))
 
+(defun bcp-fetcher--psalter-for-translation (translation)
+  "Return the psalter symbol that serves TRANSLATION, or nil.
+Scans `:kind :psalter' backends and returns the first whose
+`:translations' list contains TRANSLATION (case-insensitive)."
+  (when translation
+    (let ((tr-down (downcase translation)))
+      (cl-some (lambda (entry)
+                 (let* ((plist (cdr entry))
+                        (translations (plist-get plist :translations)))
+                   (when (and (eq (plist-get plist :kind) :psalter)
+                              (cl-some (lambda (t-name)
+                                         (string= tr-down (downcase t-name)))
+                                       translations))
+                     (car entry))))
+               bcp-fetcher--backends))))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Public fetch API
 

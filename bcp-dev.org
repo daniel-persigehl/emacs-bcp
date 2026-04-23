@@ -393,28 +393,35 @@ Language profile system.  A profile sets all scripture and liturgical language
 defaults at once; individual settings can be overridden.
 
 ** Profiles
-| Profile | Lesson | Psalm | Backend | Psalter | Fallback | Roman lang | Canticle lang | Gloria | Furigana |
-|---------+--------+-------+---------+---------+----------+------------+---------------+--------+----------|
-| ENG | KJVA | Coverdale | oremus | coverdale | oremus | english | english | nil | hidden |
-| ENG-TB | KJVA | Tate & Brady | oremus | tate-brady | oremus | english | english | nil | hidden |
-| LAT | Vulgate | Vulgate | oremus | vulgate | oremus | latin | latin | t | hidden |
-| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | nil | oremus | english | english | nil | rubi |
+| Profile | Lesson | Psalm | Backend | Fallback | Roman lang | Canticle lang | Gloria | Furigana |
+|---------+--------+-------+---------+----------+------------+---------------+--------+----------|
+| ENG | KJVA | Coverdale | oremus | oremus | english | english | nil | hidden |
+| ENG-TB | KJVA | Tate & Brady | oremus | oremus | english | english | nil | hidden |
+| LAT | Vulgate | Vulgate | oremus | oremus | latin | latin | t | hidden |
+| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | oremus | english | english | nil | rubi |
+
+The active psalter (=bcp-fetcher-psalter=) is not a profile field: it is
+derived from the psalm translation at apply time via
+=bcp-fetcher--psalter-for-translation=.  Picking a translation that a
+registered =:kind :psalter= backend serves ("Coverdale", "Tate & Brady",
+"Vulgate", etc.) routes psalms through that psalter; any other name
+leaves psalter at nil and the Bible backend serves psalms directly.
 
 ** Architecture
-=bcp-profile--definitions= (defconst) maps profile symbols to 9 keyword→value plists.
+=bcp-profile--definitions= (defconst) maps profile symbols to keyword→value plists.
 =bcp-profile--setting-to-variable= maps keywords to the real variables they govern.
 =bcp-profile--setting-to-override= maps keywords to override defcustom symbols.
 
 =bcp-profile-apply= resolves each setting: if the override is ='default=, use the
 profile's value; otherwise use the override.  Writes to real variables, so existing
-code reads them unchanged (no interception layer).
+code reads them unchanged (no interception layer).  After writing, it derives
+=bcp-fetcher-psalter= from the effective psalm translation.
 
 ** Override Variables
 All default to ='default= (inherit from profile):
 - =bcp-profile-lesson-translation= → =bible-commentary-translation=
-- =bcp-profile-psalm-translation= → =bible-commentary-psalm-translation=
+- =bcp-profile-psalm-translation= → =bible-commentary-psalm-translation= (also drives =bcp-fetcher-psalter=)
 - =bcp-profile-backend= → =bcp-fetcher-backend=
-- =bcp-profile-psalter= → =bcp-fetcher-psalter=
 - =bcp-profile-fallback-backend= → =bcp-fetcher-fallback-backend=
 - =bcp-profile-roman-language= → =bcp-roman-office-language=
 - =bcp-profile-canticle-language= → =bcp-liturgy-canticle-language=
@@ -1316,8 +1323,9 @@ range query may return a slightly wider span.  Verse numbers on
 rendered text carry =bcp-verse/bcp-book/bcp-chapter= text properties
 for downstream highlighting.  Translation names: "Tate & Brady" / "T&B".
 A new language profile =ENG-TB= selects =oremus= as backend plus
-=tate-brady= as psalter, with KJVA lessons.  The transient menu now
-has a separate psalter-cycle ("P") alongside the backend-cycle ("b").
+Tate & Brady for psalms, with KJVA lessons.  In the transient menu
+the psalter is derived from the "Psalms" translation choice, not
+selected separately.
 Post-ingest text-level fixups handled (a) part-label renumbering (TCP
 transcription anomalies in Pss 37, 89, 119), and (b) verse-1 injection
 on ~27 psalms where the TCP dropped the opening verse milestone.  Pss
@@ -1333,6 +1341,18 @@ and live in =bcp-fetcher-psalter=; oremus / ebible / bungo-yaku are
 a psalter attempt ahead of the backend chain when (a) the passage is
 a Psalm, (b) a psalter is active, and (c) the caller either passed no
 explicit translation or passed one the psalter serves.
+
+**Psalter derived from translation (2026-04-23):** The profile layer
+no longer stores =:psalter= as a separate field.  At apply time,
+=bcp-profile-apply= derives =bcp-fetcher-psalter= from the effective
+psalm translation via =bcp-fetcher--psalter-for-translation= (which
+scans =:kind :psalter= registrations for one whose =:translations=
+list matches).  This collapses the two previously-redundant settings
+in the transient Advanced overrides: there is now a single "Psalms"
+row, and choosing a translation like "Coverdale" / "Tate & Brady" /
+"Vulgate" automatically routes psalms through the matching local
+psalter; any other name leaves psalter at nil and the Bible backend
+serves.
 
 Phase B — routing metrical psalters through the hymnal registry/
 renderer per the "metrical psalters are hymns" plan above — remains

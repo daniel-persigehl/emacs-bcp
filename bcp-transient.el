@@ -194,7 +194,10 @@ called on the effective value to produce the display string."
     (bcp-profile-apply)))
 
 (transient-define-suffix bcp--override-psalm-translation ()
-  "Override psalm translation or inherit from profile."
+  "Override psalm translation or inherit from profile.
+The translation name also drives `bcp-fetcher-psalter': picking
+Coverdale / Tate & Brady / Vulgate routes psalms through the matching
+local psalter; any other name lets the Bible backend serve them."
   :description (lambda ()
     (bcp--profile-desc :psalm-translation "Psalms: %s"))
   :transient t
@@ -202,7 +205,10 @@ called on the effective value to produce the display string."
   (let ((bungo (bcp--bungo-yaku-label)))
     (setq bcp-profile-psalm-translation
           (let ((new (completing-read "Psalm translation (RET for default): "
-                       (list "default" "Coverdale" "BCP" "Vulgate" "Latin"
+                       (list "default"
+                             "Coverdale" "BCP"
+                             "Tate & Brady" "T&B"
+                             "Vulgate" "Latin"
                              "KJVA" "CW" "LP" "NRSV" bungo)
                        nil t)))
             (if (equal new "default") 'default new)))
@@ -216,16 +222,6 @@ called on the effective value to produce the display string."
   (interactive)
   (bcp--cycle-override 'bcp-profile-backend
                        '(oremus ebible bungo-yaku)))
-
-(transient-define-suffix bcp--override-psalter ()
-  "Override the active psalter or inherit from profile."
-  :description (lambda ()
-    (bcp--profile-desc :psalter "Psalter: %s"
-                       (lambda (v) (if v (format "%s" v) "none"))))
-  :transient t
-  (interactive)
-  (bcp--cycle-override 'bcp-profile-psalter
-                       '(coverdale tate-brady vulgate nil)))
 
 (transient-define-suffix bcp--override-fallback-backend ()
   "Override fallback fetch backend or inherit from profile."
@@ -285,8 +281,7 @@ Each setting shows (profile) when inherited or (override) when
 explicitly set.  Use Reset to clear all overrides."
   [["Lessons & Psalms"
     ("t" bcp--override-lesson-translation)
-    ("p" bcp--override-psalm-translation)
-    ("P" bcp--override-psalter)]
+    ("p" bcp--override-psalm-translation)]
    ["Backend"
     ("b" bcp--override-backend)
     ("B" bcp--override-fallback-backend)
