@@ -891,26 +891,34 @@ and trailing orphan Part-heads are dropped."
 
 (defun bcp-fetcher--tate-brady-render-psalm (n blocks v-from v-to)
   "Render T&B psalm N for verses V-FROM..V-TO as propertized text.
-V-FROM nil or 1 means from the start; V-TO nil means through the end."
+V-FROM nil or 1 means from the start; V-TO nil means through the end.
+The leading \"N \" marker on each verse line is stripped; the verse
+number is attached as a `bcp-verse' text property to the first
+character of the verse content, so downstream gutter overlays render
+the number without duplicating it in the text."
   (let* ((kept (bcp-fetcher--tate-brady-filter-blocks blocks v-from v-to))
-         (rendered
+         (raw
           (mapconcat
            (lambda (b)
              (pcase (car b)
                (:stanza (nth 2 b))
                (:part (concat "    " (nth 1 b)))))
            kept "\n\n")))
-    (when (> (length rendered) 0)
-      (let ((pos 0))
-        (while (string-match "^\\([0-9]+\\) " rendered pos)
-          (let* ((vstart (match-beginning 0))
-                 (vnum   (string-to-number (match-string 1 rendered)))
-                 (props  (list 'bcp-verse vnum 'bcp-book "Psalms")))
-            (when (= vnum 1)
-              (setq props (nconc props (list 'bcp-chapter n))))
-            (add-text-properties vstart (1+ vstart) props rendered)
-            (setq pos (match-end 0)))))
-      rendered)))
+    (when (> (length raw) 0)
+      (with-temp-buffer
+        (insert raw)
+        (goto-char (point-min))
+        (while (not (eobp))
+          (when (looking-at "\\([0-9]+\\) ")
+            (let* ((vnum  (string-to-number (match-string 1)))
+                   (props (list 'bcp-verse vnum 'bcp-book "Psalms")))
+              (when (= vnum 1)
+                (setq props (nconc props (list 'bcp-chapter n))))
+              (delete-region (match-beginning 0) (match-end 0))
+              (unless (eolp)
+                (add-text-properties (point) (1+ (point)) props))))
+          (forward-line 1))
+        (buffer-string)))))
 
 (defun bcp-fetcher--tate-brady-render (passage psalms)
   "Render PASSAGE from PSALMS hash table as propertized text, or nil."
