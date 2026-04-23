@@ -228,21 +228,21 @@ spins the event loop up to `bcp-roman-render--fetch-timeout' seconds."
 SPEC is an integer (full psalm, Vulgate numbering) or a list
 \(PSALM-NUM START-VERSE END-VERSE\) for a subsection.
 Numbers >= 200 are treated as DO canticle numbers.
-Uses the Coverdale psalter when the backend is \\='coverdale,
-the Vulgate psalter when the backend is \\='vulgate or language
-is \\='latin, and the active fetcher for any other backend."
+Uses the Coverdale psalter when the active psalter is \\='coverdale,
+the Vulgate psalter when the psalter is \\='vulgate or language is
+\\='latin, and the active fetcher for any other psalter (or none)."
   (let* ((vulg-num (if (listp spec) (car spec) spec))
          (latin   (eq bcp-roman-office-language 'latin))
-         (backend (and (boundp 'bcp-fetcher-backend) bcp-fetcher-backend)))
+         (psalter (and (boundp 'bcp-fetcher-psalter) bcp-fetcher-psalter)))
     (cond
      ;; Canticles: from DO files in the appropriate language
      ((>= vulg-num 200)
       (let ((all (bcp-roman-breviary--load-canticle
                   vulg-num (if latin 'latin 'english))))
         (when all (append all nil))))
-     ;; Non-Latin with a non-standard backend: fetch via the active fetcher
+     ;; Non-Latin with a non-standard psalter: fetch via the active fetcher
      ((and (not latin)
-           (not (memq backend '(coverdale vulgate))))
+           (not (memq psalter '(coverdale vulgate))))
       (let* ((v-start (when (listp spec) (nth 1 spec)))
              (v-end   (when (listp spec) (nth 2 spec)))
              (lookups (bcp-roman-breviary--vulgate-to-coverdale
@@ -263,7 +263,7 @@ is \\='latin, and the active fetcher for any other backend."
                              (seq-subseq verses from to)))))))
         result))
      ;; Coverdale psalter with BCP numbering (English profile)
-     ((eq backend 'coverdale)
+     ((eq psalter 'coverdale)
       (let* ((table (bcp-fetcher--coverdale-psalms))
              (v-start (when (listp spec) (nth 1 spec)))
              (v-end   (when (listp spec) (nth 2 spec)))

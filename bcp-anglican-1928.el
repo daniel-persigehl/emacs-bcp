@@ -592,7 +592,7 @@ With a prefix argument ARG, prompts for date and office."
       (read-only-mode 1))
     (pop-to-buffer bcp-1928-office-buffer-name)
     (message "Fetching 1928 Office texts [psalms: %s, lessons: %s]…"
-             (symbol-name bcp-fetcher-backend)
+             (symbol-name (or bcp-fetcher-psalter bcp-fetcher-backend))
              (symbol-name (or bcp-fetcher-fallback-backend bcp-fetcher-backend)))
     ;; Fetch psalms first, then lessons, then render
     (bcp-1928--fetch-all

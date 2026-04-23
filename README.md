@@ -97,12 +97,15 @@ The current implementation covers:
 - Per-setting overrides for mixing and matching (e.g. Latin structural texts with Japanese scripture)
 - Furigana display system for Japanese text: normal, muted (comment), or hidden, with in-buffer toggle
 
-**Scripture backends:**
-- `coverdale` — Miles Coverdale's Psalter served locally from a bundled text file; no network required for psalms
-- `vulgate` — Latin Vulgate Psalter with Breviary pointing (*, †, ‡) served locally; collated from Divinum Officium source files with BCP-to-Vulgate psalm number mapping
-- `bungo-yaku` — 文語訳聖書 (1917 Taishō revision), the complete 66-book Japanese Bible with furigana; served locally from a bundled text file
+**Bible backends** (served for all scripture — `bcp-fetcher-backend`):
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
 - `ebible` — local eBible.org plain-text chapter files; fully offline
+- `bungo-yaku` — 文語訳聖書 (1917 Taishō revision), the complete 66-book Japanese Bible with furigana; served locally from a bundled text file
+
+**Psalters** (served for Psalms only, layered on top of the backend — `bcp-fetcher-psalter`):
+- `coverdale` — Miles Coverdale's Psalter (BCP 1662), bundled local text file
+- `tate-brady` — Tate & Brady metrical psalter (1698 corrected edition), bundled local text file
+- `vulgate` — Latin Vulgate Psalter with Breviary pointing (*, †, ‡), bundled local text file, BCP-to-Vulgate numbering mapping
 
 ---
 
@@ -133,25 +136,30 @@ The shared rendering layer (`bcp-anglican-render`) implements the ordo walker an
 4. Once all fetches complete (or time out), the tradition's render function builds a context plist and passes it to `bcp-anglican-render--render-office`, which walks the ordo step sequence and inserts the full liturgy into the office buffer
 5. The buffer is rendered read-only with overlays for verse numbers, rubric colouring, and heading styles
 
-### Fetch backends
+### Fetch backends and psalters
 
-Fetch requests pass through a fallback chain:
+Scripture fetches pass through a two-layer pipeline. The **psalter** layer (`bcp-fetcher-psalter`) handles Psalms only; the **backend** layer (`bcp-fetcher-backend`) handles everything else, plus Psalms when no psalter is set. Fallback chain:
 
+0. **Active psalter** (if set and passage is a Psalm)
 1. **Primary backend** with preferred translation
 2. **Primary backend** with fallback translation (default: KJVA)
 3. **Fallback backend** with preferred translation
 
-Available backends:
+Bible backends:
 
-- `coverdale` — serves psalms from `bcp-liturgy-psalter-coverdale.txt` (local, no network required); returns `nil` for non-psalm passages so the chain continues
-- `vulgate` — serves Latin psalms from `bcp-liturgy-psalter-vulgate.txt` (local, no network required); applies BCP-to-Vulgate psalm number mapping (e.g. BCP 114 → Vulgate 113:1-8, BCP 116 → Vulgate 114+115 concatenated)
-- `bungo-yaku` — serves the complete 文語訳聖書 from `bcp-liturgy-bungo-yaku.txt` (local, no network required); 31,099 verses with furigana as `kanji《reading》`
 - `oremus` — fetches from [Oremus Bible Browser](https://bible.oremus.org) (online); supports KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions (Coverdale/BCP, Common Worship, Liturgical Psalter)
 - `ebible` — fetches from a local directory of eBible.org plain-text chapter files; fully offline
+- `bungo-yaku` — serves the complete 文語訳聖書 from `bcp-liturgy-bungo-yaku.txt` (local, no network required); 31,099 verses with furigana as `kanji《reading》`
 
-The fetch layer also supports translation-aware routing: if the requested translation (e.g. "Vulgate") matches a registered backend, that backend is tried first regardless of the primary backend setting.
+Psalters:
 
-The default configuration is `coverdale` primary, `oremus` fallback. Psalms are served locally; lessons come from Oremus.
+- `coverdale` — Miles Coverdale's Psalter from `bcp-liturgy-psalter-coverdale.txt`
+- `tate-brady` — Tate & Brady metrical psalter from `bcp-liturgy-psalter-tate-brady.txt`
+- `vulgate` — Latin Vulgate Psalter from `bcp-liturgy-psalter-vulgate.txt` (applies BCP-to-Vulgate psalm number mapping, e.g. BCP 114 → Vulgate 113:1-8, BCP 116 → Vulgate 114+115 concatenated)
+
+The fetch layer also supports translation-aware routing: if the caller passes an explicit translation (e.g. "Vulgate") that matches a registered backend or psalter, that source is used regardless of the current backend/psalter setting.
+
+The default configuration is `oremus` backend + `coverdale` psalter. Psalms are served locally via Coverdale; lessons come from Oremus.
 
 ---
 
@@ -240,33 +248,44 @@ Individual settings can be overridden while keeping the profile as a base:
 ;; Override just the backend (e.g. English profile but Bungo-yaku scripture)
 (setq bcp-profile-backend 'bungo-yaku)
 
+;; Override just the psalter (e.g. English profile but Tate & Brady psalms)
+(setq bcp-profile-psalter 'tate-brady)
+
 ;; Reset an override back to the profile default
 (setq bcp-profile-lesson-translation 'default)
 ```
 
-### Fetch backend
+### Fetch backend and psalter
 
 Normally set by the language profile. To override manually:
 
 ```elisp
-;; Default: local Coverdale psalms, Oremus for lessons
-(setq bcp-fetcher-backend 'coverdale
+;; Default: Oremus for lessons, Coverdale for psalms
+(setq bcp-fetcher-backend 'oremus
+      bcp-fetcher-psalter 'coverdale
       bcp-fetcher-fallback-backend 'oremus)
+
+;; Tate & Brady metrical psalms, Oremus for lessons
+(setq bcp-fetcher-backend 'oremus
+      bcp-fetcher-psalter 'tate-brady)
 
 ;; Latin Vulgate psalms, Oremus for lessons
-(setq bcp-fetcher-backend 'vulgate
-      bcp-fetcher-fallback-backend 'oremus)
-
-;; Japanese: local Bungo-yaku, Oremus fallback
-(setq bcp-fetcher-backend 'bungo-yaku
-      bcp-fetcher-fallback-backend 'oremus)
-
-;; Fully online (Oremus only)
 (setq bcp-fetcher-backend 'oremus
+      bcp-fetcher-psalter 'vulgate)
+
+;; Japanese: Bungo-yaku for everything including psalms (no psalter layer)
+(setq bcp-fetcher-backend 'bungo-yaku
+      bcp-fetcher-psalter nil
+      bcp-fetcher-fallback-backend 'oremus)
+
+;; Fully online (Oremus only, psalms from Oremus)
+(setq bcp-fetcher-backend 'oremus
+      bcp-fetcher-psalter nil
       bcp-fetcher-fallback-backend nil)
 
-;; Fully offline (eBible chapter files)
+;; Fully offline (eBible chapter files + local Coverdale psalter)
 (setq bcp-fetcher-backend 'ebible
+      bcp-fetcher-psalter 'coverdale
       bcp-fetcher-fallback-backend nil)
 ```
 

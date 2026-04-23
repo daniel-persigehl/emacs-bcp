@@ -200,18 +200,24 @@ Full internal dependency chain (for reference — all loaded transitively):
 
 API-agnostic fetch dispatch layer. No dependencies on bible-commentary or bcp-1662.
 Must be required first. Auto-loads bcp-fetcher-oremus at the bottom.
-Backends register themselves via bcp-fetcher-register-backend; active backend
-is selected by the defcustom bcp-fetcher-backend (default: 'oremus).
+Sources register themselves via bcp-fetcher-register-backend with
+`:kind :bible' (a Bible-wide backend) or `:kind :psalter' (Psalms-only).
+The active Bible backend is `bcp-fetcher-backend' (default: 'oremus);
+the active psalter is `bcp-fetcher-psalter' (default: 'coverdale).
+When a Psalms passage is requested and a psalter is set, the psalter
+is tried before the Bible backend.
 
 ** Backend Protocol
-A backend is registered as:
+A source is registered as:
   (bcp-fetcher-register-backend 'NAME
     :name "Display Name"
+    :kind :bible                      ; or :psalter (default :bible)
     :fetch-fn #'my-backend--fetch     ; (fn passage translation callback)
-    :translations '("KJVA" "NRSV" …)) ; for completing-read
+    :translations '("KJVA" "NRSV" …)) ; for completing-read and matching
 
 The :fetch-fn must call (callback text) where text is a propertized string
-(verse numbers formatted for visual-line-mode) or nil on failure.
+(verse numbers formatted for visual-line-mode) or nil on failure.  Psalters
+(`:kind :psalter') typically return nil for non-Psalms passages.
 
 ** Public API
 - bcp-fetcher-fetch(passage callback &optional translation)
@@ -254,7 +260,10 @@ requiring a change to bcp-fetcher-backend.
 ** Fallback Chain :constraint:
 bcp-fetcher-fetch builds a list of (FETCH-FN . TRANSLATION) attempts, tried
 in order until one returns non-nil:
-1. Translation-matched backend (if different from primary) with preferred tr
+0. Active psalter (only when passage is a Psalm AND either no explicit
+   translation was passed, or the caller's translation is among the
+   psalter's :translations)
+1. Translation-matched backend (if different from primary and psalter)
 2. Primary backend with preferred translation
 3. Primary backend with `bcp-fetcher-fallback-translation' (default: KJVA)
 4. Fallback backend (`bcp-fetcher-fallback-backend') with preferred translation
@@ -281,8 +290,8 @@ Prior behaviour emitted literal org-link syntax ("[[bible:...][...]]") into
 text-mode buffers, which rendered as unusable raw characters — the original
 fallback assumed an org-mode Office buffer that was later rejected.
 
-** Vulgate Backend
-Registered as 'vulgate. Translations: ("Vulgate" "Latin").
+** Vulgate Psalter
+Registered as 'vulgate with :kind :psalter. Translations: ("Vulgate" "Latin").
 Serves from bcp-liturgy-psalter-vulgate.txt (Vulgate numbering, 150 psalms).
 Applies BCP-to-Vulgate psalm number mapping via bcp-fetcher--bcp-to-vulgate:
 | BCP 1-8 | Vulgate 1-8 (same) |
@@ -298,7 +307,8 @@ Applies BCP-to-Vulgate psalm number mapping via bcp-fetcher--bcp-to-vulgate:
 Reuses bcp-fetcher--coverdale-render-psalm for propertized text rendering.
 
 ** Defcustoms (canonical home — translation config lives here)
-- bcp-fetcher-backend ('coverdale) — active backend symbol
+- bcp-fetcher-backend ('oremus) — active Bible backend (kind :bible)
+- bcp-fetcher-psalter ('coverdale) — active psalter (kind :psalter); nil = none
 - bible-commentary-translation ("KJVA") — default translation
 - bible-commentary-psalm-translation ("Coverdale") — auto-used for Psalms; "Vulgate"/"Latin" for Latin
 - bible-commentary-omitted-verse-context-window (2) — context verses for omissions
@@ -383,14 +393,15 @@ Language profile system.  A profile sets all scripture and liturgical language
 defaults at once; individual settings can be overridden.
 
 ** Profiles
-| Profile | Lesson | Psalm | Backend | Fallback | Roman lang | Canticle lang | Gloria | Furigana |
-|---------+--------+-------+---------+----------+------------+---------------+--------+----------|
-| ENG | KJVA | Coverdale | coverdale | oremus | english | english | nil | hidden |
-| LAT | Vulgate | Vulgate | vulgate | oremus | latin | latin | t | hidden |
-| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | oremus | english | english | nil | rubi |
+| Profile | Lesson | Psalm | Backend | Psalter | Fallback | Roman lang | Canticle lang | Gloria | Furigana |
+|---------+--------+-------+---------+---------+----------+------------+---------------+--------+----------|
+| ENG | KJVA | Coverdale | oremus | coverdale | oremus | english | english | nil | hidden |
+| ENG-TB | KJVA | Tate & Brady | oremus | tate-brady | oremus | english | english | nil | hidden |
+| LAT | Vulgate | Vulgate | oremus | vulgate | oremus | latin | latin | t | hidden |
+| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | nil | oremus | english | english | nil | rubi |
 
 ** Architecture
-=bcp-profile--definitions= (defconst) maps profile symbols to 8 keyword→value plists.
+=bcp-profile--definitions= (defconst) maps profile symbols to 9 keyword→value plists.
 =bcp-profile--setting-to-variable= maps keywords to the real variables they govern.
 =bcp-profile--setting-to-override= maps keywords to override defcustom symbols.
 
@@ -403,6 +414,7 @@ All default to ='default= (inherit from profile):
 - =bcp-profile-lesson-translation= → =bible-commentary-translation=
 - =bcp-profile-psalm-translation= → =bible-commentary-psalm-translation=
 - =bcp-profile-backend= → =bcp-fetcher-backend=
+- =bcp-profile-psalter= → =bcp-fetcher-psalter=
 - =bcp-profile-fallback-backend= → =bcp-fetcher-fallback-backend=
 - =bcp-profile-roman-language= → =bcp-roman-office-language=
 - =bcp-profile-canticle-language= → =bcp-liturgy-canticle-language=
@@ -1293,35 +1305,42 @@ reconstructed the two one-letter gaps (Ps 94:17 "slipt", Ps 99:9
 "sacred") from context.  Known residual issue: Ps 147 omits verses
 4, 6, 13, 15 in the TCP; not cross-checked against another edition.
 
-**Backend wiring (2026-04-23):** Integrated as a first-class fetcher
-backend =tate-brady= (parallel to =coverdale=) in =bcp-fetcher.el=:
-lazy-loads the text file into a hash-table keyed by psalm number, each
-psalm stored as a list of "blocks" (part heads and stanza groups), and
-renders a verse range by keeping every stanza whose verse numbers
-overlap the range.  Stanzas are the atomic unit — you can't sing half
-a quatrain — so a narrow-range query may return a slightly wider span.
-Verse numbers on rendered text carry =bcp-verse/bcp-book/bcp-chapter=
-text properties for downstream highlighting.  Registered with
-=bcp-fetcher-register-backend= as translation names "Tate & Brady" /
-"T&B".  A new language profile =ENG-TB= selects this backend with KJVA
-lessons and "Tate & Brady" psalm translation; the transient menu's
-backend-cycle includes =tate-brady=.  Post-ingest text-level fixups
-handled (a) part-label renumbering (TCP transcription anomalies in
-Pss 37, 89, 119), and (b) verse-1 injection on ~27 psalms where the
-TCP dropped the opening verse milestone.  Pss 69 and 71 open with a
-metrical stanza covering prose verses 1–2; labelled as "1" so full-
-psalm queries work, narrow "verse 2 alone" queries do not.
+**Backend wiring (2026-04-23):** Integrated via the dedicated psalter
+layer (=:kind :psalter= on =bcp-fetcher-register-backend=, selected by
+=bcp-fetcher-psalter=).  Renderer lazy-loads the text file into a
+hash-table keyed by psalm number, each psalm stored as a list of
+"blocks" (part heads and stanza groups), and serves a verse range by
+keeping every stanza whose verse numbers overlap the range.  Stanzas
+are the atomic unit — you can't sing half a quatrain — so a narrow-
+range query may return a slightly wider span.  Verse numbers on
+rendered text carry =bcp-verse/bcp-book/bcp-chapter= text properties
+for downstream highlighting.  Translation names: "Tate & Brady" / "T&B".
+A new language profile =ENG-TB= selects =oremus= as backend plus
+=tate-brady= as psalter, with KJVA lessons.  The transient menu now
+has a separate psalter-cycle ("P") alongside the backend-cycle ("b").
+Post-ingest text-level fixups handled (a) part-label renumbering (TCP
+transcription anomalies in Pss 37, 89, 119), and (b) verse-1 injection
+on ~27 psalms where the TCP dropped the opening verse milestone.  Pss
+69 and 71 open with a metrical stanza covering prose verses 1–2;
+labelled as "1" so full-psalm queries work, narrow "verse 2 alone"
+queries do not.
+
+**Psalter/backend split (2026-04-23):** The architectural decision
+"one preferred-psalter setting per language" is now realised.
+Coverdale, Vulgate, and Tate & Brady register with =:kind :psalter=
+and live in =bcp-fetcher-psalter=; oremus / ebible / bungo-yaku are
+=:kind :bible= in =bcp-fetcher-backend=.  The fetch dispatch inserts
+a psalter attempt ahead of the backend chain when (a) the passage is
+a Psalm, (b) a psalter is active, and (c) the caller either passed no
+explicit translation or passed one the psalter serves.
 
 Phase B — routing metrical psalters through the hymnal registry/
 renderer per the "metrical psalters are hymns" plan above — remains
-open.  The current backend is standalone, modelled on Coverdale; it
+open.  The Tate & Brady psalter is a standalone text renderer; it
 works, but doesn't yet share infrastructure with future hymn-keyed
 metrical settings (Anglo-Genevan, Japanese Genevan).
 
 *** Deferred
-- Whether "preferred psalter" needs a new language-profile field or can
-  piggyback on an existing setting — inspect the language-profile code
-  when implementation starts.
 - Exact shape of the hymnal file format extension (stanza blocks with
   =:tune= and =:meter= metadata per-psalm) — review existing hymnal
   files before adding per-stanza psalm records.

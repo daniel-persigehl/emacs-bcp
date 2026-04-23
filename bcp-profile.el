@@ -17,6 +17,7 @@
 ;;   `bcp-profile-lesson-translation'
 ;;   `bcp-profile-psalm-translation'
 ;;   `bcp-profile-backend'
+;;   `bcp-profile-psalter'
 ;;   `bcp-profile-fallback-backend'
 ;;   `bcp-profile-roman-language'
 ;;   `bcp-profile-canticle-language'
@@ -37,7 +38,8 @@
 (defconst bcp-profile--definitions
   '((ENG . (:lesson-translation       "KJVA"
             :psalm-translation        "Coverdale"
-            :backend                  coverdale
+            :backend                  oremus
+            :psalter                  coverdale
             :fallback-backend         oremus
             :roman-language           english
             :canticle-language        english
@@ -45,7 +47,8 @@
             :furigana                 hidden))
     (ENG-TB . (:lesson-translation    "KJVA"
                :psalm-translation     "Tate & Brady"
-               :backend               tate-brady
+               :backend               oremus
+               :psalter               tate-brady
                :fallback-backend      oremus
                :roman-language        english
                :canticle-language     english
@@ -53,7 +56,8 @@
                :furigana              hidden))
     (LAT . (:lesson-translation       "Vulgate"
             :psalm-translation        "Vulgate"
-            :backend                  vulgate
+            :backend                  oremus
+            :psalter                  vulgate
             :fallback-backend         oremus
             :roman-language           latin
             :canticle-language        latin
@@ -62,6 +66,7 @@
     (JAP . (:lesson-translation       "Bungo-yaku"
             :psalm-translation        "Bungo-yaku"
             :backend                  bungo-yaku
+            :psalter                  nil
             :fallback-backend         oremus
             :roman-language           english
             :canticle-language        english
@@ -74,6 +79,7 @@ Each profile maps setting keywords to their default values.")
   '((:lesson-translation  . bible-commentary-translation)
     (:psalm-translation   . bible-commentary-psalm-translation)
     (:backend             . bcp-fetcher-backend)
+    (:psalter             . bcp-fetcher-psalter)
     (:fallback-backend    . bcp-fetcher-fallback-backend)
     (:roman-language      . bcp-roman-office-language)
     (:canticle-language   . bcp-liturgy-canticle-language)
@@ -85,6 +91,7 @@ Each profile maps setting keywords to their default values.")
   '((:lesson-translation  . bcp-profile-lesson-translation)
     (:psalm-translation   . bcp-profile-psalm-translation)
     (:backend             . bcp-profile-backend)
+    (:psalter             . bcp-profile-psalter)
     (:fallback-backend    . bcp-profile-fallback-backend)
     (:roman-language      . bcp-profile-roman-language)
     (:canticle-language   . bcp-profile-canticle-language)
@@ -122,10 +129,18 @@ settings can be overridden in the Advanced Overrides menu."
   :group 'bcp-profile)
 
 (defcustom bcp-profile-backend 'default
-  "Override for primary fetch backend, or `default'."
+  "Override for the primary Bible backend, or `default'.
+Psalters are selected separately via `bcp-profile-psalter'."
   :type '(choice (const :tag "Profile default" default)
-                 (const coverdale) (const tate-brady) (const vulgate)
                  (const bungo-yaku) (const oremus) (const ebible))
+  :group 'bcp-profile)
+
+(defcustom bcp-profile-psalter 'default
+  "Override for the active psalter, or `default'.
+Nil means no psalter override — the Bible backend serves psalms."
+  :type '(choice (const :tag "Profile default" default)
+                 (const :tag "None (backend serves psalms)" nil)
+                 (const coverdale) (const tate-brady) (const vulgate))
   :group 'bcp-profile)
 
 (defcustom bcp-profile-fallback-backend 'default

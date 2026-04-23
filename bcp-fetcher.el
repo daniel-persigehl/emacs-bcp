@@ -2,9 +2,13 @@
 
 ;;; Commentary:
 
-;; Backend-agnostic fetching layer for the BCP package.  Backends
-;; register themselves via `bcp-fetcher-register-backend'; the active
-;; backend is selected by `bcp-fetcher-backend' (default: `oremus').
+;; Backend-agnostic fetching layer for the BCP package.  Sources register
+;; themselves via `bcp-fetcher-register-backend' with `:kind :bible' or
+;; `:kind :psalter'.  The active Bible backend is selected by
+;; `bcp-fetcher-backend' (default: `oremus'); the active psalter is
+;; selected by `bcp-fetcher-psalter' (default: `coverdale').  When a
+;; Psalms passage is requested and a psalter is set, the psalter is tried
+;; before the Bible backend.
 ;;
 ;; The Oremus backend is loaded automatically at the bottom of this file
 ;; via (require 'bcp-fetcher-oremus).  To use a different backend, load
@@ -15,11 +19,14 @@
 ;;   `bcp-fetcher-fetch-passage'          — async fetch, calls (load-fn text label)
 ;;   `bcp-fetcher-fetch-passage-context'  — async context fetch for omitted verses
 ;;   `bcp-fetcher-clean-text'             — strip Windows-1252 artefacts from text
-;;   `bcp-fetcher-register-backend'       — register a fetch backend
+;;   `bcp-fetcher-register-backend'       — register a backend or psalter
+;;   `bcp-fetcher-bible-backends'         — list of registered Bible backends
+;;   `bcp-fetcher-psalters'               — list of registered psalters
 ;;   `bcp-fetcher-available-translations' — translations for the active backend
 ;;   `bcp-fetcher-clear-cache'            — clear the in-memory passage cache
 ;;
 ;; Fallback chain (attempted in order, first success wins):
+;;   0. Active psalter (Psalms passages only)
 ;;   1. Primary backend, preferred translation
 ;;   2. Primary backend, `bcp-fetcher-fallback-translation' (default: KJVA)
 ;;   3. `bcp-fetcher-fallback-backend' (e.g. ebible), preferred translation
@@ -272,21 +279,30 @@ Returns the cleaned string with text properties intact."
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Backend registry
 
-(defcustom bcp-fetcher-backend 'coverdale
-  "Symbol identifying the active Bible text fetch backend.
-Defaults to \\='coverdale, which serves the Psalter from the local
-`bcp-fetcher-coverdale-file' and returns nil for all other passages,
-allowing the fallback backend to handle them.
-The backend must be registered via `bcp-fetcher-register-backend'."
+(defcustom bcp-fetcher-backend 'oremus
+  "Symbol identifying the active Bible text backend.
+The backend must be a Bible-wide source registered via
+`bcp-fetcher-register-backend' with `:kind :bible' (the default kind).
+Psalter-only sources (Coverdale, Tate & Brady, Vulgate) register as
+`:kind :psalter' and are selected separately via `bcp-fetcher-psalter'."
   :type 'symbol
   :group 'bcp-fetcher)
 
+(defcustom bcp-fetcher-psalter 'coverdale
+  "Symbol identifying the active psalter, or nil.
+When non-nil and the requested passage is a Psalm, this psalter is
+tried before the Bible backend.  If it declines the passage (e.g. for
+out-of-range verses) the normal backend chain runs.  When nil the
+Bible backend serves psalms directly.  Must be a backend registered
+with `:kind :psalter'."
+  :type '(choice (const :tag "None (backend serves psalms)" nil) symbol)
+  :group 'bcp-fetcher)
+
 (defcustom bcp-fetcher-fallback-backend 'oremus
-  "Symbol identifying a fallback backend to try when the primary fails.
+  "Symbol identifying a fallback Bible backend when the primary fails.
 When the primary backend returns nil (fetch failed, timed out, or the
-passage is outside its scope), this backend is tried next.  Defaults
-to \\='oremus so non-Psalms passages pass through transparently when
-the primary is \\='coverdale.  Nil means no fallback."
+passage is outside its scope) this backend is tried next.  Nil means
+no fallback.  Must be `:kind :bible'."
   :type '(choice (const :tag "None" nil) symbol)
   :group 'bcp-fetcher)
 
@@ -338,6 +354,9 @@ Required plist keys:
                         or nil on failure
   :translations LIST  — list of supported translation name strings
 Optional:
+  :kind SYM           — :bible (a Bible-wide backend, the default) or
+                         :psalter (a psalter-only source selected by
+                         `bcp-fetcher-psalter', not listed as a backend).
   :psalm-numbering SYM — psalm numbering scheme: hebrew (alias: kjv,
                          masoretic) or lxx (alias: vulgate, septuagint).
                          Used by the psalm-mapping layer to convert
@@ -345,12 +364,32 @@ Optional:
                          backend disagree.  Default: hebrew."
   (when-let ((pn (plist-get plist :psalm-numbering)))
     (plist-put plist :psalm-numbering (bcp-fetcher--normalize-psalm-numbering pn)))
+  (unless (plist-get plist :kind)
+    (setq plist (plist-put plist :kind :bible)))
   (setf (alist-get name bcp-fetcher--backends) plist))
 
+(defun bcp-fetcher--backends-of-kind (kind)
+  "Return alist entries from `bcp-fetcher--backends' whose :kind equals KIND."
+  (cl-remove-if-not (lambda (e) (eq (plist-get (cdr e) :kind) kind))
+                    bcp-fetcher--backends))
+
+(defun bcp-fetcher-bible-backends ()
+  "Return the list of registered Bible backend symbols."
+  (mapcar #'car (bcp-fetcher--backends-of-kind :bible)))
+
+(defun bcp-fetcher-psalters ()
+  "Return the list of registered psalter symbols."
+  (mapcar #'car (bcp-fetcher--backends-of-kind :psalter)))
+
 (defun bcp-fetcher--active-backend ()
-  "Return the plist of the active backend, or signal an error if missing."
+  "Return the plist of the active Bible backend, or signal an error if missing."
   (or (alist-get bcp-fetcher-backend bcp-fetcher--backends)
       (error "bcp-fetcher: no backend registered for `%s'" bcp-fetcher-backend)))
+
+(defun bcp-fetcher--active-psalter ()
+  "Return the plist of the active psalter, or nil if none is set."
+  (and bcp-fetcher-psalter
+       (alist-get bcp-fetcher-psalter bcp-fetcher--backends)))
 
 (defun bcp-fetcher-available-translations ()
   "Return the list of translation name strings for the active backend."
@@ -358,7 +397,7 @@ Optional:
 
 (defun bcp-fetcher--backend-for-translation (translation)
   "Return the fetch-fn for the backend that supports TRANSLATION, or nil.
-Searches all registered backends (case-insensitive match on :translations)."
+Searches all registered backends (including psalters) case-insensitively."
   (let ((tr-down (downcase translation))
         (result nil))
     (dolist (entry bcp-fetcher--backends result)
@@ -367,6 +406,11 @@ Searches all registered backends (case-insensitive match on :translations)."
         (when (cl-some (lambda (t-name) (string= tr-down (downcase t-name)))
                        translations)
           (setq result (plist-get plist :fetch-fn)))))))
+
+(defun bcp-fetcher--psalms-passage-p (passage)
+  "Return non-nil if PASSAGE is a Psalms reference."
+  (and (stringp passage)
+       (string-match-p "\\`Psalms? [0-9]" passage)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Public fetch API
@@ -408,6 +452,7 @@ The text properties from the backend are preserved — do NOT pass the result
 through `bcp-fetcher-clean-text' as that would strip them.
 
 Fallback chain (each step tried in order until one succeeds):
+  0. Active psalter (only when PASSAGE is a Psalm and a psalter is set)
   1. Translation-matched backend (if a registered backend claims TRANSLATION)
   2. Primary backend, preferred translation
   3. Primary backend, `bcp-fetcher-fallback-translation' (default: KJVA)
@@ -422,6 +467,20 @@ is checked at each step before issuing a network fetch."
   (let* ((tr         (or translation bible-commentary-translation))
          (primary-fn (plist-get (bcp-fetcher--active-backend) :fetch-fn))
          (tr-fn      (bcp-fetcher--backend-for-translation tr))
+         (psalter    (and (bcp-fetcher--psalms-passage-p passage)
+                          (bcp-fetcher--active-psalter)))
+         (psalter-translations (plist-get psalter :translations))
+         ;; Psalter fires only when either no explicit translation was
+         ;; passed (use profile default) or the caller's translation is
+         ;; one the psalter can serve.
+         (psalter-applies (and psalter
+                               (or (null translation)
+                                   (cl-some (lambda (t-name)
+                                              (string= (downcase t-name)
+                                                       (downcase tr)))
+                                            psalter-translations))))
+         (psalter-fn (and psalter-applies (plist-get psalter :fetch-fn)))
+         (psalter-tr (car psalter-translations))
          (fb-tr      (and bcp-fetcher-fallback-translation
                           (not (equal tr bcp-fetcher-fallback-translation))
                           bcp-fetcher-fallback-translation))
@@ -430,7 +489,11 @@ is checked at each step before issuing a network fetch."
                                                bcp-fetcher--backends))))
                        (when fb (plist-get fb :fetch-fn))))
          (attempts   (delq nil
-                           (list (when (and tr-fn (not (eq tr-fn primary-fn)))
+                           (list (when psalter-fn
+                                   (cons psalter-fn (or psalter-tr tr)))
+                                 (when (and tr-fn
+                                            (not (eq tr-fn primary-fn))
+                                            (not (eq tr-fn psalter-fn)))
                                    (cons tr-fn tr))
                                  (cons primary-fn tr)
                                  (when fb-tr (cons primary-fn fb-tr))
@@ -695,6 +758,7 @@ Returns nil for non-Psalms passages so the fallback chain continues."
 (bcp-fetcher-register-backend
  'coverdale
  :name            "Coverdale Psalter (local)"
+ :kind            :psalter
  :fetch-fn        #'bcp-fetcher--coverdale-fetch
  :psalm-numbering 'hebrew
  :translations    '("Coverdale" "BCP"))
@@ -880,6 +944,7 @@ Returns nil for non-Psalms passages so the fallback chain continues."
 (bcp-fetcher-register-backend
  'tate-brady
  :name            "Tate & Brady Metrical Psalter (local, 1698)"
+ :kind            :psalter
  :fetch-fn        #'bcp-fetcher--tate-brady-fetch
  :psalm-numbering 'hebrew
  :translations    '("Tate & Brady" "T&B"))
@@ -1018,6 +1083,7 @@ Wrapper around `bcp-fetcher--hebrew-to-lxx' for backward compatibility."
 (bcp-fetcher-register-backend
  'vulgate
  :name            "Vulgate Psalter (local)"
+ :kind            :psalter
  :fetch-fn        #'bcp-fetcher--vulgate-fetch
  :psalm-numbering 'lxx
  :translations    '("Vulgate" "Latin"))

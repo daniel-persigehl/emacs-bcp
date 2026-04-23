@@ -73,6 +73,7 @@
 (defvar bible-commentary-translation)
 (defvar bible-commentary-psalm-translation)
 (defvar bcp-fetcher-backend)
+(defvar bcp-fetcher-psalter)
 (defvar bcp-fetcher-fallback-backend)
 (defvar bcp-1662-venite-lent-verses)
 (defvar bcp-1662-venite-ps96-substitute)
@@ -208,13 +209,23 @@ called on the effective value to produce the display string."
     (bcp-profile-apply)))
 
 (transient-define-suffix bcp--override-backend ()
-  "Override primary fetch backend or inherit from profile."
+  "Override primary Bible backend or inherit from profile."
   :description (lambda ()
     (bcp--profile-desc :backend "Backend: %s"))
   :transient t
   (interactive)
   (bcp--cycle-override 'bcp-profile-backend
-                       '(coverdale tate-brady vulgate bungo-yaku oremus ebible)))
+                       '(oremus ebible bungo-yaku)))
+
+(transient-define-suffix bcp--override-psalter ()
+  "Override the active psalter or inherit from profile."
+  :description (lambda ()
+    (bcp--profile-desc :psalter "Psalter: %s"
+                       (lambda (v) (if v (format "%s" v) "none"))))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-psalter
+                       '(coverdale tate-brady vulgate nil)))
 
 (transient-define-suffix bcp--override-fallback-backend ()
   "Override fallback fetch backend or inherit from profile."
@@ -274,7 +285,8 @@ Each setting shows (profile) when inherited or (override) when
 explicitly set.  Use Reset to clear all overrides."
   [["Lessons & Psalms"
     ("t" bcp--override-lesson-translation)
-    ("p" bcp--override-psalm-translation)]
+    ("p" bcp--override-psalm-translation)
+    ("P" bcp--override-psalter)]
    ["Backend"
     ("b" bcp--override-backend)
     ("B" bcp--override-fallback-backend)
