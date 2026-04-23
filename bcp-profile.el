@@ -58,7 +58,7 @@
             :roman-language           english
             :canticle-language        english
             :canticle-gloria          nil
-            :furigana                 comment)))
+            :furigana                 rubi)))
   "Built-in language profile definitions.
 Each profile maps setting keywords to their default values.")
 
@@ -146,7 +146,8 @@ settings can be overridden in the Advanced Overrides menu."
 (defcustom bcp-profile-furigana 'default
   "Override for furigana display mode, or `default'."
   :type '(choice (const :tag "Profile default" default)
-                 (const normal) (const comment) (const hidden))
+                 (const normal) (const comment) (const hidden)
+                 (const :tag "Overhead rubi" rubi))
   :group 'bcp-profile)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
@@ -176,7 +177,7 @@ Call this after changing `bcp-language-profile' or any override variable."
              (eq (symbol-value 'bcp-fetcher-furigana-display) 'hidden)
              (eq bcp-profile-furigana 'default)
              (not (eq bcp-language-profile 'JAP)))
-    (set 'bcp-fetcher-furigana-display 'comment))
+    (set 'bcp-fetcher-furigana-display 'rubi))
   ;; Clear cache since backend/translation may have changed
   (when (fboundp 'bcp-fetcher-clear-cache)
     (bcp-fetcher-clear-cache))

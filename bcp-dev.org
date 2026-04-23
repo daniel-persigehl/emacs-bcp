@@ -297,16 +297,51 @@ Extracted from the JapBungo SWORD module via =mod2imp= + OSIS tag stripping.
 Furigana preserved as =kanji《reading》= (lenticular brackets).
 
 ** Furigana Display System
-Three display modes controlled by =bcp-fetcher-furigana-display=:
+Four display modes controlled by =bcp-fetcher-furigana-display=:
 - =normal= — furigana displayed inline with body text
 - =comment= — furigana displayed in muted grey (font-lock-comment-face)
 - =hidden= — furigana invisible (Emacs =invisible= property with =bcp-furigana= spec)
+- =rubi= — overhead rubi via inline SVG images (kanji + reading kana centred above)
 
 =bcp-fetcher--propertize-furigana= marks 《…》 spans with the =bcp-furigana=
-text property at render time.  =bcp-fetcher-toggle-furigana= cycles visibility
-in the current buffer without re-rendering.
+text property at render time, and stamps =bcp-rubi-reading= / =bcp-rubi-base-width=
+on the first character of each preceding kanji run so the rubi renderer can
+locate spans at finalise time.
 
-The language profile auto-promotes furigana from =hidden= to =comment= when
+*** Rubi SVG renderer
+=bcp-fetcher--rubi-svg-build= generates an SVG per (kanji . reading) pair
+sized to the current =frame-char-width= / =frame-char-height=.  Tunables:
+- =bcp-fetcher-rubi-svg-kanji-scale= (default 0.62) — kanji height as a
+  fraction of =frame-char-height=
+- =bcp-fetcher-rubi-svg-reading-scale= (default 0.5) — reading height as a
+  fraction of the kanji size; auto-shrinks further when the reading would
+  otherwise overflow the kanji-width box
+- =bcp-fetcher-rubi-svg-font= — font-family list passed to the SVG
+Built images are cached in =bcp-fetcher--rubi-svg-cache= (keyed by cons
+cell), invalidated by =bcp-fetcher-clear-cache=.
+=bcp-fetcher--rubi-apply-svg= walks the buffer, replacing each kanji
+span's display with its SVG image; =bcp-fetcher--rubi-remove-svg= strips
+those =display= / =bcp-rubi-svg= properties.  When SVG is unavailable,
+=rubi= mode falls through to showing the 《…》 markers visibly inline.
+Diagnostic: =M-x bcp-fetcher-rubi-svg-diagnose= prints the current pixel
+sizing.
+
+*** Toggle semantics
+=bcp-fetcher-toggle-furigana= is a binary "show-as-configured ↔ hidden
+entirely" toggle.  State is tracked via buffer-local
+=bcp-fetcher--furigana-toggled-off=; =bcp-fetcher--furigana-show-configured=
+dispatches on =bcp-fetcher-furigana-display= to restore the configured
+mode (including re-applying SVGs for =rubi=), and
+=bcp-fetcher--furigana-hide-all= strips SVGs and stamps every 《…》 span
+invisible.  The Advanced override menu selects *which* mode shows when
+toggled on; the main-menu toggle only flips visibility.
+
+The command searches for a buffer with furigana annotations (current
+buffer preferred, otherwise the first live buffer with =bcp-rubi-reading=
+or =bcp-furigana= properties), so it works when invoked from the settings
+transient regardless of which buffer was selected beforehand.
+
+The language profile auto-promotes furigana from =hidden= to =rubi= when
 the backend is =bungo-yaku= but the profile is not JAP (cross-language override).
 
 * bcp-profile.el :science:
@@ -322,7 +357,7 @@ defaults at once; individual settings can be overridden.
 |---------+--------+-------+---------+----------+------------+---------------+--------+----------|
 | ENG | KJVA | Coverdale | coverdale | oremus | english | english | nil | hidden |
 | LAT | Vulgate | Vulgate | vulgate | oremus | latin | latin | t | hidden |
-| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | oremus | english | english | nil | comment |
+| JAP | Bungo-yaku | Bungo-yaku | bungo-yaku | oremus | english | english | nil | rubi |
 
 ** Architecture
 =bcp-profile--definitions= (defconst) maps profile symbols to 8 keyword→value plists.

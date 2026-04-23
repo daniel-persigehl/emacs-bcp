@@ -36,6 +36,10 @@
 
 (require 'cl-lib)
 
+(declare-function svg-create "svg" (width height &rest args))
+(declare-function svg-text   "svg" (svg text &rest args))
+(declare-function svg-image  "svg" (svg &rest props))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Defgroup
 
@@ -314,6 +318,8 @@ Cache is per-session only; it is cleared when Emacs restarts or when
   "Clear the in-memory passage cache and reset local psalters."
   (interactive)
   (clrhash bcp-fetcher--cache)
+  (when (boundp 'bcp-fetcher--rubi-svg-cache)
+    (clrhash bcp-fetcher--rubi-svg-cache))
   (setq bcp-fetcher--coverdale-psalms nil
         bcp-fetcher--vulgate-psalms nil
         bcp-fetcher--bungo-yaku-bible nil)
@@ -831,10 +837,13 @@ Wrapper around `bcp-fetcher--hebrew-to-lxx' for backward compatibility."
 `normal'  — display as normal text, same as surrounding kanji.
 `comment' — display in a muted face (inherits `font-lock-comment-face').
 `hidden'  — hide furigana entirely (can be toggled with
-            `bcp-fetcher-toggle-furigana')."
+            `bcp-fetcher-toggle-furigana').
+`rubi'    — hide the inline 《…》 markers and render the reading as a
+            half-height strip above the kanji span (overhead rubi)."
   :type '(choice (const :tag "Normal text" normal)
                  (const :tag "Comment face (muted)" comment)
-                 (const :tag "Hidden" hidden))
+                 (const :tag "Hidden" hidden)
+                 (const :tag "Overhead rubi" rubi))
   :group 'bcp-fetcher)
 
 (defface bcp-fetcher-furigana
@@ -843,19 +852,49 @@ Wrapper around `bcp-fetcher--hebrew-to-lxx' for backward compatibility."
 Used when `bcp-fetcher-furigana-display' is `comment'."
   :group 'bcp-fetcher)
 
+(defun bcp-fetcher--rubi-kanji-char-p (c)
+  "Non-nil if C is a CJK ideograph eligible to carry a rubi reading.
+Covers the Basic, Ext-A, and Ext-B ranges plus compatibility block."
+  (or (and (>= c #x3400) (<= c #x4DBF))     ; CJK Ext A
+      (and (>= c #x4E00) (<= c #x9FFF))     ; CJK Unified
+      (and (>= c #xF900) (<= c #xFAFF))     ; Compatibility
+      (and (>= c #x20000) (<= c #x2A6DF)))) ; CJK Ext B
+
+(defun bcp-fetcher--kanji-span-start (str end)
+  "Return index in STR of the start of the kanji run ending at END.
+Scans backward from END while characters are CJK ideographs."
+  (let ((i end))
+    (while (and (> i 0)
+                (bcp-fetcher--rubi-kanji-char-p (aref str (1- i))))
+      (setq i (1- i)))
+    i))
+
 (defun bcp-fetcher--propertize-furigana (str)
   "Apply furigana display properties to 《reading》 spans in STR.
-Respects `bcp-fetcher-furigana-display'."
+Respects `bcp-fetcher-furigana-display'.
+Also stamps the first character of each preceding kanji span with
+`bcp-rubi-reading' (the kana reading) and `bcp-rubi-base-width'
+(visual width of the kanji span in default-face columns), so the
+rubi renderer can locate and align spans at finalise time."
   (let ((result (copy-sequence str))
         (start 0))
     (while (string-match "《\\([^》]+\\)》" result start)
-      (let ((beg (match-beginning 0))
-            (end (match-end 0)))
+      (let* ((beg       (match-beginning 0))
+             (end       (match-end 0))
+             (reading   (match-string 1 result))
+             (kanji-beg (bcp-fetcher--kanji-span-start result beg))
+             (kanji-width (when (< kanji-beg beg)
+                            (string-width (substring result kanji-beg beg)))))
         (put-text-property beg end 'bcp-furigana t result)
+        (when kanji-width
+          (put-text-property kanji-beg (1+ kanji-beg)
+                             'bcp-rubi-reading reading result)
+          (put-text-property kanji-beg (1+ kanji-beg)
+                             'bcp-rubi-base-width kanji-width result))
         (pcase bcp-fetcher-furigana-display
           ('comment
            (put-text-property beg end 'face 'bcp-fetcher-furigana result))
-          ('hidden
+          ((or 'hidden 'rubi)
            (put-text-property beg end 'invisible 'bcp-furigana result)))
         (setq start end)))
     result))
@@ -870,24 +909,240 @@ Respects `bcp-fetcher-furigana-display'."
         (put-text-property pos end prop value)
         (setq pos end)))))
 
-(defun bcp-fetcher-toggle-furigana ()
-  "Toggle furigana visibility in the current buffer.
-When furigana are visible, hides them.  When hidden, restores them
-according to `bcp-fetcher-furigana-display' (normal or comment face)."
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Overhead rubi rendering — SVG images
+;;;;
+;;;; For each kanji span carrying a `bcp-rubi-reading' property, we generate
+;;;; an inline SVG image containing the kanji at the baseline and the
+;;;; reading kana at roughly half-size centered above, then replace the
+;;;; kanji-span's display with that image via a `display' text property.
+;;;; The underlying characters stay in the buffer, so search, copy, and
+;;;; cursor navigation work normally.
+;;;;
+;;;; Width of each SVG equals the kanji span's natural width
+;;;; (2 × frame-char-width × N-kanji), so text flow is unchanged regardless
+;;;; of reading length — a long reading just shrinks to fit.
+;;;;
+;;;; Requires Emacs built with SVG support.  When `(image-type-available-p
+;;;; 'svg)' is nil, the finalise step skips the SVG pass and leaves the
+;;;; 《…》 markers visible as a graceful fallback.
+
+(defcustom bcp-fetcher-rubi-svg-font
+  "Noto Serif CJK JP, Noto Sans CJK JP, Sazanami Mincho, IPAMincho, serif"
+  "CSS font-family used for overhead rubi SVGs.
+Comma-separated fallback chain as in CSS; the first family
+available in the rendering backend (librsvg/fontconfig) wins."
+  :type 'string
+  :group 'bcp-fetcher)
+
+(defcustom bcp-fetcher-rubi-svg-kanji-scale 0.62
+  "Kanji font-size as a fraction of `frame-char-height' inside rubi SVGs.
+SVG text at font-size = full line-height renders visually larger
+than the same glyph in buffer, so a value under 1.0 usually looks
+right.  Call `bcp-fetcher-clear-cache' after changing this."
+  :type 'number
+  :group 'bcp-fetcher)
+
+(defcustom bcp-fetcher-rubi-svg-reading-scale 0.5
+  "Reading font-size as a fraction of the SVG kanji font-size.
+0.5 is the classic half-size rubi proportion.  Call
+`bcp-fetcher-clear-cache' after changing this."
+  :type 'number
+  :group 'bcp-fetcher)
+
+(defvar bcp-fetcher--rubi-svg-cache (make-hash-table :test 'equal)
+  "Hash table caching rubi SVG images keyed by (kanji . reading).
+Cleared by `bcp-fetcher-clear-cache'.")
+
+(defun bcp-fetcher--rubi-svg-build (kanji reading)
+  "Return an image spec showing READING above KANJI, or nil if no SVG support."
+  (when (image-type-available-p 'svg)
+    (require 'svg)
+    (let* ((fw            (frame-char-width))
+           (fh            (frame-char-height))
+           (nkanji        (length kanji))
+           (width         (* 2 nkanji fw))
+           (kanji-size    (max 2 (round (* fh bcp-fetcher-rubi-svg-kanji-scale))))
+           (reading-size  (max 2 (round (* kanji-size
+                                           bcp-fetcher-rubi-svg-reading-scale))))
+           (rubi-gap      1)
+           (height        (+ reading-size rubi-gap kanji-size 1))
+           ;; If the reading is wider than the span at the nominal size, shrink
+           ;; it further so it still fits above the kanji.  CJK kana at font-
+           ;; size N render ≈ N pixels wide; leave a ~5% margin so edges don't
+           ;; clip against the SVG viewport.
+           (safe-width        (* width 0.95))
+           (approx-reading-px (* (length reading) reading-size))
+           (reading-size  (if (> approx-reading-px safe-width)
+                              (max 4 (floor (* reading-size
+                                               (/ safe-width
+                                                  approx-reading-px))))
+                            reading-size))
+           (reading-y     (+ reading-size 0))
+           (kanji-y       (- height 2))
+           (fg            (or (face-attribute 'default :foreground nil 'default)
+                              "black"))
+           (svg           (svg-create width height)))
+      (svg-text svg reading
+                :x (/ width 2) :y reading-y
+                :text-anchor "middle"
+                :font-size reading-size
+                :font-family bcp-fetcher-rubi-svg-font
+                :fill fg)
+      (svg-text svg kanji
+                :x (/ width 2) :y kanji-y
+                :text-anchor "middle"
+                :font-size kanji-size
+                :font-family bcp-fetcher-rubi-svg-font
+                :fill fg)
+      (svg-image svg :ascent (round (* 100.0 (/ (float kanji-y) height)))))))
+
+(defun bcp-fetcher--rubi-svg (kanji reading)
+  "Return a cached image spec for KANJI+READING, or nil if no SVG support."
+  (let ((key (cons kanji reading)))
+    (or (gethash key bcp-fetcher--rubi-svg-cache)
+        (let ((img (bcp-fetcher--rubi-svg-build kanji reading)))
+          (when img (puthash key img bcp-fetcher--rubi-svg-cache))
+          img))))
+
+(defun bcp-fetcher--rubi-apply-svg ()
+  "Replace every kanji+reading span with its rubi SVG image.
+No-op when SVG is unavailable — caller should leave the 《…》
+markers visible as the fallback."
+  (when (image-type-available-p 'svg)
+    (save-excursion
+      (let ((inhibit-read-only t))
+        (goto-char (point-min))
+        (while (not (eobp))
+          (let ((reading (get-text-property (point) 'bcp-rubi-reading))
+                (width   (get-text-property (point) 'bcp-rubi-base-width)))
+            (cond
+             ((and reading width)
+              (let* ((end   (+ (point) (/ width 2)))
+                     (kanji (buffer-substring-no-properties (point) end))
+                     (image (bcp-fetcher--rubi-svg kanji reading)))
+                (when image
+                  (put-text-property (point) end 'display image)
+                  (put-text-property (point) end 'bcp-rubi-svg t))
+                (goto-char end)))
+             (t
+              (goto-char (or (next-single-property-change
+                              (point) 'bcp-rubi-reading nil (point-max))
+                             (point-max)))))))))))
+
+(defun bcp-fetcher--rubi-remove-svg ()
+  "Strip any rubi-SVG display properties from the current buffer."
+  (save-excursion
+    (let ((inhibit-read-only t)
+          (pos (point-min)))
+      (while (setq pos (text-property-any pos (point-max) 'bcp-rubi-svg t))
+        (let ((end (or (next-single-property-change
+                        pos 'bcp-rubi-svg nil (point-max))
+                       (point-max))))
+          (remove-text-properties pos end '(display nil bcp-rubi-svg nil))
+          (setq pos end))))))
+
+(defvar-local bcp-fetcher--furigana-toggled-off nil
+  "Non-nil when `bcp-fetcher-toggle-furigana' has hidden furigana in this buffer.
+Cleared when the user toggles it back on.")
+
+(defun bcp-fetcher--furigana-hide-all ()
+  "Hide every furigana annotation in the current buffer.
+Strips any rubi SVGs and marks every 《…》 span invisible."
+  (when (text-property-any (point-min) (point-max) 'bcp-rubi-svg t)
+    (bcp-fetcher--rubi-remove-svg))
+  (add-to-invisibility-spec 'bcp-furigana)
+  (bcp-fetcher--walk-furigana 'face nil)
+  (bcp-fetcher--walk-furigana 'invisible 'bcp-furigana)
+  (setq bcp-fetcher--furigana-toggled-off t))
+
+(defun bcp-fetcher--furigana-show-configured ()
+  "Display furigana in the current buffer per `bcp-fetcher-furigana-display'."
+  (bcp-fetcher--rubi-remove-svg)
+  (pcase bcp-fetcher-furigana-display
+    ('normal
+     (remove-from-invisibility-spec 'bcp-furigana)
+     (bcp-fetcher--walk-furigana 'invisible nil)
+     (bcp-fetcher--walk-furigana 'face nil))
+    ('comment
+     (remove-from-invisibility-spec 'bcp-furigana)
+     (bcp-fetcher--walk-furigana 'invisible nil)
+     (bcp-fetcher--walk-furigana 'face 'bcp-fetcher-furigana))
+    ('hidden
+     (add-to-invisibility-spec 'bcp-furigana)
+     (bcp-fetcher--walk-furigana 'face nil)
+     (bcp-fetcher--walk-furigana 'invisible 'bcp-furigana))
+    ('rubi
+     (cond
+      ((image-type-available-p 'svg)
+       (add-to-invisibility-spec 'bcp-furigana)
+       (bcp-fetcher--walk-furigana 'face nil)
+       (bcp-fetcher--walk-furigana 'invisible 'bcp-furigana)
+       (bcp-fetcher--rubi-apply-svg))
+      (t
+       (remove-from-invisibility-spec 'bcp-furigana)
+       (bcp-fetcher--walk-furigana 'invisible nil)
+       (bcp-fetcher--walk-furigana 'face nil)))))
+  (setq bcp-fetcher--furigana-toggled-off nil))
+
+(defun bcp-fetcher-rubi-svg-diagnose ()
+  "Report the pixel dimensions currently used for rubi SVGs."
   (interactive)
-  (if (and (boundp 'buffer-invisibility-alist)
-           (memq 'bcp-furigana buffer-invisibility-alist))
-      ;; Currently hidden → show
-      (progn
-        (remove-from-invisibility-spec 'bcp-furigana)
-        (bcp-fetcher--walk-furigana 'invisible nil)
-        (when (eq bcp-fetcher-furigana-display 'comment)
-          (bcp-fetcher--walk-furigana 'face 'bcp-fetcher-furigana))
-        (message "Furigana shown."))
-    ;; Currently visible → hide
-    (add-to-invisibility-spec 'bcp-furigana)
-    (bcp-fetcher--walk-furigana 'invisible 'bcp-furigana)
-    (message "Furigana hidden.")))
+  (let* ((fw (frame-char-width))
+         (fh (frame-char-height))
+         (kanji-size (max 2 (round (* fh bcp-fetcher-rubi-svg-kanji-scale))))
+         (reading-size (max 2 (round (* kanji-size
+                                        bcp-fetcher-rubi-svg-reading-scale)))))
+    (message
+     "rubi SVG: frame-char %dx%dpx | kanji-scale %.3f → %dpx | reading-scale %.3f → %dpx"
+     fw fh bcp-fetcher-rubi-svg-kanji-scale kanji-size
+     bcp-fetcher-rubi-svg-reading-scale reading-size)))
+
+(defun bcp-fetcher--buffer-has-rubi-p (buf)
+  "Non-nil if BUF contains any `bcp-rubi-reading' or `bcp-furigana' property."
+  (and (buffer-live-p buf)
+       (with-current-buffer buf
+         (save-excursion
+           (goto-char (point-min))
+           (let (found)
+             (while (and (not found) (not (eobp)))
+               (if (or (get-text-property (point) 'bcp-rubi-reading)
+                       (get-text-property (point) 'bcp-furigana))
+                   (setq found t)
+                 (goto-char
+                  (min (or (next-single-property-change
+                            (point) 'bcp-rubi-reading nil (point-max))
+                           (point-max))
+                       (or (next-single-property-change
+                            (point) 'bcp-furigana nil (point-max))
+                           (point-max))))))
+             found)))))
+
+(defun bcp-fetcher--rubi-target-buffer ()
+  "Return a buffer containing furigana annotations.
+Prefers the current buffer; otherwise returns the first live buffer
+with `bcp-rubi-reading' or `bcp-furigana' properties, or nil."
+  (if (bcp-fetcher--buffer-has-rubi-p (current-buffer))
+      (current-buffer)
+    (seq-find #'bcp-fetcher--buffer-has-rubi-p (buffer-list))))
+
+(defun bcp-fetcher-toggle-furigana ()
+  "Toggle furigana visibility in a buffer with furigana content.
+Switches between the configured display mode (per
+`bcp-fetcher-furigana-display', settable under Advanced settings)
+and fully hidden.  Operates on the current buffer if it contains
+furigana annotations, otherwise the first buffer that does."
+  (interactive)
+  (let ((buf (bcp-fetcher--rubi-target-buffer)))
+    (unless buf
+      (user-error "No buffer with furigana annotations is open"))
+    (with-current-buffer buf
+      (if bcp-fetcher--furigana-toggled-off
+          (progn (bcp-fetcher--furigana-show-configured)
+                 (message "Furigana shown (%s) in %s."
+                          bcp-fetcher-furigana-display (buffer-name)))
+        (bcp-fetcher--furigana-hide-all)
+        (message "Furigana hidden in %s." (buffer-name))))))
 
 (defcustom bcp-fetcher-bungo-yaku-file
   (expand-file-name "bcp-liturgy-bungo-yaku.txt"
@@ -1065,7 +1320,9 @@ Returns the hash table, or sets the variable to \\='unavailable on error."
 
 (defun bcp-fetcher--bungo-yaku-render-verses (book ch verses v-from v-to)
   "Render verse vector VERSES of BOOK chapter CH from V-FROM to V-TO.
-Returns a propertized string or nil."
+Returns a propertized string or nil.  The entire returned string
+carries `bcp-cjk-body' t so the rubi renderer can identify it as
+a CJK-body region at finalise time."
   (let* ((len   (length verses))
          (start (1- (max 1 (or v-from 1))))
          (end   (min len (or v-to len)))
@@ -1084,7 +1341,9 @@ Returns a propertized string or nil."
                      (concat result
                              (apply #'propertize (substring text 0 1) props)
                              (substring text 1)))))
-    (unless (string-empty-p result) result)))
+    (unless (string-empty-p result)
+      (put-text-property 0 (length result) 'bcp-cjk-body t result)
+      result)))
 
 (defun bcp-fetcher--bungo-yaku-render (passage bible)
   "Render PASSAGE from Bungo-yaku BIBLE hash table as propertized text, or nil."

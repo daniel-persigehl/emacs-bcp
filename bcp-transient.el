@@ -256,7 +256,7 @@ called on the effective value to produce the display string."
     (bcp--profile-desc :furigana "Furigana: %s"))
   :transient t
   (interactive)
-  (bcp--cycle-override 'bcp-profile-furigana '(normal comment hidden)))
+  (bcp--cycle-override 'bcp-profile-furigana '(normal comment hidden rubi)))
 
 (transient-define-suffix bcp--profile-reset-all ()
   "Reset all overrides to profile defaults."

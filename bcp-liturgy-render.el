@@ -28,6 +28,8 @@
 
 (require 'cl-lib)
 
+(declare-function bcp-fetcher--rubi-apply-svg "bcp-fetcher")
+
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Parent defgroup
 ;;;; ══════════════════════════════════════════════════════════════════════════
@@ -365,13 +367,25 @@ then calling `bcp-liturgy-render--finalise-buffer'."
 (defun bcp-liturgy-render--finalise-buffer ()
   "Finalise the current Office buffer after all content has been inserted.
 Normalises spacing, enables visual-line-mode, and sets read-only-mode.
-When `bcp-fetcher-furigana-display' is `hidden', adds `bcp-furigana'
-to the buffer invisibility spec."
+Honours `bcp-fetcher-furigana-display'.  `hidden' hides the inline
+《…》 markers via invisibility spec.  `rubi' additionally replaces
+each kanji+reading span's display with an SVG image showing the
+reading above the kanji.  If Emacs lacks SVG support, `rubi' falls
+through to showing 《…》 markers inline as a graceful fallback."
   (goto-char (point-min))
   (bcp-liturgy-render--normalise-spacing)
-  (when (and (boundp 'bcp-fetcher-furigana-display)
-             (eq bcp-fetcher-furigana-display 'hidden))
-    (add-to-invisibility-spec 'bcp-furigana))
+  (when (boundp 'bcp-fetcher-furigana-display)
+    (pcase bcp-fetcher-furigana-display
+      ('hidden
+       (add-to-invisibility-spec 'bcp-furigana))
+      ('rubi
+       (cond
+        ((image-type-available-p 'svg)
+         (add-to-invisibility-spec 'bcp-furigana)
+         (bcp-fetcher--rubi-apply-svg))
+        (t
+         ;; SVG unsupported — leave 《…》 markers visible as fallback.
+         nil)))))
   (visual-line-mode 1)
   (read-only-mode 1))
 
