@@ -1103,6 +1103,161 @@ texts second (collects, canticles, offices).
 - Sources to check: NDL (dl.ndl.go.jp), HathiTrust, Internet Archive,
   Project Canterbury (anglicanhistory.org).
 
+*** Japanese Anglican psalm chanting — research notes
+Source: NSKK 聖歌集改訂委員会 newsletters №2 (1999), №5 (2000), №7 (2001),
+at =www.nskk.org/hymn/pdf/002.pdf=, =005.pdf=, =007.pdf=.
+
+The NSKK chants psalms and canticles at the Offices using three
+stacked traditions, all provided in the 2006 聖歌集 service-music section
+(numbers S41–S70, 礼拝諸式・詩篇):
+1. *Gregorian psalm tones* (プレーンソング詩篇唱) — the eight church modes,
+   with the classic intonation → reciting tone → mediant → reciting tone →
+   termination shape.
+2. *Anglican chant* (アングリカンチャント) — described by the committee as
+   "plainsong with harmony added", pointed verses with a mediant dividing
+   the verse into two halves, 4-part harmony.
+3. *Original Japanese compositions* — new tones composed for Japanese
+   prosody.
+
+Newsletter №2 contains a specimen Mode II Easter canticle (復活の歌) laid
+out in the classic Gregorian column format: Japanese syllables aligned to
+intonation, mediant cadence, termination.  So *the mediant concept
+transfers directly to Japanese*; it just points Japanese syllables to the
+tone instead of English ones.
+
+Committee observation: psalm tones fit Japanese *better* than fixed
+metrical hymn tunes, because the elastic reciting tone absorbs extra
+syllables that wouldn't scan in a metrical setting.  Anglican chant is
+harder to adapt (fixed note count per half-verse) and they noted difficulty.
+
+Canticle taxonomy (shared with Latin): 大カンティクル (Magnificat, Nunc
+dimittis, Benedictus) vs. 小カンティクル (other OT canticles).
+
+*** IN-DEVELOPMENT Japanese psalter pointing (Bungo-yaku)
+Long-term authoring project.  Decision: option 1 (hand-point the Bungo-yaku
+psalms as original liturgical work).  Options 2 and 3 rejected — no clean
+digitisation of the 1928/29 NSKK 祈祷書 is available, and the reader use
+case benefits from pointing even when not sung (marks structural breath).
+
+**** Pilot complete
+=bcp-liturgy-psalter-bungo-yaku.txt= contains Psalm 1 (all 6 verses) and
+Psalm 119:1–8 (aleph stanza).  Establishes the format and conventions.
+
+**** Conventions
+- *Versification:* Hebrew/KJV, matching =bcp-liturgy-bungo-yaku.txt=
+  (not Coverdale BCP numbering).  Note Bungo verse merges, e.g.
+  Ps 1:3 Bungo = Coverdale 3+4.
+- *Mediant:* =＊= (U+FF0A fullwidth asterisk).  Half-width =*= is
+  visually cramped against CJK text; fullwidth gives the singer a
+  prominent cue without breaking rubi alignment (rubi SVGs are
+  anchored per-kanji via =bcp-rubi-base-width=, independent of
+  surrounding glyph widths).
+- *Flex:* =†=.  Used only on long composite verses.  Single mediant
+  is the default; a flex is a genuine secondary breath, not padding.
+- *Placement rule:* =＊= marks the *Japanese* breath point, not the
+  position where English =*= falls.  Anchor conceptually to Hebrew
+  parallelism (A // B) via the pre-existing Coverdale/Vulgate
+  pointing, then find the Japanese clause boundary carrying the same
+  parallelism hinge.  Natural Japanese breath markers: conjunctive
+  =て=, negative =ず=, topic =は=, conditional =ば=, verb endings in
+  =たまふ=.  Japanese word order often inverts the English, so the
+  mediant position diverges — that is correct, not a bug.
+- *Stanza headings:* (Ps 119) inline at start of verse 1 of each
+  stanza, preserving the Bungo source's style.
+- *Furigana:* preserved as =kanji《reading》= from source.
+- *Spacing:* single ASCII space on either side of =＊= and =†=.
+
+**** Batch plan
+Aligned to BCP day-of-month divisions for review cadence.
+
+| Batch | Psalms    | Verses | Status      |
+|-------+-----------+--------+-------------|
+|   1   | 1–17      |    179 | done        |
+|   2   | 18–34     |   ~320 |             |
+|   3   | 35–55     |   ~340 |             |
+|   4   | 56–78     |   ~430 |             |
+|   5   | 79–103    |   ~360 |             |
+|   6   | 104–118   |   ~320 |             |
+|   7   | 119       |    176 |             |
+|   8   | 120–150   |   ~270 |             |
+
+Rough rate: ~30 verses / hour of focused authoring.  Dense psalms
+(78, 104–107, 119) run slower.
+
+**** Pending integration
+Once the psalter file is substantially complete, add a Bungo-yaku
+psalter render path in =bcp-fetcher.el= analogous to
+=bcp-fetcher--coverdale-render-psalm=.  Until then the file is data
+only; office rendering continues to use the prose Bungo-yaku scripture
+fetcher.
+
+**** Pointing convention note for =bcp-dev.org=
+Update line 493–494 pointing-convention section when Japanese psalter
+ships: "Japanese texts use =＊= mediant, =†= flex."
+
+** OPEN Metrical psalters
+:PROPERTIES:
+:STATUS: OPEN
+:END:
+
+Architectural commitments (user-confirmed):
+
+*** Metrical psalters are hymns
+A metrical psalter entry reuses the hymnal file format, registry, and
+renderer.  Psalm identity is carried by the psalm number; each metrical
+setting is a hymn keyed to that psalm (and to a translation/tune).  This
+avoids inventing a new file type and avoids verse-numbering conflicts
+with the prose psalter — a metrical setting renders as a hymn block
+(stanzas, meter, tune), not as numbered verses.
+
+*** Office substitution via the hymn renderer
+Metrical psalms may stand in for prose psalms at the Office psalm slot.
+Dispatch: when rendering a psalm, if the user's preferred psalter for
+the current language is metrical, call the hymn renderer with the
+corresponding setting.  No verse-numbering shim needed because the
+output is a hymn, not a numbered psalter line.
+
+*** Preferred-psalter setting is one dimension, not two
+No separate "prefer metrical" toggle.  The language profile's preferred
+psalter directly names the psalter (Coverdale, Tate-Brady, Anglo-Genevan
+1987, Japanese Genevan, etc.).  If that psalter is prose-pointed, the
+pointed renderer runs; if metrical, the hymn renderer runs.  One
+setting, unambiguous dispatch.
+
+*** Tunes are first-class and shared
+Tunes carry meter and optional source metadata, independent of any
+specific psalter text.  The Genevan tune corpus is referenced by both
+the (English) Anglo-Genevan 1987 and the Japanese Genevan settings; one
+tune record serves both.  Sets up future audio hooks cleanly.
+
+*** Rubi/furigana applies
+Japanese metrical psalters (Japanese Genevan) route through the same
+rubi SVG infrastructure as other CJK translations.  No new rendering
+code required; the hymn renderer must preserve =《...》= markup.
+
+*** Private data directory
+=defcustom bcp-private-data-dir= (nil by default), set in the user's
+Emacs config.  Fetcher lookup order: private dir → shipped data dir.
+Registry entries for copyright-encumbered psalters (Anglo-Genevan 1987,
+Japanese Genevan, etc.) declare expected filenames; if a file is absent
+in both locations and the entry is marked private-only, surface a clear
+"install your licensed copy at X" message.  Never commit copyrighted
+text to the repo.
+
+*** Content priority
+Tate & Brady "New Version of the Psalms of David" (1696) is the first
+shipping PD metrical psalter.  Historically bound with the 1662 BCP from
+1700; natural fit for this project's tradition.  Scottish Psalter 1650
+and the 1912 Psalter are later additions.
+
+*** Deferred
+- Whether "preferred psalter" needs a new language-profile field or can
+  piggyback on an existing setting — inspect the language-profile code
+  when implementation starts.
+- Exact shape of the hymnal file format extension (stanza blocks with
+  =:tune= and =:meter= metadata per-psalm) — review existing hymnal
+  files before adding per-stanza psalm records.
+
 * Rejected Approaches
 :PROPERTIES:
 :STATUS: SETTLED
