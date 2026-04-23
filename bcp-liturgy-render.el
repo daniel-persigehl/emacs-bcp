@@ -387,7 +387,11 @@ through to showing 《…》 markers inline as a graceful fallback."
          ;; SVG unsupported — leave 《…》 markers visible as fallback.
          nil)))))
   (visual-line-mode 1)
-  (read-only-mode 1))
+  (read-only-mode 1)
+  (let ((map (make-sparse-keymap)))
+    (define-key map "q" #'quit-window)
+    (set-keymap-parent map (current-local-map))
+    (use-local-map map)))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Liturgical identity display block
