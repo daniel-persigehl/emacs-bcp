@@ -321,6 +321,7 @@ Cache is per-session only; it is cleared when Emacs restarts or when
   (when (boundp 'bcp-fetcher--rubi-svg-cache)
     (clrhash bcp-fetcher--rubi-svg-cache))
   (setq bcp-fetcher--coverdale-psalms nil
+        bcp-fetcher--tate-brady-psalms nil
         bcp-fetcher--vulgate-psalms nil
         bcp-fetcher--bungo-yaku-bible nil)
   (message "bcp-fetcher: passage cache cleared."))
@@ -697,6 +698,191 @@ Returns nil for non-Psalms passages so the fallback chain continues."
  :fetch-fn        #'bcp-fetcher--coverdale-fetch
  :psalm-numbering 'hebrew
  :translations    '("Coverdale" "BCP"))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Tate & Brady Metrical Psalter (local)
+
+(defcustom bcp-fetcher-tate-brady-file
+  (expand-file-name "bcp-liturgy-psalter-tate-brady.txt"
+                    (file-name-directory
+                     (or load-file-name buffer-file-name default-directory)))
+  "Path to the local Tate & Brady metrical psalter text file.
+Format: \"Psalm N\" headings, verse lines starting with an integer
+followed by a space, continuation lines indented by two spaces,
+blank lines between stanzas, and \"--- Part N ---\" markers for
+the long psalms the 1698 edition sub-divides for performance."
+  :type 'file
+  :group 'bcp-fetcher)
+
+(defvar bcp-fetcher--tate-brady-psalms nil
+  "Hash table mapping psalm numbers to parsed Tate & Brady records.
+Each record is an ordered list of blocks.  A block is one of:
+  (:stanza VERSES TEXT)  — VERSES is a list of verse numbers the
+                           stanza contains; TEXT is the rendered
+                           stanza with newlines preserved.
+  (:part NAME)           — a Part heading (e.g. \"Part II\").
+Populated lazily by `bcp-fetcher--tate-brady-load'.")
+
+(defun bcp-fetcher--tate-brady-load ()
+  "Parse `bcp-fetcher-tate-brady-file' into `bcp-fetcher--tate-brady-psalms'.
+Returns the hash table, or sets the variable to \\='unavailable and
+signals an error if the file is missing."
+  (unless (file-exists-p bcp-fetcher-tate-brady-file)
+    (setq bcp-fetcher--tate-brady-psalms 'unavailable)
+    (error "bcp-fetcher: Tate & Brady psalter file not found: %s"
+           bcp-fetcher-tate-brady-file))
+  (let ((table         (make-hash-table :test 'eql))
+        (psalm         nil)
+        (blocks        nil)
+        (stanza-lines  nil)
+        (stanza-verses nil))
+    (cl-labels
+        ((flush-stanza ()
+           (when stanza-lines
+             (push (list :stanza
+                         (nreverse stanza-verses)
+                         (mapconcat #'identity (nreverse stanza-lines) "\n"))
+                   blocks)
+             (setq stanza-lines nil
+                   stanza-verses nil)))
+         (flush-psalm ()
+           (flush-stanza)
+           (when psalm
+             (puthash psalm (nreverse blocks) table)
+             (setq psalm nil blocks nil))))
+      (with-temp-buffer
+        (insert-file-contents bcp-fetcher-tate-brady-file)
+        (goto-char (point-min))
+        (while (not (eobp))
+          (let ((line (buffer-substring-no-properties
+                       (line-beginning-position) (line-end-position))))
+            (cond
+             ((string-prefix-p ";" line) nil)
+             ((string-match "^Psalm \\([0-9]+\\)$" line)
+              (flush-psalm)
+              (setq psalm (string-to-number (match-string 1 line))))
+             ((string-match "^--- \\(Part [IVX]+\\) ---$" line)
+              (flush-stanza)
+              (push (list :part (match-string 1 line)) blocks))
+             ((string-empty-p line)
+              (flush-stanza))
+             ((string-match "^\\([0-9]+\\) .*$" line)
+              (push (string-to-number (match-string 1 line)) stanza-verses)
+              (push line stanza-lines))
+             ((string-match "^  .+$" line)
+              (push line stanza-lines))))
+          (forward-line 1))
+        (flush-psalm)))
+    (setq bcp-fetcher--tate-brady-psalms table)))
+
+(defun bcp-fetcher--tate-brady-psalms ()
+  "Return the Tate & Brady psalms hash table, loading it if needed.
+Returns nil if the file was previously found to be unavailable."
+  (cond
+   ((eq bcp-fetcher--tate-brady-psalms 'unavailable) nil)
+   (bcp-fetcher--tate-brady-psalms)
+   (t (bcp-fetcher--tate-brady-load))))
+
+(defun bcp-fetcher--tate-brady-stanza-overlaps-p (block v-from v-to)
+  "Non-nil if stanza BLOCK contains any verse in [V-FROM, V-TO]."
+  (when (eq (car block) :stanza)
+    (cl-some (lambda (v)
+               (and (>= v v-from) (or (null v-to) (<= v v-to))))
+             (nth 1 block))))
+
+(defun bcp-fetcher--tate-brady-filter-blocks (blocks v-from v-to)
+  "Return BLOCKS trimmed to stanzas overlapping [V-FROM, V-TO].
+Part-heads are retained when any stanza after them survives; leading
+and trailing orphan Part-heads are dropped."
+  (if (and (or (null v-from) (<= v-from 1)) (null v-to))
+      blocks
+    (let ((kept nil)
+          (pending-part nil))
+      (dolist (b blocks)
+        (pcase (car b)
+          (:part (setq pending-part b))
+          (:stanza
+           (when (bcp-fetcher--tate-brady-stanza-overlaps-p b v-from v-to)
+             (when pending-part
+               (push pending-part kept)
+               (setq pending-part nil))
+             (push b kept)))))
+      (nreverse kept))))
+
+(defun bcp-fetcher--tate-brady-render-psalm (n blocks v-from v-to)
+  "Render T&B psalm N for verses V-FROM..V-TO as propertized text.
+V-FROM nil or 1 means from the start; V-TO nil means through the end."
+  (let* ((kept (bcp-fetcher--tate-brady-filter-blocks blocks v-from v-to))
+         (rendered
+          (mapconcat
+           (lambda (b)
+             (pcase (car b)
+               (:stanza (nth 2 b))
+               (:part (concat "    " (nth 1 b)))))
+           kept "\n\n")))
+    (when (> (length rendered) 0)
+      (let ((pos 0))
+        (while (string-match "^\\([0-9]+\\) " rendered pos)
+          (let* ((vstart (match-beginning 0))
+                 (vnum   (string-to-number (match-string 1 rendered)))
+                 (props  (list 'bcp-verse vnum 'bcp-book "Psalms")))
+            (when (= vnum 1)
+              (setq props (nconc props (list 'bcp-chapter n))))
+            (add-text-properties vstart (1+ vstart) props rendered)
+            (setq pos (match-end 0)))))
+      rendered)))
+
+(defun bcp-fetcher--tate-brady-render (passage psalms)
+  "Render PASSAGE from PSALMS hash table as propertized text, or nil."
+  (cond
+   ((string-match "^Psalms? \\([0-9]+\\)-\\([0-9]+\\)$" passage)
+    (let ((from  (string-to-number (match-string 1 passage)))
+          (to    (string-to-number (match-string 2 passage)))
+          (parts nil))
+      (cl-loop for n from from to to
+               for blocks = (gethash n psalms)
+               when blocks do
+               (let ((rendered (bcp-fetcher--tate-brady-render-psalm
+                                n blocks nil nil)))
+                 (when rendered (push rendered parts))))
+      (when parts
+        (mapconcat #'identity (nreverse parts) "\n\n"))))
+   ((string-match "^Psalms? \\([0-9]+\\):\\([0-9]+\\)\\(?:-\\([0-9]+\\)\\)?$" passage)
+    (let* ((n      (string-to-number (match-string 1 passage)))
+           (v1     (string-to-number (match-string 2 passage)))
+           (v2     (when (match-string 3 passage)
+                     (string-to-number (match-string 3 passage))))
+           (blocks (gethash n psalms)))
+      (when blocks
+        (bcp-fetcher--tate-brady-render-psalm n blocks v1 v2))))
+   ((string-match "^Psalms? \\([0-9]+\\)$" passage)
+    (let* ((n      (string-to-number (match-string 1 passage)))
+           (blocks (gethash n psalms)))
+      (when blocks
+        (bcp-fetcher--tate-brady-render-psalm n blocks nil nil))))
+   (t nil)))
+
+(defun bcp-fetcher--tate-brady-fetch (passage _translation callback)
+  "Serve PASSAGE from the local Tate & Brady psalter and call CALLBACK.
+Returns nil for non-Psalms passages so the fallback chain continues."
+  (let ((text (condition-case err
+                  (bcp-fetcher--tate-brady-render
+                   passage (bcp-fetcher--tate-brady-psalms))
+                (error
+                 (message "bcp-fetcher-tate-brady: %s"
+                          (error-message-string err))
+                 nil))))
+    (when text
+      (message "bcp-fetcher: %s served from Tate & Brady metrical psalter."
+               passage))
+    (funcall callback text)))
+
+(bcp-fetcher-register-backend
+ 'tate-brady
+ :name            "Tate & Brady Metrical Psalter (local, 1698)"
+ :fetch-fn        #'bcp-fetcher--tate-brady-fetch
+ :psalm-numbering 'hebrew
+ :translations    '("Tate & Brady" "T&B"))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Vulgate Psalter (local)

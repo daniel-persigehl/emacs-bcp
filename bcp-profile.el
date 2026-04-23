@@ -43,6 +43,14 @@
             :canticle-language        english
             :canticle-gloria          nil
             :furigana                 hidden))
+    (ENG-TB . (:lesson-translation    "KJVA"
+               :psalm-translation     "Tate & Brady"
+               :backend               tate-brady
+               :fallback-backend      oremus
+               :roman-language        english
+               :canticle-language     english
+               :canticle-gloria       nil
+               :furigana              hidden))
     (LAT . (:lesson-translation       "Vulgate"
             :psalm-translation        "Vulgate"
             :backend                  vulgate
@@ -92,7 +100,8 @@ Each profile maps setting keywords to their default values.")
 Sets defaults for scripture translations, fetch backend, office
 language, canticle language, and furigana display.  Individual
 settings can be overridden in the Advanced Overrides menu."
-  :type '(choice (const :tag "English" ENG)
+  :type '(choice (const :tag "English (Coverdale psalter)" ENG)
+                 (const :tag "English (Tate & Brady metrical psalter)" ENG-TB)
                  (const :tag "Latin" LAT)
                  (const :tag "Japanese (文語訳)" JAP))
   :group 'bcp-profile)
@@ -115,7 +124,7 @@ settings can be overridden in the Advanced Overrides menu."
 (defcustom bcp-profile-backend 'default
   "Override for primary fetch backend, or `default'."
   :type '(choice (const :tag "Profile default" default)
-                 (const coverdale) (const vulgate)
+                 (const coverdale) (const tate-brady) (const vulgate)
                  (const bungo-yaku) (const oremus) (const ebible))
   :group 'bcp-profile)
 

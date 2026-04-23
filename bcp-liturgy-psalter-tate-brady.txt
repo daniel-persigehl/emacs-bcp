@@ -11,6 +11,14 @@
 ;   transcription skips them, and we have not cross-checked against another
 ;   edition to determine whether the 1698 printed book actually dropped those
 ;   verses or whether the gap is a transcription artefact.
+; Verse labelling: the TCP transcription leaves the opening stanza of many
+;   psalms unlabelled; we inject "1" at the head of each such stanza so the
+;   renderer can match verse-1 queries.  In Pss 69 and 71 the first stanza
+;   actually covers prose verses 1–2 and the TCP jumps to labelled verse 3;
+;   we label the opening "1" there too — full-psalm queries render correctly
+;   but a narrow "verse 2 only" request on those psalms returns nothing.
+; Part labels: rewritten to run sequentially (Part II, III, ...) within each
+;   psalm, correcting TCP transcription anomalies in Pss 37, 89, and 119.
 
 Psalm 1
 
@@ -2578,7 +2586,7 @@ Psalm 37
   Rejoycing still with godly Mirth,
   with Peace and Plenty always crown'd.
 
---- Part II ---
+--- Part III ---
 
 12 While sinful Crowds with false Design,
   Against the righteous few combine,
@@ -2618,7 +2626,7 @@ Psalm 37
   Shall in an instant melt away,
   and vanish into Smoak and Air.
 
---- Part III ---
+--- Part IV ---
 
 21 Whilst Sinners, brought to sad Decay,
   Still borrow on, and never pay,
@@ -2659,7 +2667,7 @@ Psalm 37
   His Heart the Law of God approves,
   therefore his Footsteps never slide.
 
---- Part IV ---
+--- Part V ---
 
 32 In wait the watchful Sinner lies
   In vain the Righteous to surprise;
@@ -2940,7 +2948,7 @@ Psalm 40
 
 Psalm 41
 
-  HAppy the Man, whose tender Care
+1 HAppy the Man, whose tender Care
   relieves the poor distrest;
   When Troubles compass him around,
   the Lord shall give him Rest.
@@ -3002,7 +3010,7 @@ Psalm 41
 
 Psalm 42
 
-  AS pants the Hart for cooling Streams,
+1 AS pants the Hart for cooling Streams,
   when heated in the chace,
   So longs my Soul, O God, for thee,
   and thy refreshing Grace.
@@ -3063,7 +3071,7 @@ Psalm 42
 
 Psalm 43
 
-  JUST Judge of Heav'n, against 'my Foes
+1 JUST Judge of Heav'n, against 'my Foes
   do thou affert my injur'd Right:
   O set me free, my God, from those
   that in Deceit and Wrong delight.
@@ -3090,7 +3098,7 @@ Psalm 43
 
 Psalm 44
 
-  O Lord, our Fathers oft have told
+1 O Lord, our Fathers oft have told
   in our attentive Ears,
   Thy Wonders in their days'perform'd,
   and elder Times than theirs:
@@ -3201,7 +3209,7 @@ Psalm 44
 
 Psalm 45
 
-  WHile I the King's loud Praise rehearse,
+1 WHile I the King's loud Praise rehearse,
   endited by my Heart,
   My Tongue is like the Pen of him
   that writes with ready Art.
@@ -3293,7 +3301,7 @@ Psalm 45
 
 Psalm 46
 
-  GOD is our Refuge in Distress,
+1 GOD is our Refuge in Distress,
   A present Help when Dangers press;
   In him undaunted we'll conside:
 
@@ -3362,7 +3370,7 @@ Psalm 47
 
 Psalm 48
 
-  THE Lord, the only God, is great,
+1 THE Lord, the only God, is great,
   and greatly to be prais'd;
   In Sion, on whose happy Mount
   his sacred Throne is rais'd.
@@ -3612,7 +3620,7 @@ Psalm 50
 
 Psalm 51
 
-  HAve Mercy, Lord, on me,
+1 HAve Mercy, Lord, on me,
   as thou wert ever kind;
   Let me, opprest with Loads of Guilt,
   thy wonted Mercy find.
@@ -3701,7 +3709,7 @@ Psalm 51
 
 Psalm 52
 
-  IN vain, O Man of lawless Might,
+1 IN vain, O Man of lawless Might,
   thou boast'st thy self in Ill;
   Since God the God in whom I trust
   vouchsafes his Favour still
@@ -3743,7 +3751,7 @@ Psalm 52
 
 Psalm 53
 
-  THE wicked Fools must sure suppose
+1 THE wicked Fools must sure suppose
   that God is but a Name;
   This gross Mistake their Practice shows,
   since Virtue all disclaim,
@@ -3802,7 +3810,7 @@ Psalm 54
 
 Psalm 55
 
-  GIve ear, thou Judge of all the Earth,
+1 GIve ear, thou Judge of all the Earth,
   and listen when I pray;
   Nor from thy humble Suppliant turn
   thy glorious Face away.
@@ -3907,7 +3915,7 @@ Psalm 55
 
 Psalm 56
 
-  DO Thou, O God, in Mercy help,
+1 DO Thou, O God, in Mercy help,
   for Man my Life pursues;
   To crush me with repeated Wrongs,
   he daily Strife renews.
@@ -3968,7 +3976,7 @@ Psalm 56
 
 Psalm 57
 
-  THY Mercy, Lord to me extend,
+1 THY Mercy, Lord to me extend,
   on thy Protection I depend;
   And to thy wing for shelter haste,
   Till this outragious Storm is past.
@@ -4020,7 +4028,7 @@ Psalm 57
 
 Psalm 58
 
-  SPeak, O ye Judges of the Earth,
+1 SPeak, O ye Judges of the Earth,
   if just your Sentence be,
   Or, most not Innocence appeal
   to Heav'n from your Decree!
@@ -4077,7 +4085,7 @@ Psalm 58
 
 Psalm 59
 
-  DEliver me, O Lord my God,
+1 DEliver me, O Lord my God,
   from all my spiteful Foes;
   In my Defence oppose thy Pow'r
   to theirs who me oppose.
@@ -4168,7 +4176,7 @@ Psalm 59
 
 Psalm 60
 
-  O God who hast our Troops disperst,
+1 O God who hast our Troops disperst,
   For saking Those who left Thee first;
   As we thy just Displeasure mourn,
   To us in Mercy, Lord, return.
@@ -4219,7 +4227,7 @@ Psalm 60
 
 Psalm 61
 
-  LOrd, hear my Cry, regard my Pray'r,
+1 LOrd, hear my Cry, regard my Pray'r,
   which I opprest with Grief,
 2 From Earth's remotest Parts address
   to Thee for kind Relief.
@@ -4302,7 +4310,7 @@ Psalm 62
 
 Psalm 63
 
-  O God my gracious God, to Thee
+1 O God my gracious God, to Thee
   My Morning Pray'rs shall offer'd be;
   For thee my thirsty Soul does pant;
   My fainting Flesh implores thy Grace,
@@ -4350,7 +4358,7 @@ Psalm 63
 
 Psalm 64
 
-  LOrd, hear the Voice of my Complaint;
+1 LOrd, hear the Voice of my Complaint;
   to my Request give Ear.
   Preserve my Life from cruel Foes,
   and free my Soul from Fear
@@ -4402,7 +4410,7 @@ Psalm 64
 
 Psalm 65
 
-  FOR Thee, O God, our constant Praise
+1 FOR Thee, O God, our constant Praise
   In Sion waits, thy chosen Seat;
   Our promis'd Altars we will raise,
   And there our zealous Vows compleat.
@@ -4545,7 +4553,7 @@ Psalm 66
 
 Psalm 67
 
-  TO bless thy chosen Race,
+1 TO bless thy chosen Race,
   in Mercy, Lord, incline;
   And cause the brightness of thy Face
   on all thy Saints to shine.
@@ -4756,7 +4764,7 @@ Psalm 68
 
 Psalm 69
 
-  SAve me, O God, from Waves that rowl,
+1 SAve me, O God, from Waves that rowl,
   And press to overwhelm my Soul.
   With painful steps in mire I tread,
   And Deluges o'erflow my Head.
@@ -4877,7 +4885,7 @@ Psalm 69
 
 Psalm 70
 
-  O Lord, to my Relief draw near,
+1 O Lord, to my Relief draw near,
   For never was more, pressing Need
   For my Deliv'rance, Lord, appear,
   And add to that Deliv'rance Speed.
@@ -4904,7 +4912,7 @@ Psalm 70
 
 Psalm 71
 
-  IN Thee I put my stedfast Trust;
+1 IN Thee I put my stedfast Trust;
   defend me, Lord, from Shame;
   Incline thine Ear, and save my Soul,
   for righteous is thy Name.
@@ -5008,7 +5016,7 @@ Psalm 71
 
 Psalm 72
 
-  LOrd let thy just Decrees the King
+1 LOrd let thy just Decrees the King
   in all his Ways direct;
   And let his Son throughout his Reign,
   thy righteous Laws respect.
@@ -5119,7 +5127,7 @@ Psalm 72
 
 Psalm 73
 
-  AT length, by certain Proofs 'tis plain
+1 AT length, by certain Proofs 'tis plain
   That God will to his Saints be kind,
   That all, whose Hearts are pure and clean
   Shall his protecting Favour find.
@@ -5218,7 +5226,7 @@ Psalm 73
 
 Psalm 74
 
-  WHY hast thou cast us off, O God,
+1 WHY hast thou cast us off, O God,
   with thou no more return?
   O why against thy chosen Flock,
   does thy fierce Anger burn?
@@ -5334,7 +5342,7 @@ Psalm 74
 
 Psalm 75
 
-  TO thee, O God, we render Praise,
+1 TO thee, O God, we render Praise,
   to thee with Thanks repair;
   For, that thy Name to us is nigh,
   thy wond'rous Works declare.
@@ -5386,7 +5394,7 @@ Psalm 75
 
 Psalm 76
 
-  IN Judah the Almighty's known,
+1 IN Judah the Almighty's known,
   (Almighty there by Wonders shown)
   His Name in Jacob does excel:
 
@@ -6596,7 +6604,7 @@ Psalm 89
 29 "His Seed for ever shall endure,
   "His Throne, till Heav'n dissolves, shall last.
 
---- Part III ---
+--- Part II ---
 
 30 "But if his Heirs my Law forsake;
   "And from my sacred Precepts stray;
@@ -8906,8 +8914,6 @@ Psalm 118
 
 Psalm 119
 
---- Part II ---
-
 1 HOW blest are they who always keep
   the pure and perfect way!
   Who never from the sacred Paths
@@ -8990,7 +8996,7 @@ Psalm 119
   The strict Remembrance of thy Word
   shall all my Thoughts employ,
 
---- Part II ---
+--- Part III ---
 
 17 Be gracious to thy Servant, Lord,
   do thou my Life defend:
@@ -9032,7 +9038,7 @@ Psalm 119
   By them I learn, with prudent Care,
   to guide my Steps aright.
 
---- Part II ---
+--- Part IV ---
 
 25 My Soul opprest with deadly Care,
   close to the Earth does cleave;
@@ -9074,7 +9080,7 @@ Psalm 119
   And with a Heart, enlarg'd with Joy,
   successfully go on.
 
---- Part II ---
+--- Part V ---
 
 33 Instruct me in thy Statutes, Lord,
   thy righteous Paths display;
@@ -9116,7 +9122,7 @@ Psalm 119
   O then make haste to raise me up,
   and promis'd Succour grant.
 
---- Part II ---
+--- Part VI ---
 
 41 Thy constant Blessing, Lord, bestow,
   to cheer my drooping Heart.
@@ -9158,7 +9164,7 @@ Psalm 119
   My Care and Bus'ness then shall be
   to study thy Commands.
 
---- Part II ---
+--- Part VII ---
 
 49 According to thy promis'd Grace,
   thy Favour, Lord, extend;
@@ -9200,7 +9206,7 @@ Psalm 119
   By strict Obedience to thy Will
   I happily obtain'd.
 
---- Part II ---
+--- Part VIII ---
 
 57 O Lord, my God, ray Portion thou
   and sure Poffession art;
@@ -9242,7 +9248,7 @@ Psalm 119
   O make me then exactly learn,
   thy facred Paths to tread.
 
---- Part II ---
+--- Part IX ---
 
 65 With me, thy Servant thou hail dealt
   most graciously, O Lord,
@@ -9284,7 +9290,7 @@ Psalm 119
   Than untouch'd Mines, than thousand Mines
   of Silver and of Gold.
 
---- Part II ---
+--- Part X ---
 
 73 To me who am the Workmanship
   of thy Almighty Hands,
@@ -9326,7 +9332,7 @@ Psalm 119
   That Guilt and Shame, the Sinners Lot,
   may never me confound.
 
---- Part II ---
+--- Part XI ---
 
 81 My Soul with long Expectance faints
   to see thy saving Grace;
@@ -9368,7 +9374,7 @@ Psalm 119
   That by thy righteous Statutes, I
   my Life's whole Course may steer.
 
---- Part II ---
+--- Part XII ---
 
 89 Forever, and for ever, Lord,
   unchang'd thou dost remain;
@@ -9410,7 +9416,7 @@ Psalm 119
   But thy Commandments, like thy felt,
   no Change or Period know.
 
---- Part II ---
+--- Part XIII ---
 
 97 The Love that to thy Laws I bear,
   no Language can display;
@@ -9452,7 +9458,7 @@ Psalm 119
   Thro' which the treach'rous Ways of Sin
   I utterly detest.
 
---- Part II ---
+--- Part XIV ---
 
 105 Thy Word is to my Feet a Lamp,
   the way of Truth to show;
@@ -9494,7 +9500,7 @@ Psalm 119
   And 'till my course of Life is done;
   shall keep thy upright Way.
 
---- Part II ---
+--- Part XV ---
 
 113 Deceitful Thoughts and Practices;
   I utterly detest
@@ -9536,7 +9542,7 @@ Psalm 119
   When on Transgressors I behold
   Thy Judgments thus descend.
 
---- Part II ---
+--- Part XVI ---
 
 121 Judgment and Justice I have lov'd;
   O therefore, Lord, engage
@@ -9578,7 +9584,7 @@ Psalm 119
   They teach me to discern the right,
   and all false Ways decline.
 
---- Part II ---
+--- Part XVII ---
 
 129 The Wonders which thy Laws contain
   no Words can represent,
@@ -9620,7 +9626,7 @@ Psalm 119
   To see Mankind, against thy Laws,
   in bold defiance go.
 
---- Part II ---
+--- Part XVIII ---
 
 137 Thou art the righteous Judge, in whom
   wrong'd Innocence may trust;
@@ -9662,7 +9668,7 @@ Psalm 119
   Teach me the Wisdom that will make
   my Soul for ever live.
 
---- Part II ---
+--- Part XIX ---
 
 145 with my whole Heart to God I Call'd,
   Lord, hear my earnest Cry;

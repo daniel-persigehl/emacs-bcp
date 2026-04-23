@@ -1293,6 +1293,31 @@ reconstructed the two one-letter gaps (Ps 94:17 "slipt", Ps 99:9
 "sacred") from context.  Known residual issue: Ps 147 omits verses
 4, 6, 13, 15 in the TCP; not cross-checked against another edition.
 
+**Backend wiring (2026-04-23):** Integrated as a first-class fetcher
+backend =tate-brady= (parallel to =coverdale=) in =bcp-fetcher.el=:
+lazy-loads the text file into a hash-table keyed by psalm number, each
+psalm stored as a list of "blocks" (part heads and stanza groups), and
+renders a verse range by keeping every stanza whose verse numbers
+overlap the range.  Stanzas are the atomic unit — you can't sing half
+a quatrain — so a narrow-range query may return a slightly wider span.
+Verse numbers on rendered text carry =bcp-verse/bcp-book/bcp-chapter=
+text properties for downstream highlighting.  Registered with
+=bcp-fetcher-register-backend= as translation names "Tate & Brady" /
+"T&B".  A new language profile =ENG-TB= selects this backend with KJVA
+lessons and "Tate & Brady" psalm translation; the transient menu's
+backend-cycle includes =tate-brady=.  Post-ingest text-level fixups
+handled (a) part-label renumbering (TCP transcription anomalies in
+Pss 37, 89, 119), and (b) verse-1 injection on ~27 psalms where the
+TCP dropped the opening verse milestone.  Pss 69 and 71 open with a
+metrical stanza covering prose verses 1–2; labelled as "1" so full-
+psalm queries work, narrow "verse 2 alone" queries do not.
+
+Phase B — routing metrical psalters through the hymnal registry/
+renderer per the "metrical psalters are hymns" plan above — remains
+open.  The current backend is standalone, modelled on Coverdale; it
+works, but doesn't yet share infrastructure with future hymn-keyed
+metrical settings (Anglo-Genevan, Japanese Genevan).
+
 *** Deferred
 - Whether "preferred psalter" needs a new language-profile field or can
   piggyback on an existing setting — inspect the language-profile code

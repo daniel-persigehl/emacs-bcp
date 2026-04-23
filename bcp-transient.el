@@ -214,7 +214,7 @@ called on the effective value to produce the display string."
   :transient t
   (interactive)
   (bcp--cycle-override 'bcp-profile-backend
-                       '(coverdale vulgate bungo-yaku oremus ebible)))
+                       '(coverdale tate-brady vulgate bungo-yaku oremus ebible)))
 
 (transient-define-suffix bcp--override-fallback-backend ()
   "Override fallback fetch backend or inherit from profile."
