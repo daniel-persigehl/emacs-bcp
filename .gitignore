@@ -1,0 +1,21 @@
+# Emacs byte-compiled files
+*.elc
+
+# Backup directories
+bible-reader-backup-*/
+
+# Vendored upstream sources
+divinum-officium-master/
+JapBungo/
+
+# Audio assets (readaloud)
+eng-bcp_readaloud/
+eng-kjv_readaloud/
+
+# 1928 lectionary OCR scratch
+lect1928-p*.txt
+lectionary-1928-scratch.txt
+Lectionary_1928.pdf
+
+# Misc local media
+*.mp4
