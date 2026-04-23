@@ -489,13 +489,15 @@ Wraps `bcp-1928--select-opening-sentence' in a single-element list."
               (bcp-liturgy-render--insert-heading 3 (format "Epistle: %s" ep-label))
               (if ep-txt
                   (bcp-liturgy-render--insert-text-block ep-txt)
-                (insert (format "[[bible:%s][%s]]\n\n"
-                                (funcall ref-str-fn ep) ep-label)))
+                (bcp-liturgy-render--insert-passage-fallback
+                 (funcall ref-str-fn ep) ep-label
+                 bible-commentary-translation))
               (bcp-liturgy-render--insert-heading 3 (format "Gospel: %s" go-label))
               (if go-txt
                   (bcp-liturgy-render--insert-text-block go-txt)
-                (insert (format "[[bible:%s][%s]]\n\n"
-                                (funcall ref-str-fn go) go-label))))
+                (bcp-liturgy-render--insert-passage-fallback
+                 (funcall ref-str-fn go) go-label
+                 bible-commentary-translation)))
             (insert "\n")))))))
 
 (defun bcp-1928--invitatory (propers)

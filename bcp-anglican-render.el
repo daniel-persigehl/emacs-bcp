@@ -317,8 +317,9 @@ CTX is the tradition context plist."
                    (text! txt)
                    (when bcp-liturgy-canticle-append-gloria
                      (text! (bcp-liturgy-canticle-gloria-text))))
-               (insert (format "[[bible:%s][%s]]\n\n"
-                               (funcall psalm-pass-fn p) key))))))
+               (bcp-liturgy-render--insert-passage-fallback
+                (funcall psalm-pass-fn p) key
+                bible-commentary-psalm-translation)))))
 
         ;; ── Lesson slot ──────────────────────────────────────────────────
         (:lesson
@@ -336,8 +337,9 @@ CTX is the tradition context plist."
                          (if (eq which 'second) "Second" "First") label))
                (if txt
                    (text! txt)
-                 (insert (format "[[bible:%s][%s]]\n\n"
-                                 (funcall ref-str-fn ref) label)))))))
+                 (bcp-liturgy-render--insert-passage-fallback
+                  (funcall ref-str-fn ref) label
+                  bible-commentary-translation))))))
 
         ;; ── Collect slot ─────────────────────────────────────────────────
         (:collect

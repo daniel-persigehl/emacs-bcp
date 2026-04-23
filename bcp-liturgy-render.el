@@ -29,6 +29,7 @@
 (require 'cl-lib)
 
 (declare-function bcp-fetcher--rubi-apply-svg "bcp-fetcher")
+(declare-function bcp-fetcher-fetch-passage "bcp-fetcher")
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Parent defgroup
@@ -329,6 +330,47 @@ Post-processing applied:
            ((looking-at "[A-Z]")
             (put-text-property bol (line-end-position) 'wrap-prefix "   "))))
         (forward-line 1)))))
+
+(defun bcp-liturgy-render--retry-passage-fetch (btn)
+  "Retry fetching the passage for button BTN.
+On success, replace the button region with the fetched passage text.
+On repeated failure, reinstall the retry button."
+  (let ((passage (button-get btn 'bcp-passage))
+        (label   (button-get btn 'bcp-label))
+        (tr      (button-get btn 'bcp-translation))
+        (start   (copy-marker (button-start btn)))
+        (end     (copy-marker (button-end btn) t))
+        (buf     (current-buffer)))
+    (bcp-fetcher-fetch-passage
+     passage
+     (lambda (text _lbl)
+       (when (buffer-live-p buf)
+         (with-current-buffer buf
+           (let ((inhibit-read-only t))
+             (save-excursion
+               (goto-char start)
+               (delete-region start end)
+               (if text
+                   (bcp-liturgy-render--insert-text-block text)
+                 (bcp-liturgy-render--insert-passage-fallback
+                  passage label tr)))))))
+     tr)))
+
+(defun bcp-liturgy-render--insert-passage-fallback (passage label &optional translation)
+  "Insert a fallback line for a failed PASSAGE fetch.
+LABEL is the human-readable display label.  TRANSLATION is the Bible
+translation name to retry with (defaults to `bible-commentary-translation').
+Inserts a clickable text-button; activating it retries the fetch and,
+on success, replaces the line with the passage text."
+  (insert-text-button
+   (format "[%s — fetch failed; click to retry]\n\n" label)
+   'action #'bcp-liturgy-render--retry-passage-fetch
+   'bcp-passage passage
+   'bcp-label label
+   'bcp-translation translation
+   'follow-link t
+   'face 'shadow
+   'help-echo (format "Retry fetch of %s" passage)))
 
 (defun bcp-liturgy-render--insert-canticle-text (text)
   "Insert canticle TEXT with consistent 3-space indent on all verses.

@@ -411,6 +411,11 @@ Fallback chain (each step tried in order until one succeeds):
   2. Primary backend, preferred translation
   3. Primary backend, `bcp-fetcher-fallback-translation' (default: KJVA)
   4. Fallback backend (`bcp-fetcher-fallback-backend'), preferred translation
+  5. Fallback backend, `bcp-fetcher-fallback-translation'
+Step 5 covers the case where the preferred translation isn't a non-psalm
+source (e.g. Vulgate psalter-only) AND the fallback backend can't serve
+the preferred translation either — the final rescue is fallback-backend
+with fallback-translation.
 Results are cached when `bcp-fetcher-cache-enable' is non-nil; the cache
 is checked at each step before issuing a network fetch."
   (let* ((tr         (or translation bible-commentary-translation))
@@ -428,7 +433,9 @@ is checked at each step before issuing a network fetch."
                                    (cons tr-fn tr))
                                  (cons primary-fn tr)
                                  (when fb-tr (cons primary-fn fb-tr))
-                                 (when fb-fn (cons fb-fn tr))))))
+                                 (when fb-fn (cons fb-fn tr))
+                                 (when (and fb-fn fb-tr)
+                                   (cons fb-fn fb-tr))))))
     (bcp-fetcher--try-attempts passage attempts callback)))
 (defun bcp-fetcher-fetch-passage (passage load-fn &optional translation)
   "Fetch PASSAGE using the active backend and call LOAD-FN with (text label).

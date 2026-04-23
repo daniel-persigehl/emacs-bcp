@@ -251,6 +251,36 @@ tried first in the fallback chain. This means setting psalm-translation to
 "Vulgate" automatically routes psalm fetches to the vulgate backend without
 requiring a change to bcp-fetcher-backend.
 
+** Fallback Chain :constraint:
+bcp-fetcher-fetch builds a list of (FETCH-FN . TRANSLATION) attempts, tried
+in order until one returns non-nil:
+1. Translation-matched backend (if different from primary) with preferred tr
+2. Primary backend with preferred translation
+3. Primary backend with `bcp-fetcher-fallback-translation' (default: KJVA)
+4. Fallback backend (`bcp-fetcher-fallback-backend') with preferred translation
+5. Fallback backend with fallback translation
+
+Step 5 is the critical rescue for the case where the preferred translation
+is served by a primary backend that can't handle the passage (e.g. the
+vulgate backend is psalter-only, so non-psalm lessons return nil even though
+the translation matches), AND the fallback backend doesn't recognise the
+preferred translation (e.g. Oremus has no Vulgate version code).  Without
+step 5, LAT profile + non-psalm lesson = unrecoverable fetch failure.
+
+** Render Fallback Button :ui:
+When a passage fetch ultimately returns nil, Office renderers call
+=bcp-liturgy-render--insert-passage-fallback= (in bcp-liturgy-render.el)
+instead of emitting raw text.  This inserts a shadow-faced text-button
+reading "[LABEL — fetch failed; click to retry]".  Activating the button
+re-invokes =bcp-fetcher-fetch-passage= and, on success, replaces the button
+region with the fetched passage text; on repeated failure the button is
+reinstalled.  Buttons are live even when the Office buffer is read-only
+(the retry handler temporarily binds `inhibit-read-only').
+
+Prior behaviour emitted literal org-link syntax ("[[bible:...][...]]") into
+text-mode buffers, which rendered as unusable raw characters — the original
+fallback assumed an org-mode Office buffer that was later rejected.
+
 ** Vulgate Backend
 Registered as 'vulgate. Translations: ("Vulgate" "Latin").
 Serves from bcp-liturgy-psalter-vulgate.txt (Vulgate numbering, 150 psalms).

@@ -332,8 +332,9 @@ Returns :skip (omit), :handled (already rendered), or nil (shared handling)."
           (bcp-liturgy-render--insert-heading 3 (format "OT Lesson: %s" label))
           (if txt
               (bcp-liturgy-render--insert-text-block txt)
-            (insert (format "[[bible:%s][%s]]\n\n"
-                            (funcall ref-str-fn ot-ref) label)))))
+            (bcp-liturgy-render--insert-passage-fallback
+             (funcall ref-str-fn ot-ref) label
+             bible-commentary-translation))))
       (when-let* ((cp (bcp-1662-communion-propers communion-sym))
                   (ep (plist-get cp :epistle))
                   (go (plist-get cp :gospel)))
@@ -344,13 +345,15 @@ Returns :skip (omit), :handled (already rendered), or nil (shared handling)."
           (bcp-liturgy-render--insert-heading 3 (format "Epistle: %s" ep-label))
           (if ep-txt
               (bcp-liturgy-render--insert-text-block ep-txt)
-            (insert (format "[[bible:%s][%s]]\n\n"
-                            (funcall ref-str-fn ep) ep-label)))
+            (bcp-liturgy-render--insert-passage-fallback
+             (funcall ref-str-fn ep) ep-label
+             bible-commentary-translation))
           (bcp-liturgy-render--insert-heading 3 (format "Gospel: %s" go-label))
           (if go-txt
               (bcp-liturgy-render--insert-text-block go-txt)
-            (insert (format "[[bible:%s][%s]]\n\n"
-                            (funcall ref-str-fn go) go-label))))
+            (bcp-liturgy-render--insert-passage-fallback
+             (funcall ref-str-fn go) go-label
+             bible-commentary-translation)))
         (insert "\n")))))
 
 (defun bcp-1662--build-ctx (propers)
