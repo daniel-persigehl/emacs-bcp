@@ -1275,10 +1275,23 @@ in both locations and the entry is marked private-only, surface a clear
 text to the repo.
 
 *** Content priority
-Tate & Brady "New Version of the Psalms of David" (1696) is the first
-shipping PD metrical psalter.  Historically bound with the 1662 BCP from
-1700; natural fit for this project's tradition.  Scottish Psalter 1650
-and the 1912 Psalter are later additions.
+Tate & Brady "New Version of the Psalms of David" is the first shipping
+PD metrical psalter.  Historically bound with the 1662 BCP from 1700;
+natural fit for this project's tradition.  Scottish Psalter 1650 and
+the 1912 Psalter are later additions.
+
+**Source:** We ship the *1698* "corrected" second edition, not the 1696
+first: the 1698 is the text actually sung in parish churches for the
+next century (every 18th–19th-century reprint descends from it), and
+the EEBO-TCP keyboarded transcription of the 1698 (=A27962=) is
+pristine (2 single-letter gaps over 8,726 lines) where the TCP of the
+1696 (=A27952=) has 521 gaps from a damaged microfilm source.  Text
+lives at =bcp-liturgy-psalter-tate-brady.txt=, CC0 via the TCP Phase I
+public-domain dedication.  A patch pass corrected ~40 keyer-level
+typos (mostly f/ſ confusions on the final page, Pss 147–150) and
+reconstructed the two one-letter gaps (Ps 94:17 "slipt", Ps 99:9
+"sacred") from context.  Known residual issue: Ps 147 omits verses
+4, 6, 13, 15 in the TCP; not cross-checked against another edition.
 
 *** Deferred
 - Whether "preferred psalter" needs a new language-profile field or can
