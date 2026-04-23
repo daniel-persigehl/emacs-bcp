@@ -1049,8 +1049,17 @@ Handles all ref formats from bcp-1662-propers-year.el:
   (\"Book\" CH)           → \"Full Book Name CH\"
   (\"Book\" CH V nil)     → \"Full Book Name CH:V\"
   (\"Book\" CH V1 V2)     → \"Full Book Name CH:V1-V2\"
-  (REF1 REF2)             → joined lesson spanning two refs"
+  (REF1 REF2)             → joined lesson spanning two refs
+Also accepts string form \"Book CH[:V[-V2]]\" (used for canticle :ref
+in bcp-1662-ordo.el); the leading book abbreviation is expanded if known."
   (cond
+   ;; String form — expand leading book abbreviation, pass rest through.
+   ((stringp ref)
+    (if (string-match "\\`\\(.+?\\) \\([0-9].*\\)\\'" ref)
+        (format "%s %s"
+                (bcp-1662--expand-book (match-string 1 ref))
+                (match-string 2 ref))
+      ref))
    ;; Joined lesson: list of two refs (REF1 REF2)
    ((and (listp ref) (listp (car ref)))
     (let* ((r1   (car ref))
@@ -1093,8 +1102,11 @@ Handles all ref formats from bcp-1662-propers-year.el:
    (t (format "%s" ref))))
 
 (defun bcp-1662--ref-label (ref)
-  "Return a short human-readable label for REF using abbreviated book names."
+  "Return a short human-readable label for REF using abbreviated book names.
+String REF is returned as-is (it is already an abbreviated passage
+string, e.g. \"Luke 1:46-55\")."
   (cond
+   ((stringp ref) ref)
    ((and (listp ref) (listp (car ref)))
     ;; Joined lesson — use abbreviated form
     (let* ((r1  (car ref))

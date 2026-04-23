@@ -109,7 +109,7 @@ but in the ordinary course of the Psalms. On the days hereafter named, here may 
 sung or said the appointed Invitatory.")
     (:canticle venite
      :latin "Venite, exultemus Domino."
-     :ref ("Ps" 95)
+     :ref "Ps 95"
      :exception-easter t
      :exception-day-of-month 19)
 
@@ -129,7 +129,7 @@ these Canticles, or the Song of the Three Children (Benedicite).")
       :rubric "To be used throughout the Year.")
      (:canticle benedictus-es-domine
       :latin "Benedictus es, Domine."
-      :ref ("Dan" 3 29)
+      :ref "Song of Three 29-34"
       :rubric "Or this Canticle.")
      (:canticle benedicite
       :latin "Benedicite, omnia opera."
@@ -144,10 +144,10 @@ these Canticles.")
     (:alternatives
      (:canticle benedictus
       :latin "Benedictus."
-      :ref ("Luke" 1 68))
+      :ref "Luke 1:68-79")
      (:canticle jubilate-deo
       :latin "Jubilate Deo."
-      :ref ("Ps" 100)
+      :ref "Ps 100"
       :rubric "Or this Psalm."))
 
     (:rubric "Then shall be said the Apostles' Creed by the Minister and the \
@@ -260,10 +260,10 @@ as is appointed. After the Lesson shall follow one of these Canticles.")
     (:alternatives
      (:canticle magnificat
       :latin "Magnificat."
-      :ref ("Luke" 1 46))
+      :ref "Luke 1:46-55")
      (:canticle cantate-domino
       :latin "Cantate Domino."
-      :ref ("Ps" 98)
+      :ref "Ps 98"
       :rubric "Or this Psalm; except on the nineteenth day of the month."))
 
     (:rubric "Then shall be read the Second Lesson, taken out of the New Testament \
@@ -274,10 +274,10 @@ as is appointed. After the Lesson shall follow one of these Canticles.")
     (:alternatives
      (:canticle nunc-dimittis
       :latin "Nunc dimittis."
-      :ref ("Luke" 2 29))
+      :ref "Luke 2:29-32")
      (:canticle deus-misereatur
       :latin "Deus misereatur."
-      :ref ("Ps" 67)
+      :ref "Ps 67"
       :rubric "Or this Psalm; except on the twelfth day of the month."))
 
     (:rubric "Then shall be said the Apostles' Creed by the Minister and the \

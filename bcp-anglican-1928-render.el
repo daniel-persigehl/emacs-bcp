@@ -132,8 +132,11 @@
       abbrev))
 
 (defun bcp-1928--ref-label (ref)
-  "Return a short human-readable label for REF."
+  "Return a short human-readable label for REF.
+String REF is returned as-is (it is already an abbreviated passage
+string, e.g. \"Luke 1:46-55\")."
   (cond
+   ((stringp ref) ref)
    ;; :multiple (:multiple REF1 REF2 ...)
    ((and (listp ref) (keywordp (car ref)) (eq (car ref) :multiple))
     (mapconcat #'bcp-1928--ref-label (cdr ref) ", "))
@@ -164,8 +167,18 @@
    (t (format "%s" ref))))
 
 (defun bcp-1928--lectionary-ref-to-string (ref)
-  "Convert REF to a passage string for Oremus."
+  "Convert REF to a passage string for Oremus.
+Also accepts string form \"Book CH[:V[-V2]]\" (used for canticle :ref
+in bcp-anglican-1928-ordo.el); the leading book abbreviation is
+expanded if known."
   (cond
+   ;; String form — expand leading book abbreviation, pass rest through.
+   ((stringp ref)
+    (if (string-match "\\`\\(.+?\\) \\([0-9].*\\)\\'" ref)
+        (format "%s %s"
+                (bcp-1928--expand-book (match-string 1 ref))
+                (match-string 2 ref))
+      ref))
    ;; :multiple — join each sub-ref on its own line
    ((and (listp ref) (keywordp (car ref)) (eq (car ref) :multiple))
     (mapconcat #'bcp-1928--lectionary-ref-to-string (cdr ref) "\n"))

@@ -24,9 +24,10 @@
 ;;   (:kyrie)
 ;;     — the Kyrie (Lord have mercy / Christ have mercy / Lord have mercy)
 ;;
-;;   (:canticle NAME :ref REF :rubric TEXT)
+;;   (:canticle NAME :ref "Book CH:V-V" :rubric TEXT)
 ;;     — a canticle identified by name, with its scriptural reference
-;;       and any governing rubric; text kept elsewhere
+;;       as a passage string (e.g. "Luke 1:46-55", "Ps 95") and any
+;;       governing rubric; text kept elsewhere
 ;;
 ;;   (:alternatives CANTICLE-A CANTICLE-B :rubric TEXT)
 ;;     — two canticles between which the rubric prescribes a choice
@@ -156,7 +157,7 @@ The minister reads one or more of these at the opening of the service.")
     (:rubric "Then shall be said or sung this Psalm following; Except on Easter Day, upon which another Anthem is appointed; and on the nineteenth day of every month it is not to be read here, but in the ordinary course of the Psalms.")
     (:canticle venite
      :latin "Venite, exultemus Domino."
-     :ref ("Ps" 95)
+     :ref "Ps 95"
      :exception-easter t
      :exception-day-of-month 19)
 
@@ -184,10 +185,10 @@ The minister reads one or more of these at the opening of the service.")
     (:alternatives
      (:canticle benedictus
       :latin "Benedictus."
-      :ref ("Luke" 1 68))
+      :ref "Luke 1:68-79")
      (:canticle jubilate-deo
       :latin "Jubilate Deo."
-      :ref ("Ps" 100)
+      :ref "Ps 100"
       :rubric "Or this Psalm."))
 
     (:rubric "Then shall be sung or said the Apostles' Creed, by the Minister and the people standing: Except only such days as the Creed of Saint Athanasius is appointed to be read.")
@@ -296,10 +297,10 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:alternatives
      (:canticle magnificat
       :latin "Magnificat."
-      :ref ("Luke" 1 46))
+      :ref "Luke 1:46-55")
      (:canticle cantate-domino
       :latin "Cantate Domino."
-      :ref ("Ps" 98)
+      :ref "Ps 98"
       :rubric "Or else this Psalm; except it be on the nineteenth day of the month, when it is read in the ordinary course of the Psalms."
       :exception-day-of-month 19))
 
@@ -310,10 +311,10 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:alternatives
      (:canticle nunc-dimittis
       :latin "Nunc dimittis."
-      :ref ("Luke" 2 29))
+      :ref "Luke 2:29-32")
      (:canticle deus-misereatur
       :latin "Deus misereatur."
-      :ref ("Ps" 67)
+      :ref "Ps 67"
       :rubric "Or else this Psalm: Except it be on the twelfth day of the month."
       :exception-day-of-month 12))
 
