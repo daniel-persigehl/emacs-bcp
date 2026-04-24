@@ -1360,6 +1360,20 @@ open.  The Tate & Brady psalter is a standalone text renderer; it
 works, but doesn't yet share infrastructure with future hymn-keyed
 metrical settings (Anglo-Genevan, Japanese Genevan).
 
+**Editorial stance (2026-04-23):** After an initial pass modernised
+period spellings aggressively (=rejoyce=→=rejoice=, =Desart=→=Desert=,
+=chearful=→=cheerful=, etc.), user pushed back: T&B's 17th-century
+orthography is part of the value, and the audience that reaches for
+T&B self-selects into period register.  All such modernizations were
+reverted; the text now preserves 1698 spellings throughout.  Only
+=spight=→=spite= is modernized (user-flagged as outlandish) and true
+OCR corruption fixes are retained (long-s/f confusions, broken
+possessives, glued apostrophes, drop-cap glitches, word-split rejoins
+like =sted fast=→=stedfast=).  See =feedback_tb_spelling.md= in auto-
+memory for the full allow/preserve/fix taxonomy.  Pronunciation- and
+meter-affecting forms (=Burthen=, =throughly=, =Highliest=) are
+preserved categorically — they were never in scope for modernization.
+
 *** Deferred
 - Exact shape of the hymnal file format extension (stanza blocks with
   =:tune= and =:meter= metadata per-psalm) — review existing hymnal
