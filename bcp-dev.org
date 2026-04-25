@@ -1704,6 +1704,31 @@ plain L.M. (iambic dimeter quatrains), but the few exceptions
 the same way.  Until then, Latin records render without a
 =Meter:= line.
 
+** Fallback tunes by time-of-day + meter (2026-04-25)
+
+Many Roman-hymnal English translations (e.g. "Who madest all and dost
+control") have a meter but no entry in any registered hymnal manifest
+— so =bcp-hymnal-tunes-for-text= returns nil and the renderer used to
+print no tune at all.  =bcp-hymnal-fallback-tunes= now provides a
+small alist keyed by =(TIME . METER)= → list of tune-ids; the
+renderer consults it when no appointed tune is found and prefixes the
+line =Suggested tune:= rather than =Tune:= so the distinction is
+visible.
+
+Time-of-day comes from the office (=mattins= / =morning-prayer= /
+canonical-hour-morning-side → =morning=; =evensong= /
+=evening-prayer= / =vespers= / =compline= → =evening=).  Entries
+keyed =any= apply to either time and lose to a more specific match.
+Meter strings are normalised (whitespace and periods stripped) so
+=L.M.=, =L. M.=, and =LM= are interchangeable in both keys and
+queries.
+
+Starter table covers L.M., C.M., S.M. (per-time), plus 11.11.11.5,
+87.87.87, 87.87.D, and 88.88.88 (=any=).  The selection is
+deliberately limited to widely-known or musically simple tunes since
+they're being suggested for slots the hymnal didn't anticipate.
+Customisable; users can override or extend per-meter lists in init.
+
 ** Seeded picks + cross-office dedup (2026-04-25)
 
 Every =:hymn= step previously called =bcp-hymnal-select= and took the

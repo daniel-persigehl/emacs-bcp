@@ -417,7 +417,13 @@ CTX is the tradition context plist."
                  (overlay-put (make-overlay m-start (point))
                               'face 'bcp-hymn-meter)
                  (insert "\n")))
-             (let ((tunes (bcp-hymnal-tunes-for-text top-id)))
+             (let* ((appointed (bcp-hymnal-tunes-for-text top-id))
+                    (fallback  (and (null appointed)
+                                    (bcp-hymnal-fallback-tunes-for
+                                     (bcp-hymnal-time-of-day-for-office office)
+                                     (plist-get text-rec :meter))))
+                    (tunes     (or appointed fallback))
+                    (suggested (and (null appointed) fallback)))
                (when tunes
                  (cl-labels
                      ((tune-display (id)
@@ -440,7 +446,7 @@ CTX is the tradition context plist."
                               (overlay-put (make-overlay s (point))
                                            'face 'bcp-hymn-meter))))))
                    (let ((label-start (point)))
-                     (insert "Tune: ")
+                     (insert (if suggested "Suggested tune: " "Tune: "))
                      (overlay-put (make-overlay label-start (point))
                                   'face 'bcp-hymn-meter))
                    (tune-insert (car tunes))

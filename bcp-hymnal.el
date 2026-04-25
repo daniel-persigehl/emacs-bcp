@@ -386,6 +386,64 @@ hymnal slot anywhere."
       (nreverse tunes))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Fallback tunes (by time-of-day + meter)
+;;
+;; Consulted only when a picked hymn text has no appointed tune in any
+;; registered hymnal manifest.  Keyed by (TIME . METER) where TIME is
+;; `morning', `evening', or `any'; time-specific entries take precedence.
+;; Meter strings are normalised before comparison so "L.M.", "L. M.",
+;; and "LM" all match.
+
+(defun bcp-hymnal--normalize-meter (meter)
+  "Strip whitespace and periods from METER for tolerant matching."
+  (and meter (replace-regexp-in-string "[. \t]+" "" meter)))
+
+(defcustom bcp-hymnal-fallback-tunes
+  '(((morning . "L.M.")           . (JAM-LUCIS-ORTO-SIDERE MELCOMBE))
+    ((evening . "L.M.")           . (TE-LUCIS TALLIS-CANON))
+    ((morning . "C.M.")           . (ST-PETER RICHMOND))
+    ((evening . "C.M.")           . (ST-AGNES ST-PETER))
+    ((morning . "S.M.")           . (ST-MICHAEL FRANCONIA))
+    ((evening . "S.M.")           . (FRANCONIA ST-MICHAEL))
+    ((any     . "11. 11. 11. 5.") . (ISTE-CONFESSOR CHRISTE-SANCTORUM))
+    ((any     . "87. 87. 87.")    . (PANGE-LINGUA TANTUM-ERGO))
+    ((any     . "87. 87. D.")     . (HYFRYDOL))
+    ((any     . "88. 88. 88")     . (VENI-EMMANUEL ST-CATHERINE)))
+  "Suggested tunes when a hymn text has no appointed tune.
+Alist of ((TIME . METER) . TUNE-IDS).  TIME is `morning', `evening',
+or `any'; the TIME-specific entry, when present, takes precedence
+over the `any' entry for the same meter.  METER strings are matched
+modulo whitespace and periods.  Tunes here should be widely known or
+musically simple, since they are sung from memory at a slot the
+hymnal didn't anticipate."
+  :type '(alist :key-type (cons symbol string)
+                :value-type (repeat symbol))
+  :group 'bcp-hymnal)
+
+(defun bcp-hymnal-fallback-tunes-for (time meter)
+  "Return a list of fallback tune-ids for TIME and METER, or nil.
+TIME is `morning' or `evening'; entries keyed `any' apply to either."
+  (when meter
+    (let ((norm (bcp-hymnal--normalize-meter meter))
+          time-match any-match)
+      (dolist (cell bcp-hymnal-fallback-tunes)
+        (let ((cell-time  (car (car cell)))
+              (cell-meter (bcp-hymnal--normalize-meter (cdr (car cell)))))
+          (when (equal cell-meter norm)
+            (cond
+             ((eq cell-time time) (setq time-match (cdr cell)))
+             ((eq cell-time 'any) (setq any-match  (cdr cell)))))))
+      (or time-match any-match))))
+
+(defun bcp-hymnal-time-of-day-for-office (office)
+  "Return `morning', `evening', or nil for the named OFFICE symbol."
+  (cond
+   ((memq office '(mattins matins morning-prayer lauds prime terce sext none))
+    'morning)
+   ((memq office '(evensong evening-prayer vespers compline))
+    'evening)))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Copyright resolution
 
 (defun bcp-hymnal--copyright-restricted-p (status)

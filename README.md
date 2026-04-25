@@ -102,6 +102,12 @@ The current implementation covers:
 - `ebible` — local eBible.org plain-text chapter files; fully offline
 - `bungo-yaku` — 文語訳聖書 (1917 Taishō revision), the complete 66-book Japanese Bible with furigana; served locally from a bundled text file
 
+**Hymns and tunes:**
+- Office hymn rendering integrated with all four traditions; selection driven by a controlled-vocabulary tag system over a unified text registry that covers The Hymnal 1940 (Episcopal) and the Roman office hymnal in three English translations (Britt, Caswall, Neale)
+- Deterministic, non-repeating hymn picks: a `date + office + slot` seed picks from the tag-eligible pool, and prior-office picks on the same day are excluded so Mattins and Evensong draw distinct hymns without any persistent state
+- Tune metadata for ~640 tunes; tune names render as clickable YouTube recording links where one is registered (586 of the 1940's tunes)
+- Per-translator meter notation printed under each hymn title; when a hymn text has no appointed setting, a fallback table by time-of-day + meter suggests a widely-known tune (e.g. TE-LUCIS / TALLIS' CANON for evening L.M.)
+
 **Psalters** (served for Psalms only, layered on top of the backend — `bcp-fetcher-psalter`):
 - `coverdale` — Miles Coverdale's Psalter (BCP 1662), bundled local text file
 - `tate-brady` — Tate & Brady metrical psalter (1698 corrected edition), bundled local text file
