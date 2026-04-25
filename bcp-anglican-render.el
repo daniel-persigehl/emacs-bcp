@@ -385,13 +385,21 @@ CTX is the tradition context plist."
          (let* ((slot-kind  (or (plist-get step :slot-kind) 'office-hymn))
                 (extra-tags (plist-get step :extra-tags))
                 (date       (plist-get propers :date))
+                (office     (plist-get propers :office))
+                (prior      (bcp-liturgy-prior-office-picks date office ctx))
+                (exclude    (append prior bcp-liturgy-render--picked-text-ids))
+                (seed       (sxhash-equal (list date office slot-kind)))
                 (results    (bcp-hymnal-select
                              :date       date
                              :slot-kind  slot-kind
                              :language   'english
-                             :extra-tags extra-tags))
+                             :extra-tags extra-tags
+                             :exclude    exclude
+                             :seed       seed))
                 (top-id     (car results))
                 (text-rec   (when top-id (bcp-hymnal-text top-id))))
+           (when top-id
+             (push top-id bcp-liturgy-render--picked-text-ids))
            (let* ((label (or (plist-get step :heading) "Hymn"))
                   (title (and text-rec (plist-get text-rec :first-line)))
                   (heading-text (if title
@@ -550,7 +558,10 @@ CTX is the tradition context plist (see slot documentation above)."
       (insert "\n")
 
       ;; ── Ordo walk ────────────────────────────────────────────────────
-      (let ((past-venite nil))
+      ;; Bind the dynamic pick-tracker fresh per office so within-office
+      ;; `:hymn' steps see each other's picks via `:exclude'.
+      (let ((past-venite nil)
+            (bcp-liturgy-render--picked-text-ids nil))
         (dolist (step ordo)
           (let* ((type       (car step))
                  (pos-before (point))

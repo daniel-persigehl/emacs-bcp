@@ -917,6 +917,10 @@ Keyword ARGS:
   :slot-kind   SYMBOL (office-hymn / closing / anthem / ...)
   :language    SYMBOL (english / latin / japanese / ...)
   :extra-tags  LIST of tag symbols a candidate must match (AND)
+  :exclude     LIST of text-id symbols to omit from results
+  :seed        INTEGER — when supplied, rotate the result list so the
+               element at (mod SEED length) appears first (deterministic
+               pick); the rest of the ranked order is preserved
   :policy      override for `bcp-hymnal-policy-for-slot'
 
 Returns a list of text-ids in rank order.  If policy is `appointed'
@@ -932,13 +936,16 @@ and any candidate is rubrically appointed, only those are returned."
          (slot-kind  (plist-get args :slot-kind))
          (language   (plist-get args :language))
          (extra-tags (plist-get args :extra-tags))
+         (exclude    (plist-get args :exclude))
+         (seed       (plist-get args :seed))
          (policy     (or (plist-get args :policy)
                          (and slot-kind (bcp-hymnal-policy-for-slot slot-kind))))
          (texts      (bcp-hymnal--ensure-texts))
          ranked)
     (maphash
      (lambda (id text)
-       (when (bcp-hymnal--text-language-matches text language)
+       (when (and (bcp-hymnal--text-language-matches text language)
+                  (not (memq id exclude)))
          (let* ((expanded  (bcp-hymnal--expand-tags (plist-get text :tags)))
                 (appointed (and slot-kind
                                 (bcp-hymnal--appointment-matches
@@ -982,7 +989,16 @@ and any candidate is rubrically appointed, only those are returned."
                          (not (plist-get a :popular))) nil)
                    (t (string< (or (plist-get a :first-line) "")
                                (or (plist-get b :first-line) "")))))))
-    (mapcar (lambda (c) (plist-get c :id)) ranked)))
+    (let ((ids (mapcar (lambda (c) (plist-get c :id)) ranked)))
+      (if (and seed ids)
+          ;; Deterministic pick: rotate so element at (mod seed n) leads.
+          (let* ((n   (length ids))
+                 (idx (mod seed n))
+                 (head (nth idx ids))
+                 (rest (append (cl-subseq ids 0 idx)
+                               (cl-subseq ids (1+ idx) n))))
+            (cons head rest))
+        ids))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Bootstrap: load manifests for enabled hymnals

@@ -622,7 +622,18 @@ Resolves current defcustom values and registers all tradition callbacks."
      :post-office-fn                #'bcp-1928--post-office
      :day-id-fn                     #'bcp-1928--day-identity
      :office-label-fn               #'bcp-anglican-render--office-label
+     :office-order                  '(mattins evensong)
+     :propers-fn                    #'bcp-1928--propers-fn
+     :ordo-for-office               #'bcp-1928--ordo-for-office
      :buffer-name                   bcp-1928-office-buffer-name)))
+
+(defun bcp-1928--propers-fn (date office)
+  "Return propers for DATE (M D Y) at OFFICE — used by prior-office simulation."
+  (bcp-1928-propers-for-date (nth 0 date) (nth 1 date) (nth 2 date) office))
+
+(defun bcp-1928--ordo-for-office (office)
+  "Return the 1928 ordo list for OFFICE (mattins or evensong)."
+  (if (eq office 'mattins) bcp-1928-ordo-morning bcp-1928-ordo-evening))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Main entry point

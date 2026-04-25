@@ -1682,6 +1682,39 @@ plist as =:recording-url=, not on slots.
   fuzzy-match at cutoff 0.85.  That data is gone from the tree —
   the alist is the durable artefact.
 
+** Seeded picks + cross-office dedup (2026-04-25)
+
+Every =:hymn= step previously called =bcp-hymnal-select= and took the
+top-ranked text — which meant the same Easter-tagged hymn won both
+the opening and closing slot of every office.  Two changes:
+
+1. =bcp-hymnal-select= gained =:exclude= (drop named text-ids before
+   ranking) and =:seed= (rotate the ranked list so the element at
+   =(mod seed n)= leads, preserving the rest of the order).  Default
+   behaviour (no seed, no exclude) is unchanged for any caller that
+   doesn't pass them.
+
+2. The renderer's =:hymn= step computes
+   =seed = (sxhash-equal (date office slot-kind))= and an =exclude=
+   list combining (a) within-office picks tracked in the dynamic
+   =bcp-liturgy-render--picked-text-ids= (rebound per office) and
+   (b) prior-office picks via =bcp-liturgy-prior-office-picks=,
+   which simulates earlier offices' hymn slots by walking their
+   ordo with the same seed/exclude rule.
+
+The simulation walks =:office-order= in the tradition's ctx.  1662
+and 1928 register =(mattins evensong)= plus =:propers-fn= /
+=:ordo-for-office= so the helper can re-derive picks without any
+shared mutable state.  Re-rendering Evensong later (after restarting
+Emacs) sees the same Mattins picks because they're recomputed by
+simulation, not stored.
+
+Slot-affinity stays soft: =:slot-kind= continues to flow as a
+ranking signal only, not a filter.  The seed (which incorporates
+slot-kind) plus the no-repeat rule together yield distinct picks per
+slot.  Tag-weeding to exclude specific hymns from specific slots is
+deferred until mismatches surface.
+
 ** Meter notation surfaced in renders (2026-04-25)
 
 Both hymns and metrical psalters now print =_Meter: …_= immediately

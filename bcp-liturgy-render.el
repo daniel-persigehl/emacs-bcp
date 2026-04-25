@@ -30,6 +30,7 @@
 
 (declare-function bcp-fetcher--rubi-apply-svg "bcp-fetcher")
 (declare-function bcp-fetcher-fetch-passage "bcp-fetcher")
+(declare-function bcp-hymnal-select "bcp-hymnal")
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Parent defgroup
@@ -500,6 +501,49 @@ redundancies (e.g. subdivision = week-name)."
     (let ((ov (make-overlay info-start (point))))
       (overlay-put ov 'face '(:slant italic)))))
 
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Hymn-pick tracking (within-office and across-day)
+
+(defvar bcp-liturgy-render--picked-text-ids nil
+  "List of hymn text-ids already picked by `:hymn' slots in the current render.
+Bound to nil at the start of an office walk so each `:hymn' step can
+push its pick and subsequent steps can exclude prior picks.")
+
+(defun bcp-liturgy-prior-office-picks (date office ctx)
+  "Return text-ids picked by offices that precede OFFICE on DATE.
+
+CTX must provide:
+  :office-order      list of office symbols in canonical day order
+                     (e.g. (mattins evensong))
+  :propers-fn        function (DATE OFFICE) -> propers plist
+  :ordo-for-office   function (OFFICE)      -> ordo list
+
+Walks each prior office's ordo, simulating its `:hymn' slots with the
+same seeded-pick rule the live renderer uses, and returns the union of
+the picks in walk order.  Picks accumulate so a prior office's slot-2
+sees its own slot-1 pick excluded — matching live behaviour."
+  (let* ((order      (plist-get ctx :office-order))
+         (propers-fn (plist-get ctx :propers-fn))
+         (ordo-fn    (plist-get ctx :ordo-for-office))
+         (cur-pos    (and order (cl-position office order)))
+         picks)
+    (when (and order propers-fn ordo-fn cur-pos (> cur-pos 0))
+      (dolist (prior (cl-subseq order 0 cur-pos))
+        (dolist (step (funcall ordo-fn prior))
+          (when (eq (car step) :hymn)
+            (let* ((slot-kind  (or (plist-get step :slot-kind) 'office-hymn))
+                   (extra-tags (plist-get step :extra-tags))
+                   (seed       (sxhash-equal (list date prior slot-kind)))
+                   (top (car (bcp-hymnal-select
+                              :date       date
+                              :slot-kind  slot-kind
+                              :language   'english
+                              :extra-tags extra-tags
+                              :exclude    picks
+                              :seed       seed))))
+              (when top (push top picks)))))))
+    (nreverse picks)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Officiant-sensitive versicles
