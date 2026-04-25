@@ -966,7 +966,7 @@ so the user sees at a glance what tunes will fit."
       (when-let ((meter (plist-get
                          (alist-get 'tate-brady bcp-fetcher--backends)
                          :meter)))
-        (setq text (concat (format "_Meter: %s_\n\n" meter) text)))
+        (setq text (concat (format "Meter: %s\n\n" meter) text)))
       (message "bcp-fetcher: %s served from Tate & Brady metrical psalter."
                passage))
     (funcall callback text)))

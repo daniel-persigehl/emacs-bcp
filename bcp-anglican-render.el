@@ -392,17 +392,31 @@ CTX is the tradition context plist."
                              :extra-tags extra-tags))
                 (top-id     (car results))
                 (text-rec   (when top-id (bcp-hymnal-text top-id))))
-           (heading! 3 (or (plist-get step :heading) "Hymn"))
+           (let ((label (or (plist-get step :heading) "Hymn"))
+                 (title (and text-rec (plist-get text-rec :first-line))))
+             (heading! 3 (if title
+                             (format "%s: %s" label (upcase title))
+                           label)))
            (cond
             (text-rec
-             (insert (format "_%s_\n\n"
-                             (or (plist-get text-rec :first-line) "")))
-             ;; Meter under the title so the user can see at a glance
-             ;; what tunes will fit (no syllable-counting required).
              (when-let ((meter (plist-get text-rec :meter)))
-               (insert (format "_Meter: %s_\n\n" meter)))
-             (dolist (stanza (or (plist-get text-rec :stanzas) '()))
-               (insert stanza "\n\n")))
+               (insert (format "Meter: %s\n\n" meter)))
+             (let* ((stanzas (or (plist-get text-rec :stanzas) '()))
+                    (num-w   (length (number-to-string (length stanzas)))))
+               (cl-loop
+                for stanza in stanzas
+                for i from 1 do
+                (let* ((prefix (format (format "%%%dd. " num-w) i))
+                       (indent (make-string (length prefix) ?\s))
+                       (lines  (split-string stanza "\n"))
+                       (out    nil))
+                  (when lines
+                    (push (concat prefix (car lines)) out)
+                    (dolist (l (cdr lines))
+                      (push (if (string-empty-p l) l (concat indent l))
+                            out)))
+                  (insert (mapconcat #'identity (nreverse out) "\n")
+                          "\n\n")))))
             (t
              (rubric! "Here followeth a hymn.")))))
 
