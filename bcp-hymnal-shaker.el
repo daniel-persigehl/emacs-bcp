@@ -15,6 +15,16 @@
 
 (require 'bcp-hymnal)
 
+;; Provisional tune-ids: Shaker melodies are usually anonymous and
+;; folk-transmitted, so we mint a tune symbol per text until Patterson
+;; supplies an authoritative name.
+
+(bcp-hymnal-register-tune 'GOOD-ELDER
+  :name "GOOD ELDER"
+  :source "Shaker tradition (anonymous)"
+  :copyright :public-domain
+  :recording-url "https://www.youtube.com/watch?v=m-0H8b3t3JE")
+
 (bcp-hymnal-register-hymnal
  'hymnal-shaker
  '(:name "Shaker Hymns"
@@ -26,9 +36,10 @@
  '(
    ("1" :text shaker-good-elder
         :first-line "Good Elder, dear Brethren and Sisters, I love you"
+        :tune GOOD-ELDER
         :author nil
         :copyright :public-domain
-        :notes "Communal affection; tune unknown pending Patterson.")
+        :notes "Communal affection; tune symbol provisional pending Patterson.")
    ))
 
 (provide 'bcp-hymnal-shaker)
