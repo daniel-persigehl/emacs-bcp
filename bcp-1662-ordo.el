@@ -154,6 +154,8 @@ The minister reads one or more of these at the opening of the service.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
+    (:hymn :slot-kind office-hymn)
+
     (:rubric "Then shall be said or sung this Psalm following; Except on Easter Day, upon which another Anthem is appointed; and on the nineteenth day of every month it is not to be read here, but in the ordinary course of the Psalms.")
     (:canticle venite
      :latin "Venite, exultemus Domino."
@@ -239,6 +241,8 @@ The minister reads one or more of these at the opening of the service.")
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
 
+    (:hymn :slot-kind closing)
+
     (:rubric "Here endeth the Order of Morning Prayer throughout the Year."))
   "Ordo for Morning Prayer from the 1662 BCP.
 Steps are tagged plists; see file commentary for type descriptions.")
@@ -285,6 +289,8 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:versicles
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
+
+    (:hymn :slot-kind office-hymn)
 
     (:rubric "Then shall be said or sung the Psalms in order as they be appointed.")
     (:psalm first
@@ -365,6 +371,8 @@ Steps are tagged plists; see file commentary for type descriptions.")
      :ref bcp-common-prayers-chrysostom)
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
+
+    (:hymn :slot-kind closing)
 
     (:rubric "Here endeth the Order of Evening Prayer throughout the Year."))
   "Ordo for Evening Prayer from the 1662 BCP.

@@ -35,6 +35,8 @@
 ;;; Code:
 
 (require 'cl-lib)
+(eval-when-compile (require 'bcp-hymnal))
+(declare-function bcp-hymnal-register-exporter "bcp-hymnal" (fn))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; User configuration
@@ -109,6 +111,63 @@ LANGUAGE is \\='latin or \\='english.  TRANSLATOR is passed to
     (mapcar #'car (plist-get entry :translations))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Export to the unified hymnal text store
+;;
+;; The Roman registry is the authoring surface (Latin original plus
+;; translator-keyed translations grouped by incipit).  At unified-store
+;; load time, every entry is unpacked into one text-record per
+;; (incipit, language, translator) so the shared selector and renderer
+;; treat Roman hymns identically to manifest hymnals.  Roman renderers
+;; continue to call `bcp-roman-hymnal-get'; the export is purely
+;; additive.
+
+(defun bcp-roman-hymnal--first-line (body)
+  "Return the first non-empty line of BODY, trimmed of trailing comma."
+  (let* ((line (car (split-string body "\n" t))))
+    (replace-regexp-in-string "[,;]\\'" "" (or line ""))))
+
+(defun bcp-roman-hymnal--split-stanzas (body)
+  "Split BODY on blank lines, returning a list of stanza strings."
+  (mapcar #'string-trim (split-string body "\n[ \t]*\n" t)))
+
+(defun bcp-roman-hymnal--export-to-unified ()
+  "Insert one record per (incipit, language, translator) into
+`bcp-hymnal--texts'.  Latin record id is the incipit symbol;
+each English record id is `incipit/translator'.  Tags from the
+Roman entry are copied to every record produced from it."
+  (require 'bcp-hymnal)
+  (dolist (cell bcp-roman-hymnal--hymns)
+    (let* ((incipit      (car cell))
+           (plist        (cdr cell))
+           (latin        (plist-get plist :latin))
+           (translations (plist-get plist :translations))
+           (tags         (plist-get plist :tags)))
+      (when latin
+        (puthash incipit
+                 (list :first-line (bcp-roman-hymnal--first-line latin)
+                       :stanzas    (bcp-roman-hymnal--split-stanzas latin)
+                       :language   'latin
+                       :tags       tags
+                       :copyright  :public-domain)
+                 bcp-hymnal--texts))
+      (dolist (tr translations)
+        (let* ((translator (car tr))
+               (body       (cdr tr))
+               (tid (intern (format "%s/%s" incipit translator))))
+          (puthash tid
+                   (list :first-line (bcp-roman-hymnal--first-line body)
+                         :stanzas    (bcp-roman-hymnal--split-stanzas body)
+                         :language   'english
+                         :translator translator
+                         :original   incipit
+                         :tags       tags
+                         :copyright  :public-domain)
+                   bcp-hymnal--texts))))))
+
+(with-eval-after-load 'bcp-hymnal
+  (bcp-hymnal-register-exporter #'bcp-roman-hymnal--export-to-unified))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Hymn data
 ;;
 ;; Each hymn is registered with its Latin text and one or more English
@@ -124,7 +183,8 @@ LANGUAGE is \\='latin or \\='english.  TRANSLATOR is passed to
 
 (bcp-roman-hymnal-register
  'ave-maris-stella
- '(:latin
+ '(:tags (vespers marian)
+   :latin
    "Ave maris stella,\n\
 Dei Mater alma,\n\
 Atque semper Virgo,\n\
@@ -205,7 +265,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'quem-terra-pontus-sidera
- '(:latin
+ '(:tags (matins marian)
+   :latin
    "Quem terra, pontus, sídera\n\
 Colunt, adórant, prædicant,\n\
 Trinam regéntem máchinam,\n\
@@ -267,7 +328,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'o-gloriosa-virginum
- '(:latin
+ '(:tags (lauds marian)
+   :latin
    "O gloriósa Vírginum,\n\
 Sublímis inter sídera,\n\
 Qui te creávit, párvulum\n\
@@ -325,7 +387,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'memento-rerum-conditor
- '(:latin
+ '(:tags (marian)
+   :latin
    "Meménto, rerum Cónditor,\n\
 Nostri quod olim córporis,\n\
 Sacráta ab alvo Vírginis\n\
@@ -361,7 +424,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'memento-rerum-conditor-compl
- '(:latin
+ '(:tags (compline marian)
+   :latin
    "Meménto, rerum Cónditor,\n\
 Nostri quod olim córporis,\n\
 Sacráta ab alvo Vírginis\n\
@@ -416,7 +480,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'lucis-creator-optime
- '(:latin
+ '(:tags (vespers creation)
+   :latin
    "Lucis Creátor óptime,\n\
 Lucem diérum próferens,\n\
 Primórdiis lucis novæ,\n\
@@ -475,7 +540,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'immense-caeli-conditor
- '(:latin
+ '(:tags (vespers creation)
+   :latin
    "Imménse cæli Cónditor,\n\
 Qui mixta ne confúnderent,\n\
 Aquæ fluénta dívidens,\n\
@@ -534,7 +600,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'telluris-alme-conditor
- '(:latin
+ '(:tags (vespers creation)
+   :latin
    "Tellúris alme Cónditor,\n\
 Mundi solum qui séparans,\n\
 Pulsis aquæ moléstiis,\n\
@@ -593,7 +660,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'caeli-deus-sanctissime
- '(:latin
+ '(:tags (vespers creation)
+   :latin
    "Cæli Deus sanctíssime,\n\
 Qui lúcidas mundi plagas\n\
 Candóre pingis ígneo,\n\
@@ -652,7 +720,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'magne-deus-potentiae
- '(:latin
+ '(:tags (vespers creation)
+   :latin
    "Magnæ Deus poténtiæ,\n\
 Qui fértili natos aqua\n\
 Partim relínquis gúrgiti,\n\
@@ -711,7 +780,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'hominis-superne-conditor
- '(:latin
+ '(:tags (vespers creation)
+   :latin
    "Hóminis supérne Cónditor,\n\
 Qui cuncta solus órdinans,\n\
 Humum jubes prodúcere\n\
@@ -770,7 +840,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'jam-sol-recedit-igneus
- '(:latin
+ '(:tags (vespers trinitarian)
+   :latin
    "Jam sol recédit ígneus:\n\
 Tu, lux perénnis, Únitas,\n\
 Nostris, beáta Trínitas,\n\
@@ -812,7 +883,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'te-lucis-ante-terminum
- '(:latin
+ '(:tags (compline)
+   :latin
    "Te lucis ante términum,\n\
 Rerum Creátor, póscimus,\n\
 Ut pro tua cleméntia\n\
@@ -853,7 +925,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'ecce-jam-noctis
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Ecce, jam noctis tenuátur umbra,\n\
 Lux et auróræ rútilans corúscat:\n\
 Súpplices rerum Dóminum canóra\n\
@@ -891,7 +964,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'splendor-paternae-gloriae
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Splendor Patérnæ glóriæ,\n\
 De luce lucem próferens,\n\
 Lux lucis, et fons lúminis,\n\
@@ -989,7 +1063,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'ales-diei-nuntius
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Ales diéi núntius\n\
 Lucem propínquam prǽcinit:\n\
 Nos excitátor méntium\n\
@@ -1047,7 +1122,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'nox-et-tenebrae
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Nox, et tenébræ, et núbila,\n\
 Confúsa mundi et túrbida:\n\
 Lux intrat, albéscit polus:\n\
@@ -1105,7 +1181,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'lux-ecce-surgit-aurea
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Lux ecce surgit áurea,\n\
 Pallens facéssat cǽcitas,\n\
 Quæ nosmet in præceps diu\n\
@@ -1163,7 +1240,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'aeterna-caeli-gloria
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Ætérna cæli glória,\n\
 Beáta spes mortálium,\n\
 Summi Tonántis Únice,\n\
@@ -1231,7 +1309,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'aurora-jam-spargit-polum
- '(:latin
+ '(:tags (lauds)
+   :latin
    "Auróra jam spargit polum:\n\
 Terris dies illábitur:\n\
 Lucis resúltat spículum:\n\
@@ -1282,7 +1361,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'jam-lucis-orto-sidere
- '(:latin
+ '(:tags (prime morning)
+   :latin
    "Jam lucis orto sídere,\n\
 Deum precémur súpplices,\n\
 Ut in diúrnis áctibus\n\
@@ -1343,7 +1423,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'nunc-sancte-nobis-spiritus
- '(:latin
+ '(:tags (terce holy-spirit paraclete)
+   :latin
    "Nunc, Sancte, nobis, Spíritus,\n\
 Unum Patri cum Fílio,\n\
 Dignáre promptus íngeri\n\
@@ -1381,7 +1462,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'rector-potens-verax-deus
- '(:latin
+ '(:tags (sext)
+   :latin
    "Rector potens, verax Deus,\n\
 Qui témperas rerum vices,\n\
 Splendóre mane illúminas,\n\
@@ -1419,7 +1501,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'rerum-deus-tenax-vigor
- '(:latin
+ '(:tags (none)
+   :latin
    "Rerum, Deus, tenax vigor,\n\
 Immótus in te pérmanens,\n\
 Lucis diúrnæ témpora\n\
@@ -1460,7 +1543,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'primo-dierum-omnium
- '(:latin
+ '(:tags (matins)
+   :latin
    "Primo diérum ómnium,\n\
 Quo mundus extat cónditus,\n\
 Vel quo resúrgens Cónditor\n\
@@ -1528,7 +1612,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'somno-refectis-artubus
- '(:latin
+ '(:tags (matins)
+   :latin
    "Somno reféctis ártubus,\n\
 Spreto cubíli, súrgimus:\n\
 Nobis, Pater, canéntibus\n\
@@ -1586,7 +1671,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'consors-paterni-luminis
- '(:latin
+ '(:tags (matins)
+   :latin
    "Consors patérni lúminis,\n\
 Lux ipse lucis, et dies,\n\
 Noctem canéndo rúmpimus:\n\
@@ -1634,7 +1720,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'rerum-creator-optime
- '(:latin
+ '(:tags (matins)
+   :latin
    "Rerum Creátor óptime,\n\
 Rectórque noster, áspice:\n\
 Nos a quiéte nóxia\n\
@@ -1692,7 +1779,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'nox-atra-rerum-contegit
- '(:latin
+ '(:tags (matins)
+   :latin
    "Nox atra rerum cóntegit\n\
 Terræ colóres ómnium:\n\
 Nos confiténtes póscimus\n\
@@ -1750,7 +1838,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'tu-trinitatis-unitas
- '(:latin
+ '(:tags (matins trinitarian)
+   :latin
    "Tu, Trinitátis Unitas,\n\
 Orbem poténter quæ regis,\n\
 Atténde laudis cánticum,\n\
@@ -1818,7 +1907,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'summae-parens-clementiae
- '(:latin
+ '(:tags (matins)
+   :latin
    "Summæ Parens cleméntiæ,\n\
 Mundi regis qui máchinam,\n\
 Uníus et substántiæ,\n\
@@ -1878,7 +1968,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'jam-christus-astra-ascenderat
- '(:latin
+ '(:tags (matins pentecost-octave holy-spirit paraclete)
+   :latin
    "Jam Christus astra ascénderat,\n\
 Revérsus unde vénerat,\n\
 Promíssum Patris múnere,\n\
@@ -1980,7 +2071,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'christe-redemptor-omnium
- '(:latin
+ '(:tags (matins christmastide nativity)
+   :latin
    "Christe Redémptor ómnium,\n\
 Ex Patre Patris únice,\n\
 Solus ante princípium\n\
@@ -2059,7 +2151,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'deus-tuorum-militum
- '(:latin
+ '(:tags (matins sanctorum)
+   :latin
    "Deus tuórum mílitum\n\
 Sors, et coróna, prǽmium,\n\
 Laudes canéntes Mártyris\n\
@@ -2117,7 +2210,8 @@ In endless glory. Amen."))))
 
 (bcp-roman-hymnal-register
  'hostis-herodes-impie
- '(:latin
+ '(:tags (matins epiphanytide epiphany-day)
+   :latin
    "Hostis Heródes ímpie,\n\
 Christum veníre quid times?\n\
 Non éripit mortália,\n\
@@ -2178,7 +2272,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'aeterna-christi-munera-apostolorum
- '(:latin
+ '(:tags (matins sanctorum)
+   :latin
    "Ætérna Christi múnera,\n\
 Apostolórum glóriam,\n\
 Palmas et hymnos débitos\n\
@@ -2237,7 +2332,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'christo-profusum-sanguinem
- '(:latin
+ '(:tags (matins sanctorum)
+   :latin
    "Christo profúsum sánguinem,\n\
 Et Mártyrum victórias,\n\
 Dignámque cælo láuream\n\
@@ -2296,7 +2392,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'iste-confessor
- '(:latin
+ '(:tags (matins sanctorum)
+   :latin
    "Iste Conféssor Dómini, coléntes\n\
 Quem pie laudant pópuli per orbem,\n\
 Hac die lætus méruit beátas\n\
@@ -2355,7 +2452,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'virginis-proles
- '(:latin
+ '(:tags (matins sanctorum)
+   :latin
    "Vírginis Proles Opiféxque Matris,\n\
 Virgo quem gessit, peperítque Virgo:\n\
 Vírginis partos cánimus decóra\n\
@@ -2414,7 +2512,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'fortem-virili-pectore
- '(:latin
+ '(:tags (matins sanctorum)
+   :latin
    "Fortem viríli péctore\n\
 Laudémus omnes féminam,\n\
 Quæ sanctitátis glória\n\
@@ -2474,7 +2573,8 @@ Both now and evermore. Amen."))))
 
 (bcp-roman-hymnal-register
  'exsultet-orbis-gaudiis
- '(:latin
+ '(:tags (vespers lauds sanctorum)
+   :latin
    "Exsúltet orbis gáudiis:\n\
 Cælum resúltet láudibus:\n\
 Apostolórum glóriam\n\
@@ -2543,7 +2643,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'invicte-martyr-unicum
- '(:latin
+ '(:tags (lauds sanctorum)
+   :latin
    "Invícte Martyr, únicum\n\
 Patris secútus Fílium,\n\
 Victis triúmphas hóstibus,\n\
@@ -2592,7 +2693,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'sanctorum-meritis
- '(:latin
+ '(:tags (vespers sanctorum)
+   :latin
    "Sanctórum méritis ínclita gáudia\n\
 Pangámus, sócii, géstaque fórtia:\n\
 Gliscens fert ánimus prómere cántibus\n\
@@ -2661,7 +2763,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'rex-gloriosae-martyrum
- '(:latin
+ '(:tags (lauds sanctorum)
+   :latin
    "Rex glorióse Mártyrum,\n\
 Coróna confiténtium,\n\
 Qui respuéntes térrea\n\
@@ -2711,7 +2814,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'jesu-redemptor-omnium-perpes
- '(:latin
+ '(:tags (lauds sanctorum)
+   :latin
    "Jesu Redémptor ómnium,\n\
 Perpes coróna Prǽsulum,\n\
 In hac die cleméntius\n\
@@ -2770,7 +2874,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'jesu-corona-celsior
- '(:latin
+ '(:tags (lauds sanctorum)
+   :latin
    "Jesu, coróna célsior,\n\
 Et véritas sublímior,\n\
 Qui confiténti sérvulo\n\
@@ -2859,7 +2964,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'jesu-corona-virginum
- '(:latin
+ '(:tags (vespers lauds sanctorum)
+   :latin
    "Jesu, coróna Vírginum,\n\
 Quem Mater illa cóncipit\n\
 Quæ sola Virgo párturit,\n\
@@ -2921,7 +3027,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'pange-lingua-gloriosi
- '(:latin "\
+ '(:tags (matins passiontide holy-cross passion cross)
+   :latin "\
 Pange, lingua, gloriósi\n\
 Láuream certáminis,\n\
 Et super Crucis trophǽo\n\
@@ -2999,7 +3106,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'te-splendor-et-virtus-patris
- '(:latin "\
+ '(:tags (st-michael)
+   :latin "\
 Te, splendor et virtus Patris,\n\
 Te vita, Jesu, córdium,\n\
 Ab ore qui pendent tuo,\n\
@@ -3060,7 +3168,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'antra-deserti
- '(:latin "\
+ '(:tags (st-john-baptist-nativity)
+   :latin "\
 Antra desérti téneris sub annis,\n\
 Cívium turmas fúgiens, petísti,\n\
 Ne levi posses maculáre vitam\n\
@@ -3118,7 +3227,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'ira-justa-conditoris
- '(:latin "\
+ '(:tags (passion)
+   :latin "\
 Ira justa Conditóris,\n\
 Imbre aquárum víndice,\n\
 Criminósum mersit orbem\n\
@@ -3196,7 +3306,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'quicumque-christum-quaeritis
- '(:latin "\
+ '(:tags (transfiguration)
+   :latin "\
 Quicúmque Christum quǽritis,\n\
 Oculos in altum tóllite:\n\
 Illic licébit vísere\n\
@@ -3254,7 +3365,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'christe-sanctorum-decus-angelorum
- '(:latin "\
+ '(:tags (sanctorum)
+   :latin "\
 Christe, sanctórum decus Angelórum,\n\
 Gentis humánæ Sator et Redémptor,\n\
 Cǽlitum nobis tríbuas beátas\n\
@@ -3301,7 +3413,8 @@ For ever. Amen."))))
 
 (bcp-roman-hymnal-register
  'caelitum-joseph-decus
- '(:latin "\
+ '(:tags (matins st-joseph)
+   :latin "\
 Cǽlitum Joseph, decus atque nostræ\n\
 Certa spes vitæ, columénque mundi,\n\
 Quas tibi læti cánimus, benígnus\n\
@@ -3359,7 +3472,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'christe-sanctorum-gabriel
- '(:latin "\
+ '(:tags (sanctorum)
+   :latin "\
 Christe, sanctórum decus Angelórum,\n\
 Gentis humánæ Sator et Redémptor,\n\
 Cǽlitum nobis tríbuas beátas\n\
@@ -3406,7 +3520,8 @@ For ever. Amen."))))
 
 (bcp-roman-hymnal-register
  'sacris-solemniis
- '(:latin "\
+ '(:tags (matins corpus-christi)
+   :latin "\
 Sacris solémniis juncta sint gáudia,\n\
 Et ex præcórdiis sonent præcónia;\n\
 Recédant vétera, nova sint ómnia,\n\
@@ -3505,7 +3620,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'auctor-beate-saeculi
- '(:latin "\
+ '(:tags (matins sacred-heart)
+   :latin "\
 Auctor beáte sǽculi,\n\
 Christe, Redémptor ómnium,\n\
 Lumen Patris de lúmine,\n\
@@ -3573,7 +3689,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'aeterna-imago-altissimi
- '(:latin "\
+ '(:tags (matins christ-the-king)
+   :latin "\
 Ætérna Imago Altíssimi,\n\
 Lumen, Deus, de Lúmine,\n\
 Tibi, Redémptor glória,\n\
@@ -3651,7 +3768,8 @@ Amen."))))
 
 (bcp-roman-hymnal-register
  'egregie-doctor-paule
- '(:latin "\
+ '(:tags (st-peter sanctorum)
+   :latin "\
 Egrégie Doctor, Paule, mores ínstrue,\n\
 Et nostra tecum péctora in cælum trahe;\n\
 Veláta dum merídiem cernat fides,\n\

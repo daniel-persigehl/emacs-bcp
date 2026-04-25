@@ -33,6 +33,7 @@
 (require 'bcp-common-canticles)
 (require 'bcp-common-prayers)
 (require 'bcp-common-anglican)
+(require 'bcp-hymnal)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Context plist — slot documentation
@@ -370,6 +371,36 @@ CTX is the tradition context plist."
          (rubric!
           (or (plist-get step :rubric)
               "In Quires and Places where they sing, here followeth the Anthem.")))
+
+        ;; ── Hymn ─────────────────────────────────────────────────────────
+        ;; Driven by the controlled-vocabulary tag system in bcp-hymnal.
+        ;; Step keys:
+        ;;   :slot-kind   SYMBOL (office-hymn / closing / opening / ...)
+        ;;   :extra-tags  LIST of tag symbols required on the candidate
+        ;;   :heading     STRING override (default "Hymn")
+        ;; The selector ranks by appointment, occasion tier, popularity;
+        ;; we render the top text record (first-line + stanzas).  When
+        ;; no candidate is found the slot degrades to a plain rubric.
+        (:hymn
+         (let* ((slot-kind  (or (plist-get step :slot-kind) 'office-hymn))
+                (extra-tags (plist-get step :extra-tags))
+                (date       (plist-get propers :date))
+                (results    (bcp-hymnal-select
+                             :date       date
+                             :slot-kind  slot-kind
+                             :language   'english
+                             :extra-tags extra-tags))
+                (top-id     (car results))
+                (text-rec   (when top-id (bcp-hymnal-text top-id))))
+           (heading! 3 (or (plist-get step :heading) "Hymn"))
+           (cond
+            (text-rec
+             (insert (format "_%s_\n\n"
+                             (or (plist-get text-rec :first-line) "")))
+             (dolist (stanza (or (plist-get text-rec :stanzas) '()))
+               (insert stanza "\n\n")))
+            (t
+             (rubric! "Here followeth a hymn.")))))
 
         ;; ── Prayer slot ──────────────────────────────────────────────────
         (:prayer

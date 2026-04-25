@@ -101,6 +101,8 @@ also kneeling and repeating it with him.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
+    (:hymn :slot-kind office-hymn)
+
     (:rubric "Then shall be said or sung the following Canticle; except on those \
 days for which other Canticles are appointed; and except also, that Psalm 95 may \
 be used in this place. But Note, That on Ash Wednesday and Good Friday the Venite \
@@ -198,6 +200,8 @@ daily be said at Morning Prayer throughout all the Year.")
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
 
+    (:hymn :slot-kind closing)
+
     (:rubric "Here endeth the Order of Morning Prayer."))
   "Ordo for Morning Prayer from the 1928 American BCP.
 Steps are tagged plists; see bcp-1662-ordo.el commentary for type descriptions.")
@@ -247,6 +251,8 @@ also kneeling and repeating it with him.")
     (:versicles
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
+
+    (:hymn :slot-kind office-hymn)
 
     (:rubric "Then shall be said or sung the Psalms appointed for the day.")
     (:psalm first
@@ -326,6 +332,8 @@ for Peace; the third for Aid against all Perils.")
      :ref bcp-common-prayers-chrysostom)
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
+
+    (:hymn :slot-kind closing)
 
     (:rubric "Here endeth the Order of Evening Prayer."))
   "Ordo for Evening Prayer from the 1928 American BCP.

@@ -1379,6 +1379,264 @@ preserved categorically — they were never in scope for modernization.
   =:tune= and =:meter= metadata per-psalm) — review existing hymnal
   files before adding per-stanza psalm records.
 
+* Hymnals :science:
+:PROPERTIES:
+:STATUS: IN-DEVELOPMENT
+:END:
+
+** Architecture (2026-04-23)
+
+Three normalized registries live in =bcp-hymnal.el=:
+
+- =bcp-hymnal--texts= — text-id → plist.  One record per
+  translation/original pair; a Latin hymn with three English renderings
+  is four records.  Lazy-loaded from =bcp-hymnal-texts.txt= (shared
+  across hymnals).  Other authoring surfaces (e.g.
+  =bcp-roman-hymnal.el=) emit synthetic records into this hash via
+  =bcp-hymnal-register-exporter= — see /Roman hymnal export/ below.
+- =bcp-hymnal--tunes= — tune-id → plist.  One record per canonical
+  tune (NICAEA, STUTTGART, SINE-NOMINE, …).  Meter and composer
+  attached here, not on the slot.
+- =bcp-hymnal--manifests= — hymnal-id → hash table keyed by hymn
+  number (string, may include letter suffix: "164b").  The per-hymnal
+  number → slot-plist mapping — the only thing that differs between
+  books that share a text/tune.
+
+Copyright attaches to the component that is or isn't copyrighted
+(text / translation / tune / harmonization / arrangement), not to
+the slot.  Slot entries can override with a local note.
+
+** Selection
+
+Three orthogonal axes the user controls:
+
+1. =bcp-hymnal-available= — list of enabled hymnal ids.
+2. =bcp-hymnal-office-profile= — slot profile for the office
+   (=anthem-only= / =opening-and-close= / =opening-full= /
+   =roman-office= / =monastic-office= / =none=).  Defaults to
+   =auto=, which reads the language profile: LAT → =roman-office=,
+   ENG / ENG-TB (strict 1662) → =anthem-only=, ENG-1928 →
+   =opening-full=.
+3. Selection policy per slot (=appointed= / =sticky= / =suggest= /
+   =fixed=) — not yet wired into the renderers.
+
+Translator preference (=bcp-hymnal-preferred-translator= with a
+fallback list: Neale → Caswall → Newman → Chambers → Riley → Primer
+→ Britt) picks between multiple English renderings of the same Latin
+office hymn.
+
+** Hymnal 1940 (2026-04-23)
+
+Scraped 866 entries from Hymnary.org (=HPEC1940=; 1 req/sec, UA
+identified as research client).  Metadata → Elisp by
+=/tmp/hymnary_to_elisp.py=:
+
+- =bcp-hymnal-tunes.el= — 642 distinct tunes (public-domain filter
+  based on composer / harmonizer /arranger years ≥ 1931 as of 2026).
+- =bcp-hymnal-1940.el= — manifest; each slot carries
+  =:first-line :tune :meter :author :translator :topic :copyright=.
+- =bcp-hymnal-1940-manifest.txt= — human-readable audit; lists the
+  103 restricted slots with which component is blocked.
+
+763 of 866 slots are currently available; 103 flagged as restricted
+because a contribution (text / translation / tune / harmonization)
+first appeared 1931 or later and has not yet entered PD under the
+95-year rule.  The compilation itself is still under copyright
+through ~2035, but Church Publishing's Rights & Permissions page
+states that selections without a copyright listing are PD; we take
+them at their word for the 763 unencumbered slots.
+
+Stanza bodies are not in this metadata scrape — only first lines.
+A second pass (see /Stanza ingestion/ below) fetches them from the
+canonical /text/<slug>/ pages and merges them into
+=bcp-hymnal-texts.txt=.
+
+** Tag system (2026-04-23)
+
+Seeded the selection infrastructure in =bcp-hymnal.el=.  Four pieces:
+
+*** Controlled tag vocabulary
+=bcp-hymnal--tag-axes= groups tag symbols by axis — season, occasion,
+hour, slot, character, mood, theme.  A symbol not listed in any axis
+is rejected (grow-on-demand discipline).  Tags attach to text records,
+not slots: the character of a hymn is a property of the text, not of
+which hymnal prints it.
+
+*** One-directional implication graph
+=bcp-hymnal--tag-implications= encodes specific → general
+relationships (=low-sunday= → =(easter-octave eastertide resurrection
+paschal)=, =whitsunday= → =(pentecost-octave holy-spirit paraclete)=,
+etc.), expanded at match time by =bcp-hymnal--expand-tags=.  Authors
+tag conservatively on the most-specific label; expansion broadens the
+match surface without bloating storage.
+
+*** Date → occasion translator
+=bcp-hymnal-occasions-for-date (DATE)= returns a specificity-ordered
+list, most specific first:
+
+#+begin_example
+Easter Day 2026-04-05:     (easter-day easter-octave eastertide)
+Easter Monday:             (easter-monday easter-octave eastertide)
+Low Sunday 2026-04-12:     (low-sunday easter-octave easter-week-1 eastertide)
+Mon after Low Sunday:      (easter-week-1 eastertide)
+Good Friday 2026-04-03:    (good-friday holy-week passiontide)
+Christmas Day:             (christmas-day christmas-octave christmastide)
+All Saints:                (all-saints trinitytide)
+#+end_example
+
+Week numbering aligns with 1662 (Low Sunday begins Easter Week 1);
+the Easter Octave is Easter Sunday + 7 and does not carry a
+=easter-week-N= tag.  Uses =bcp-moveable-feasts= + fixed-date feast
+table + =bcp-1662-liturgical-season= under the hood.
+
+*** Appointment policy + selector
+=bcp-hymnal-appointment-policy= is a per-slot-kind alist with three
+values: =appointed= (rubric wins, no picker — Pian rigorist),
+=suggest= (appointed hits rank first, tier-matches follow — default),
+=free= (ignore appointments entirely — liturgical libertine).  A
+=default= key handles unlisted slot-kinds.
+
+=bcp-hymnal-select= takes =:date :occasion :slot-kind :language
+:extra-tags :policy= and returns text-ids ranked by:
+appointment-status → occasion-tier → =popular= → alphabetical.
+Occasion is a *ranking signal*, not a filter; the hard filters are
+language, extra-tags, and (under =appointed= policy) appointment
+status.  The sort puts rubric-appointed hits at the top, then
+tier-0 matches, deeper tiers, and finally hymns with no occasion
+match at all (tier 9999).
+
+** Stanza ingestion (2026-04-25)
+
+The "Stanza bodies are not in the scrape" gap noted under Hymnal 1940
+is closed.  Pipeline:
+
+1. =/tmp/hymnary_text_scrape.py= — visits each =/hymn/HPEC1940/<hid>=
+   page, follows the canonical =/text/<slug>= link, extracts stanzas,
+   copyright, and source attribution.  Resumable (state in the output
+   JSON), polite (1.5s between requests), identifies as a research
+   client.  Skips slots whose =:copyright (:restricted ...)= plist
+   blocks =:text= or =:translation= — those have no usable PD text
+   on Hymnary either.
+2. =/tmp/hymnary_merge.py= — turns the scrape into ingested data:
+   - Appends one =[text-id]= block per unique text to
+     =bcp-hymnal-texts.txt=.  The text-id is the kebab of the first
+     line; collisions (same opening words across distinct texts) fall
+     back to the Hymnary slug.  Two slots that share a Hymnary slug
+     are the same text bound to different tunes — they share a
+     text-id (hymnal-level dedup).
+   - Inserts =:text <id>= into each manifest slot in =bcp-hymnal-1940.el=,
+     immediately after =:first-line=.  Idempotent: re-runs skip slots
+     already linked.
+   - Comments out slots whose =:copyright (:restricted ...)= plist
+     gates the text or translation (no other component can save them).
+
+End state: 826 hids scraped, 815 with stanzas, 585 unique text blocks
+appended.  815 of the 866 manifest slots now resolve to a text record;
+40 commented out as restricted; 11 already had =:text= from an earlier
+POC seed.  Scripts left under =/tmp= (gitignored per project policy).
+
+** Roman hymnal export (Approach C, 2026-04-25)
+
+The Roman hymnal stays the authoring surface — incipit-keyed with
+=:latin= and a =:translations= alist by translator — but at load
+time it emits synthetic text records into =bcp-hymnal--texts= so the
+unified selector treats Roman hymns identically to the 1940.
+
+- =bcp-hymnal-register-exporter= adds a thunk to
+  =bcp-hymnal--exporters=.  =bcp-hymnal--ensure-texts= runs all
+  registered exporters once after parsing =bcp-hymnal-texts.txt=.
+- Latin record id = bare incipit symbol (=quem-terra-pontus-sidera=).
+  English record id = =incipit/translator= (=quem-terra-pontus-sidera/neale=).
+  =:original= back-pointer on each English record names the source
+  incipit; =:translator= names the translator id.
+- Tags on the Roman entry propagate to every record produced from it.
+  All 59 Roman entries are tagged in the source plist
+  (=:tags (matins christmastide nativity)= and so on).
+- The selector's existing translator-preference logic
+  (=bcp-hymnal-preferred-translator= → fallback chain) now applies to
+  Roman hymns through the unified store.  =do= (Divinum Officium) is
+  registered as a translator.
+
+The Roman renderer continues to call =bcp-roman-hymnal-get= directly;
+the export is purely additive.  Anglican offices reach Roman hymns
+through =bcp-hymnal-select=.  An opt-in path for Roman offices to
+pull non-Gregorian hymns from the unified pool is wired but not yet
+exposed in the Roman renderer.
+
+** Calendar-aware occasion translation (2026-04-25)
+
+The hymn that's right for a date depends on /which calendar/ the
+office is using.  =bcp-hymnal-occasions-for-date= now dispatches
+through =bcp-hymnal--calendar-translators=.  Three built-ins:
+
+- =anglican-1662= — the maximal occasion superset minus feasts not
+  in the 1662 kalendar (Transfiguration, Assumption, Holy Cross,
+  St Joseph, Sacred Heart, Corpus Christi, Christ the King, Visitation,
+  St Mary Magdalene).
+- =anglican-1928= — superset minus the smaller non-1928 set
+  (Assumption, Sacred Heart, Corpus Christi, Christ the King, St Joseph).
+- =roman-pre-1955= — superset plus Roman moveables not derivable from
+  the 1662 framework: Corpus Christi (Easter+60), Sacred Heart
+  (Easter+68 = Friday after Corpus Christi octave), Christ the King
+  (last Sunday of October per /Quas primas/ 1925, before the 1969
+  reform moved it).
+
+=bcp-hymnal-calendar= defcustom: when set to =auto= (default), it
+reads =bcp-language-profile= — LAT → =roman-pre-1955=, ENG-1928 →
+=anglican-1928=, otherwise =anglican-1662=.  Users can register
+custom kalendars via =bcp-hymnal-register-calendar= and bind
+=bcp-hymnal-calendar= to their id.  =bcp-hymnal-select= takes
+=:calendar= as a per-call override.
+
+This satisfies the design rule: an Anglo-Catholic 1662 user with a
+plain 1662 kalendar won't get a hymn for Pope Pius V, but the same
+user with a custom kalendar that lists Pius V will.
+
+** Renderer wiring (2026-04-25)
+
+Hymn slots wired into the Anglican ordo renderer.  =bcp-anglican-render=
+gained a =:hymn= step: it calls =bcp-hymnal-select= with the slot's
+=:slot-kind= and =:extra-tags=, takes the top text, and renders its
+first-line + stanzas under a "Hymn" heading.  When no candidate is
+found the slot degrades to a plain rubric.
+
+1662 Morning and Evening Prayer ordos and the 1928 ordo each gained
+two =(:hymn :slot-kind ...)= insertions: =office-hymn= after the
+opening responses, =closing= after the Grace.  Following the
+=:office-profile= scheme, =anthem-only= profiles render the closing
+slot as a plain rubric — the slot is present in every ordo but only
+fills with a hymn when the user's profile asks for one.
+
+** Deferred
+
+- 1940 occasion tagging.  Slot =:topic= strings (=Christmas; 1st after
+  Christmas: ...=) are the source signal but need cleaning into the
+  controlled vocabulary; until then 1940 picks fall to tier 9999 and
+  sort alphabetically.
+- =:appointments= data on text records — schema is
+  =((SLOT-KIND . OCCASION) ...)= for v1; may need a plist form for
+  Roman office-hymn appointments that key on
+  =(tradition hour season)= triples.
+- Roman renderer opt-in to non-Gregorian hymns from the unified pool.
+- =pange-lingua-corporis= (Aquinas, Corpus Christi Vespers) — distinct
+  from Fortunatus's Passiontide =pange-lingua-gloriosi= currently in
+  the registry.  Roman propers reference the latter from a Corpus
+  Christi slot that actually wants the former.
+- Vocab additions noted but not made: =precious-blood=, =apostles=,
+  =martyrs=, =confessors=, =virgins=, =holy-women=, =angels=,
+  =eucharist=.
+- Sticky memory / per-user "last choice" persistence.
+- Mass / Compline slot profile registries.
+- Shaker Hymnal (Patterson) — texts and tunes PD; editorial
+  apparatus will need flagging similar to the 1940 filter.  First
+  Shaker hymn already registered (=shaker-good-elder=) pending
+  Patterson's numbering.
+- Future: per-calendar translators currently live in =bcp-hymnal.el=;
+  extracting them into their respective calendar modules
+  (=bcp-1662-calendar=, =bcp-anglican-1928-calendar=, a future
+  =bcp-roman-calendar=) keeps each kalendar's projection rules
+  alongside its data.
+
 * Rejected Approaches
 :PROPERTIES:
 :STATUS: SETTLED
