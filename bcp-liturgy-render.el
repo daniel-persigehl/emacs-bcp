@@ -31,6 +31,7 @@
 (declare-function bcp-fetcher--rubi-apply-svg "bcp-fetcher")
 (declare-function bcp-fetcher-fetch-passage "bcp-fetcher")
 (declare-function bcp-hymnal-select "bcp-hymnal")
+(declare-function bcp-shinjitai-maybe-enable "bcp-shinjitai")
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Parent defgroup
@@ -467,6 +468,8 @@ through to showing 《…》 markers inline as a graceful fallback."
        (cond
         ((image-type-available-p 'svg)
          (add-to-invisibility-spec 'bcp-furigana)
+         (when (fboundp 'bcp-shinjitai-maybe-enable)
+           (bcp-shinjitai-maybe-enable))
          (bcp-fetcher--rubi-apply-svg))
         (t
          ;; SVG unsupported — leave 《…》 markers visible as fallback.

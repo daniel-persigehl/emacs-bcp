@@ -191,6 +191,8 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-roman-breviary.el | bcp-roman- | Full Breviary: ferial + dominical + feast ordo builders, resolver, psalm-fn, auto-hour dispatch | SETTLED |
 | bcp-liturgy-hours.el | bcp-liturgy- | Canonical hours framework, hour-grouping registry | SETTLED |
 | bcp-vulgate-collate.el | bcp- | One-time utility: collates 150 DO Latin psalm files into bcp-liturgy-psalter-vulgate.txt | SETTLED |
+| bcp-bungo-point.el | bcp- | One-time utility: auto-points Bungo-yaku psalms by syncing mediant placement to Coverdale | SETTLED |
+| bcp-shinjitai.el | bcp- | Toggleable 旧字体→新字体 display overlay (formal + lossy hyogai-ji tables) | SETTLED |
 | bcp-liturgy-bungo-yaku.txt | bcp- | 文語訳 Bible text (31,099 verses, 66 books); furigana as kanji《reading》 | SETTLED |
 
 * bcp-fetcher.el :science:
@@ -383,6 +385,42 @@ transient regardless of which buffer was selected beforehand.
 
 The language profile auto-promotes furigana from =hidden= to =rubi= when
 the backend is =bungo-yaku= but the profile is not JAP (cross-language override).
+
+*** 旧字体→新字体 display overlay (=bcp-shinjitai.el=)
+The Bungo-yaku (1917) uses pre-1949 character forms that many modern
+CJK fonts either lack glyphs for or render in a Chinese style.  This
+module installs a display-only substitution overlay so kyūjitai are
+shown as their shinjitai equivalents while the buffer text stays
+unchanged (search, copy, and rubi machinery all see the original).
+
+Two tables, both =defconst= so =bcp-reload= rebuilds them after alist
+edits (a =defvar= caches the pre-reload table and silently no-ops new
+entries):
+- =bcp-shinjitai--alist= — formal 1949 当用漢字字体表 simplifications
+  (學→学, 國→国, 體→体, ...)
+- =bcp-shinjitai--lossy-alist= — semantically adjacent stand-ins for
+  hyogai-ji that have no formal shinjitai (犢→子 yields 子牛 from
+  犢牛《こうし》; 阱→穴, 儆→戒, 腭→顎).  Gated by
+  =bcp-shinjitai-allow-lossy-substitutions= (default =t=).
+
+Activation is opt-out: =bcp-shinjitai-auto-enable= (default =t=)
+causes =bcp-shinjitai-maybe-enable= to fire from
+=bcp-liturgy-render.el= just before =bcp-fetcher--rubi-apply-svg=, so
+SVGs are built with the substituted glyphs from the start.  The
+buffer-local =bcp-shinjitai--active= flag is honoured by
+=bcp-fetcher--rubi-display-kanji=, which is called from
+=bcp-fetcher--rubi-svg= before cache lookup — so the cache key is
+the *post-substitution* kanji, naturally distinguishing toggle
+states.  Bare (non-rubi) kanji get individual =display= text
+properties via =bcp-shinjitai--apply=, which skips chars covered by
+=bcp-rubi-reading=, =bcp-furigana=, or =bcp-rubi-svg= so rubi
+machinery owns those.
+
+Commands: =bcp-toggle-shinjitai= (interactive toggle), =bcp-shinjitai-refresh=
+(strip + rebuild SVGs after a reload that added alist entries),
+=bcp-shinjitai-scan-rubi-spans= (lists every rubi span with its raw
+kanji and substituted display form, plus uncovered kanji — the
+diagnostic for finding tofu sources).
 
 * bcp-profile.el :science:
 :PROPERTIES:

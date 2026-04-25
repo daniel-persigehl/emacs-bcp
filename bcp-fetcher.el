@@ -1302,11 +1302,28 @@ Cleared by `bcp-fetcher-clear-cache'.")
                 :fill fg)
       (svg-image svg :ascent (round (* 100.0 (/ (float kanji-y) height)))))))
 
+(defun bcp-fetcher--rubi-display-kanji (kanji)
+  "Return KANJI with 旧字体→新字体 substitution applied if active here.
+Substitution is gated on the buffer-local `bcp-shinjitai--active'
+flag set by `bcp-toggle-shinjitai'.  Characters not in the
+shinjitai table pass through unchanged."
+  (if (and (boundp 'bcp-shinjitai--active)
+           bcp-shinjitai--active
+           (fboundp 'bcp-shinjitai-lookup))
+      (mapconcat (lambda (c)
+                   (string (or (bcp-shinjitai-lookup c) c)))
+                 kanji "")
+    kanji))
+
 (defun bcp-fetcher--rubi-svg (kanji reading)
-  "Return a cached image spec for KANJI+READING, or nil if no SVG support."
-  (let ((key (cons kanji reading)))
+  "Return a cached image spec for KANJI+READING, or nil if no SVG support.
+The kanji string is run through `bcp-fetcher--rubi-display-kanji'
+before lookup and build, so the cache key naturally distinguishes
+shinjitai-substituted variants."
+  (let* ((display-kanji (bcp-fetcher--rubi-display-kanji kanji))
+         (key (cons display-kanji reading)))
     (or (gethash key bcp-fetcher--rubi-svg-cache)
-        (let ((img (bcp-fetcher--rubi-svg-build kanji reading)))
+        (let ((img (bcp-fetcher--rubi-svg-build display-kanji reading)))
           (when img (puthash key img bcp-fetcher--rubi-svg-cache))
           img))))
 

@@ -31,6 +31,7 @@
 
 (declare-function bcp-reload                    "bcp-preferences")
 (declare-function bcp-fetcher-toggle-furigana    "bcp-fetcher")
+(declare-function bcp-toggle-shinjitai           "bcp-shinjitai")
 (declare-function bcp-fetcher-clear-cache        "bcp-fetcher")
 (declare-function bcp-profile-apply              "bcp-profile")
 (declare-function bcp-profile-reset              "bcp-profile")
@@ -169,6 +170,12 @@ called on the effective value to produce the display string."
   :description "Toggle furigana"
   (interactive)
   (bcp-fetcher-toggle-furigana))
+
+(transient-define-suffix bcp--toggle-shinjitai ()
+  "Toggle 旧字体→新字体 display in the current office buffer."
+  :description "Toggle 旧字体→新字体"
+  (interactive)
+  (bcp-toggle-shinjitai))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Advanced override suffixes
@@ -872,7 +879,8 @@ defaults at once; use Advanced (A) to override individual settings."
   [["Language"
     ("L" bcp--set-language-profile)
     ("A" "Advanced overrides…" bcp-settings-advanced)
-    ("j" bcp--toggle-furigana)]
+    ("j" bcp--toggle-furigana)
+    ("J" bcp--toggle-shinjitai)]
    ["General"
     ("o" bcp--set-officiant)
     ("c" bcp--set-creed)
