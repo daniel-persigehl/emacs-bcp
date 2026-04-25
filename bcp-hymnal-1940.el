@@ -903,5 +903,7 @@
 (bcp-hymnal-register-exporter
  (lambda () (bcp-hymnal-hymnary-tagger-apply 'hymnal-1940)))
 
+(require 'bcp-hymnal-1940-recordings)
+
 (provide 'bcp-hymnal-1940)
 ;;; bcp-hymnal-1940.el ends here

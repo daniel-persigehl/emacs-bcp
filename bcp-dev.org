@@ -1652,6 +1652,36 @@ its alternate (\"5b\") and first occurrence wins.  The renderer
 prints =Tune: PRIMARY (or ALT1, ALT2)= under the meter line.  When
 no manifest sets a tune for the text, the line is omitted.
 
+** Tune-name recordings as YouTube buttons (2026-04-25)
+
+A YouTuber recorded the entire Hymnal 1940 instrumentally on piano
+(playlist =PLZZAT1pP5dJrWsu25T4gVyIAC8nOI-lP8=).  Because the
+recordings are instrumental, a tune has one recording regardless of
+which text is set to it — so the URL lives on the tune-record
+plist as =:recording-url=, not on slots.
+
+- =bcp-hymnal-1940-recordings.el= holds an alist of 586
+  =(TUNE-ID . URL)= pairs, populated into the registry on require
+  via =bcp-hymnal-set-tune-recording=.  Loaded at the tail of
+  =bcp-hymnal-1940.el=.
+- =bcp-hymnal-tune-recording= reads the slot back; renderer uses it
+  to decide whether to emit a button or plain text.
+- The =:hymn= step in =bcp-anglican-render= renders each tune name
+  in the =Tune:= line via =insert-text-button=, action
+  =browse-url= over the stored URL.  Face
+  =bcp-hymn-recording-link= inherits =bcp-hymn-meter= plus
+  =:underline t= so the link cue is visible without screaming.
+  Tunes without a registered recording fall through to plain
+  meter-face text.
+- Coverage: 586 of 642 registered tunes.  Misses are usually
+  orphan tune-ids never set on a slot, plus a handful of foreign
+  spellings the matcher couldn't bridge.  Adding more is purely
+  data work in the alist file.
+- The matcher (extraction-time, not runtime) used a normalized
+  alphanum form plus ~50 hand-curated aliases plus difflib
+  fuzzy-match at cutoff 0.85.  That data is gone from the tree —
+  the alist is the durable artefact.
+
 ** Meter notation surfaced in renders (2026-04-25)
 
 Both hymns and metrical psalters now print =_Meter: …_= immediately

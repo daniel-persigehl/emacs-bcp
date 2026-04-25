@@ -247,6 +247,11 @@ Subdued colour by inheritance from the theme's comment face."
   "Face for the leading verse number on each hymn stanza."
   :group 'bcp-liturgy-render)
 
+(defface bcp-hymn-recording-link
+  '((t :inherit bcp-hymn-meter :underline t))
+  "Face for clickable tune-name buttons that open a YouTube recording."
+  :group 'bcp-liturgy-render)
+
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Buffer insertion primitives
 ;;;; ══════════════════════════════════════════════════════════════════════════

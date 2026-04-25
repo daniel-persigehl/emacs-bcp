@@ -308,6 +308,15 @@ Populated by `bcp-hymnal-register-tune'.")
   "Return plist for tune ID, or nil."
   (gethash id bcp-hymnal--tunes))
 
+(defun bcp-hymnal-set-tune-recording (id url)
+  "Attach recording URL to tune ID's record (no-op if ID not registered)."
+  (when-let ((rec (gethash id bcp-hymnal--tunes)))
+    (puthash id (plist-put rec :recording-url url) bcp-hymnal--tunes)))
+
+(defun bcp-hymnal-tune-recording (id)
+  "Return the recording URL for tune ID, or nil."
+  (plist-get (bcp-hymnal-tune id) :recording-url))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Hymnal manifest registry
 ;;

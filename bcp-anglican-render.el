@@ -411,24 +411,48 @@ CTX is the tradition context plist."
                  (insert "\n")))
              (let ((tunes (bcp-hymnal-tunes-for-text top-id)))
                (when tunes
-                 (let* ((primary (bcp-hymnal-tune (car tunes)))
-                        (alts    (cdr tunes))
-                        (t-start (point)))
-                   (insert (format
-                            "Tune: %s"
-                            (or (plist-get primary :name)
-                                (symbol-name (car tunes)))))
-                   (when alts
-                     (insert
-                      " (or "
-                      (mapconcat
-                       (lambda (id)
-                         (or (plist-get (bcp-hymnal-tune id) :name)
-                             (symbol-name id)))
-                       alts ", ")
-                      ")"))
-                   (overlay-put (make-overlay t-start (point))
-                                'face 'bcp-hymn-meter)
+                 (cl-labels
+                     ((tune-display (id)
+                        (or (plist-get (bcp-hymnal-tune id) :name)
+                            (symbol-name id)))
+                      (tune-insert (id)
+                        (let ((name (tune-display id))
+                              (url  (bcp-hymnal-tune-recording id)))
+                          (if url
+                              (insert-text-button
+                               name
+                               'face 'bcp-hymn-recording-link
+                               'follow-link t
+                               'help-echo (format "Open recording (%s)" url)
+                               'url url
+                               'action (lambda (b)
+                                         (browse-url (button-get b 'url))))
+                            (let ((s (point)))
+                              (insert name)
+                              (overlay-put (make-overlay s (point))
+                                           'face 'bcp-hymn-meter))))))
+                   (let ((label-start (point)))
+                     (insert "Tune: ")
+                     (overlay-put (make-overlay label-start (point))
+                                  'face 'bcp-hymn-meter))
+                   (tune-insert (car tunes))
+                   (when-let ((alts (cdr tunes)))
+                     (let ((open-start (point)))
+                       (insert " (or ")
+                       (overlay-put (make-overlay open-start (point))
+                                    'face 'bcp-hymn-meter))
+                     (cl-loop for id in alts
+                              for first = t then nil do
+                              (unless first
+                                (let ((sep-start (point)))
+                                  (insert ", ")
+                                  (overlay-put (make-overlay sep-start (point))
+                                               'face 'bcp-hymn-meter)))
+                              (tune-insert id))
+                     (let ((close-start (point)))
+                       (insert ")")
+                       (overlay-put (make-overlay close-start (point))
+                                    'face 'bcp-hymn-meter)))
                    (insert "\n"))))
              (insert "\n")
              (let* ((stanzas (or (plist-get text-rec :stanzas) '()))
