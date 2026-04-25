@@ -228,6 +228,10 @@ bcp-preferences.el is always loaded last."
     ;; text files (Coverdale, Tate & Brady, Vulgate, Bungo-yaku) take effect.
     (when (fboundp 'bcp-fetcher-clear-cache)
       (bcp-fetcher-clear-cache))
+    ;; Reset the unified hymn store so corpus exporters re-run with
+    ;; whatever new fields (`:meter`, `:tags`, etc.) the reload defined.
+    (when (boundp 'bcp-hymnal--texts)
+      (setq bcp-hymnal--texts nil))
     (message "BCP reloaded (%d files)." (1+ (length files)))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
