@@ -1682,6 +1682,28 @@ plist as =:recording-url=, not on slots.
   fuzzy-match at cutoff 0.85.  That data is gone from the tree —
   the alist is the durable artefact.
 
+** Roman translation meters (2026-04-25)
+
+=bcp-roman-hymnal.el= entries gained an optional
+=:translation-meters= alist =((TRANSLATOR . METER-STRING) ...)=.
+Per-translator because translators recast metre freely — Caswall
+turns L.M. Latin originals into C.M. English, the Divinum Officium
+"do" translator usually preserves L.M., Sapphic Latin sometimes
+maps to 11.11.11.5 in English and sometimes to a free quatrain.
+The exporter copies the translator's meter onto the produced text
+record so the renderer's existing =Meter:= line surfaces it
+identically to 1940 hymns.
+
+All 59 current English translations are tagged.  Convention follows
+the 1940's notation: =L.M.=, =C.M.=, =S.M.= for the named common
+metres, period-grouped digits otherwise (=87. 87. 87.=, =11. 11. 11. 5.=).
+
+Latin original meters are deferred — most Roman office hymns are
+plain L.M. (iambic dimeter quatrains), but the few exceptions
+(Sapphic, Pange Lingua, Sacris solemniis) need authoring per-text
+the same way.  Until then, Latin records render without a
+=Meter:= line.
+
 ** Seeded picks + cross-office dedup (2026-04-25)
 
 Every =:hymn= step previously called =bcp-hymnal-select= and took the
@@ -1722,18 +1744,18 @@ under the title so the reader can pick a tune without counting
 syllables.  The data was already there — exposing it was a one-line
 edit per render path.
 
-- Hymns: =bcp-anglican-render= reads =:meter= from the text record
-  (542 / 590 records carry it; missing ones are mostly Roman hymns,
-  which lack authored meters).  When =:meter= is absent the line is
-  silently omitted.
+- Hymns: =bcp-anglican-render= reads =:meter= from the text record.
+  All 59 Roman English translations now carry it (per-translator,
+  via =:translation-meters= on the source entry); Latin originals
+  do not yet.  When =:meter= is absent the line is silently omitted.
 - Metrical psalters: =bcp-fetcher--tate-brady-fetch= prepends a meter
   banner taken from the backend's =:meter= property
   (="Common Meter (8.6.8.6 iambic)"=).  Future metrical psalter
   backends (Anglo-Genevan, Genevan Japanese) declare their own and
   inherit the same banner behaviour.
 
-Authoring Roman-hymn meters and per-part T&B meter overrides remain
-open; renderer degrades gracefully without them.
+Authoring Roman *Latin*-original meters and per-part T&B meter
+overrides remain open; renderer degrades gracefully without them.
 
 ** Deferred
 - =:appointments= data on text records — schema is
@@ -1755,9 +1777,11 @@ open; renderer degrades gracefully without them.
 - Vocab additions noted but not made: =precious-blood=, =apostles=,
   =martyrs=, =confessors=, =virgins=, =holy-women=, =angels=,
   =eucharist=.
-- Roman-hymn =:meter= authoring — 59 hymns lack the field, so the
-  meter line is silently omitted under Roman ordos.  Once authored
-  the same renderer wiring picks them up.
+- Roman *Latin*-original =:meter= authoring — translations are now
+  fully tagged but the Latin records are not.  Most are L.M. (iambic
+  dimeter quatrains); the exceptions (Sapphic, Pange Lingua, Sacris
+  solemniis, Te splendor) need per-text authoring.  Until then,
+  Latin records render without a meter line.
 - Per-part Tate & Brady meter overrides — the banner currently uses
   the backend default ("Common Meter"); a few T&B parts are not in
   CM and would benefit from per-part =:meter=.

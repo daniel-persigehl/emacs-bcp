@@ -14,7 +14,11 @@
 ;;   Each hymn is an alist entry: (INCIPIT . PLIST)
 ;;   The PLIST has:
 ;;     :latin   STRING — the Latin text (pointed, with accents)
-;;     :translations  ALIST of (TRANSLATOR-KEY . STRING)
+;;     :translations         ALIST of (TRANSLATOR-KEY . STRING)
+;;     :translation-meters   ALIST of (TRANSLATOR-KEY . METER-STRING).
+;;                           Optional; per-translator because translators
+;;                           recast the metre freely (e.g. Caswall's C.M.
+;;                           rendering of an L.M. Latin original).
 ;;
 ;; The translator key is a symbol naming the translator or edition:
 ;;   britt    — Dom Matthew Britt, O.S.B., Hymns of the Breviary and
@@ -134,13 +138,16 @@ LANGUAGE is \\='latin or \\='english.  TRANSLATOR is passed to
   "Insert one record per (incipit, language, translator) into
 `bcp-hymnal--texts'.  Latin record id is the incipit symbol;
 each English record id is `incipit/translator'.  Tags from the
-Roman entry are copied to every record produced from it."
+Roman entry are copied to every record produced from it.  Per-
+translator meter from `:translation-meters' is attached to each
+English record's `:meter' slot."
   (require 'bcp-hymnal)
   (dolist (cell bcp-roman-hymnal--hymns)
     (let* ((incipit      (car cell))
            (plist        (cdr cell))
            (latin        (plist-get plist :latin))
            (translations (plist-get plist :translations))
+           (meters       (plist-get plist :translation-meters))
            (tags         (plist-get plist :tags)))
       (when latin
         (puthash incipit
@@ -153,6 +160,7 @@ Roman entry are copied to every record produced from it."
       (dolist (tr translations)
         (let* ((translator (car tr))
                (body       (cdr tr))
+               (meter      (alist-get translator meters))
                (tid (intern (format "%s/%s" incipit translator))))
           (puthash tid
                    (list :first-line (bcp-roman-hymnal--first-line body)
@@ -160,6 +168,7 @@ Roman entry are copied to every record produced from it."
                          :language   'english
                          :translator translator
                          :original   incipit
+                         :meter      meter
                          :tags       tags
                          :copyright  :public-domain)
                    bcp-hymnal--texts))))))
@@ -220,6 +229,7 @@ Summo Christo decus,\n\
 Spirítui Sancto,\n\
 Tribus honor unus.\n\
 Amen."
+   :translation-meters ((caswall . "66. 66."))
    :translations
    ((caswall .
      "Ave, star of ocean,\n\
@@ -292,6 +302,7 @@ Qui natus es de Vírgine,\n\
 Cum Patre, et almo Spíritu\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((neale . "L.M."))
    :translations
    ((neale .
      "The God whom earth, and sea, and sky\n\
@@ -350,6 +361,7 @@ Qui natus es de Vírgine,\n\
 Cum Patre, et almo Spíritu\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "O glorious lady! throned on high\n\
@@ -404,6 +416,7 @@ Qui natus es de Vírgine,\n\
 Cum Patre et almo Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "Remember, O creator Lord,\n\
@@ -446,6 +459,7 @@ Qui natus es de Vírgine,\n\
 Cum Patre et almo Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "Remember, O creator Lord,\n\
@@ -507,6 +521,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O blest Creator of the light,\n\
@@ -567,6 +582,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O great Creator of the sky,\n\
@@ -627,6 +643,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Earth's mighty Maker, whose command\n\
@@ -687,6 +704,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O God, whose hand hath spread the sky,\n\
@@ -747,6 +765,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O sovereign Lord of nature's might,\n\
@@ -807,6 +826,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Maker of man, who from thy throne\n\
@@ -857,6 +877,7 @@ Tibíque, Sancte Spíritus,\n\
 Sicut fuit, sit júgiter\n\
 Sæclum per omne glória.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "As fades the glowing orb of day,\n\
@@ -900,6 +921,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Before the ending of the day,\n\
@@ -942,6 +964,7 @@ Patris, ac Nati, paritérque Sancti\n\
 Spíritus, cujus résonat per omnem\n\
 Glória mundum.\n\
 Amen."
+   :translation-meters ((do . "11. 11. 11. 5."))
    :translations
    ((do .
      "Lo, the dim shadows of the night are waning;\n\
@@ -1011,6 +1034,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O splendour of God's glory bright,\n\
@@ -1090,6 +1114,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "77. 77. 5."))
    :translations
    ((do .
      "As the bird, whose clarion gay\n\
@@ -1149,6 +1174,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "77. 77. 5."))
    :translations
    ((do .
      "Day is breaking, dawn is bright:\n\
@@ -1208,6 +1234,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "77. 77. 5."))
    :translations
    ((do .
      "See the golden sun arise!\n\
@@ -1272,6 +1299,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O Christ, whose glory fills the heaven,\n\
@@ -1331,6 +1359,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "The dawn is sprinkling in the east\n\
@@ -1388,6 +1417,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Now in the sun's new dawning ray,\n\
@@ -1440,6 +1470,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Come Holy Ghost who ever One\n\
@@ -1479,6 +1510,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O God of truth, O Lord of might,\n\
@@ -1518,6 +1550,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "11. 10. 11. 10."))
    :translations
    ((do .
      "O strength and stay upholding all creation,\n\
@@ -1590,6 +1623,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "11. 11. 11. 5."))
    :translations
    ((do .
      "Now, from the slumbers of the night arising,\n\
@@ -1639,6 +1673,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Our limbs refreshed with slumber now,\n\
@@ -1693,6 +1728,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O Light of Light, O Day-spring bright,\n\
@@ -1747,6 +1783,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "C.M."))
    :translations
    ((do .
      "Who madest all and dost control,\n\
@@ -1806,6 +1843,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "The dusky veil of night hath laid\n\
@@ -1870,6 +1908,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O Three in One, and One in Three,\n\
@@ -1934,6 +1973,7 @@ Patríque compar Únice,\n\
 Cum Spíritu Paráclito\n\
 Regnans per omne sǽculum.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Great God of boundless mercy hear;\n\
@@ -2015,6 +2055,7 @@ Natóque, qui a mórtuis\n\
 Surréxit, ac Paráclito,\n\
 In sæculórum sǽcula.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Now Christ, ascending whence he came,\n\
@@ -2108,6 +2149,7 @@ Qui natus es de Vírgine,\n\
 Cum Patre et Sancto Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Jesus, the Ransomer of man,\n\
@@ -2178,6 +2220,7 @@ Et Fílio, qui a mórtuis\n\
 Surréxit, ac Paráclito,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "O God, of those that fought thy fight,\n\
@@ -2237,6 +2280,7 @@ Qui apparuísti géntibus,\n\
 Cum Patre, et almo Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((do . "L.M."))
    :translations
    ((do .
      "Why, impious Herod, vainly fear\n\
@@ -2299,6 +2343,7 @@ Tibíque Sancte Spíritus,\n\
 Sicut fuit, sit júgiter\n\
 Sæclum per omne glória.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "The eternal gifts of Christ the King,\n\
@@ -2359,6 +2404,7 @@ Ut mártyrum consórtio\n\
 Jungas precántes sérvulos\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "The martyr's blood for Christ outpoured,\n\
@@ -2419,6 +2465,7 @@ Qui, super cæli sólio corúscans,\n\
 Tótius mundi sériem gubérnat,\n\
 Trinus et unus.\n\
 Amen."
+   :translation-meters ((britt . "11. 11. 11. 5."))
    :translations
    ((britt .
      "This the Confessor of the Lord, whose triumph\n\
@@ -2479,6 +2526,7 @@ Et tibi, compar utriúsque virtus,\n\
 Spíritus semper, Deus unus, omni\n\
 Témporis ævo.\n\
 Amen."
+   :translation-meters ((britt . "11. 11. 11. 5."))
    :translations
    ((britt .
      "Son of a Virgin, Maker of thy Mother,\n\
@@ -2539,6 +2587,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc, et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "With manly heart we praise aloud\n\
@@ -2605,6 +2654,7 @@ Tibíque Sancte Spíritus,\n\
 Sicut fuit, sit júgiter\n\
 Sæclum per omne glória.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "Now let the earth with joy resound,\n\
@@ -2665,6 +2715,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc, et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "Martyr of God, whose strength was steeled\n\
@@ -2725,6 +2776,7 @@ Ut culpas ábigas, nóxia súbtrahas,\n\
 Des pacem fámulis; ut tibi glóriam,\n\
 Annórum in sériem, canant.\n\
 Amen."
+   :translation-meters ((britt . "12. 12. 12. 8."))
    :translations
    ((britt .
      "Sing, O sons of the Church sounding the martyrs' praise!\n\
@@ -2785,6 +2837,7 @@ Ejúsque soli Fílio,\n\
 Cum Spíritu Paráclito,\n\
 Nunc, et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "O glorious King of martyr hosts,\n\
@@ -2841,6 +2894,7 @@ Tibi, Patríque glória,\n\
 Cum Spíritu Paráclito,\n\
 Nunc, et per omne sǽculum.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "Jesu, the world's Redeemer, O hear;\n\
@@ -2916,6 +2970,7 @@ Natóque Patris único,\n\
 Sanctóque sit Paráclito,\n\
 Per omne semper sǽculum.\n\
 Amen."
+   :translation-meters ((britt . "C.M."))
    :translations
    ((britt .
      "Jesu, eternal truth sublime,\n\
@@ -2991,6 +3046,7 @@ Deo Patri cum Fílio,\n\
 Sancto simul Paráclito,\n\
 In sæculórum sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt .
      "Jesu, the virgins' crown, do thou\n\
@@ -3064,6 +3120,7 @@ Inclyto Paráclito:\n\
 Cui laus est et potéstas,\n\
 Per ætérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "87. 87. 87."))
    :translations
    ((britt . "\
 Sing, my tongue, the Saviour's glory,\n\
@@ -3133,6 +3190,7 @@ Qui, quos redémit Fílius,\n\
 Et Sanctus unxit Spíritus,\n\
 Per Angelos custódiat.\n\
 Amen."
+   :translation-meters ((britt . "87. 87. 87."))
    :translations
    ((britt . "\
 Thee, O splendour, thee, O power,\n\
@@ -3195,6 +3253,7 @@ Et tibi, compar utriúsque virtus,\n\
 Spíritus semper, Deus unus omni\n\
 Témporis ævo.\n\
 Amen."
+   :translation-meters ((britt . "11. 11. 11. 5."))
    :translations
    ((britt . "\
 Midst the desert caves, while yet a stripling,\n\
@@ -3271,6 +3330,7 @@ Dux et Auctor ínclite,\n\
 Qui tenes beáta regna\n\
 Cum Parénte et Spíritu.\n\
 Amen."
+   :translation-meters ((britt . "888. 888."))
    :translations
    ((britt . "\
 The just Creator's wrath once fell\n\
@@ -3333,6 +3393,7 @@ Qui te revélas párvulis,\n\
 Cum Patre, et almo Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "C.M."))
    :translations
    ((britt . "\
 All ye who seek a comfort sure\n\
@@ -3387,6 +3448,7 @@ Patris, ac Nati, paritérque Sancti\n\
 Spíritus, cujus résonat per omnem\n\
 Glória mundum.\n\
 Amen."
+   :translation-meters ((britt . "11. 11. 11. 5."))
    :translations
    ((britt . "\
 O Christ, the glory of the Angel choir,\n\
@@ -3440,6 +3502,7 @@ Quæ tibi præbens súperos honóres,\n\
 Det tuis nobis méritis beátæ\n\
 Gáudia vitæ.\n\
 Amen."
+   :translation-meters ((britt . "11. 11. 11. 5."))
    :translations
    ((britt . "\
 Joseph, the glory of the court of heaven,\n\
@@ -3494,6 +3557,7 @@ Patris, ac Nati, paritérque Sancti\n\
 Spíritus, cujus résonat per omnem\n\
 Glória mundum.\n\
 Amen."
+   :translation-meters ((britt . "11. 11. 11. 5."))
    :translations
    ((britt . "\
 O Christ, the glory of the Angel choir,\n\
@@ -3557,6 +3621,7 @@ Sic nos tu vísita, sicut te cólimus:\n\
 Per tuas sémitas duc nos quo téndimus,\n\
 Ad lucem quam inhábitas.\n\
 Amen."
+   :translation-meters ((britt . "66. 66. 66. 8."))
    :translations
    ((britt . "\
 At this our solemn feast,\n\
@@ -3652,6 +3717,7 @@ Qui Corde fundis grátiam,\n\
 Cum Patre, et almo Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt . "\
 O Christ, the world's Creator bright,\n\
@@ -3726,6 +3792,7 @@ Qui sceptra mundi témperas,\n\
 Cum Patre, et almo Spíritu,\n\
 In sempitérna sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "L.M."))
    :translations
    ((britt . "\
 O thou eternal Image bright\n\
@@ -3780,6 +3847,7 @@ Honor, potéstas atque jubilátio,\n\
 In unitáte, quæ gubérnat ómnia,\n\
 Per univérsa æternitátis sǽcula.\n\
 Amen."
+   :translation-meters ((britt . "10. 10. 10. 10."))
    :translations
    ((britt . "\
 O glorious Doctor Paul, instruct our ways,\n\
