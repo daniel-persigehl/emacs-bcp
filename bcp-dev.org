@@ -1607,16 +1607,33 @@ opening responses, =closing= after the Grace.  Following the
 slot as a plain rubric — the slot is present in every ordo but only
 fills with a hymn when the user's profile asks for one.
 
-** Deferred
+** Hymnary topic tagging (2026-04-25)
 
-- 1940 occasion tagging.  Slot =:topic= strings (=Christmas; 1st after
-  Christmas: ...=) are the source signal but need cleaning into the
-  controlled vocabulary; until then 1940 picks fall to tier 9999 and
-  sort alphabetically.
+=bcp-hymnal-hymnary-tagger.el= parses Hymnary's =:topic= strings into
+the controlled tag vocabulary and unions the tags onto each slot's
+=:text= record.  Runs as a load-time exporter from
+=bcp-hymnal-1940.el=; coverage 598 / 708 (85%) — the untagged 110 are
+texts whose Hymnary topics map only to themes outside the vocabulary
+(=Brotherhood=, =Loyalty=, =Confirmation=, occasional offices) and so
+intentionally drop.  The same parser is reusable for any Hymnary
+hymnal scrape (1982, English Hymnal, A&M).
+
+Christmas Day, Easter Day, Whitsunday, Trinity Sunday all surface
+season-or-feast-tagged 1940 hymns at tier 0 instead of falling to
+the alphabetical fallback.
+
+** Deferred
 - =:appointments= data on text records — schema is
   =((SLOT-KIND . OCCASION) ...)= for v1; may need a plist form for
   Roman office-hymn appointments that key on
   =(tradition hour season)= triples.
+- Slot-kind ranking signal.  =bcp-hymnal-select :slot-kind= today
+  drives only =appointment-policy=; with no appointments authored,
+  asking for =office-hymn= vs =closing= returns identical orderings.
+  The Hymnary tagger now writes =opening= / =closing= / =matins= /
+  =vespers= tags from topic strings (~70% of 1940 slots), so the
+  selector could promote slot-tag matches as a tier signal — likely
+  between occasion-tier and =popular=.
 - Roman renderer opt-in to non-Gregorian hymns from the unified pool.
 - =pange-lingua-corporis= (Aquinas, Corpus Christi Vespers) — distinct
   from Fortunatus's Passiontide =pange-lingua-gloriosi= currently in

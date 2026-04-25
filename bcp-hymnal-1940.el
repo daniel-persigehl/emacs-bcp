@@ -21,6 +21,7 @@
 
 (require 'bcp-hymnal)
 (require 'bcp-hymnal-tunes)
+(require 'bcp-hymnal-hymnary-tagger)
 
 (bcp-hymnal-register-hymnal
  'hymnal-1940
@@ -898,6 +899,9 @@
    ("740" :first-line "Amen, Amen" :text amen-amen :tune AMEN-AMEN)
    ("741" :first-line "Amen, Amen, Amen, Amen, Amen, Amen" :text amen-amen :tune AMEN-AMEN-AMEN-AMEN-AMEN-AMEN-AMEN)
    ))
+
+(bcp-hymnal-register-exporter
+ (lambda () (bcp-hymnal-hymnary-tagger-apply 'hymnal-1940)))
 
 (provide 'bcp-hymnal-1940)
 ;;; bcp-hymnal-1940.el ends here
