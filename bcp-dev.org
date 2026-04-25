@@ -1632,14 +1632,10 @@ flat-text first cut:
 - Title merged into the heading: =Hymn: O COME, ALL YE FAITHFUL=
   (label + upcased first-line on one line) instead of label + first-
   line on separate lines.
-- Proportional indent inside stanzas.  Per-stanza =max-line-length=
-  is the reference; shorter lines indent by =(max - len) / 3=,
-  capped at 6 spaces.  Cheap approximation of meter-aware indent
-  (no =:meter= parsing needed) that handles split-line meters
-  (11=6+5, 11.10, 4.10.10.10.4, etc.) and lets refrains stand off
-  visually inside their parent stanza.  A future meter-aware pass
-  could supplant this for known meters; the imprecision is in
-  punctuation-skewed character counts, mostly fine in practice.
+- (Tried proportional within-stanza indent based on character count;
+  reverted — author found the flat hanging indent more readable.
+  Meter-aware indent could be revisited if a specific case calls for
+  it; otherwise plain hanging indent is the chosen typography.)
 
 Three new theme-aware faces (=bcp-hymn-title=, =bcp-hymn-meter=,
 =bcp-hymn-verse-number=) live in =bcp-liturgy-render=.  They

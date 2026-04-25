@@ -417,12 +417,6 @@ CTX is the tradition context plist."
                 (let* ((prefix      (format (format "%%%dd. " num-w) i))
                        (indent-base (make-string (length prefix) ?\s))
                        (lines       (split-string stanza "\n"))
-                       (lyric-lens  (mapcar #'length
-                                            (cl-remove-if #'string-empty-p
-                                                          lines)))
-                       (max-len     (if lyric-lens
-                                        (apply #'max lyric-lens)
-                                      0))
                        (prefix-emitted nil))
                   (dolist (l lines)
                     (cond
@@ -433,18 +427,10 @@ CTX is the tradition context plist."
                         (insert prefix)
                         (overlay-put (make-overlay p-start (point))
                                      'face 'bcp-hymn-verse-number))
-                      (let ((extra (min 6 (max 0 (/ (- max-len (length l))
-                                                    3)))))
-                        (when (> extra 0)
-                          (insert (make-string extra ?\s))))
                       (insert l "\n")
                       (setq prefix-emitted t))
                      (t
                       (insert indent-base)
-                      (let ((extra (min 6 (max 0 (/ (- max-len (length l))
-                                                    3)))))
-                        (when (> extra 0)
-                          (insert (make-string extra ?\s))))
                       (insert l "\n"))))
                   (insert "\n")))))
             (t
