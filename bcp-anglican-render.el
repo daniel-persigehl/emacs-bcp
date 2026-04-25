@@ -408,7 +408,29 @@ CTX is the tradition context plist."
                  (insert (format "Meter: %s" meter))
                  (overlay-put (make-overlay m-start (point))
                               'face 'bcp-hymn-meter)
-                 (insert "\n\n")))
+                 (insert "\n")))
+             (let ((tunes (bcp-hymnal-tunes-for-text top-id)))
+               (when tunes
+                 (let* ((primary (bcp-hymnal-tune (car tunes)))
+                        (alts    (cdr tunes))
+                        (t-start (point)))
+                   (insert (format
+                            "Tune: %s"
+                            (or (plist-get primary :name)
+                                (symbol-name (car tunes)))))
+                   (when alts
+                     (insert
+                      " (or "
+                      (mapconcat
+                       (lambda (id)
+                         (or (plist-get (bcp-hymnal-tune id) :name)
+                             (symbol-name id)))
+                       alts ", ")
+                      ")"))
+                   (overlay-put (make-overlay t-start (point))
+                                'face 'bcp-hymn-meter)
+                   (insert "\n"))))
+             (insert "\n")
              (let* ((stanzas (or (plist-get text-rec :stanzas) '()))
                     (num-w   (length (number-to-string (length stanzas)))))
                (cl-loop

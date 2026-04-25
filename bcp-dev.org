@@ -1643,6 +1643,15 @@ inherit from semantic font-lock faces (=keyword=, =comment=,
 =constant=) so colours track the user's theme without hard-coding
 hex.  Applied via overlay in =bcp-anglican-render='s =:hymn= step.
 
+** Suggested tune (2026-04-25)
+
+=bcp-hymnal-tunes-for-text= walks every registered manifest and
+returns the tune-id symbols set for the given text-id, sorted by
+slot number string so a hymn's primary setting (\"5a\") sorts before
+its alternate (\"5b\") and first occurrence wins.  The renderer
+prints =Tune: PRIMARY (or ALT1, ALT2)= under the meter line.  When
+no manifest sets a tune for the text, the line is omitted.
+
 ** Meter notation surfaced in renders (2026-04-25)
 
 Both hymns and metrical psalters now print =_Meter: …_= immediately

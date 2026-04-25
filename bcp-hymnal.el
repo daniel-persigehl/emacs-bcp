@@ -349,6 +349,27 @@ NUMBER is a string (may include letter suffix: \"164b\")."
   "Return the info plist for HYMNAL-ID, or nil."
   (alist-get hymnal-id bcp-hymnal--hymnal-info))
 
+(defun bcp-hymnal-tunes-for-text (text-id)
+  "Return ordered de-duplicated list of tune-id symbols set for TEXT-ID.
+Walks every registered hymnal manifest and collects each slot whose
+`:text' matches TEXT-ID.  Slots are sorted by their number-string so a
+hymnal's primary setting (e.g. \"5a\") sorts before alternates (\"5b\");
+first occurrence of each tune wins.  Returns nil if TEXT-ID has no
+hymnal slot anywhere."
+  (let (pairs)
+    (dolist (entry bcp-hymnal--manifests)
+      (maphash
+       (lambda (n slot)
+         (when (and (eq (plist-get slot :text) text-id)
+                    (plist-get slot :tune))
+           (push (cons n (plist-get slot :tune)) pairs)))
+       (cdr entry)))
+    (let ((sorted (sort pairs (lambda (a b) (string< (car a) (car b)))))
+          tunes)
+      (dolist (p sorted)
+        (cl-pushnew (cdr p) tunes :test #'eq))
+      (nreverse tunes))))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Copyright resolution
 
