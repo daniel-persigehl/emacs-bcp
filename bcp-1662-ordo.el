@@ -2,7 +2,7 @@
 
 ;; Author: You
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "28.1") (bcp-1662-lectionary "0.1.0"))
+;; Package-Requires: ((emacs "28.1"))
 ;; Keywords: bible, bcp, daily-office, liturgy, 1662
 
 ;;; Commentary:

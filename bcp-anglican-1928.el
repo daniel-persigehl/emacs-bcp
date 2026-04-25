@@ -1,7 +1,7 @@
 ;;; bcp-anglican-1928.el --- 1928 American BCP Daily Office -*- lexical-binding: t -*-
 
 ;; Keywords: bible, bcp, liturgy, daily-office
-;; Package-Requires: ((emacs "28.1") (bible-commentary "0.2.0"))
+;; Package-Requires: ((emacs "28.1"))
 
 ;;; Commentary:
 

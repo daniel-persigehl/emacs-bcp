@@ -1,7 +1,7 @@
 ;;; bcp-1662.el --- 1662 BCP Daily Office for Emacs -*- lexical-binding: t -*-
 
 ;; Keywords: bible, bcp, liturgy, daily-office
-;; Package-Requires: ((emacs "28.1") (bible-commentary "0.2.0"))
+;; Package-Requires: ((emacs "28.1"))
 
 ;;; Commentary:
 
