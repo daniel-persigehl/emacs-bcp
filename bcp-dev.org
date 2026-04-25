@@ -1704,6 +1704,51 @@ plain L.M. (iambic dimeter quatrains), but the few exceptions
 the same way.  Until then, Latin records render without a
 =Meter:= line.
 
+** Verse / stanza class numbering (2026-04-25)
+
+The buffer now distinguishes two classes typographically:
+
+- *Verse class* — psalms, canticles, lessons.  Numbered by overlay
+  in =bcp-reader--add-verse-number-overlays= as a 4-char right-aligned
+  digit followed by a single space, giving a 5-char gutter (e.g.
+  =   1 =, =  29 =, = 176 =).  No trailing period.  =wrap-prefix= is
+  5 spaces.  The =bcp-verse N= text property on the first character
+  of each verse is the trigger; =bcp-book= is no longer consulted
+  for formatting (kept on the property only as provenance).
+
+- *Stanza class* — office hymns and Tate & Brady metrical psalms.
+  Emitted as literal text by the hymn renderer
+  (=bcp-anglican-render.el='s =:hymn= step) and by
+  =bcp-fetcher--tate-brady-render-psalm=.  4-char right-aligned digit
+  followed by a period and a space, giving a 6-char gutter (e.g.
+  =   1. =, =  29. =).  Continuation lines indent to match.
+
+The single-character period is the class signal — same colour, same
+right-aligned digit field, one extra column for stanzas.  The
+convention follows printed psalters/Bibles (bare numeral) versus
+hymnals (numeral + period).
+
+Both classes carry the =bcp-verse-number= face on the leading number
+(inherits =font-lock-constant-face=, so the accent picks up the
+theme).  For the verse class the face rides on the overlay's
+=before-string=; for the stanza class it's a property on the literal
+text the renderer inserts.
+
+Canticles previously rendered without numbers; the new
+=bcp-liturgy-render--insert-canticle-text= splits the input on
+newline, strips the legacy 3-space indent that aligned subsequent
+verses, and propertizes each verse with =bcp-verse N= so the gutter
+overlay supplies the number.  This makes communal antiphonal
+recitation ("Side A: odd, Side B: even") possible across all sung
+prose canticles (Te Deum, Magnificat, Benedictus, Nunc Dimittis,
+Venite, Jubilate).
+
+T&B no longer participates in the overlay path: its prior =bcp-verse=
+propertization is dropped and the stanza prefix is rewritten to
+=   N. = with 6-space continuation indent inside the renderer
+itself.  Hymns use the same =%4d. = format, so the two stanza-class
+sources align column-for-column whatever the surrounding context.
+
 ** Fallback tunes by time-of-day + meter (2026-04-25)
 
 Many Roman-hymnal English translations (e.g. "Who madest all and dost

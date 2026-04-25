@@ -469,12 +469,11 @@ CTX is the tradition context plist."
                                     'face 'bcp-hymn-meter)))
                    (insert "\n"))))
              (insert "\n")
-             (let* ((stanzas (or (plist-get text-rec :stanzas) '()))
-                    (num-w   (length (number-to-string (length stanzas)))))
+             (let* ((stanzas (or (plist-get text-rec :stanzas) '())))
                (cl-loop
                 for stanza in stanzas
                 for i from 1 do
-                (let* ((prefix      (format (format "%%%dd. " num-w) i))
+                (let* ((prefix      (format "%4d. " i))
                        (indent-base (make-string (length prefix) ?\s))
                        (lines       (split-string stanza "\n"))
                        (prefix-emitted nil))
@@ -486,7 +485,7 @@ CTX is the tradition context plist."
                       (let ((p-start (point)))
                         (insert prefix)
                         (overlay-put (make-overlay p-start (point))
-                                     'face 'bcp-hymn-verse-number))
+                                     'face 'bcp-verse-number))
                       (insert l "\n")
                       (setq prefix-emitted t))
                      (t

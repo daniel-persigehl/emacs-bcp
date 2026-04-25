@@ -890,12 +890,16 @@ and trailing orphan Part-heads are dropped."
       (nreverse kept))))
 
 (defun bcp-fetcher--tate-brady-render-psalm (n blocks v-from v-to)
-  "Render T&B psalm N for verses V-FROM..V-TO as propertized text.
+  "Render T&B psalm N for verses V-FROM..V-TO as text with stanza numbers.
 V-FROM nil or 1 means from the start; V-TO nil means through the end.
-The leading \"N \" marker on each verse line is stripped; the verse
-number is attached as a `bcp-verse' text property to the first
-character of the verse content, so downstream gutter overlays render
-the number without duplicating it in the text."
+
+T&B is metrical: each numbered unit is a stanza, not a prose verse.
+The renderer rewrites each \"N \" line-start to \"   N. \" (4-char
+right-aligned digit field + period + space = 6-char prefix) and
+indents continuation lines to match — the same prefix shape used by
+the office hymn renderer.  Bypasses the verse-number gutter overlay
+path; the period is the visual signal that distinguishes the stanza
+class from the prose-verse class."
   (let* ((kept (bcp-fetcher--tate-brady-filter-blocks blocks v-from v-to))
          (raw
           (mapconcat
@@ -903,20 +907,31 @@ the number without duplicating it in the text."
              (pcase (car b)
                (:stanza (nth 2 b))
                (:part (concat "    " (nth 1 b)))))
-           kept "\n\n")))
+           kept "\n\n"))
+         (indent "      "))                ; 6 spaces — matches "%4d. "
     (when (> (length raw) 0)
       (with-temp-buffer
         (insert raw)
         (goto-char (point-min))
         (while (not (eobp))
-          (when (looking-at "\\([0-9]+\\) ")
-            (let* ((vnum  (string-to-number (match-string 1)))
-                   (props (list 'bcp-verse vnum 'bcp-book "Psalms")))
-              (when (= vnum 1)
-                (setq props (nconc props (list 'bcp-chapter n))))
+          (cond
+           ;; Verse line: rewrite "N " to "   N. " (4-char field + ". ")
+           ((looking-at "\\([0-9]+\\) ")
+            (let* ((vnum   (string-to-number (match-string 1)))
+                   (prefix (format "%4d. " vnum)))
               (delete-region (match-beginning 0) (match-end 0))
+              (insert (propertize prefix 'face 'bcp-verse-number))
+              ;; First-character provenance props (no `bcp-verse', so
+              ;; the gutter overlay does not fire on this passage).
               (unless (eolp)
-                (add-text-properties (point) (1+ (point)) props))))
+                (let ((props (list 'bcp-book "Psalms")))
+                  (when (= vnum 1)
+                    (setq props (nconc props (list 'bcp-chapter n))))
+                  (add-text-properties (point) (1+ (point)) props)))))
+           ;; Continuation line: 2-space source indent → 6-space render indent.
+           ((looking-at "  ")
+            (delete-region (match-beginning 0) (match-end 0))
+            (insert indent)))
           (forward-line 1))
         (buffer-string)))))
 

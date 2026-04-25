@@ -79,9 +79,14 @@ Scans for positions where `bcp-verse' is set (the first character of each
 verse's text), collects them in order, then creates one overlay per verse
 spanning from that position to the start of the next verse (or end of
 buffer).  Each overlay carries:
-  `before-string'    — the verse number, right-aligned in a 4-char field
+  `before-string'    — bare numeral, right-aligned in a 4-char field + space
   `wrap-prefix'      — 5-space indent for continuation lines
   `bcp-verse-number' — t (used to identify and remove these overlays)
+
+The bare numeral (no period) is the visual signal for the verse class —
+psalms, canticles, lessons.  The stanza class (hymns, metrical psalms)
+emits its own \"N. \" prefix as literal text and bypasses this overlay
+path.
 
 Does nothing if the buffer contains no `bcp-verse' properties."
   (let (positions)
@@ -98,16 +103,16 @@ Does nothing if the buffer contains no `bcp-verse' properties."
     (setq positions (nreverse positions))
     ;; Pass 2 — create overlays
     (cl-loop for (start next) on positions
-             for vnum     = (get-text-property start 'bcp-verse)
-             for book     = (get-text-property start 'bcp-book)
-             for is-psalm = (equal book "Psalms")
-             for end      = (or next (point-max))
-             for disp     = (if is-psalm (format "%d." vnum) (format "%d" vnum))
-             for pad      = (make-string (max 0 (- 4 (length disp))) ?\s)
-             for ov       = (make-overlay start end)
+             for vnum = (get-text-property start 'bcp-verse)
+             for end  = (or next (point-max))
+             for disp = (format "%d" vnum)
+             for pad  = (make-string (max 0 (- 4 (length disp))) ?\s)
+             for ov   = (make-overlay start end)
              do
              (overlay-put ov 'bcp-verse-number t)
-             (overlay-put ov 'before-string (concat pad disp " "))
+             (overlay-put ov 'before-string
+                          (propertize (concat pad disp " ")
+                                      'face 'bcp-verse-number))
              (overlay-put ov 'wrap-prefix "     "))))
 
 (defun bcp-reader-toggle-verse-numbers ()

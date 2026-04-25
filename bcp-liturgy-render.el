@@ -243,14 +243,17 @@ keyword face so it picks up an accent automatically under any theme."
 Subdued colour by inheritance from the theme's comment face."
   :group 'bcp-liturgy-render)
 
-(defface bcp-hymn-verse-number
-  '((t :inherit font-lock-constant-face))
-  "Face for the leading verse number on each hymn stanza."
-  :group 'bcp-liturgy-render)
-
 (defface bcp-hymn-recording-link
   '((t :inherit bcp-hymn-meter :underline t))
   "Face for clickable tune-name buttons that open a YouTube recording."
+  :group 'bcp-liturgy-render)
+
+(defface bcp-verse-number
+  '((t :inherit font-lock-constant-face))
+  "Face for the leading verse / stanza number on every numbered line.
+Applies uniformly to the verse class (psalms, canticles, lessons —
+rendered by gutter overlay) and the stanza class (office hymns,
+metrical psalms — rendered as literal \"N. \" prefix)."
   :group 'bcp-liturgy-render)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
@@ -397,11 +400,27 @@ on success, replaces the line with the passage text."
    'help-echo (format "Retry fetch of %s" passage)))
 
 (defun bcp-liturgy-render--insert-canticle-text (text)
-  "Insert canticle TEXT with consistent 3-space indent on all verses.
+  "Insert canticle TEXT with overlay-driven verse numbering.
 Canticle strings store the first verse at column 0; subsequent verses
-begin with a newline + 3 spaces.  This function prepends the 3-space
-indent to the first verse so all verses are visually aligned."
-  (bcp-liturgy-render--insert-text-block (concat "   " text)))
+begin with a newline + 3 spaces.  Strips that 3-space indent and
+propertizes the first character of each verse with `bcp-verse N',
+so the gutter overlay added by `bcp-reader--add-verse-number-overlays'
+renders the verse numbers in the same 5-char gutter used for psalms
+and lessons."
+  (let* ((lines  (split-string text "\n"))
+         (vnum   0)
+         (parts  nil))
+    (dolist (line lines)
+      (let ((stripped (replace-regexp-in-string "\\`   " "" line)))
+        (if (string-empty-p stripped)
+            (push "" parts)
+          (cl-incf vnum)
+          (push (concat (propertize (substring stripped 0 1)
+                                    'bcp-verse vnum)
+                        (substring stripped 1))
+                parts))))
+    (bcp-liturgy-render--insert-text-block
+     (mapconcat #'identity (nreverse parts) "\n"))))
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Spacing normalisation
