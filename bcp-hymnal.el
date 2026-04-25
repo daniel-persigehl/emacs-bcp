@@ -301,7 +301,13 @@ File format: blocks separated by `[text-id]' headers, followed by
 Populated by `bcp-hymnal-register-tune'.")
 
 (defun bcp-hymnal-register-tune (id &rest plist)
-  "Register a tune with symbol ID and PLIST metadata."
+  "Register a tune with symbol ID and PLIST metadata.
+Preserves any previously-set `:recording-url' so a reload of
+`bcp-hymnal-tunes.el' doesn't drop URLs that were attached
+separately by a recording-bundle file."
+  (when-let* ((existing (gethash id bcp-hymnal--tunes))
+              (url (plist-get existing :recording-url)))
+    (setq plist (plist-put plist :recording-url url)))
   (puthash id plist bcp-hymnal--tunes))
 
 (defun bcp-hymnal-tune (id)

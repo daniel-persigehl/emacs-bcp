@@ -22,6 +22,7 @@
 ;;; Code:
 
 (require 'bcp-hymnal)
+(require 'bcp-hymnal-tunes)
 
 (defconst bcp-hymnal-1940-recordings--alist
   '(
