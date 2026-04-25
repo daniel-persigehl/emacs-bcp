@@ -1622,6 +1622,26 @@ Christmas Day, Easter Day, Whitsunday, Trinity Sunday all surface
 season-or-feast-tagged 1940 hymns at tier 0 instead of falling to
 the alphabetical fallback.
 
+** Meter notation surfaced in renders (2026-04-25)
+
+Both hymns and metrical psalters now print =_Meter: …_= immediately
+under the title so the reader can pick a tune without counting
+syllables.  The data was already there — exposing it was a one-line
+edit per render path.
+
+- Hymns: =bcp-anglican-render= reads =:meter= from the text record
+  (542 / 590 records carry it; missing ones are mostly Roman hymns,
+  which lack authored meters).  When =:meter= is absent the line is
+  silently omitted.
+- Metrical psalters: =bcp-fetcher--tate-brady-fetch= prepends a meter
+  banner taken from the backend's =:meter= property
+  (="Common Meter (8.6.8.6 iambic)"=).  Future metrical psalter
+  backends (Anglo-Genevan, Genevan Japanese) declare their own and
+  inherit the same banner behaviour.
+
+Authoring Roman-hymn meters and per-part T&B meter overrides remain
+open; renderer degrades gracefully without them.
+
 ** Deferred
 - =:appointments= data on text records — schema is
   =((SLOT-KIND . OCCASION) ...)= for v1; may need a plist form for
@@ -1642,6 +1662,12 @@ the alphabetical fallback.
 - Vocab additions noted but not made: =precious-blood=, =apostles=,
   =martyrs=, =confessors=, =virgins=, =holy-women=, =angels=,
   =eucharist=.
+- Roman-hymn =:meter= authoring — 59 hymns lack the field, so the
+  meter line is silently omitted under Roman ordos.  Once authored
+  the same renderer wiring picks them up.
+- Per-part Tate & Brady meter overrides — the banner currently uses
+  the backend default ("Common Meter"); a few T&B parts are not in
+  CM and would benefit from per-part =:meter=.
 - Sticky memory / per-user "last choice" persistence.
 - Mass / Compline slot profile registries.
 - Shaker Hymnal (Patterson) — texts and tunes PD; editorial

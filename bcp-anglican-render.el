@@ -397,6 +397,10 @@ CTX is the tradition context plist."
             (text-rec
              (insert (format "_%s_\n\n"
                              (or (plist-get text-rec :first-line) "")))
+             ;; Meter under the title so the user can see at a glance
+             ;; what tunes will fit (no syllable-counting required).
+             (when-let ((meter (plist-get text-rec :meter)))
+               (insert (format "_Meter: %s_\n\n" meter)))
              (dolist (stanza (or (plist-get text-rec :stanzas) '()))
                (insert stanza "\n\n")))
             (t

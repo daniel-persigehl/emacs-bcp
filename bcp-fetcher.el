@@ -952,7 +952,9 @@ the number without duplicating it in the text."
 
 (defun bcp-fetcher--tate-brady-fetch (passage _translation callback)
   "Serve PASSAGE from the local Tate & Brady psalter and call CALLBACK.
-Returns nil for non-Psalms passages so the fallback chain continues."
+Returns nil for non-Psalms passages so the fallback chain continues.
+Prepends a meter notation drawn from the backend's :meter property
+so the user sees at a glance what tunes will fit."
   (let ((text (condition-case err
                   (bcp-fetcher--tate-brady-render
                    passage (bcp-fetcher--tate-brady-psalms))
@@ -961,6 +963,10 @@ Returns nil for non-Psalms passages so the fallback chain continues."
                           (error-message-string err))
                  nil))))
     (when text
+      (when-let ((meter (plist-get
+                         (alist-get 'tate-brady bcp-fetcher--backends)
+                         :meter)))
+        (setq text (concat (format "_Meter: %s_\n\n" meter) text)))
       (message "bcp-fetcher: %s served from Tate & Brady metrical psalter."
                passage))
     (funcall callback text)))
@@ -971,7 +977,8 @@ Returns nil for non-Psalms passages so the fallback chain continues."
  :kind            :psalter
  :fetch-fn        #'bcp-fetcher--tate-brady-fetch
  :psalm-numbering 'hebrew
- :translations    '("Tate & Brady" "T&B"))
+ :translations    '("Tate & Brady" "T&B")
+ :meter           "Common Meter (8.6.8.6 iambic)")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Vulgate Psalter (local)
