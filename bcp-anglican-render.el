@@ -392,31 +392,61 @@ CTX is the tradition context plist."
                              :extra-tags extra-tags))
                 (top-id     (car results))
                 (text-rec   (when top-id (bcp-hymnal-text top-id))))
-           (let ((label (or (plist-get step :heading) "Hymn"))
-                 (title (and text-rec (plist-get text-rec :first-line))))
-             (heading! 3 (if title
-                             (format "%s: %s" label (upcase title))
-                           label)))
+           (let* ((label (or (plist-get step :heading) "Hymn"))
+                  (title (and text-rec (plist-get text-rec :first-line)))
+                  (heading-text (if title
+                                    (format "%s: %s" label (upcase title))
+                                  label))
+                  (h-start (point)))
+             (insert heading-text "\n")
+             (overlay-put (make-overlay h-start (point))
+                          'face 'bcp-hymn-title))
            (cond
             (text-rec
              (when-let ((meter (plist-get text-rec :meter)))
-               (insert (format "Meter: %s\n\n" meter)))
+               (let ((m-start (point)))
+                 (insert (format "Meter: %s" meter))
+                 (overlay-put (make-overlay m-start (point))
+                              'face 'bcp-hymn-meter)
+                 (insert "\n\n")))
              (let* ((stanzas (or (plist-get text-rec :stanzas) '()))
                     (num-w   (length (number-to-string (length stanzas)))))
                (cl-loop
                 for stanza in stanzas
                 for i from 1 do
-                (let* ((prefix (format (format "%%%dd. " num-w) i))
-                       (indent (make-string (length prefix) ?\s))
-                       (lines  (split-string stanza "\n"))
-                       (out    nil))
-                  (when lines
-                    (push (concat prefix (car lines)) out)
-                    (dolist (l (cdr lines))
-                      (push (if (string-empty-p l) l (concat indent l))
-                            out)))
-                  (insert (mapconcat #'identity (nreverse out) "\n")
-                          "\n\n")))))
+                (let* ((prefix      (format (format "%%%dd. " num-w) i))
+                       (indent-base (make-string (length prefix) ?\s))
+                       (lines       (split-string stanza "\n"))
+                       (lyric-lens  (mapcar #'length
+                                            (cl-remove-if #'string-empty-p
+                                                          lines)))
+                       (max-len     (if lyric-lens
+                                        (apply #'max lyric-lens)
+                                      0))
+                       (prefix-emitted nil))
+                  (dolist (l lines)
+                    (cond
+                     ((string-empty-p l)
+                      (insert "\n"))
+                     ((not prefix-emitted)
+                      (let ((p-start (point)))
+                        (insert prefix)
+                        (overlay-put (make-overlay p-start (point))
+                                     'face 'bcp-hymn-verse-number))
+                      (let ((extra (min 6 (max 0 (/ (- max-len (length l))
+                                                    3)))))
+                        (when (> extra 0)
+                          (insert (make-string extra ?\s))))
+                      (insert l "\n")
+                      (setq prefix-emitted t))
+                     (t
+                      (insert indent-base)
+                      (let ((extra (min 6 (max 0 (/ (- max-len (length l))
+                                                    3)))))
+                        (when (> extra 0)
+                          (insert (make-string extra ?\s))))
+                      (insert l "\n"))))
+                  (insert "\n")))))
             (t
              (rubric! "Here followeth a hymn.")))))
 

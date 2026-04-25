@@ -229,6 +229,24 @@ the Church of England may set either value."
   "Face for third-level Office headings (canticles, lessons, collects)."
   :group 'bcp-liturgy-render)
 
+(defface bcp-hymn-title
+  '((t :inherit (bcp-liturgy-heading-3 font-lock-keyword-face)))
+  "Face for the hymn title line (\"Hymn: O COME, ALL YE FAITHFUL\").
+Inherits weight from the section heading and color from the theme's
+keyword face so it picks up an accent automatically under any theme."
+  :group 'bcp-liturgy-render)
+
+(defface bcp-hymn-meter
+  '((t :inherit font-lock-comment-face))
+  "Face for the hymn / metrical-psalter meter notation line.
+Subdued colour by inheritance from the theme's comment face."
+  :group 'bcp-liturgy-render)
+
+(defface bcp-hymn-verse-number
+  '((t :inherit font-lock-constant-face))
+  "Face for the leading verse number on each hymn stanza."
+  :group 'bcp-liturgy-render)
+
 ;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Buffer insertion primitives
 ;;;; ══════════════════════════════════════════════════════════════════════════
