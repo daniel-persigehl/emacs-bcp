@@ -470,27 +470,37 @@ Reloads all package files in dependency order without restarting Emacs.
 
 ## Acknowledgements
 
-**Oremus Bible Browser** ([bible.oremus.org](https://bible.oremus.org)) is maintained by the Church of England and has provided free public access to scripture texts since the late 1990s. This project depends on it as its primary online scripture source.
+### Liturgical and scriptural texts
 
 **The Book of Common Prayer 1662** is a work of the Church of England and is in the public domain. The text of the 1662 BCP used here follows the standard edition.
 
+**The Book of Common Prayer 1928** (American) is in the public domain. The text of the collects, canticles, prayers, and liturgical calendar used here follows the standard 1928 edition.
+
 **The Coverdale Psalter** — Miles Coverdale's translation of the Psalms, appointed in the BCP 1662 — is in the public domain. The bundled `bcp-liturgy-psalter-coverdale.txt` was prepared from the Oremus Bible Browser's BCP psalter texts.
 
-**The Book of Common Prayer 1928** (American) is in the public domain. The text of the collects, canticles, prayers, and liturgical calendar used here follows the standard 1928 edition.
+**The Marquess of Bute's** translation of the Roman Breviary (1908) provides the English prose translations for the Little Office of the BVM. Hymn translations are attributed to their individual translators: Dom Matthew Britt, O.S.B. (1922), Edward Caswall (1849), and John Mason Neale (1851).
+
+### Digital sources
+
+**Oremus Bible Browser** ([bible.oremus.org](https://bible.oremus.org)) is maintained by the Church of England and has provided free public access to scripture texts since the late 1990s. This project depends on it as its primary online scripture source.
 
 **eBible.org** provides freely downloadable plain-text scripture files used by the optional `bcp-fetcher-ebible` backend.
 
+**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation. The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer and the Roman Breviary.
+
+### Recordings
+
 **Andrew Remillard** has performed and uploaded a complete instrumental playthrough of the [*Hymnal 1940*](https://www.youtube.com/playlist?list=PLZZAT1pP5dJrWsu25T4gVyIAC8nOI-lP8) on YouTube. Each "Tune:" line in a rendered hymn is a clickable link to his recording of that tune; the project hosts nothing and fetches nothing at runtime.
+
+### Inspirations and personal thanks
+
+The author's love of the Roman Office owes much to the ***Anglican Breviary*** (Frank Gavin Liturgical Foundation; currently maintained by the Lancelot Andrewes Press). No text has been drawn from that copyrighted work; all Latin and English texts in this project are sourced independently from the public domain.
 
 The author would like to extend thanks to the creators of the [*1662 Daily Office Podcast*](https://creators.spotify.com/pod/profile/1662pod/) produced by [Trinity Anglican Church](https://trinityconnersville.com/) (Connersville, IN), for lowering the barrier of regularly praying Morning and Evening Prayer.
 
 The author also wishes to thank the many wonderful members of the Personal Ordinariate of St. Peter for their personal kindness and their work in raising awareness of the richness of the Anglican traditions.
 
-**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation. The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer and the Roman Breviary.
-
-**The Marquess of Bute's** translation of the Roman Breviary (1908) provides the English prose translations for the Little Office of the BVM. Hymn translations are attributed to their individual translators: Dom Matthew Britt, O.S.B. (1922), Edward Caswall (1849), and John Mason Neale (1851).
-
-The author's love of the Roman Office owes much to the ***Anglican Breviary*** (Frank Gavin Liturgical Foundation; currently maintained by the Lancelot Andrewes Press). No text has been drawn from that copyrighted work; all Latin and English texts in this project are sourced independently from the public domain.
+### Tools
 
 This project was developed with the assistance of [Claude Code](https://claude.ai/claude-code) (Anthropic).
 
