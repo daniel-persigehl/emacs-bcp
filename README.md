@@ -114,7 +114,7 @@ The current implementation covers:
 - Tune metadata for ~640 tunes; tune names render as clickable YouTube recording links where one is registered (586 of the 1940's tunes)
 - Per-translator meter notation printed under each hymn title; when a hymn text has no appointed setting, a fallback table by time-of-day + meter suggests a widely-known tune (e.g. TE-LUCIS / TALLIS' CANON for evening L.M.)
 
-![A hymn from The Hymnal 1940 with tune metadata](img/hymn-1940.svg)
+![A hymn from The Hymnal 1940 with tune metadata, alongside a state prayer using the configured head-of-state name](img/hymn-1940.svg)
 
 **Psalters** (served for Psalms only, layered on top of the backend — `bcp-fetcher-psalter`):
 - `coverdale` — Miles Coverdale's Psalter (BCP 1662), bundled local text file
