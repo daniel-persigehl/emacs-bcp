@@ -22,3 +22,6 @@ Lectionary_1928.pdf
 
 # Misc local media
 *.mp4
+
+# Local drafts (Reddit posts, scratch notes)
+*.draft.txt
