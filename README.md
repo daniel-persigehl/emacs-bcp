@@ -1,6 +1,6 @@
 # emacs-bcp — Bible Commentary & Prayer
 
-An Emacs Lisp framework for Bible study and liturgical prayer. It has two equal purposes: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline. Four traditions ship feature-complete: the BCP 1662, the 1928 American BCP, the Little Office of the BVM, and the pre-1955 Roman Breviary; the architecture is designed to accommodate additional prayer books.
+An Emacs Lisp framework for Bible study and liturgical prayer. It has two halves: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline (currently the more developed of the two). Four traditions ship feature-complete: the BCP 1662, the 1928 American BCP, the Little Office of the BVM, and the pre-1955 Roman Breviary; the architecture is designed to accommodate additional prayer books.
 
 ![BCP 1662 Morning Prayer for Christmas Day](img/1662-christmas-morning.svg)
 
