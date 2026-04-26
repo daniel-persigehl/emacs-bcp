@@ -1499,7 +1499,7 @@ Returns one of:
 HOUR is a symbol (lauds, prime, terce, sext, none, vespers, compline).
 DATE is a Gregorian date (MONTH DAY YEAR); defaults to today.
 DATA-FN is the resolver function; defaults to `bcp-roman-breviary--resolve'."
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (year  (caddr date))
          (bcp-roman-breviary--current-dow (calendar-day-of-week date))
          (bcp-roman-breviary--current-date date)
@@ -1555,7 +1555,7 @@ DATA-FN is the resolver function; defaults to `bcp-roman-breviary--resolve'."
   "Render Vespers of the Roman Breviary.
 DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (interactive)
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (dow  (calendar-day-of-week date))
          (season (bcp-roman-breviary--liturgical-season date))
          (hw-triduum (pcase season
@@ -1607,7 +1607,7 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   "Render Compline of the Roman Breviary.
 DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (interactive)
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (dow  (calendar-day-of-week date))
          (season (bcp-roman-breviary--liturgical-season date))
          (hw-triduum (pcase season
@@ -1640,7 +1640,7 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   "Render Lauds of the Roman Breviary.
 DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (interactive)
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (dow  (calendar-day-of-week date))
          (season (bcp-roman-breviary--liturgical-season date))
          (hw-triduum (pcase season
@@ -1681,7 +1681,7 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   "Render Prime of the Roman Breviary.
 DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (interactive)
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (dow  (calendar-day-of-week date))
          (season (bcp-roman-breviary--liturgical-season date))
          (hw-triduum (pcase season
@@ -1735,7 +1735,7 @@ DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
 (defun bcp-roman-breviary--minor-hour-entry (hour english-name latin-name &optional date)
   "Dispatch minor HOUR with feast and Triduum awareness.
 ENGLISH-NAME and LATIN-NAME are for buffer/label formatting."
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (dow  (calendar-day-of-week date))
          (season (bcp-roman-breviary--liturgical-season date))
          (hw-triduum (pcase season
@@ -1957,7 +1957,7 @@ cursus.  Otherwise: Sundays get dominical Matins (3 nocturns, 9 lessons),
 weekdays get ferial Matins (1 nocturn, 12 psalms, lectio brevis).
 DATE is a Gregorian date (MONTH DAY YEAR); defaults to today."
   (interactive)
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (dow  (calendar-day-of-week date))
          (feast-data (bcp-roman-breviary--feast-matins-data date))
          (proprium-feast (bcp-roman-proprium-feast date))

@@ -962,7 +962,7 @@ local constants."
   "Render an LOBVM HOUR with ORDO, BUFFER-NAME, LABEL, and optional DATE.
 HOUR is a symbol: `matins', `lauds', `prime', `terce', `sext',
 `none', `vespers', or `compline'."
-  (let* ((date (or date (calendar-current-date)))
+  (let* ((date (or date (bcp-roman--current-date)))
          (year  (caddr date))
          (season (bcp-roman-lobvm--marian-season date))
          (marian-data (cdr (assq season

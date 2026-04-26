@@ -108,6 +108,7 @@
 (defvar bcp-fetcher-furigana-display)
 (defvar bcp-1662-office-date)
 (defvar bcp-1928-office-date)
+(defvar bcp-roman-office-date)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Helpers
@@ -760,7 +761,8 @@ explicitly set.  Use Reset to clear all overrides."
 (defun bcp--office-date-active-p ()
   "Non-nil when an office date override is currently set."
   (or (and (boundp 'bcp-1662-office-date) bcp-1662-office-date)
-      (and (boundp 'bcp-1928-office-date) bcp-1928-office-date)))
+      (and (boundp 'bcp-1928-office-date) bcp-1928-office-date)
+      (and (boundp 'bcp-roman-office-date) bcp-roman-office-date)))
 
 (transient-define-suffix bcp--set-office-date ()
   "Set the override date used by all BCP Daily Office launches.
@@ -784,7 +786,8 @@ bypass the hour-based dispatch."
          (hour  (nth 2 now))
          (time  (list 0 0 hour day month year nil nil nil)))
     (setq bcp-1662-office-date time
-          bcp-1928-office-date time)
+          bcp-1928-office-date time
+          bcp-roman-office-date time)
     (message "Office date set to %d-%02d-%02d." year month day)))
 
 (transient-define-suffix bcp--clear-office-date ()
@@ -794,7 +797,8 @@ bypass the hour-based dispatch."
   :if (lambda () (bcp--office-date-active-p))
   (interactive)
   (setq bcp-1662-office-date nil
-        bcp-1928-office-date nil)
+        bcp-1928-office-date nil
+        bcp-roman-office-date nil)
   (message "Office date reset — using current date."))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

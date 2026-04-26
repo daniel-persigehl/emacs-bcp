@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'bcp-common-prayers)
+(require 'calendar)
 
 ;; Shared officiant variable — defined as defcustom in bcp-1662.el,
 ;; declared here so the Roman Office can reference it independently.
@@ -41,6 +42,29 @@ One of: lay, deacon, priest, bishop.")
   "Roman Office settings."
   :prefix "bcp-roman-"
   :group 'bcp-liturgy)
+
+(defvar bcp-roman-office-date nil
+  "When non-nil, override the date used by Roman Office entry points.
+A decoded-time list as returned by `decode-time'.  Set via the BCP
+transient \"Set office date\" command alongside `bcp-1662-office-date'
+and `bcp-1928-office-date'; cleared by \"Clear office date\".
+
+`bcp-office-nav--override-time' (bound dynamically by day-navigation
+commands) takes precedence over this variable.")
+
+(defun bcp-roman--current-date ()
+  "Return the effective Gregorian date (MONTH DAY YEAR) for the Roman Office.
+Checks `bcp-office-nav--override-time' first (set dynamically by
+navigation commands), then `bcp-roman-office-date', then today."
+  (cond
+   ((and (boundp 'bcp-office-nav--override-time)
+         bcp-office-nav--override-time)
+    (let ((dt bcp-office-nav--override-time))
+      (list (nth 4 dt) (nth 3 dt) (nth 5 dt))))
+   (bcp-roman-office-date
+    (let ((dt bcp-roman-office-date))
+      (list (nth 4 dt) (nth 3 dt) (nth 5 dt))))
+   (t (calendar-current-date))))
 
 (defcustom bcp-roman-office-language 'latin
   "Language for the Roman Office.
