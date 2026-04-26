@@ -101,7 +101,7 @@ The current implementation covers:
 - Per-setting overrides for mixing and matching (e.g. Latin structural texts with Japanese scripture)
 - Furigana display system for Japanese text: normal, muted (comment), or hidden, with in-buffer toggle
 
-![Left: Evening Prayer with Bungo-yaku scripture and English structural fallback. Right: English Evening Prayer with Latin canticles.](img/multilingual-support.svg)
+![Left: Evening Prayer under the Japanese profile, with English fallback for parts that lack a Japanese implementation. Right: English Evening Prayer with Latin canticles.](img/multilingual-support.svg)
 
 **Bible backends** (served for all scripture — `bcp-fetcher-backend`):
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
