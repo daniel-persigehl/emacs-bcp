@@ -23,9 +23,9 @@ Four traditions are implemented:
 - **BCP 1662** — the English prayer book; full liturgical calendar with moveable feasts and user-defined observances
 - **1928 American BCP** — the pre-revision American prayer book; full liturgical calendar and lectionary
 - **Little Office of the BVM** — the Roman Office (*Officium Parvum BMV*), DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering
-- **Roman Breviary** — the pre-1955 (Divino Afflatu) Roman Breviary, all eight canonical hours with Latin/English/Japanese trilingual rendering, weekly psalter cycle, dominical and festal Matins with full lessons, Proprium Sanctorum, Commune Sanctorum, and four seasonal Propers of the Time (Advent, Lent, Eastertide, Christmastide); Holy Week and Sacred Triduum offices
+- **Roman Breviary** — pre-1955 (Divino Afflatu), all eight canonical hours with Latin/English/Japanese trilingual rendering, weekly psalter cycle, dominical and festal Matins with full lessons, Proprium Sanctorum, Commune Sanctorum, and four seasonal Propers of the Time (Advent, Lent, Eastertide, Christmastide); Holy Week and Sacred Triduum offices
 
-The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`). Support for the 1979 American BCP is planned.
+The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`).
 
 ---
 
@@ -99,7 +99,7 @@ The current implementation covers:
 **Language profiles:**
 - Three built-in profiles — ENG (English/Coverdale/KJVA), LAT (Latin/Vulgate), JAP (Japanese/文語訳) — each setting all scripture and liturgical language defaults at once
 - Per-setting overrides for mixing and matching (e.g. Latin structural texts with Japanese scripture)
-- Furigana display system for Japanese text: normal, muted (comment), or hidden, with in-buffer toggle
+- Furigana display system for Japanese text: normal, muted (comment), hidden, or overhead rubi, with in-buffer toggle
 
 ![Left: Evening Prayer under the Japanese profile, with English fallback for parts that lack a Japanese implementation. Right: English Evening Prayer with Latin canticles.](img/multilingual-support.svg)
 
@@ -111,7 +111,7 @@ The current implementation covers:
 **Hymns and tunes:**
 - Office hymn rendering integrated with all four traditions; selection driven by a controlled-vocabulary tag system over a unified text registry that covers The Hymnal 1940 (Episcopal) and the Roman office hymnal in three English translations (Britt, Caswall, Neale)
 - Deterministic, non-repeating hymn picks: a `date + office + slot` seed picks from the tag-eligible pool, and prior-office picks on the same day are excluded so Mattins and Evensong draw distinct hymns without any persistent state
-- Tune metadata for ~640 tunes; tune names render as clickable YouTube recording links where one is registered (586 of the 1940's tunes)
+- Tune metadata for ~640 tunes; tune names render as clickable YouTube recording links where one is registered (586 from The Hymnal 1940)
 - Per-translator meter notation printed under each hymn title; when a hymn text has no appointed setting, a fallback table by time-of-day + meter suggests a widely-known tune (e.g. TE-LUCIS / TALLIS' CANON for evening L.M.)
 
 ![A hymn from The Hymnal 1940 with tune metadata, alongside a state prayer using the configured head-of-state name](img/hymn-1940.svg)
@@ -420,15 +420,14 @@ Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to up
 (setq bcp-roman-office-language 'latin)   ; 'latin or 'english
 ;; Any non-latin value uses English structural texts and fetcher-based scripture/psalms
 
-;; Preferred hymn translator (English mode)
-(setq bcp-roman-hymnal-preferred-translator 'britt)
+;; Hymn translator order (English mode) — head is preferred,
+;; remaining entries are consulted in order if the preferred has
+;; no rendering for a given hymn
+(setq bcp-roman-hymnal-translator-order '(britt caswall neale primer))
 ;;   'britt    — Dom Matthew Britt, O.S.B. (1922)
 ;;   'caswall  — Edward Caswall (1849)
 ;;   'neale    — John Mason Neale (1851)
 ;;   'primer   — The Primer tradition
-
-;; Translator fallback order
-(setq bcp-roman-hymnal-fallback-order '(britt caswall neale primer))
 ```
 
 Both settings are also available from the transient menu (`M-x bcp-settings`, then `R` for the Roman Office submenu).
@@ -508,6 +507,12 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 ## Status
 
-This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others in the Anglican tradition who use Emacs may find it useful. Contributions, corrections, and suggestions are welcome.
+This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others who pray the Office, whether at home in the BCP or the Breviary, may find it useful. Contributions, corrections, and suggestions are welcome.
 
 Planned additions include: the 1979 American BCP, additional hymn translations, Coverdale/KJVA translations for scripture-derived antiphons, a psalm pointing utility, and CJK prayer book texts.
+
+---
+
+## License
+
+The Emacs Lisp code is distributed under the [GNU General Public License, version 3 or later](LICENSE). The bundled liturgical, scriptural, and hymn texts are in the public domain. See `LICENSE` for full terms.
