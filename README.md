@@ -507,7 +507,7 @@ This project was developed with the assistance of [Claude Code](https://claude.a
 
 ## Status
 
-This project is in active personal use and development; both the scripture study and Office sides are in regular use. It is shared in the hope that others who pray the Office, whether at home in the BCP or the Breviary, may find it useful. Contributions, corrections, and suggestions are welcome.
+This project is in active personal use and development. The Office renderer has received the bulk of attention so far and is the more mature half; the scripture reader and notebook are functional and in daily use but rougher around the edges, and will receive their share of polish once the Office side stabilises. It is shared in the hope that others who pray the Office, whether at home in the BCP or the Breviary, may find it useful. Contributions, corrections, and suggestions are welcome.
 
 Planned additions include: the 1979 American BCP, additional hymn translations, Coverdale/KJVA translations for scripture-derived antiphons, a psalm pointing utility, and CJK prayer book texts.
 
