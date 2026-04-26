@@ -1573,11 +1573,7 @@ An endless song of thankful praise!
 :copyright :public-domain
 :source CPWI Hymnal #99
 :hymnary-slug earth_has_many_a_noble_city
-
-To view this media, please accept the license agreement:
-Hope Publishing: one copy
-In order to use resources from the Hope Publishing Company, you must reside in the United States or Canada. Hope Publishing Company owns or administers the contents in these territories.
-You may download one copy of this selection for your own personal use. To make any further copies or to perform the work you must get permission from Hope Publishing Company or belong to and report the copying activity to CCLI, LicenSing or OneLicense.net.  By selecting "I Agree" you are verifying that you reside in the U.S. or Canada and will only legally use this selection.
+:status :text-missing
 
 [from-the-eastern-mountains]
 :first-line From the eastern mountains
@@ -1814,11 +1810,7 @@ God in man made manifest.
 :copyright :public-domain
 :source CPWI Hymnal #96
 :hymnary-slug alleluia_song_of_gladness_voice_of_joy
-
-To view this media, please accept the license agreement:
-Hope Publishing: one copy
-In order to use resources from the Hope Publishing Company, you must reside in the United States or Canada. Hope Publishing Company owns or administers the contents in these territories.
-You may download one copy of this selection for your own personal use. To make any further copies or to perform the work you must get permission from Hope Publishing Company or belong to and report the copying activity to CCLI, LicenSing or OneLicense.net.  By selecting "I Agree" you are verifying that you reside in the U.S. or Canada and will only legally use this selection.
+:status :text-missing
 
 [forty-days-and-forty-nights]
 :first-line Forty days and forty nights
@@ -2090,11 +2082,7 @@ O good and gracious King!
 :copyright :public-domain
 :source CPWI Hymnal #145
 :hymnary-slug the_royal_banners_forward_go
-
-To view this media, please accept the license agreement:
-Hope Publishing: one copy
-In order to use resources from the Hope Publishing Company, you must reside in the United States or Canada. Hope Publishing Company owns or administers the contents in these territories.
-You may download one copy of this selection for your own personal use. To make any further copies or to perform the work you must get permission from Hope Publishing Company or belong to and report the copying activity to CCLI, LicenSing or OneLicense.net.  By selecting "I Agree" you are verifying that you reside in the U.S. or Canada and will only legally use this selection.
+:status :text-missing
 
 [ride-on-ride-on-in-majesty]
 :first-line Ride on, ride on in majesty
