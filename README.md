@@ -101,7 +101,7 @@ The current implementation covers:
 - Per-setting overrides for mixing and matching (e.g. Latin structural texts with Japanese scripture)
 - Furigana display system for Japanese text: normal, muted (comment), or hidden, with in-buffer toggle
 
-![The same office rendered in three language profiles side by side](img/multilingual.svg)
+![Multilingual rendering](img/multilingual-support.svg)
 
 **Bible backends** (served for all scripture — `bcp-fetcher-backend`):
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
