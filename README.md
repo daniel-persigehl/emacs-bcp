@@ -486,7 +486,7 @@ Reloads all package files in dependency order without restarting Emacs.
 
 **eBible.org** provides freely downloadable plain-text scripture files used by the optional `bcp-fetcher-ebible` backend.
 
-**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation. The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer and the Roman Breviary.
+**[Divinum Officium](https://divinumofficium.com/)** provides the Latin source texts for the Roman Office implementation. The project's freely available liturgical data files made it possible to pre-extract the complete Office texts. This project was inspired by Divinum Officium and represents the author's attempt to create a comparable service for the Book of Common Prayer as well as the Roman Breviary.
 
 ### Recordings
 
