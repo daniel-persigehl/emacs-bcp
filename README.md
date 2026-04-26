@@ -430,7 +430,7 @@ Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to up
 ;;   'primer   — The Primer tradition
 ```
 
-Both settings are also available from the transient menu (`M-x bcp-settings`, then `R` for the Roman Office submenu).
+Both settings are also available from the transient menu (`M-x bcp-settings`, then `3` for the Little Office or `4` for the Roman Breviary, then `H` for hymn translator).
 
 ### Rendering
 
