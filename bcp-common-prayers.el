@@ -99,6 +99,11 @@ Use with `bcp-common-prayers-lords-prayer-doxology-1928' when the doxology is re
   "Doxology appended to the Lord's Prayer (1928 American form).
 Append to `bcp-common-prayers-lords-prayer-1928' via the ordo step's :doxology key.")
 
+(defconst bcp-common-prayers-oremus
+  '(:english "Let us pray."
+    :latin   "Orémus.")
+  "The bidding before a collect.")
+
 (defconst bcp-common-prayers-gloria-patri
   '(:english
     "Glory be to the Father, and to the Son, * and to the Holy Ghost;\n\

@@ -217,7 +217,8 @@ CTX is the tradition context plist."
         (:versicles-preces
          (bcp-liturgy-render--insert-dominus-vobiscum
           bcp-common-anglican-preces-lord-be-with-you
-          bcp-common-anglican-preces-lay))
+          bcp-common-anglican-preces-lay)
+         (bcp-liturgy-render--insert-oremus 'english))
 
         ;; ── Canticle ─────────────────────────────────────────────────────
         (:canticle
@@ -319,7 +320,8 @@ CTX is the tradition context plist."
                      (text! (bcp-liturgy-canticle-gloria-text))))
                (bcp-liturgy-render--insert-passage-fallback
                 (funcall psalm-pass-fn p) key
-                bible-commentary-psalm-translation)))))
+                bible-commentary-psalm-translation))
+             (insert "\n"))))
 
         ;; ── Lesson slot ──────────────────────────────────────────────────
         (:lesson

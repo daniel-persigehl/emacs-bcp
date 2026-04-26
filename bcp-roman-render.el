@@ -252,7 +252,7 @@ LANGUAGE is \\='latin or \\='english."
                  (plist-get data :response))))
     (insert "\n")
     (bcp-roman-render--insert-dominus-vobiscum language)
-    (insert "\n" (if en bcp-roman-oremus-en bcp-roman-oremus) "\n")
+    (bcp-liturgy-render--insert-oremus language)
     (insert (plist-get data :collect) "\n")))
 
 (defun bcp-roman-render--insert-incipit (penitential &optional gloria-patri language)
@@ -289,7 +289,7 @@ LANGUAGE is \\='latin or \\='english."
   (let ((en (eq language 'english)))
     (insert "\n" (if en bcp-roman-kyrie-en bcp-roman-kyrie) "\n\n")
     (bcp-roman-render--insert-dominus-vobiscum language)
-    (insert "\n" (if en bcp-roman-oremus-en bcp-roman-oremus) "\n")))
+    (bcp-liturgy-render--insert-oremus language)))
 
 (defun bcp-roman-render--insert-conclusio (hour &optional language)
   "Insert the closing block for HOUR.
@@ -325,7 +325,7 @@ LANGUAGE is \\='latin or \\='english."
     (bcp-liturgy-render--insert-versicles
      (list (list (plist-get data :versicle)
                  (plist-get data :response))))
-    (insert "\n" (if en bcp-roman-oremus-en bcp-roman-oremus) "\n")
+    (bcp-liturgy-render--insert-oremus language)
     (insert (plist-get data :collect) "\n")))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

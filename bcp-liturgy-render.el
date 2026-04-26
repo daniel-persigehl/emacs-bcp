@@ -27,6 +27,7 @@
 ;;; Code:
 
 (require 'cl-lib)
+(require 'bcp-common-prayers)
 
 (declare-function bcp-fetcher--rubi-apply-svg "bcp-fetcher")
 (declare-function bcp-fetcher-fetch-passage "bcp-fetcher")
@@ -628,17 +629,26 @@ sees its own slot-1 pick excluded — matching live behaviour."
 ;;;; Officiant-sensitive versicles
 
 (defun bcp-liturgy-render--insert-dominus-vobiscum (priest-form lay-form)
-  "Insert the greeting versicle appropriate to `office-officiant',
-followed by the bidding \"Let us pray.\" as its own paragraph.
+  "Insert the greeting versicle appropriate to `office-officiant'.
 PRIEST-FORM and LAY-FORM are each a list of versicle pairs.
 Priests and bishops use PRIEST-FORM; others use LAY-FORM.
-A blank line precedes the bidding to set it apart from the versicle
-pair; the trailing blank line is supplied by the ordo walker."
+Callers are responsible for emitting any following bidding
+(`bcp-liturgy-render--insert-oremus')."
   (bcp-liturgy-render--insert-versicles
    (if (memq office-officiant '(priest bishop))
        priest-form
-     lay-form))
-  (insert "\nLet us pray.\n"))
+     lay-form)))
+
+(defun bcp-liturgy-render--insert-oremus (&optional language)
+  "Insert the bidding \"Let us pray.\" / \"Orémus.\" as its own paragraph.
+LANGUAGE is a symbol (\\='english, \\='latin, ...); defaults to English.
+Languages with no defined translation fall back to Latin (the canonical
+liturgical form of the bidding)."
+  (let* ((lang (or language 'english))
+         (key  (intern (format ":%s" lang)))
+         (text (or (plist-get bcp-common-prayers-oremus key)
+                   (plist-get bcp-common-prayers-oremus :latin))))
+    (insert "\n" text "\n")))
 
 (provide 'bcp-liturgy-render)
 ;;; bcp-liturgy-render.el ends here

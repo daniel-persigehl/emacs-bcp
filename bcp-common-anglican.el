@@ -492,13 +492,13 @@ Each returned plist has at least :title and :text (or :english) keys."
   '(("The Lord be with you." "And with thy spirit."))
   "Greeting versicle pair for a priest or bishop officiant.
 The bidding \"Let us pray.\" follows on its own line and is emitted
-separately by `bcp-liturgy-render--insert-dominus-vobiscum'.")
+by the caller via `bcp-liturgy-render--insert-oremus'.")
 
 (defconst bcp-common-anglican-preces-lay
   '(("Hear my prayer, O Lord." "And let my cry come unto thee."))
   "Greeting versicle pair substituted when the officiant is a layperson or deacon.
 The bidding \"Let us pray.\" follows on its own line and is emitted
-separately by `bcp-liturgy-render--insert-dominus-vobiscum'.")
+by the caller via `bcp-liturgy-render--insert-oremus'.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Venite
