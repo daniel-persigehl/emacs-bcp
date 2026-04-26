@@ -28,7 +28,8 @@
 ;;   primer   — The Primer (various editions, 16th-18th c.)
 ;;
 ;; User configuration:
-;;   `bcp-roman-hymnal-preferred-translator' — default English translator
+;;   `bcp-roman-hymnal-translator-order' — ordered list; head is preferred,
+;;   rest is the fallback chain consulted when the preferred has no rendering
 ;;
 ;; Public API:
 ;;   `bcp-roman-hymnal-get'        — return hymn text for a given language
@@ -50,20 +51,12 @@
   :prefix "bcp-roman-hymnal-"
   :group 'bcp-liturgy)
 
-(defcustom bcp-roman-hymnal-preferred-translator 'britt
-  "Default English translator for Office hymns.
-Used by `bcp-roman-hymnal-english' when no translator is specified.
-Falls back through `bcp-roman-hymnal-fallback-order' if the preferred
-translator has no rendering for a given hymn."
-  :type  '(choice (const britt)
-                  (const caswall)
-                  (const neale)
-                  (const primer))
-  :group 'bcp-roman-hymnal)
-
-(defcustom bcp-roman-hymnal-fallback-order '(britt caswall neale primer do)
-  "Translator fallback order when the preferred translator is unavailable.
-Tried in sequence until a translation is found."
+(defcustom bcp-roman-hymnal-translator-order '(britt caswall neale primer do)
+  "Ordered list of English translators for Office hymns.
+The head of the list is the preferred translator; the remaining entries
+are consulted in order when the preferred has no rendering for a given
+hymn.  `do' is Divinum Officium's bundled English text, used as a
+last-ditch fallback."
   :type  '(repeat symbol)
   :group 'bcp-roman-hymnal)
 
@@ -89,13 +82,16 @@ PLIST has :latin and :translations."
 
 (defun bcp-roman-hymnal-english (incipit &optional translator)
   "Return the English text for hymn INCIPIT.
-TRANSLATOR is a symbol; defaults to `bcp-roman-hymnal-preferred-translator'.
-Falls back through `bcp-roman-hymnal-fallback-order'."
+TRANSLATOR is a symbol; if non-nil it is tried first, otherwise the
+order from `bcp-roman-hymnal-translator-order' is used as-is.  In
+either case lookup falls through the remaining entries of the order
+list."
   (let* ((entry (alist-get incipit bcp-roman-hymnal--hymns))
          (translations (plist-get entry :translations))
-         (preferred (or translator bcp-roman-hymnal-preferred-translator))
-         (order (cons preferred
-                     (remq preferred bcp-roman-hymnal-fallback-order))))
+         (order (if translator
+                    (cons translator
+                          (remq translator bcp-roman-hymnal-translator-order))
+                  bcp-roman-hymnal-translator-order)))
     (cl-loop for tr in order
              for text = (alist-get tr translations)
              when text return text)))

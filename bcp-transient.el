@@ -104,7 +104,7 @@
 (defvar bcp-1928-omit-penitential-intro)
 (defvar bcp-1928-show-communion-propers)
 (defvar bcp-roman-office-language)
-(defvar bcp-roman-hymnal-preferred-translator)
+(defvar bcp-roman-hymnal-translator-order)
 (defvar bcp-fetcher-furigana-display)
 (defvar bcp-1662-office-date)
 (defvar bcp-1928-office-date)
@@ -850,7 +850,7 @@ bypass the hour-based dispatch."
     bcp-1928-venite-ps96-substitute
     bcp-1928-venite-omit-ash-good-friday
     bcp-roman-office-language
-    bcp-roman-hymnal-preferred-translator
+    bcp-roman-hymnal-translator-order
     bcp-fetcher-furigana-display)
   "BCP `defcustom' variables persisted by `bcp--save-all-settings'.")
 
@@ -1013,14 +1013,18 @@ its current value into your Custom file so it survives Emacs restarts."
   (bcp--cycle 'bcp-roman-office-language '(latin english)))
 
 (transient-define-suffix bcp--set-roman-hymn-translator ()
-  "Cycle the preferred hymn translator."
+  "Cycle the preferred hymn translator (head of the order list)."
   :description (lambda ()
     (format "Hymn translator: %s"
-      (symbol-name bcp-roman-hymnal-preferred-translator)))
+      (symbol-name (car bcp-roman-hymnal-translator-order))))
   :transient t
   (interactive)
-  (bcp--cycle 'bcp-roman-hymnal-preferred-translator
-    '(britt caswall neale primer)))
+  (let* ((picks '(britt caswall neale primer))
+         (cur (car bcp-roman-hymnal-translator-order))
+         (pos (or (cl-position cur picks) -1))
+         (next (nth (mod (1+ pos) (length picks)) picks)))
+    (setq bcp-roman-hymnal-translator-order
+          (cons next (remq next bcp-roman-hymnal-translator-order)))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Breviary action suffixes

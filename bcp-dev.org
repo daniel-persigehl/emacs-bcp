@@ -859,9 +859,11 @@ Three strategies by text type:
    Resolver tries English first, falls back to Latin.
 2. *Hymns*: Separate hymnal file (=bcp-roman-hymnal.el=), keyed by Latin
    incipit, supporting multiple named English translations per hymn.
-   User selects preferred translator via =bcp-roman-hymnal-preferred-translator=
-   defcustom (default: ='britt=). Fallback chain: =bcp-roman-hymnal-fallback-order=.
-   Available translators: Britt, Caswall, Neale, Primer.
+   User configures translator preference via =bcp-roman-hymnal-translator-order=
+   defcustom (default: ='(britt caswall neale primer do)=). Head of the list
+   is the preferred translator; remaining entries are the fallback chain
+   in order. Available named translators: Britt, Caswall, Neale, Primer;
+   =do= is Divinum Officium's bundled English text, last-ditch fallback.
 3. *Scripture* (capitula, lessons): Store only the citation reference (:ref slot).
    English text resolved at render time via =bcp-fetcher-fetch= using the
    user's configured Bible translation. Latin Vulgate text stays embedded.
