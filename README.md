@@ -23,7 +23,7 @@ Four traditions are implemented:
 - **BCP 1662** — the English prayer book; full liturgical calendar with moveable feasts and user-defined observances
 - **1928 American BCP** — the pre-revision American prayer book; full liturgical calendar and lectionary
 - **Little Office of the BVM** — the Roman Office (*Officium Parvum BMV*), DA 1911 rubrics; all eight canonical hours with Latin/English bilingual rendering
-- **Roman Breviary** — pre-1955 (Divino Afflatu), all eight canonical hours with Latin/English/Japanese trilingual rendering, weekly psalter cycle, dominical and festal Matins with full lessons, Proprium Sanctorum, Commune Sanctorum, and four seasonal Propers of the Time (Advent, Lent, Eastertide, Christmastide); Holy Week and Sacred Triduum offices
+- **Roman Breviary** — pre-1955 (Divino Afflatu), all eight canonical hours with Latin/English bilingual rendering (Japanese partially implemented), weekly psalter cycle, dominical and festal Matins with full lessons, Proprium Sanctorum, Commune Sanctorum, and four seasonal Propers of the Time (Advent, Lent, Eastertide, Christmastide); Holy Week and Sacred Triduum offices
 
 The Anglican traditions share a common rendering layer (`bcp-anglican-render`) parameterised by a tradition context. The Roman Office has its own parallel renderer (`bcp-roman-render`).
 
@@ -68,7 +68,7 @@ The current implementation covers:
 **Roman Breviary:**
 - All eight canonical hours: Matins, Lauds, Prime, Terce, Sext, None, Vespers, Compline
 - Auto-hour selection based on time of day
-- Multilingual rendering governed by the language profile (Latin, English, Japanese)
+- Multilingual rendering governed by the language profile (Latin, English; Japanese partially implemented)
 - Weekly psalter cycle from `bcp-roman-psalterium` (DA cursus for Matins: 12 psalms under 6 antiphons)
 - Per Annum collects from the preceding Sunday (Pentecost I–XXIV)
 - Ferial preces (Lauds, Vespers, Prime, minor hours) with dominical/ferial switching
