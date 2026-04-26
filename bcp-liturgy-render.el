@@ -204,6 +204,36 @@ the Church of England may set either value."
   :group 'bcp-liturgy)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
+;;;; Hymn slots (Anglican Mattins/Evensong)
+;;;; ══════════════════════════════════════════════════════════════════════════
+
+(defcustom bcp-anglican-include-opening-hymn t
+  "When non-nil, render the office hymn after the Venite at Mattins/Evensong.
+This is the traditional position inherited from the Latin Office, where
+the hymn follows the invitatory psalm and precedes the psalter."
+  :type  'boolean
+  :group 'bcp-liturgy)
+
+(defcustom bcp-anglican-include-gradual-hymn nil
+  "When non-nil, render a gradual-style hymn between the First and Second Lessons.
+Off by default; analogous to the Mass gradual between Epistle and Gospel,
+but not part of the rubrical structure of the BCP Office."
+  :type  'boolean
+  :group 'bcp-liturgy)
+
+(defcustom bcp-anglican-include-anthem t
+  "When non-nil, render the anthem after the Third Collect.
+The 1662 rubric provides: \"In Quires and Places where they sing, here
+followeth the Anthem.\""
+  :type  'boolean
+  :group 'bcp-liturgy)
+
+(defcustom bcp-anglican-include-closing-hymn t
+  "When non-nil, render a closing hymn at the end of the Office."
+  :type  'boolean
+  :group 'bcp-liturgy)
+
+;;;; ══════════════════════════════════════════════════════════════════════════
 ;;;; Defgroup and shared rendering defcustoms
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
@@ -262,14 +292,18 @@ metrical psalms — rendered as literal \"N. \" prefix)."
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
 (defun bcp-liturgy-render--insert-heading (level text)
-  "Insert a heading of LEVEL (1, 2, or 3) with TEXT using a face overlay."
+  "Insert a heading of LEVEL (1, 2, or 3) with TEXT using a face overlay.
+Emits a trailing blank line so header→body spacing is consistent across
+every section.  Helpers that supply their own leading blank line (e.g.
+`bcp-liturgy-render--insert-rubric') collapse the doubled newline."
   (let* ((face (pcase level
                  (1 'bcp-liturgy-heading-1)
                  (2 'bcp-liturgy-heading-2)
                  (_ 'bcp-liturgy-heading-3)))
          (start (point)))
     (insert text "\n")
-    (overlay-put (make-overlay start (point)) 'face face)))
+    (overlay-put (make-overlay start (point)) 'face face)
+    (insert "\n")))
 
 (defun bcp-liturgy-render--insert-rubric (text rubric-face-fn)
   "Insert TEXT as an indented rubric with a blank line before it.
@@ -485,13 +519,25 @@ through to showing 《…》 markers inline as a graceful fallback."
 ;;;; Liturgical identity display block
 ;;;; ══════════════════════════════════════════════════════════════════════════
 
+(defun bcp-liturgy-render--rank-label (rank)
+  "Return a display label for feast RANK.
+RANK may be a symbol (1662 style: `greater', `lesser', etc.), an
+integer (1928 style: 1=immoveable, 2=transferable, 3=lesser), or
+nil.  Falls back to \"lesser\" when RANK is nil."
+  (cond
+   ((null rank)      "lesser")
+   ((symbolp rank)   (symbol-name rank))
+   ((integerp rank)  (format "tier %d" rank))
+   (t                (format "%s" rank))))
+
 (defun bcp-liturgy-render--insert-identity-block (day-id feast-name feast-rank)
   "Insert the liturgical identity block into the current buffer.
 
 DAY-ID is a plist from a `bcp-*-day-identity' function with keys:
   :day-name, :week-name, :subdivision, :season-name, :season-symbol
 
-FEAST-NAME is a string or nil.  FEAST-RANK is a symbol or nil.
+FEAST-NAME is a string or nil.  FEAST-RANK is a symbol, integer,
+or nil; see `bcp-liturgy-render--rank-label'.
 
 On feast days the feast leads; on ordinary days the day-id fields
 are rendered from most specific to most general, suppressing
@@ -505,7 +551,7 @@ redundancies (e.g. subdivision = week-name)."
         ;; Feast day: feast name leads, season context follows
         (progn
           (insert (format "    Feast:  %s (%s)\n" feast-name
-                          (symbol-name (or feast-rank 'lesser))))
+                          (bcp-liturgy-render--rank-label feast-rank)))
           (let ((context (or (when subdiv (format "%s — %s" seas-name subdiv))
                              week-name
                              seas-name)))
@@ -553,8 +599,10 @@ sees its own slot-1 pick excluded — matching live behaviour."
     (when (and order propers-fn ordo-fn cur-pos (> cur-pos 0))
       (dolist (prior (cl-subseq order 0 cur-pos))
         (dolist (step (funcall ordo-fn prior))
-          (when (eq (car step) :hymn)
-            (let* ((slot-kind  (or (plist-get step :slot-kind) 'office-hymn))
+          (when (and (eq (car step) :hymn)
+                     (bcp-liturgy-render--hymn-slot-active-p
+                      (or (plist-get step :hymn) 'office-hymn)))
+            (let* ((slot-kind  (or (plist-get step :hymn) 'office-hymn))
                    (extra-tags (plist-get step :extra-tags))
                    (seed       (sxhash-equal (list date prior slot-kind)))
                    (top (car (bcp-hymnal-select
@@ -567,17 +615,30 @@ sees its own slot-1 pick excluded — matching live behaviour."
               (when top (push top picks)))))))
     (nreverse picks)))
 
+(defun bcp-liturgy-render--hymn-slot-active-p (slot-kind)
+  "Return non-nil when SLOT-KIND is configured to render."
+  (pcase slot-kind
+    ('office-hymn bcp-anglican-include-opening-hymn)
+    ('gradual     bcp-anglican-include-gradual-hymn)
+    ('anthem      bcp-anglican-include-anthem)
+    ('closing     bcp-anglican-include-closing-hymn)
+    (_            t)))
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Officiant-sensitive versicles
 
 (defun bcp-liturgy-render--insert-dominus-vobiscum (priest-form lay-form)
-  "Insert the greeting versicle appropriate to `office-officiant'.
+  "Insert the greeting versicle appropriate to `office-officiant',
+followed by the bidding \"Let us pray.\" as its own paragraph.
 PRIEST-FORM and LAY-FORM are each a list of versicle pairs.
-Priests and bishops use PRIEST-FORM; others use LAY-FORM."
+Priests and bishops use PRIEST-FORM; others use LAY-FORM.
+A blank line precedes the bidding to set it apart from the versicle
+pair; the trailing blank line is supplied by the ordo walker."
   (bcp-liturgy-render--insert-versicles
    (if (memq office-officiant '(priest bishop))
        priest-form
-     lay-form)))
+     lay-form))
+  (insert "\nLet us pray.\n"))
 
 (provide 'bcp-liturgy-render)
 ;;; bcp-liturgy-render.el ends here

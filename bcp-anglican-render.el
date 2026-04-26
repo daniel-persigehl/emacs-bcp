@@ -251,7 +251,6 @@ CTX is the tradition context plist."
                    (canticle! inv)
                    (insert "\n")))
                (heading! 3 title)
-               (insert "\n")
                (if txt
                    (progn
                      (canticle! txt)
@@ -366,12 +365,6 @@ CTX is the tradition context plist."
                (heading! 3 (or title "Collect"))
                (when txt (insert txt "\n")))))))
 
-        ;; ── Anthem ───────────────────────────────────────────────────────
-        (:anthem
-         (rubric!
-          (or (plist-get step :rubric)
-              "In Quires and Places where they sing, here followeth the Anthem.")))
-
         ;; ── Hymn ─────────────────────────────────────────────────────────
         ;; Driven by the controlled-vocabulary tag system in bcp-hymnal.
         ;; Step keys:
@@ -382,7 +375,7 @@ CTX is the tradition context plist."
         ;; we render the top text record (first-line + stanzas).  When
         ;; no candidate is found the slot degrades to a plain rubric.
         (:hymn
-         (let* ((slot-kind  (or (plist-get step :slot-kind) 'office-hymn))
+         (let* ((slot-kind  (or (plist-get step :hymn) 'office-hymn))
                 (extra-tags (plist-get step :extra-tags))
                 (date       (plist-get propers :date))
                 (office     (plist-get propers :office))
@@ -400,20 +393,22 @@ CTX is the tradition context plist."
                 (text-rec   (when top-id (bcp-hymnal-text top-id))))
            (when top-id
              (push top-id bcp-liturgy-render--picked-text-ids))
-           (let* ((label (or (plist-get step :heading) "Hymn"))
-                  (title (and text-rec (plist-get text-rec :first-line)))
-                  (heading-text (if title
-                                    (format "%s: %s" label (upcase title))
-                                  label))
-                  (h-start (point)))
-             (insert heading-text "\n")
-             (overlay-put (make-overlay h-start (point))
-                          'face 'bcp-hymn-title))
-           (cond
-            (text-rec
+           (let ((fallback-rubric (plist-get step :fallback-rubric)))
+             (when (or text-rec (null fallback-rubric))
+               (let* ((label (or (plist-get step :heading) "Hymn"))
+                      (title (and text-rec (plist-get text-rec :first-line)))
+                      (heading-text (if title
+                                        (format "%s: %s" label (upcase title))
+                                      label))
+                      (h-start (point)))
+                 (insert heading-text "\n")
+                 (overlay-put (make-overlay h-start (point))
+                              'face 'bcp-hymn-title)))
+             (cond
+              (text-rec
              (when-let ((meter (plist-get text-rec :meter)))
                (let ((m-start (point)))
-                 (insert (format "Meter: %s" meter))
+                 (insert (format "Meter: %s" (bcp-hymnal-format-meter meter)))
                  (overlay-put (make-overlay m-start (point))
                               'face 'bcp-hymn-meter)
                  (insert "\n")))
@@ -492,8 +487,9 @@ CTX is the tradition context plist."
                       (insert indent-base)
                       (insert l "\n"))))
                   (insert "\n")))))
-            (t
-             (rubric! "Here followeth a hymn.")))))
+              (t
+               (rubric! (or fallback-rubric
+                            "Here followeth a hymn.")))))))
 
         ;; ── Prayer slot ──────────────────────────────────────────────────
         (:prayer
@@ -513,12 +509,15 @@ CTX is the tradition context plist."
 
         ;; ── State prayers (region-resolved) ──────────────────────────────
         (:state-prayers
-         (dolist (prayer (bcp-liturgy-state-prayers (plist-get step :tradition)))
-           (let* ((title (plist-get prayer :title))
-                  (txt   (bcp-common-prayers-text prayer)))
-             (heading! 3 (or title "Prayer"))
-             (when txt
-               (fixed! (or (plist-get prayer :name) 'state-prayer) txt)))))
+         (let ((first t))
+           (dolist (prayer (bcp-liturgy-state-prayers (plist-get step :tradition)))
+             (unless first (insert "\n"))
+             (setq first nil)
+             (let* ((title (plist-get prayer :title))
+                    (txt   (bcp-common-prayers-text prayer)))
+               (heading! 3 (or title "Prayer"))
+               (when txt
+                 (fixed! (or (plist-get prayer :name) 'state-prayer) txt))))))
 
         ;; ── Unknown — ignore silently ─────────────────────────────────────
         (_ nil)))))
@@ -566,9 +565,13 @@ CTX is the tradition context plist (see slot documentation above)."
       ;; Bind the dynamic pick-tracker fresh per office so within-office
       ;; `:hymn' steps see each other's picks via `:exclude'.
       (let ((past-venite nil)
-            (bcp-liturgy-render--picked-text-ids nil))
-        (dolist (step ordo)
-          (let* ((type       (car step))
+            (bcp-liturgy-render--picked-text-ids nil)
+            (cells ordo))
+        (while cells
+          (let* ((step       (car cells))
+                 (next-step  (cadr cells))
+                 (type       (car step))
+                 (next-type  (car-safe next-step))
                  (pos-before (point))
                  (skip-p     nil)
                  (handled-p  nil))
@@ -613,6 +616,11 @@ CTX is the tradition context plist (see slot documentation above)."
                        "[Collect for the Twenty-First Sunday after Trinity]"
                        rubric-face-fn)))
                   (setq handled-p t)))
+               ;; Optional hymn slots — skip when the user has opted out
+               ((and (eq type :hymn)
+                     (not (bcp-liturgy-render--hymn-slot-active-p
+                           (or (plist-get step :hymn) 'office-hymn))))
+                (setq skip-p t))
                ;; All other steps
                (t (setq past-venite t))))
 
@@ -621,23 +629,35 @@ CTX is the tradition context plist (see slot documentation above)."
               (bcp-anglican-render--render-ordo-step
                step propers psalms psalm-texts lesson-texts ctx))
 
-            ;; Blank line after each step that produced output
+            ;; Blank line after each step that produced output, except
+            ;; keep consecutive plain-versicle steps grouped as one block
+            ;; so the preces read as a single unit.  `:versicles-preces'
+            ;; is intentionally excluded: the dominus-vobiscum helper
+            ;; emits "Let us pray." as its own paragraph and needs a
+            ;; trailing blank line before whatever follows.
             (when (> (point) pos-before)
-              (insert "\n")))))
+              (let ((tight-types '(:versicles :state-versicles)))
+                (unless (and (memq type      tight-types)
+                             (memq next-type tight-types))
+                  (insert "\n")))))
+          (setq cells (cdr cells))))
 
       ;; ── Additional prayers ───────────────────────────────────────────
       (when add-prayers
-        (dolist (prayer add-prayers)
-          (cond
-           ((stringp prayer)
-            (bcp-liturgy-render--insert-fixed-text 'additional-prayer prayer))
-           ((symbolp prayer)
-            (let ((data (and (boundp prayer) (symbol-value prayer))))
-              (when data
-                (bcp-liturgy-render--insert-heading 3
-                  (or (plist-get data :title) (symbol-name prayer)))
-                (bcp-liturgy-render--insert-fixed-text
-                 prayer (plist-get data :text))))))))
+        (let ((first t))
+          (dolist (prayer add-prayers)
+            (unless first (insert "\n"))
+            (setq first nil)
+            (cond
+             ((stringp prayer)
+              (bcp-liturgy-render--insert-fixed-text 'additional-prayer prayer))
+             ((symbolp prayer)
+              (let ((data (and (boundp prayer) (symbol-value prayer))))
+                (when data
+                  (bcp-liturgy-render--insert-heading 3
+                    (or (plist-get data :title) (symbol-name prayer)))
+                  (bcp-liturgy-render--insert-fixed-text
+                   prayer (plist-get data :text)))))))))
 
       ;; ── Tradition post-office hook (communion propers, etc.) ─────────
       (when post-office-fn

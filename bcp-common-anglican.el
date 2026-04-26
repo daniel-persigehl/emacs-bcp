@@ -489,14 +489,16 @@ Each returned plist has at least :title and :text (or :english) keys."
 ;;;; Preces versicles
 
 (defconst bcp-common-anglican-preces-lord-be-with-you
-  '(("The Lord be with you." "And with thy spirit.")
-    ("Let us pray." nil))
-  "Preces versicles for a priest or bishop officiant.")
+  '(("The Lord be with you." "And with thy spirit."))
+  "Greeting versicle pair for a priest or bishop officiant.
+The bidding \"Let us pray.\" follows on its own line and is emitted
+separately by `bcp-liturgy-render--insert-dominus-vobiscum'.")
 
 (defconst bcp-common-anglican-preces-lay
-  '(("Hear my prayer, O Lord." "And let my cry come unto thee.")
-    ("Let us pray." nil))
-  "Preces versicles substituted when the officiant is a layperson or deacon.")
+  '(("Hear my prayer, O Lord." "And let my cry come unto thee."))
+  "Greeting versicle pair substituted when the officiant is a layperson or deacon.
+The bidding \"Let us pray.\" follows on its own line and is emitted
+separately by `bcp-liturgy-render--insert-dominus-vobiscum'.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Venite

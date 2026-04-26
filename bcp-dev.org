@@ -3,16 +3,18 @@
 #+DATE: 2026-04-03
 #+STARTUP: overview
 
-# HOW TO USE: Paste this entire file at the start of a new Claude session.
+# This file is the project's development notebook: design decisions,
+# domain architecture, constraints, and open questions accumulated
+# during development.  It is not a user manual — see README.md for
+# installation and configuration.  The intended audience is
+# contributors, auditors, and anyone wondering why something is
+# shaped the way it is.
 #
-# PROJECT: BCP — Biblical Commentary and Prayer
-#   "BCP" is the project name. Within the codebase, "BCP 1662" refers
-#   specifically to the Book of Common Prayer 1662 Daily Office module.
-#   The package prefix bcp- covers the shared framework.
-#   Domain prefixes: bcp-liturgy-, bcp-reader-, bcp-notebook-
+# Naming: "BCP" is both the project name and the shared framework
+# prefix.  "BCP 1662" refers specifically to the Book of Common
+# Prayer 1662 Daily Office module.  See README.md for the full
+# domain breakdown.
 #
-# Output files: /mnt/user-data/outputs/
-# Key transcript: /mnt/transcripts/2026-03-22-02-04-06-bcp-1662-emacs-office-dev.txt
 # TODO states: SETTLED | OPEN | IN-DEVELOPMENT
 # Tags: :constraint: :world: :science:
 
@@ -106,25 +108,23 @@ BCP aliases: =principal= → =double-1cl=, =greater= → =double-2cl=, =lesser= 
 
 ** Load Order :constraint:
 
-User-facing config (init.el) — most requires are pulled in transitively:
+User-facing config (init.el):
 #+begin_src elisp
 (add-to-list 'load-path (expand-file-name "elisp/" user-emacs-directory))
-
-;; ── Shared framework ──────────────────────────────────────────────
-(require 'bcp-fetcher)               ; MUST BE FIRST — auto-loads oremus backend
-
-;; ── BCP 1662 ─────────────────────────────────────────────────────
-(require 'bcp-1662)                  ; pulls in calendar, data, ordo, render, reader, etc.
-
-;; ── Roman Office ─────────────────────────────────────────────────
-(require 'bcp-roman-lobvm)           ; Little Office of the BVM (all 8 hours)
-(require 'bcp-roman-breviary)        ; Ferial Breviary (all 8 hours)
-;; bcp-roman-render.el autoloaded on first render
-
-;; ── Reader, Notebook, Preferences ────────────────────────────────
-(require 'bcp-notebook)              ; annotation layer (pulls in bcp-reader)
-(load "bcp-preferences.el")          ; defcustoms + transient menu
+(require 'bcp)                       ; pulls in everything transitively
 #+end_src
+
+=bcp.el= is the entry-point: requires the core modules (=bcp-fetcher=,
+=bcp-notebook=, =bcp-profile=), defines =bcp-reload=, opt-in loads
+=bcp-preferences.el= if present on the load-path, calls
+=bcp-profile-apply=, then requires =bcp-transient=.
+
+=bcp-preferences.el= is an *optional* personal-config file, gitignored
+from the repo.  When present, it is loaded after the core modules and
+its =setq= forms override =defcustom= defaults.  Most users instead
+configure via =M-x bcp-settings= and persist with the menu's =S=
+action, which writes through =customize-save-variable= to the user's
+=custom-file=.
 
 Full internal dependency chain (for reference — all loaded transitively):
 #+begin_src elisp
@@ -597,7 +597,7 @@ to keyword before plist-get. Plist keys are :english/:latin.
 :END:
 
 Step types: :rubric :text :versicles :canticle :alternatives
-            :psalm :lesson :collect :prayer :anthem
+            :psalm :lesson :collect :prayer :hymn
 
 ** Notable Steps :constraint:
 - Absolution rubric has :name absolution key

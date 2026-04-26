@@ -1,6 +1,6 @@
 # emacs-bcp — Bible Commentary & Prayer
 
-An Emacs Lisp framework for Bible study and liturgical prayer. It has two equal purposes: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline. The BCP 1662 and 1928 American BCP Daily Offices are fully implemented; the architecture is designed to accommodate additional prayer books and the Roman Breviary.
+An Emacs Lisp framework for Bible study and liturgical prayer. It has two equal purposes: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline. Four traditions ship feature-complete: the BCP 1662, the 1928 American BCP, the Little Office of the BVM, and the pre-1955 Roman Breviary; the architecture is designed to accommodate additional prayer books.
 
 ---
 
@@ -14,7 +14,7 @@ The core of the project is a scripture reader (`bcp-reader`) and study notebook 
 
 ### Daily Office
 
-The prayer side renders the full text of the BCP Daily Office — Morning and Evening Prayer — as a read-only buffer. The complete ordo is present: opening sentences, confession, absolution, psalms, canticles, lessons, collects, preces, and prayers, with lessons fetched and inserted inline. No external browser or PDF viewer is required.
+The prayer side renders the full text of the Daily Office as a read-only buffer, with psalms, prayers, and lessons fetched and inserted inline. No external browser or PDF viewer is required.
 
 Four traditions are implemented:
 
@@ -171,36 +171,33 @@ The default configuration is `oremus` backend + `coverdale` psalter. Psalms are 
 
 ## Installation
 
+### Quick start
+
 1. Clone or download this repository into a directory on your Emacs load path, e.g. `~/.emacs.d/elisp/`.
 
 2. Add the following to your `init.el`:
 
 ```elisp
 (add-to-list 'load-path (expand-file-name "elisp/" user-emacs-directory))
-
-;; Shared framework
-(require 'bcp-fetcher)               ; MUST BE FIRST — auto-loads oremus backend
-
-;; BCP 1662
-(require 'bcp-1662)                  ; pulls in calendar, data, ordo, render, reader, etc.
-
-;; Roman Office
-(require 'bcp-roman-lobvm)           ; Little Office of the BVM (all 8 hours)
-(require 'bcp-roman-breviary)        ; Ferial Breviary (all 8 hours)
-
-;; Scripture reader and notebook
-(require 'bcp-notebook)              ; annotation layer (pulls in bcp-reader)
-(load "bcp-preferences.el")          ; defcustoms + transient menu
+(require 'bcp)
 ```
 
-3. Optionally bind the entry commands:
+3. Configure via the menu: `M-x bcp-settings`. Press `S` to save your settings — they persist to your Emacs `custom-file` and survive restarts.
+
+That's it. The package ships with sensible defaults (English profile, Coverdale psalter, KJVA lessons). No further setup required.
+
+### Optional: bind entry commands
 
 ```elisp
 (global-set-key (kbd "C-c o") #'bcp-1662-open-office)
 (global-set-key (kbd "C-c O") #'bcp-1928-open-office)
 (global-set-key (kbd "C-c r") #'bcp-roman-lobvm)      ; LOBVM, auto-selects hour
-(global-set-key (kbd "C-c R") #'bcp-roman-breviary)    ; Breviary, auto-selects hour
+(global-set-key (kbd "C-c R") #'bcp-roman-breviary)   ; Breviary, auto-selects hour
 ```
+
+### Optional: scripted config (`bcp-preferences.el`)
+
+Power users can drop a `bcp-preferences.el` anywhere on the load-path with plain `setq` forms; `bcp.el` auto-loads it if present. Useful for sharing a setup across machines or keeping config in a dotfiles repo. Values set there win over `bcp-settings → Save` (standard Emacs convention: explicit `setq` beats Customize). The file is `.gitignored` from this repository — it is treated as personal config, not part of the public package.
 
 ### Coverdale Psalter
 
@@ -228,7 +225,9 @@ Download the plain-text KJV chapter files from [eBible.org](https://ebible.org) 
 
 ## Customisation
 
-All settings are collected in `bcp-preferences.el`. Copy this file and edit it, or set variables directly in your `init.el`.
+The recommended path is `M-x bcp-settings` → tweak → `S` to save. Settings persist to your Emacs `custom-file`. Power users can also `setq` variables in `init.el` or in an optional `bcp-preferences.el` file (see *Installation* above).
+
+> **Note on symbol names.** A number of customisation variables still carry the legacy `bible-commentary-` prefix from the project's pre-rename era (e.g. `bible-commentary-psalm-translation`). These will be unified under the `bcp-` prefix in a future release; existing configurations will continue to work.
 
 ### Language profile
 
@@ -470,6 +469,8 @@ Reloads all package files in dependency order without restarting Emacs.
 **The Book of Common Prayer 1928** (American) is in the public domain. The text of the collects, canticles, prayers, and liturgical calendar used here follows the standard 1928 edition.
 
 **eBible.org** provides freely downloadable plain-text scripture files used by the optional `bcp-fetcher-ebible` backend.
+
+**Andrew Remillard** has performed and uploaded a complete instrumental playthrough of the [*Hymnal 1940*](https://www.youtube.com/playlist?list=PLZZAT1pP5dJrWsu25T4gVyIAC8nOI-lP8) on YouTube. Each "Tune:" line in a rendered hymn is a clickable link to his recording of that tune; the project hosts nothing and fetches nothing at runtime.
 
 The author would like to extend thanks to the creators of the [*1662 Daily Office Podcast*](https://creators.spotify.com/pod/profile/1662pod/) produced by [Trinity Anglican Church](https://trinityconnersville.com/) (Connersville, IN), for lowering the barrier of regularly praying Morning and Evening Prayer.
 

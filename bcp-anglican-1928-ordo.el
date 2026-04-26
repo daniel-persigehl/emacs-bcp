@@ -101,8 +101,6 @@ also kneeling and repeating it with him.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
-    (:hymn :slot-kind office-hymn)
-
     (:rubric "Then shall be said or sung the following Canticle; except on those \
 days for which other Canticles are appointed; and except also, that Psalm 95 may \
 be used in this place. But Note, That on Ash Wednesday and Good Friday the Venite \
@@ -114,6 +112,8 @@ sung or said the appointed Invitatory.")
      :ref "Ps 95"
      :exception-easter t
      :exception-day-of-month 19)
+
+    (:hymn office-hymn)
 
     (:rubric "Then shall follow the Psalms in order as they be appointed.")
     (:psalm first
@@ -136,6 +136,8 @@ these Canticles, or the Song of the Three Children (Benedicite).")
      (:canticle benedicite
       :latin "Benedicite, omnia opera."
       :rubric "Or this Canticle, especially in Advent and Lent."))
+
+    (:hymn gradual)
 
     (:rubric "Then shall be read the Second Lesson, taken out of the New Testament \
 as is appointed in the Table of Lessons. After the Lesson shall follow one of \
@@ -190,8 +192,10 @@ daily be said at Morning Prayer throughout all the Year.")
     (:collect morning-grace
      :ref bcp-common-anglican-collect-morning-grace-1928)
 
-    (:anthem
-     :rubric "In Quires and Places where they sing, here followeth the Anthem.")
+    (:hymn anthem
+     :heading "Anthem"
+     :extra-tags (anthem)
+     :fallback-rubric "In Quires and Places where they sing, here followeth the Anthem.")
 
     (:rubric "Then shall be said the following Prayers.")
     (:state-prayers :tradition 1928)
@@ -200,7 +204,7 @@ daily be said at Morning Prayer throughout all the Year.")
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
 
-    (:hymn :slot-kind closing)
+    (:hymn closing)
 
     (:rubric "Here endeth the Order of Morning Prayer."))
   "Ordo for Morning Prayer from the 1928 American BCP.
@@ -252,7 +256,7 @@ also kneeling and repeating it with him.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
-    (:hymn :slot-kind office-hymn)
+    (:hymn office-hymn)
 
     (:rubric "Then shall be said or sung the Psalms appointed for the day.")
     (:psalm first
@@ -271,6 +275,8 @@ as is appointed. After the Lesson shall follow one of these Canticles.")
       :latin "Cantate Domino."
       :ref "Ps 98"
       :rubric "Or this Psalm; except on the nineteenth day of the month."))
+
+    (:hymn gradual)
 
     (:rubric "Then shall be read the Second Lesson, taken out of the New Testament \
 as is appointed. After the Lesson shall follow one of these Canticles.")
@@ -323,8 +329,10 @@ for Peace; the third for Aid against all Perils.")
     (:collect evening-perils
      :ref bcp-common-anglican-collect-evening-perils)
 
-    (:anthem
-     :rubric "In Quires and Places where they sing, here followeth the Anthem.")
+    (:hymn anthem
+     :heading "Anthem"
+     :extra-tags (anthem)
+     :fallback-rubric "In Quires and Places where they sing, here followeth the Anthem.")
 
     (:rubric "Then shall be said the following Prayers.")
     (:state-prayers :tradition 1928)
@@ -333,7 +341,7 @@ for Peace; the third for Aid against all Perils.")
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
 
-    (:hymn :slot-kind closing)
+    (:hymn closing)
 
     (:rubric "Here endeth the Order of Evening Prayer."))
   "Ordo for Evening Prayer from the 1928 American BCP.

@@ -1,6 +1,9 @@
 # Emacs byte-compiled files
 *.elc
 
+# Personal user config (loaded by bcp.el if present)
+bcp-preferences.el
+
 # Backup directories
 bible-reader-backup-*/
 

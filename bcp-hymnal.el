@@ -364,6 +364,12 @@ NUMBER is a string (may include letter suffix: \"164b\")."
   "Return the info plist for HYMNAL-ID, or nil."
   (alist-get hymnal-id bcp-hymnal--hymnal-info))
 
+(defun bcp-hymnal-format-meter (meter)
+  "Return METER for display, with no space after the periods.
+Standard hymnological convention writes \"C.M.\", \"L.M.\", \"87.87\";
+the source data is inconsistent, so normalise at display time."
+  (and meter (replace-regexp-in-string "\\. +" "." meter)))
+
 (defun bcp-hymnal-tunes-for-text (text-id)
   "Return ordered de-duplicated list of tune-id symbols set for TEXT-ID.
 Walks every registered hymnal manifest and collects each slot whose
@@ -1003,7 +1009,9 @@ and any candidate is rubrically appointed, only those are returned."
     (maphash
      (lambda (id text)
        (when (and (bcp-hymnal--text-language-matches text language)
-                  (not (memq id exclude)))
+                  (not (memq id exclude))
+                  (not (bcp-hymnal--copyright-restricted-p
+                        (plist-get text :copyright))))
          (let* ((expanded  (bcp-hymnal--expand-tags (plist-get text :tags)))
                 (appointed (and slot-kind
                                 (bcp-hymnal--appointment-matches

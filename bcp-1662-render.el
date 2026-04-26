@@ -342,12 +342,14 @@ Returns :skip (omit), :handled (already rendered), or nil (shared handling)."
                (go-label (funcall ref-label-fn go))
                (ep-txt   (cdr (assoc "epistle" lesson-texts)))
                (go-txt   (cdr (assoc "gospel"  lesson-texts))))
+          (when ot-ref (insert "\n"))
           (bcp-liturgy-render--insert-heading 3 (format "Epistle: %s" ep-label))
           (if ep-txt
               (bcp-liturgy-render--insert-text-block ep-txt)
             (bcp-liturgy-render--insert-passage-fallback
              (funcall ref-str-fn ep) ep-label
              bible-commentary-translation))
+          (insert "\n")
           (bcp-liturgy-render--insert-heading 3 (format "Gospel: %s" go-label))
           (if go-txt
               (bcp-liturgy-render--insert-text-block go-txt)

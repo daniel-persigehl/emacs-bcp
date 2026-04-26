@@ -1864,6 +1864,7 @@ In your resurrection-tide.
 :meter L.M.
 :language english
 :hymnary-slug kind_maker_of_the_world_o_hear
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -3514,6 +3515,7 @@ Alleluia, alleluia, alleluia, alleluia!
 :meter S. M.
 :language english
 :hymnary-slug the_sabbath_day_was_by
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -3559,6 +3561,7 @@ the Savior's love proclaim.
 :meter Irregular, with Refrain
 :language english
 :hymnary-slug he_who_was_nailed_to_the_cross
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -3720,6 +3723,7 @@ Their everlasting theme.
 :meter L.M.
 :language english
 :hymnary-slug o_come_creator_spirit_come_and_make_with
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -4161,6 +4165,7 @@ we with the angels may bow and adore.
 :meter 11 11. 11 5
 :language english
 :hymnary-slug christ_the_fair_glory_of_the_holy_ang_ma
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -4477,6 +4482,7 @@ blest they stand before his face.
 :meter L. M.
 :language english
 :hymnary-slug the_eternal_gifts_of_christ_the_kingthem
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -5528,6 +5534,7 @@ we lose ourselves in heav'n above.
 :meter 11 11. 11 5
 :language english
 :hymnary-slug now_it_is_evening_time_to_rest_from_labo
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -6280,6 +6287,7 @@ thy countenance divine.
 :meter 887. 887
 :language english
 :hymnary-slug zion_praise_thy_savior_singing
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -6551,6 +6559,7 @@ that here its sacred pledges tastes.
 :meter 11 11. 11 11
 :language english
 :hymnary-slug humbly_i_adore_thee_verity_unseen
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -7556,6 +7565,7 @@ Amen.
 :language english
 :copyright :public-domain
 :hymnary-slug god_my_father_loving_me
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -7861,6 +7871,7 @@ will care for me.
 :meter C.M.
 :language english
 :hymnary-slug thy_gospel_jesus_we_believe
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -7870,6 +7881,7 @@ Representative text cannot be shown for this hymn due to copyright.
 :meter 86.866
 :language english
 :hymnary-slug lord_jesus_from_thy_throne_above
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -8014,6 +8026,7 @@ AMEN.
 :meter 9 10.9 10.10 10
 :language english
 :hymnary-slug awake_thou_spirit_of_the_watchmen
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 
@@ -8362,6 +8375,7 @@ And every land is Thine!
 :copyright :public-domain
 :source Hymns and Devotions for Daily Worship #184a
 :hymnary-slug holy_holy_holy_lord_god_almighty_early
+:tags anthem
 
 Holy, holy, holy! Lord God Almighty!
 Early in the morning our song shall rise to thee.
@@ -8952,6 +8966,7 @@ In the triumph song of life.
 :copyright :public-domain
 :source Psalter Hymnal, (Gray)
 :hymnary-slug praise_my_soul_the_king_of_heaven
+:tags anthem
 
 Praise, my soul, the King of heaven;
 to his feet your tribute bring.
@@ -9183,6 +9198,7 @@ Always the same.
 :meter 87.87.887
 :language english
 :hymnary-slug give_praise_and_glory_unto_god
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -9229,6 +9245,7 @@ in true adoration shall sing to your praise!
 :copyright :public-domain
 :source Hymns and Devotions for Daily Worship #332
 :hymnary-slug our_god_our_help_in_ages_past_watts
+:tags anthem
 
 Our God, our help in ages past,
 Our hope for years to come,
@@ -11072,6 +11089,7 @@ Both now and through eternity.
 :copyright :public-domain
 :source United Methodist Hymnal, 1989
 :hymnary-slug the_king_of_love_my_shepherd_is
+:tags anthem
 
 The King of love my shepherd is, 
 whose goodness faileth never. 
@@ -11663,6 +11681,7 @@ whose joys eternal flow.
 :meter 11 11.12.11
 :language english
 :hymnary-slug master_of_eager_youth
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -15469,6 +15488,7 @@ the meanest work divine.
 :meter 668. 668. 3366
 :language english
 :hymnary-slug god_himself_is_with_us_let_us_hymnal1940
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -16343,6 +16363,7 @@ Amen.
 :meter 11 10. 11 10
 :language english
 :hymnary-slug father_we_come_with_youth_and_vigor_pres
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -17264,6 +17285,7 @@ But over all the Saviour reigns!
 :language english
 :copyright :public-domain
 :hymnary-slug through_north_and_south_and_east_and_wes
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 See page scan previews below.
@@ -18572,6 +18594,7 @@ Your rest, your joy, your glory share.
 :meter 11 10. 11 10
 :language english
 :hymnary-slug lord_who_didst_send_by_two_and_two_befor
+:copyright :restricted
 
 Representative text cannot be shown for this hymn due to copyright.
 

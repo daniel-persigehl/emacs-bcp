@@ -46,8 +46,9 @@
 ;;   (:prayer NAME TEXT)
 ;;     — a fixed prayer identified by name
 ;;
-;;   (:anthem :rubric TEXT)
-;;     — the anthem placeholder (in quires and places where they sing)
+;;   (:hymn anthem :heading TEXT :fallback-rubric TEXT)
+;;     — the anthem slot; selects an anthem-tagged hymn from the
+;;       hymnal, or falls back to the rubric when none is available
 ;;
 ;; Sentences are kept in `bcp-1662-opening-sentences', shared between
 ;; both offices.  Each entry: (TEXT . CITATION) where CITATION is a
@@ -154,14 +155,14 @@ The minister reads one or more of these at the opening of the service.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
-    (:hymn :slot-kind office-hymn)
-
     (:rubric "Then shall be said or sung this Psalm following; Except on Easter Day, upon which another Anthem is appointed; and on the nineteenth day of every month it is not to be read here, but in the ordinary course of the Psalms.")
     (:canticle venite
      :latin "Venite, exultemus Domino."
      :ref "Ps 95"
      :exception-easter t
      :exception-day-of-month 19)
+
+    (:hymn office-hymn)
 
     (:rubric "Then shall follow the Psalms in order as they be appointed. And at the end of every Psalm throughout the year, and likewise at the end of Benedicite, Benedictus, Magnificat, and Nunc dimittis, shall be repeated, Glory be to the Father...")
     (:psalm first
@@ -179,6 +180,8 @@ The minister reads one or more of these at the opening of the service.")
      (:canticle benedicite
       :latin "Benedicite, omnia opera."
       :rubric "Or this Canticle."))
+
+    (:hymn gradual)
 
     (:rubric "Then shall be read in like manner the Second Lesson, taken out of the New Testament. And after that, the Hymn following; except when that shall happen to be read in the Chapter for the day, or for the Gospel on Saint John Baptist's Day.")
     (:lesson second
@@ -200,8 +203,7 @@ The minister reads one or more of these at the opening of the service.")
     (:rubric "And after that these Prayers following, all devoutly kneeling: the Minister first pronouncing with a loud voice,")
     (:versicles-preces)
     (:versicles
-     ("Lord, have mercy upon us." nil)
-     ("Christ, have mercy upon us." nil)
+     ("Lord, have mercy upon us." "Christ, have mercy upon us.")
      ("Lord, have mercy upon us." nil))
 
     (:rubric "Then the Minister, Clerks, and people shall say the Lord's Prayer with a loud voice.")
@@ -231,8 +233,10 @@ The minister reads one or more of these at the opening of the service.")
     (:collect morning-grace
      :ref bcp-common-anglican-collect-morning-grace)
 
-    (:anthem
-     :rubric "In Quires and Places where they sing here followeth the Anthem.")
+    (:hymn anthem
+     :heading "Anthem"
+     :extra-tags (anthem)
+     :fallback-rubric "In Quires and Places where they sing here followeth the Anthem.")
 
     (:rubric "Then these five Prayers following are to be read here: Except when the Litany is read; and then only the two last are to be read, as they are there placed.")
     (:state-prayers :tradition 1662)
@@ -241,7 +245,7 @@ The minister reads one or more of these at the opening of the service.")
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
 
-    (:hymn :slot-kind closing)
+    (:hymn closing)
 
     (:rubric "Here endeth the Order of Morning Prayer throughout the Year."))
   "Ordo for Morning Prayer from the 1662 BCP.
@@ -290,7 +294,7 @@ Steps are tagged plists; see file commentary for type descriptions.")
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
 
-    (:hymn :slot-kind office-hymn)
+    (:hymn office-hymn)
 
     (:rubric "Then shall be said or sung the Psalms in order as they be appointed.")
     (:psalm first
@@ -309,6 +313,8 @@ Steps are tagged plists; see file commentary for type descriptions.")
       :ref "Ps 98"
       :rubric "Or else this Psalm; except it be on the nineteenth day of the month, when it is read in the ordinary course of the Psalms."
       :exception-day-of-month 19))
+
+    (:hymn gradual)
 
     (:rubric "Then a Lesson of the New Testament, as it is appointed. And after that Nunc dimittis (or the Song of Simeon) in English, as followeth.")
     (:lesson second
@@ -332,8 +338,7 @@ Steps are tagged plists; see file commentary for type descriptions.")
     ;; TODO: when `office-officiant' is `lay or `deacon (i.e. not a priest),
     (:versicles-preces)
     (:versicles
-     ("Lord, have mercy upon us." nil)
-     ("Christ, have mercy upon us." nil)
+     ("Lord, have mercy upon us." "Christ, have mercy upon us.")
      ("Lord, have mercy upon us." nil))
 
     (:rubric "Then the Minister, Clerks, and people shall say the Lord's Prayer with a loud voice.")
@@ -363,8 +368,10 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:collect evening-perils
      :ref bcp-common-anglican-collect-evening-perils)
 
-    (:anthem
-     :rubric "In Quires and Places where they sing here followeth the Anthem.")
+    (:hymn anthem
+     :heading "Anthem"
+     :extra-tags (anthem)
+     :fallback-rubric "In Quires and Places where they sing here followeth the Anthem.")
 
     (:state-prayers :tradition 1662)
     (:prayer chrysostom
@@ -372,7 +379,7 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:prayer grace-2cor
      :ref bcp-common-prayers-grace-2cor)
 
-    (:hymn :slot-kind closing)
+    (:hymn closing)
 
     (:rubric "Here endeth the Order of Evening Prayer throughout the Year."))
   "Ordo for Evening Prayer from the 1662 BCP.

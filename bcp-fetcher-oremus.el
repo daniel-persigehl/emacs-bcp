@@ -18,6 +18,7 @@
 
 (require 'bcp-fetcher)
 (require 'cl-lib)
+(require 'dom)
 (require 'url)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

@@ -29,16 +29,21 @@
 ;; Suppress byte-compiler warnings for variables and functions defined
 ;; in the tradition modules.  bcp-transient is loaded after them.
 
-(declare-function bcp-reload                    "bcp-preferences")
+(declare-function bcp-reload                    "bcp")
+(declare-function bcp-reset                     "bcp")
 (declare-function bcp-fetcher-toggle-furigana    "bcp-fetcher")
+(declare-function bcp-fetcher--rubi-target-buffer "bcp-fetcher")
 (declare-function bcp-toggle-shinjitai           "bcp-shinjitai")
+(declare-function bcp-shinjitai--target-buffer    "bcp-shinjitai")
 (declare-function bcp-fetcher-clear-cache        "bcp-fetcher")
 (declare-function bcp-profile-apply              "bcp-profile")
 (declare-function bcp-profile-reset              "bcp-profile")
 (declare-function bcp-profile-effective          "bcp-profile")
 (declare-function bcp-profile-overridden-p       "bcp-profile")
 (declare-function bcp-1662-open-office   "bcp-1662")
+(declare-function bcp-1662--current-time "bcp-1662")
 (declare-function bcp-1928-open-office   "bcp-anglican-1928")
+(declare-function bcp-1928--current-time "bcp-anglican-1928")
 (declare-function bcp-roman-lobvm        "bcp-roman-lobvm")
 (declare-function bcp-roman-lobvm-matins "bcp-roman-lobvm")
 (declare-function bcp-roman-lobvm-lauds  "bcp-roman-lobvm")
@@ -71,6 +76,10 @@
 (defvar bcp-liturgy-president-name)
 (defvar bcp-liturgy-canticle-language)
 (defvar bcp-liturgy-canticle-append-gloria)
+(defvar bcp-anglican-include-opening-hymn)
+(defvar bcp-anglican-include-gradual-hymn)
+(defvar bcp-anglican-include-anthem)
+(defvar bcp-anglican-include-closing-hymn)
 (defvar bible-commentary-translation)
 (defvar bible-commentary-psalm-translation)
 (defvar bcp-fetcher-backend)
@@ -97,6 +106,8 @@
 (defvar bcp-roman-office-language)
 (defvar bcp-roman-hymnal-preferred-translator)
 (defvar bcp-fetcher-furigana-display)
+(defvar bcp-1662-office-date)
+(defvar bcp-1928-office-date)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Helpers
@@ -168,12 +179,16 @@ called on the effective value to produce the display string."
 (transient-define-suffix bcp--toggle-furigana ()
   "Toggle furigana visibility in the current office buffer."
   :description "Toggle furigana"
+  :transient t
+  :if (lambda () (bcp-fetcher--rubi-target-buffer))
   (interactive)
   (bcp-fetcher-toggle-furigana))
 
 (transient-define-suffix bcp--toggle-shinjitai ()
   "Toggle 旧字体→新字体 display in the current office buffer."
-  :description "Toggle 旧字体→新字体"
+  :description "Toggle shinjitai"
+  :transient t
+  :if (lambda () (bcp-shinjitai--target-buffer))
   (interactive)
   (bcp-toggle-shinjitai))
 
@@ -286,17 +301,16 @@ local psalter; any other name lets the Bible backend serve them."
   "Override individual language-profile settings.
 Each setting shows (profile) when inherited or (override) when
 explicitly set.  Use Reset to clear all overrides."
-  [["Lessons & Psalms"
-    ("t" bcp--override-lesson-translation)
-    ("p" bcp--override-psalm-translation)]
-   ["Backend"
+  [["Backend"
     ("b" bcp--override-backend)
-    ("B" bcp--override-fallback-backend)
-    ("f" bcp--override-furigana)]
+    ("B" bcp--override-fallback-backend)]
    ["Language"
     ("r" bcp--override-roman-language)
     ("c" bcp--override-canticle-language)
     ("g" bcp--override-canticle-gloria)]
+   ["Display"
+    ("f" bcp--override-furigana)
+    ("J" bcp--toggle-shinjitai)]
    [""
     ("R" bcp--profile-reset-all)]])
 
@@ -397,6 +411,25 @@ explicitly set.  Use Reset to clear all overrides."
               bcp-liturgy-president-name)))
     (setq bcp-liturgy-president-name
           (if (string-empty-p s) nil s))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; State prayers sub-prefix
+
+(transient-define-prefix bcp-settings-state-prayers ()
+  "Settings for the state prayers (versicle and intercessions)."
+  [["Versicle & region"
+    ("s" bcp--set-state-versicle-form)
+    ("r" bcp--set-region)]
+   ["Monarchy"
+    ("k" bcp--set-sovereign-title)
+    ("K" bcp--set-sovereign-name)
+    ("F" bcp--set-royal-family-names)]
+   ["Republic"
+    ("T" bcp--set-head-of-state-title)
+    ("C" bcp--set-country-name)
+    ("P" bcp--set-president-name)]
+   [""
+    ("q" bcp--back-to-settings)]])
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; BCP 1662 rubric suffixes
@@ -541,7 +574,11 @@ explicitly set.  Use Reset to clear all overrides."
 
 (transient-define-prefix bcp-settings-1662 ()
   "Settings for the BCP 1662 Daily Office."
-  [["Rendering"
+  [["Office"
+    ("o" bcp--action-open-1662)
+    ("M" bcp--action-open-1662-mattins)
+    ("E" bcp--action-open-1662-evensong)]
+   ["Rendering"
     ("r" bcp--set-1662-rubric-style)]
    ["Ordo"
     ("p" bcp--set-1662-penitential-intro)
@@ -555,6 +592,11 @@ explicitly set.  Use Reset to clear all overrides."
     ("V" bcp--set-1662-venite-ps96)
     ("e" bcp--set-1662-easter-anthems)
     ("m" bcp--set-1662-communion-propers)]
+   ["Hymns"
+    ("h" bcp--toggle-opening-hymn)
+    ("g" bcp--toggle-gradual-hymn)
+    ("a" bcp--toggle-anthem)
+    ("C" bcp--toggle-closing-hymn)]
    [""
     ("q" bcp--back-to-settings)]])
 
@@ -606,7 +648,11 @@ explicitly set.  Use Reset to clear all overrides."
 
 (transient-define-prefix bcp-settings-1928 ()
   "Settings for the 1928 American BCP Daily Office."
-  [["Rendering"
+  [["Office"
+    ("o" bcp--action-open-1928)
+    ("M" bcp--action-open-1928-mattins)
+    ("E" bcp--action-open-1928-evensong)]
+   ["Rendering"
     ("r" bcp--set-1928-rubric-style)]
    ["Ordo"
     ("p" bcp--set-1928-penitential-intro)
@@ -614,8 +660,13 @@ explicitly set.  Use Reset to clear all overrides."
    ["Canticles & lessons"
     ("v" bcp--set-1928-venite-lent-verses)
     ("V" bcp--set-1928-venite-ps96)
-    ("a" bcp--set-1928-venite-omit-penitential)
+    ("P" bcp--set-1928-venite-omit-penitential)
     ("l" bcp--set-1928-lectionary)]
+   ["Hymns"
+    ("h" bcp--toggle-opening-hymn)
+    ("g" bcp--toggle-gradual-hymn)
+    ("a" bcp--toggle-anthem)
+    ("C" bcp--toggle-closing-hymn)]
    [""
     ("q" bcp--back-to-settings)]])
 
@@ -642,6 +693,53 @@ explicitly set.  Use Reset to clear all overrides."
         (not bcp-liturgy-canticle-append-gloria)))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Hymn-slot toggles (shared between 1662 and 1928)
+
+(transient-define-suffix bcp--toggle-opening-hymn ()
+  "Toggle the opening hymn (after the Venite)."
+  :description (lambda ()
+    (if bcp-anglican-include-opening-hymn
+        "Opening hymn: include"
+      "Opening hymn: omit"))
+  :transient t
+  (interactive)
+  (setq bcp-anglican-include-opening-hymn
+        (not bcp-anglican-include-opening-hymn)))
+
+(transient-define-suffix bcp--toggle-gradual-hymn ()
+  "Toggle the gradual-style hymn between the Lessons."
+  :description (lambda ()
+    (if bcp-anglican-include-gradual-hymn
+        "Gradual hymn: include"
+      "Gradual hymn: omit"))
+  :transient t
+  (interactive)
+  (setq bcp-anglican-include-gradual-hymn
+        (not bcp-anglican-include-gradual-hymn)))
+
+(transient-define-suffix bcp--toggle-anthem ()
+  "Toggle the anthem after the Third Collect."
+  :description (lambda ()
+    (if bcp-anglican-include-anthem
+        "Anthem: include"
+      "Anthem: omit"))
+  :transient t
+  (interactive)
+  (setq bcp-anglican-include-anthem
+        (not bcp-anglican-include-anthem)))
+
+(transient-define-suffix bcp--toggle-closing-hymn ()
+  "Toggle the closing hymn at the end of the Office."
+  :description (lambda ()
+    (if bcp-anglican-include-closing-hymn
+        "Closing hymn: include"
+      "Closing hymn: omit"))
+  :transient t
+  (interactive)
+  (setq bcp-anglican-include-closing-hymn
+        (not bcp-anglican-include-closing-hymn)))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Navigation suffixes
 
 (transient-define-suffix bcp--quit ()
@@ -657,25 +755,183 @@ explicitly set.  Use Reset to clear all overrides."
   (call-interactively #'bcp-settings))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Office date override
+
+(defun bcp--office-date-active-p ()
+  "Non-nil when an office date override is currently set."
+  (or (and (boundp 'bcp-1662-office-date) bcp-1662-office-date)
+      (and (boundp 'bcp-1928-office-date) bcp-1928-office-date)))
+
+(transient-define-suffix bcp--set-office-date ()
+  "Set the override date used by all BCP Daily Office launches.
+Sets both `bcp-1662-office-date' and `bcp-1928-office-date' so the
+override applies to whichever tradition you open next.  The current
+clock hour is preserved so the auto-pick of Mattins/Evensong still
+works; pick a specific office from the tradition's submenu to
+bypass the hour-based dispatch."
+  :description (lambda ()
+    (let ((d (bcp--office-date-active-p)))
+      (if d
+          (format "Office date: %d-%02d-%02d"
+                  (nth 5 d) (nth 4 d) (nth 3 d))
+        "Office date: today")))
+  :transient t
+  (interactive)
+  (let* ((now   (decode-time))
+         (year  (read-number "Year: "  (nth 5 now)))
+         (month (read-number "Month: " (nth 4 now)))
+         (day   (read-number "Day: "   (nth 3 now)))
+         (hour  (nth 2 now))
+         (time  (list 0 0 hour day month year nil nil nil)))
+    (setq bcp-1662-office-date time
+          bcp-1928-office-date time)
+    (message "Office date set to %d-%02d-%02d." year month day)))
+
+(transient-define-suffix bcp--clear-office-date ()
+  "Clear the office date override (resume using current date)."
+  :description "Clear office date"
+  :transient t
+  :if (lambda () (bcp--office-date-active-p))
+  (interactive)
+  (setq bcp-1662-office-date nil
+        bcp-1928-office-date nil)
+  (message "Office date reset — using current date."))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Save settings
+
+(defconst bcp--saveable-settings
+  '(bcp-language-profile
+    bcp-profile-lesson-translation
+    bcp-profile-psalm-translation
+    bcp-profile-backend
+    bcp-profile-fallback-backend
+    bcp-profile-roman-language
+    bcp-profile-canticle-language
+    bcp-profile-canticle-gloria
+    bcp-profile-furigana
+    office-officiant
+    bcp-liturgy-creed
+    bcp-liturgy-churchmanship
+    bcp-liturgy-state-versicle-form
+    bcp-liturgy-region
+    bcp-liturgy-sovereign-title
+    bcp-liturgy-sovereign-name
+    bcp-liturgy-royal-family-names
+    bcp-liturgy-head-of-state-title
+    bcp-liturgy-country-name
+    bcp-liturgy-president-name
+    bcp-liturgy-canticle-language
+    bcp-liturgy-canticle-append-gloria
+    bcp-anglican-include-opening-hymn
+    bcp-anglican-include-gradual-hymn
+    bcp-anglican-include-anthem
+    bcp-anglican-include-closing-hymn
+    bcp-1662-rubric-style
+    bcp-1662-omit-penitential-intro
+    bcp-1662-opening-sentence-corpus
+    bcp-1662-opening-sentence-selection
+    bcp-1662-bidding-form
+    bcp-1662-general-confession-form
+    bcp-1662-easter-anthems-throughout-eastertide
+    bcp-1662-show-communion-propers
+    bcp-1662-venite-lent-verses
+    bcp-1662-venite-ps96-substitute
+    bcp-1662-lectionary
+    bcp-1928-rubric-style
+    bcp-1928-omit-penitential-intro
+    bcp-1928-show-communion-propers
+    bcp-1928-lectionary
+    bcp-1928-venite-lent-verses
+    bcp-1928-venite-ps96-substitute
+    bcp-1928-venite-omit-ash-good-friday
+    bcp-roman-office-language
+    bcp-roman-hymnal-preferred-translator
+    bcp-fetcher-furigana-display)
+  "BCP `defcustom' variables persisted by `bcp--save-all-settings'.")
+
+(transient-define-suffix bcp--save-all-settings ()
+  "Persist current BCP settings to `custom-file'.
+Each variable is written via `customize-save-variable', which records
+its current value into your Custom file so it survives Emacs restarts."
+  :description "Save settings to file"
+  :transient t
+  (interactive)
+  (unless (or custom-file user-init-file)
+    (user-error "Neither `custom-file' nor `user-init-file' is set; cannot save"))
+  (let ((n 0))
+    (dolist (var bcp--saveable-settings)
+      (when (boundp var)
+        (customize-save-variable var (symbol-value var))
+        (cl-incf n)))
+    (message "BCP: saved %d setting%s to %s."
+             n (if (= n 1) "" "s")
+             (or custom-file user-init-file))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Action suffixes
 
 (transient-define-suffix bcp--action-reload ()
-  "Reload all BCP modules."
+  "Reload BCP modules without re-applying preferences."
   :description "Reload modules"
+  :transient t
   (interactive)
   (bcp-reload))
 
+(transient-define-suffix bcp--action-reset ()
+  "Re-apply scripted defaults from bcp-preferences.el and reload."
+  :description "Reset to defaults"
+  :transient t
+  (interactive)
+  (bcp-reset))
+
 (transient-define-suffix bcp--action-open-1662 ()
-  "Open the BCP 1662 Daily Office."
-  :description "Open 1662 office"
+  "Open the BCP 1662 Daily Office (auto-pick Mattins/Evensong by hour)."
+  :description "Open (auto)"
   (interactive)
   (bcp-1662-open-office))
 
+(transient-define-suffix bcp--action-open-1662-mattins ()
+  "Open BCP 1662 Morning Prayer for the office date (or today)."
+  :description "Open Mattins"
+  (interactive)
+  (let* ((base (bcp-1662--current-time))
+         (bcp-1662-office-date
+          (list 0 0 9 (nth 3 base) (nth 4 base) (nth 5 base) nil nil nil)))
+    (bcp-1662-open-office)))
+
+(transient-define-suffix bcp--action-open-1662-evensong ()
+  "Open BCP 1662 Evening Prayer for the office date (or today)."
+  :description "Open Evensong"
+  (interactive)
+  (let* ((base (bcp-1662--current-time))
+         (bcp-1662-office-date
+          (list 0 0 18 (nth 3 base) (nth 4 base) (nth 5 base) nil nil nil)))
+    (bcp-1662-open-office)))
+
 (transient-define-suffix bcp--action-open-1928 ()
-  "Open the 1928 American BCP Daily Office."
-  :description "Open 1928 office"
+  "Open the 1928 American BCP Daily Office (auto-pick Mattins/Evensong)."
+  :description "Open (auto)"
   (interactive)
   (bcp-1928-open-office))
+
+(transient-define-suffix bcp--action-open-1928-mattins ()
+  "Open 1928 BCP Morning Prayer for the office date (or today)."
+  :description "Open Mattins"
+  (interactive)
+  (let* ((base (bcp-1928--current-time))
+         (bcp-1928-office-date
+          (list 0 0 9 (nth 3 base) (nth 4 base) (nth 5 base) nil nil nil)))
+    (bcp-1928-open-office)))
+
+(transient-define-suffix bcp--action-open-1928-evensong ()
+  "Open 1928 BCP Evening Prayer for the office date (or today)."
+  :description "Open Evensong"
+  (interactive)
+  (let* ((base (bcp-1928--current-time))
+         (bcp-1928-office-date
+          (list 0 0 18 (nth 3 base) (nth 4 base) (nth 5 base) nil nil nil)))
+    (bcp-1928-open-office)))
 
 (transient-define-suffix bcp--action-open-lobvm ()
   "Open the Little Office of the BVM (auto-selects hour)."
@@ -845,7 +1101,9 @@ explicitly set.  Use Reset to clear all overrides."
     ("s" bcp--action-open-lobvm-sext)
     ("n" bcp--action-open-lobvm-none)
     ("v" bcp--action-open-lobvm-vespers)
-    ("c" bcp--action-open-lobvm-compline)]])
+    ("c" bcp--action-open-lobvm-compline)]
+   [""
+    ("q" bcp--back-to-settings)]])
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Breviary submenu
@@ -864,7 +1122,9 @@ explicitly set.  Use Reset to clear all overrides."
     ("s" bcp--action-open-breviary-sext)
     ("n" bcp--action-open-breviary-none)
     ("v" bcp--action-open-breviary-vespers)
-    ("c" bcp--action-open-breviary-compline)]])
+    ("c" bcp--action-open-breviary-compline)]
+   [""
+    ("q" bcp--back-to-settings)]])
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Main prefix
@@ -873,37 +1133,31 @@ explicitly set.  Use Reset to clear all overrides."
 (transient-define-prefix bcp-settings ()
   "BCP Daily Office settings.
 
-Settings take effect immediately.  Quit with q, then re-open the office
-to see the result.  Language profile (L) sets all scripture and language
-defaults at once; use Advanced (A) to override individual settings."
+Settings take effect immediately.  Each tradition (1–4) has its own
+submenu containing rubric options and an Open action.  Press `S' to
+persist current settings to your Custom file; `q' to quit."
   [["Language"
     ("L" bcp--set-language-profile)
+    ("t" bcp--override-lesson-translation)
+    ("p" bcp--override-psalm-translation)
     ("A" "Advanced overrides…" bcp-settings-advanced)
-    ("j" bcp--toggle-furigana)
-    ("J" bcp--toggle-shinjitai)]
+    ("j" bcp--toggle-furigana)]
    ["General"
     ("o" bcp--set-officiant)
     ("c" bcp--set-creed)
-    ("h" bcp--set-churchmanship)]
-   ["State prayers"
-    ("s" bcp--set-state-versicle-form)
-    ("r" bcp--set-region)
-    ("k" bcp--set-sovereign-title)
-    ("K" bcp--set-sovereign-name)
-    ("F" bcp--set-royal-family-names)
-    ("T" bcp--set-head-of-state-title)
-    ("C" bcp--set-country-name)
-    ("P" bcp--set-president-name)]]
+    ("h" bcp--set-churchmanship)
+    ("s" "State prayers…" bcp-settings-state-prayers)]]
   [["Traditions"
-    ("1" "BCP 1662 rubrics…" bcp-settings-1662)
-    ("2" "BCP 1928 rubrics…" bcp-settings-1928)]
+    ("1" "BCP 1662…"        bcp-settings-1662)
+    ("2" "BCP 1928…"        bcp-settings-1928)
+    ("3" "Little Office…"   bcp-settings-lobvm)
+    ("4" "Roman Breviary…"  bcp-settings-breviary)]
    ["Actions"
-    ("E" bcp--action-open-1662)
-    ("W" bcp--action-open-1928)
-    ("v" bcp--action-open-lobvm)
-    ("R" "Little Office hours…" bcp-settings-lobvm)
-    ("B" "Breviary hours…" bcp-settings-breviary)
+    ("d" bcp--set-office-date)
+    ("D" bcp--clear-office-date)
+    ("S" bcp--save-all-settings)
     ("g" bcp--action-reload)
+    ("G" bcp--action-reset)
     ("q" bcp--quit)]])
 
 (provide 'bcp-transient)

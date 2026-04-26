@@ -505,6 +505,7 @@ Wraps `bcp-1928--select-opening-sentence' in a single-element list."
                 (bcp-liturgy-render--insert-passage-fallback
                  (funcall ref-str-fn ep) ep-label
                  bible-commentary-translation))
+              (insert "\n")
               (bcp-liturgy-render--insert-heading 3 (format "Gospel: %s" go-label))
               (if go-txt
                   (bcp-liturgy-render--insert-text-block go-txt)
