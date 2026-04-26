@@ -2,6 +2,8 @@
 
 An Emacs Lisp framework for Bible study and liturgical prayer. It has two equal purposes: a scripture reader and annotation environment built around org and org-roam, and a Daily Office engine that renders complete liturgies with scripture lessons fetched and inserted inline. Four traditions ship feature-complete: the BCP 1662, the 1928 American BCP, the Little Office of the BVM, and the pre-1955 Roman Breviary; the architecture is designed to accommodate additional prayer books.
 
+![BCP 1662 Mattins rendered in an Emacs buffer](img/1662-mattins.svg)
+
 ---
 
 ## Purpose
@@ -82,6 +84,8 @@ The current implementation covers:
 - Holy Week: Palm Sunday through Holy Saturday with proper offices
 - Sacred Triduum: Tenebrae Matins with Lamentations, proper Lauds, Vespers rubrics
 
+![Roman Breviary Matins for a feast](img/roman-matins-feast.svg)
+
 **State prayers (both Anglican traditions):**
 - Three versicle forms — monarchy / *save the State* (1928) / *them that rule* (1662) — selectable independently of region on theological grounds
 - Sovereign name, title (king/queen), and royal family members configurable; rendered in ALL-CAPS to mark as requiring update at succession
@@ -97,6 +101,8 @@ The current implementation covers:
 - Per-setting overrides for mixing and matching (e.g. Latin structural texts with Japanese scripture)
 - Furigana display system for Japanese text: normal, muted (comment), or hidden, with in-buffer toggle
 
+![The same office rendered in three language profiles side by side](img/multilingual.svg)
+
 **Bible backends** (served for all scripture — `bcp-fetcher-backend`):
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
 - `ebible` — local eBible.org plain-text chapter files; fully offline
@@ -107,6 +113,8 @@ The current implementation covers:
 - Deterministic, non-repeating hymn picks: a `date + office + slot` seed picks from the tag-eligible pool, and prior-office picks on the same day are excluded so Mattins and Evensong draw distinct hymns without any persistent state
 - Tune metadata for ~640 tunes; tune names render as clickable YouTube recording links where one is registered (586 of the 1940's tunes)
 - Per-translator meter notation printed under each hymn title; when a hymn text has no appointed setting, a fallback table by time-of-day + meter suggests a widely-known tune (e.g. TE-LUCIS / TALLIS' CANON for evening L.M.)
+
+![A hymn from The Hymnal 1940 with tune metadata](img/hymn-1940.svg)
 
 **Psalters** (served for Psalms only, layered on top of the backend — `bcp-fetcher-psalter`):
 - `coverdale` — Miles Coverdale's Psalter (BCP 1662), bundled local text file
@@ -226,6 +234,8 @@ Download the plain-text KJV chapter files from [eBible.org](https://ebible.org) 
 ## Customisation
 
 The recommended path is `M-x bcp-settings` → tweak → `S` to save. Settings persist to your Emacs `custom-file`. Power users can also `setq` variables in `init.el` or in an optional `bcp-preferences.el` file (see *Installation* above).
+
+![The bcp-settings transient menu](img/menu.svg)
 
 > **Note on symbol names.** A number of customisation variables still carry the legacy `bible-commentary-` prefix from the project's pre-rename era (e.g. `bible-commentary-psalm-translation`). These will be unified under the `bcp-` prefix in a future release; existing configurations will continue to work.
 
