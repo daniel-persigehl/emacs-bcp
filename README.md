@@ -105,6 +105,7 @@ The current implementation covers:
 
 **Bible backends** (served for all scripture — `bcp-fetcher-backend`):
 - `oremus` — Oremus Bible Browser (online); KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions
+- `kjva` — King James Version with Apocrypha, served locally from a bundled text file; fully offline, ships with the repository
 - `ebible` — local eBible.org plain-text chapter files; fully offline
 - `bungo-yaku` — 文語訳聖書 (1917 Taishō revision), the complete 66-book Japanese Bible with furigana; served locally from a bundled text file
 
@@ -162,6 +163,7 @@ Scripture fetches pass through a two-layer pipeline. The **psalter** layer (`bcp
 Bible backends:
 
 - `oremus` — fetches from [Oremus Bible Browser](https://bible.oremus.org) (online); supports KJVA, KJV, NRSV, NRSVAE, and psalm-specific versions (Coverdale/BCP, Common Worship, Liturgical Psalter)
+- `kjva` — serves the King James Version with Apocrypha from `bcp-liturgy-bible-kjva.txt` (local, no network required); 80 books, 36,822 verses, collated from the eBible.org plain-text distribution
 - `ebible` — fetches from a local directory of eBible.org plain-text chapter files; fully offline
 - `bungo-yaku` — serves the complete 文語訳聖書 from `bcp-liturgy-bungo-yaku.txt` (local, no network required); 31,099 verses with furigana as `kanji《reading》`
 
@@ -219,9 +221,27 @@ The file `bcp-liturgy-psalter-vulgate.txt` is included in the repository. It con
 
 To regenerate, load `bcp-vulgate-collate.el` and call `M-x bcp-vulgate-collate`.
 
-### eBible backend (optional, fully offline)
+### KJVA backend (bundled, fully offline)
 
-Download the plain-text KJV chapter files from [eBible.org](https://ebible.org) and set:
+The file `bcp-liturgy-bible-kjva.txt` is included in the repository. It contains the complete King James Version with Apocrypha (80 books, 36,822 verses) collated from the eBible.org plain-text distribution. The backend is loaded automatically with `bcp-fetcher`; no setup is required.
+
+To use it as the primary backend (no network, ever) or as the offline fallback for an Oremus-based setup:
+
+```elisp
+;; Fully offline: KJVA for everything
+(setq bcp-fetcher-backend 'kjva
+      bcp-fetcher-fallback-backend 'kjva)
+
+;; Online primary, offline safety net
+(setq bcp-fetcher-backend 'oremus
+      bcp-fetcher-fallback-backend 'kjva)
+```
+
+To regenerate the bundle (e.g. after refreshing the eBible source), download the `eng-kjv_readaloud` distribution from eBible.org into the elisp directory, then load `bcp-kjva-collate.el` and call `M-x bcp-kjva-collate`.
+
+### eBible backend (optional, for non-KJV translations)
+
+If you want a translation other than KJVA served fully offline, download the plain-text chapter files for it from [eBible.org](https://ebible.org) and set:
 
 ```elisp
 (require 'bcp-fetcher-ebible)
@@ -476,6 +496,8 @@ Reloads all package files in dependency order without restarting Emacs.
 **The Book of Common Prayer 1928** (American) is in the public domain. The text of the collects, canticles, prayers, and liturgical calendar used here follows the standard 1928 edition.
 
 **The Coverdale Psalter** — Miles Coverdale's translation of the Psalms, appointed in the BCP 1662 — is in the public domain. The bundled `bcp-liturgy-psalter-coverdale.txt` was prepared from the Oremus Bible Browser's BCP psalter texts.
+
+**The King James Version with Apocrypha** (1769 Blayney revision) is in the public domain. The bundled `bcp-liturgy-bible-kjva.txt` was collated from the eBible.org `eng-kjv` plain-text distribution.
 
 **The Marquess of Bute's** translation of the Roman Breviary (1908) provides the English prose translations for the Little Office of the BVM. Hymn translations are attributed to their individual translators: Dom Matthew Britt, O.S.B. (1922), Edward Caswall (1849), and John Mason Neale (1851).
 

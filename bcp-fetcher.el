@@ -342,6 +342,8 @@ Cache is per-session only; it is cleared when Emacs restarts or when
         bcp-fetcher--tate-brady-psalms nil
         bcp-fetcher--vulgate-psalms nil
         bcp-fetcher--bungo-yaku-bible nil)
+  (when (boundp 'bcp-fetcher--kjva-bible)
+    (setq bcp-fetcher--kjva-bible nil))
   (message "bcp-fetcher: passage cache cleared."))
 
 (defvar bcp-fetcher--backends nil
@@ -1739,4 +1741,5 @@ a CJK-body region at finalise time."
 
 (provide 'bcp-fetcher)                 ; provide before requiring backend to
 (require 'bcp-fetcher-oremus)          ; avoid circular-require loop
+(require 'bcp-fetcher-kjva)            ; bundled offline KJVA, always available
 ;;; bcp-fetcher.el ends here

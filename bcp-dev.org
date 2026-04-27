@@ -194,6 +194,9 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-bungo-point.el | bcp- | One-time utility: auto-points Bungo-yaku psalms by syncing mediant placement to Coverdale | SETTLED |
 | bcp-shinjitai.el | bcp- | Toggleable 旧字体→新字体 display overlay (formal + lossy hyogai-ji tables) | SETTLED |
 | bcp-liturgy-bungo-yaku.txt | bcp- | 文語訳 Bible text (31,099 verses, 66 books); furigana as kanji《reading》 | SETTLED |
+| bcp-fetcher-kjva.el | bcp- | Local KJV-with-Apocrypha backend; serves from bcp-liturgy-bible-kjva.txt | SETTLED |
+| bcp-kjva-collate.el | bcp- | One-time collator: eBible eng-kjv readaloud → bcp-liturgy-bible-kjva.txt | SETTLED |
+| bcp-liturgy-bible-kjva.txt | bcp- | KJVA Bible text (36,822 verses, 80 books incl. Apocrypha) | SETTLED |
 
 * bcp-fetcher.el :science:
 :PROPERTIES:
@@ -201,7 +204,7 @@ Full internal dependency chain (for reference — all loaded transitively):
 :END:
 
 API-agnostic fetch dispatch layer. No dependencies on bible-commentary or bcp-1662.
-Must be required first. Auto-loads bcp-fetcher-oremus at the bottom.
+Must be required first. Auto-loads bcp-fetcher-oremus and bcp-fetcher-kjva at the bottom.
 Sources register themselves via bcp-fetcher-register-backend with
 `:kind :bible' (a Bible-wide backend) or `:kind :psalter' (Psalms-only).
 The active Bible backend is `bcp-fetcher-backend' (default: 'oremus);
@@ -337,6 +340,18 @@ Psalm numbering: hebrew (KJV versification).
 Serves from =bcp-liturgy-bungo-yaku.txt= (31,099 verses, 66 books).
 Extracted from the JapBungo SWORD module via =mod2imp= + OSIS tag stripping.
 Furigana preserved as =kanji《reading》= (lenticular brackets).
+
+** KJVA Backend
+Registered as 'kjva.  Translations: ("KJVA" "KJV with Apocrypha" "King James
+Version with Apocrypha").  Psalm numbering: hebrew.
+Serves from =bcp-liturgy-bible-kjva.txt= (36,822 verses, 80 books).
+Same single-file bundle format as Bungo-yaku: =Book Ch:V<TAB>Text= per line,
+SWORD canonical book names.  Apocrypha books canonicalised as: Tobit,
+Judith, Esther (Greek), Wisdom of Solomon, Sirach, Baruch, Song of the Three
+Holy Children, Susanna, Bel and the Dragon, Prayer of Manasseh, I/II Esdras,
+I/II Maccabees.  Collated by =bcp-kjva-collate= from eBible.org's
+=eng-kjv_readaloud= distribution.  Backend file shares
+=bcp-fetcher--book-name-aliases= with the Bungo-yaku resolver.
 
 ** Furigana Display System
 Four display modes controlled by =bcp-fetcher-furigana-display=:
