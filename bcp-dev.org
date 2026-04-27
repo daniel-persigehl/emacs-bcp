@@ -197,6 +197,9 @@ Full internal dependency chain (for reference — all loaded transitively):
 | bcp-fetcher-kjva.el | bcp- | Local KJV-with-Apocrypha backend; serves from bcp-liturgy-bible-kjva.txt | SETTLED |
 | bcp-kjva-collate.el | bcp- | One-time collator: eBible eng-kjv readaloud → bcp-liturgy-bible-kjva.txt | SETTLED |
 | bcp-liturgy-bible-kjva.txt | bcp- | KJVA Bible text (36,822 verses, 80 books incl. Apocrypha) | SETTLED |
+| bcp-fetcher-vulgate-bible.el | bcp- | Local Vulgata Clementina backend; serves from bcp-liturgy-bible-vulgate.txt | SETTLED |
+| bcp-vulgate-bible-collate.el | bcp- | One-time collator: eBible latVUC readaloud → bcp-liturgy-bible-vulgate.txt | SETTLED |
+| bcp-liturgy-bible-vulgate.txt | bcp- | Vulgata Clementina text (35,809 verses, 73 books) | SETTLED |
 
 * bcp-fetcher.el :science:
 :PROPERTIES:
@@ -204,7 +207,8 @@ Full internal dependency chain (for reference — all loaded transitively):
 :END:
 
 API-agnostic fetch dispatch layer. No dependencies on bible-commentary or bcp-1662.
-Must be required first. Auto-loads bcp-fetcher-oremus and bcp-fetcher-kjva at the bottom.
+Must be required first. Auto-loads bcp-fetcher-oremus, bcp-fetcher-kjva, and
+bcp-fetcher-vulgate-bible at the bottom.
 Sources register themselves via bcp-fetcher-register-backend with
 `:kind :bible' (a Bible-wide backend) or `:kind :psalter' (Psalms-only).
 The active Bible backend is `bcp-fetcher-backend' (default: 'oremus);
@@ -352,6 +356,17 @@ Holy Children, Susanna, Bel and the Dragon, Prayer of Manasseh, I/II Esdras,
 I/II Maccabees.  Collated by =bcp-kjva-collate= from eBible.org's
 =eng-kjv_readaloud= distribution.  Backend file shares
 =bcp-fetcher--book-name-aliases= with the Bungo-yaku resolver.
+
+** Vulgate Bible Backend
+Registered as 'vulgate-bible (distinct from the inline 'vulgate *psalter*).
+Translations: ("Vulgate" "Latin").  Psalm numbering: lxx.
+Serves from =bcp-liturgy-bible-vulgate.txt= (35,809 verses, 73 books).
+Collated by =bcp-vulgate-bible-collate= from eBible.org's =latVUC_readaloud=
+distribution (Bibbia Vulgata Clementina, PD).  Susanna, Bel, and the Song of
+the Three are integrated into Daniel (chs 13, 14, 3:24-90) per the Clementine
+canon.  When the Vulgate psalter (with Breviary pointing) is the active
+psalter, Psalms route through it; this backend serves the rest of scripture.
+Backend file shares =bcp-fetcher--book-name-aliases= via its own resolver.
 
 ** Furigana Display System
 Four display modes controlled by =bcp-fetcher-furigana-display=:

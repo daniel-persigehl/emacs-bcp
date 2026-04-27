@@ -11,9 +11,10 @@ bible-reader-backup-*/
 divinum-officium-master/
 JapBungo/
 
-# Audio assets (readaloud)
+# eBible readaloud source distributions (used by collators)
 eng-bcp_readaloud/
 eng-kjv_readaloud/
+latVUC_readaloud/
 
 # 1928 lectionary OCR scratch
 lect1928-p*.txt
