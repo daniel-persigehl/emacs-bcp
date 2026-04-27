@@ -110,6 +110,8 @@ The current implementation covers:
 - `ebible` — local eBible.org plain-text chapter files; fully offline
 - `bungo-yaku` — 文語訳聖書 (1917 Taishō revision), the complete 66-book Japanese Bible with furigana; served locally from a bundled text file
 
+The `kjva`, `vulgate-bible`, and `bungo-yaku` bundles ship with the repository and need no network access, so the Office can be prayed entirely offline in English, Latin, or Japanese — switch by setting `bcp-fetcher-backend`, or wire one as the offline fallback for an Oremus-based setup with `bcp-fetcher-fallback-backend`.
+
 **Hymns and tunes:**
 - Office hymn rendering integrated with all four traditions; selection driven by a controlled-vocabulary tag system over a unified text registry that covers The Hymnal 1940 (Episcopal) and the Roman office hymnal in three English translations (Britt, Caswall, Neale)
 - Deterministic, non-repeating hymn picks: a `date + office + slot` seed picks from the tag-eligible pool, and prior-office picks on the same day are excluded so Mattins and Evensong draw distinct hymns without any persistent state
@@ -177,7 +179,7 @@ Psalters:
 
 The fetch layer also supports translation-aware routing: if the caller passes an explicit translation (e.g. "Vulgate") that matches a registered backend or psalter, that source is used regardless of the current backend/psalter setting.
 
-The default configuration is `oremus` backend + `coverdale` psalter. Psalms are served locally via Coverdale; lessons come from Oremus.
+The default configuration is `oremus` backend + `coverdale` psalter. Psalms are served locally via Coverdale; lessons come from Oremus. Setting the backend or fallback-backend to `kjva`, `vulgate-bible`, or `bungo-yaku` switches the lessons path to a bundled local source — see *Installation* for the relevant snippets.
 
 ---
 
