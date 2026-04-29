@@ -4,6 +4,9 @@
 # Personal user config (loaded by bcp.el if present)
 bcp-preferences.el
 
+# Personal screenshot helpers (auto-loaded by bcp-reload if present)
+bcp-screenshot.el
+
 # Backup directories
 bible-reader-backup-*/
 
