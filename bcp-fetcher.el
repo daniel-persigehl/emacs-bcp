@@ -122,6 +122,79 @@ translation available."
   :group 'bcp-fetcher)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Scripture substitution
+
+(defcustom bcp-scripture-substitution-enable t
+  "Whether to substitute scripturally-cited liturgical fragments at render time.
+When non-nil, opening sentences and other citation-bearing texts are fetched
+via `bcp-fetcher-fetch' and the verse rendered in place of the printed text.
+The fallback chain in `bcp-fetcher-fetch' (psalter for psalms, lessons
+translation otherwise, with backend fallbacks) drives the lookup."
+  :type 'boolean
+  :group 'bcp-fetcher)
+
+(defcustom bcp-scripture-substitution-timeout 5
+  "Maximum seconds to wait for a synchronous scripture-substitution fetch.
+Local backends (KJVA, Vulgate) respond instantly; the timeout matters for
+network backends.  When the deadline elapses the printed text is rendered
+unchanged."
+  :type 'number
+  :group 'bcp-fetcher)
+
+(defun bcp-fetcher-citation-to-passage (cite)
+  "Convert citation list CITE to a passage string for `bcp-fetcher-fetch'.
+Accepts:
+  string                → returned unchanged
+  (BOOK CH)             → \"Book CH\"
+  (BOOK CH V)           → \"Book CH:V-V\"   (explicit single-verse range)
+  (BOOK CH V1 nil)      → \"Book CH:V1-V1\" (idem)
+  (BOOK CH V1 V2)       → \"Book CH:V1-V2\"
+Single-verse forms emit the explicit V-V range so backends that read
+\"Book CH:V\" as lectionary shorthand for \"V to end of chapter\" return
+just the one verse.
+Returns nil for multi-ref or unrecognised forms — `bcp-fetcher-fetch-citation'
+splits multi-refs and recurses on each sub-ref."
+  (cond
+   ((stringp cite) cite)
+   ((and (listp cite) (stringp (car cite)))
+    (let* ((book (car cite))
+           (ch   (cadr cite))
+           (v1   (caddr cite))
+           (v2   (cadddr cite)))
+      (cond
+       ((null ch) book)
+       ((null v1) (format "%s %d" book ch))
+       ((null v2) (format "%s %d:%d-%d" book ch v1 v1))
+       (t         (format "%s %d:%d-%d" book ch v1 v2)))))
+   (t nil)))
+
+(defun bcp-fetcher-fetch-citation (cite &optional timeout)
+  "Fetch CITE synchronously via `bcp-fetcher-fetch' and return text, or nil.
+CITE is either a single ref accepted by `bcp-fetcher-citation-to-passage'
+or a multi-ref list of such refs ((BOOK CH V) (BOOK CH V) …) — multi-refs
+are fetched independently and joined with a single newline.
+TIMEOUT defaults to `bcp-scripture-substitution-timeout'.
+Returns nil when any sub-fetch fails or the citation form is unrecognised."
+  (cond
+   ((and (listp cite) (listp (car cite)))
+    (let ((parts (mapcar (lambda (c)
+                           (bcp-fetcher-fetch-citation c timeout))
+                         cite)))
+      (and (cl-every #'stringp parts)
+           (mapconcat #'identity parts "\n"))))
+   (t
+    (when-let* ((passage (bcp-fetcher-citation-to-passage cite)))
+      (let ((deadline (+ (float-time)
+                         (or timeout bcp-scripture-substitution-timeout)))
+            (done nil) (result nil))
+        (bcp-fetcher-fetch passage
+                           (lambda (text)
+                             (setq result text done t)))
+        (while (and (not done) (< (float-time) deadline))
+          (accept-process-output nil 0.1))
+        result)))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Session translation state
 
 (defvar bible-commentary--session-translation nil

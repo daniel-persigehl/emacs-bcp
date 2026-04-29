@@ -366,6 +366,7 @@ Resolves current defcustom values and registers all tradition callbacks."
     (list
      :rubric-face-fn                #'bcp-1662--rubric-face
      :collect-text-fn               #'bcp-1662-collect-text
+     :collect-stanzas-fn            #'bcp-1662-collect-stanzas
      :ref-to-string-fn              #'bcp-1662--lectionary-ref-to-string
      :ref-label-fn                  #'bcp-1662--ref-label
      :psalm-label-fn                #'bcp-1662--psalm-label

@@ -235,10 +235,12 @@ the Vulgate psalter when the psalter is \\='vulgate or language is
          (latin   (eq bcp-roman-office-language 'latin))
          (psalter (and (boundp 'bcp-fetcher-psalter) bcp-fetcher-psalter)))
     (cond
-     ;; Canticles: from DO files in the appropriate language
+     ;; Canticles: from DO files in the appropriate language.
+     ;; English path covers vernacular profiles; Latin (and bungo, since
+     ;; no Bungo canticle files exist) loads the Latin file.
      ((>= vulg-num 200)
-      (let ((all (bcp-roman-breviary--load-canticle
-                  vulg-num (if latin 'latin 'english))))
+      (let* ((file-lang (if (eq bcp-roman-office-language 'english) 'english 'latin))
+             (all (bcp-roman-breviary--load-canticle vulg-num file-lang)))
         (when all (append all nil))))
      ;; Non-Latin with a non-standard psalter: fetch via the active fetcher
      ((and (not latin)
@@ -1529,8 +1531,10 @@ DATA-FN is the resolver function; defaults to `bcp-roman-breviary--resolve'."
            :marian-antiphon marian-data
            :data-fn (or data-fn #'bcp-roman-breviary--resolve)
            :psalm-fn #'bcp-roman-breviary--psalm-verses
-           :gloria-patri (plist-get bcp-common-prayers-gloria-patri
-                                    (intern (format ":%s" lang)))
+           :gloria-patri (or (plist-get bcp-common-prayers-gloria-patri
+                                        (intern (format ":%s" lang)))
+                             (plist-get bcp-common-prayers-gloria-patri
+                                        :latin))
            :buffer-name buffer-name
            :office-label label))
     ;; Init navigation mode for refresh/day-navigation

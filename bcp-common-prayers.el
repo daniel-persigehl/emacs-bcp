@@ -32,8 +32,8 @@
 (defcustom bcp-common-prayers-language 'english
   "Active language for common prayer texts.
 Language symbols correspond to keyword keys in each text entry plist,
-e.g. \\='english → :english, \\='latin → :latin."
-  :type  '(choice (const english) (const latin))
+e.g. \\='english → :english, \\='latin → :latin, \\='bungo → :bungo."
+  :type  '(choice (const english) (const latin) (const bungo))
   :group 'bcp-common-prayers)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
@@ -101,7 +101,8 @@ Append to `bcp-common-prayers-lords-prayer-1928' via the ordo step's :doxology k
 
 (defconst bcp-common-prayers-oremus
   '(:english "Let us pray."
-    :latin   "Orémus.")
+    :latin   "Orémus."
+    :bungo   "祈らん。")
   "The bidding before a collect.")
 
 (defconst bcp-common-prayers-gloria-patri
@@ -210,7 +211,9 @@ everlasting. Amen."
 of the Holy Ghost, be with us all evermore. Amen."
     :latin
     "Grátia Dómini nostri Jesu Christi, et cáritas Dei, et communicátio \
-Sancti Spíritus sit cum ómnibus nobis. Amen.")
+Sancti Spíritus sit cum ómnibus nobis. Amen."
+    :bungo
+    "願くは主イエス・キリストの恩惠、神の愛、聖霊の交感、われら凡ての者と偕に永遠にあらんことを。アァメン。")
   "The Grace (2 Corinthians 13:14).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

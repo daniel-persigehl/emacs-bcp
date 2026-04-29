@@ -63,34 +63,40 @@
 ;;;; ──────────────────────────────────────────────────────────────────────
 ;;;; Opening Sentences
 ;; Shared between Morning and Evening Prayer.
-;; Each entry: (TEXT CITATION) where CITATION is a lesson ref.
-;; A sentence with two citations (Jer x.24 / Ps vi.1) has a list of refs.
+;; Each entry is a plist with :text, :ref (lesson ref or list of refs),
+;; and optional :inexact (when the printed text covers only part of the
+;; cited verse(s) — the renderer appends a † to the citation label so
+;; readers know the substituted whole verse exceeds what was printed).
+;; Multi-ref entries are auto-flagged at render time.
 
 (defconst bcp-1662-opening-sentences
-  '(("When the wicked man turneth away from his wickedness that he hath committed, and doeth that which is lawful and right, he shall save his soul alive."
-     ("Ezek" 18 27))
-    ("I acknowledge my transgressions, and my sin is ever before me."
-     ("Ps" 51 3))
-    ("Hide thy face from my sins, and blot out all mine iniquities."
-     ("Ps" 51 9))
-    ("The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise."
-     ("Ps" 51 17))
-    ("Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
-     ("Joel" 2 13))
-    ("To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
-     (("Dan" 9 9) ("Dan" 9 10)))
-    ("O Lord, correct me, but with judgment; not in thine anger, lest thou bring me to nothing."
-     (("Jer" 10 24) ("Ps" 6 1)))
-    ("Repent ye; for the Kingdom of Heaven is at hand."
-     ("Matt" 3 2))
-    ("I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, and am no more worthy to be called thy son."
-     ("Luke" 15 18 19))
-    ("Enter not into judgment with thy servant, O Lord; for in thy sight shall no man living be justified."
-     ("Ps" 143 2))
-    ("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
-     ("1 John" 1 8 9)))
+  '((:text "When the wicked man turneth away from his wickedness that he hath committed, and doeth that which is lawful and right, he shall save his soul alive."
+     :ref ("Ezek" 18 27))
+    (:text "I acknowledge my transgressions, and my sin is ever before me."
+     :ref ("Ps" 51 3))
+    (:text "Hide thy face from my sins, and blot out all mine iniquities."
+     :ref ("Ps" 51 9))
+    (:text "The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise."
+     :ref ("Ps" 51 17))
+    (:text "Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
+     :ref ("Joel" 2 13))
+    (:text "To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
+     :ref (("Dan" 9 9) ("Dan" 9 10)))
+    (:text "O Lord, correct me, but with judgment; not in thine anger, lest thou bring me to nothing."
+     :ref (("Jer" 10 24) ("Ps" 6 1)))
+    (:text "Repent ye; for the Kingdom of Heaven is at hand."
+     :ref ("Matt" 3 2))
+    ;; Printed text ends mid-v.19 ("called thy son.") — strict partial verse.
+    (:text "I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, and am no more worthy to be called thy son."
+     :ref ("Luke" 15 18 19) :inexact t)
+    (:text "Enter not into judgment with thy servant, O Lord; for in thy sight shall no man living be justified."
+     :ref ("Ps" 143 2))
+    ;; Conjoined paraphrase of vv.8-9 ("but if we confess" replaces v.9's "If we
+    ;; confess"; "God" replaces "he").  Citation given as a verse range.
+    (:text "If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
+     :ref ("1 John" 1 8 9) :inexact t))
   "Opening sentences for Morning and Evening Prayer.
-Each entry: (TEXT CITATION) where CITATION is a lesson ref or list of refs.
+Each entry is a plist with :text, :ref, and optional :inexact.
 The minister reads one or more of these at the opening of the service.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────
@@ -142,6 +148,10 @@ The minister reads one or more of these at the opening of the service.")
      :doxology bcp-common-prayers-lords-prayer-doxology)
 
     (:rubric "Then likewise he shall say,")
+    ;; Versicles drawn from the Psalter (Coverdale), corporately adapted
+    ;; from singular ("my/me") to plural ("our/us"):
+    ;;   "O Lord, open thou our lips" / "shew forth thy praise"   — Ps 51:15
+    ;;   "O God, make speed to save us" / "make haste to help us" — Ps 70:1
     (:versicles
      ("O Lord, open thou our lips."
       "And our mouth shall shew forth thy praise.")
@@ -151,6 +161,8 @@ The minister reads one or more of these at the opening of the service.")
     (:rubric "Here all standing up, the Priest shall say,")
     (:text gloria-patri
      :ref bcp-common-prayers-gloria-patri)
+    ;; "Praise ye the Lord" — common Hallelujah incipit (Ps 113:1 et al.);
+    ;; "The Lord's Name be praised" — Ps 113:2 (Coverdale paraphrase).
     (:versicles
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
@@ -202,6 +214,7 @@ The minister reads one or more of these at the opening of the service.")
 
     (:rubric "And after that these Prayers following, all devoutly kneeling: the Minister first pronouncing with a loud voice,")
     (:versicles-preces)
+    ;; Kyrie eleison — ancient liturgical formula, not a scripture quote.
     (:versicles
      ("Lord, have mercy upon us." "Christ, have mercy upon us.")
      ("Lord, have mercy upon us." nil))
@@ -211,10 +224,18 @@ The minister reads one or more of these at the opening of the service.")
      :ref bcp-common-prayers-lords-prayer)
 
     (:rubric "Then the Priest standing up shall say,")
+    ;; "O Lord, shew thy mercy" / "And grant us thy salvation" — Ps 85:7
+    ;; (Coverdale, corporately adapted; the verse itself reads "us" in both).
     (:versicles
      ("O Lord, shew thy mercy upon us."
       "And grant us thy salvation."))
     (:state-versicles :tradition 1662)
+    ;; Suffrages (1662 form), all from the Psalter, corporately adapted:
+    ;;   "Endue thy Ministers" / "thy chosen people joyful"      — Ps 132:9 (paraphrase)
+    ;;   "O Lord, save thy people" / "bless thine inheritance"   — Ps 28:9
+    ;;   "Give peace in our time" / "none other that fighteth"   — composition
+    ;;       (Latin "Da pacem"; cf. 2 Chr 14:11, 2 Chr 20:15)
+    ;;   "O God, make clean our hearts" / "take not thy Holy..."  — Ps 51:10-11
     (:versicles
      ("Endue thy Ministers with righteousness."
       "And make thy chosen people joyful.")
@@ -281,6 +302,9 @@ Steps are tagged plists; see file commentary for type descriptions.")
      :doxology bcp-common-prayers-lords-prayer-doxology)
 
     (:rubric "Then likewise he shall say,")
+    ;; Versicles drawn from the Psalter (Coverdale), corporately adapted:
+    ;;   "O Lord, open thou our lips" / "shew forth thy praise"   — Ps 51:15
+    ;;   "O God, make speed to save us" / "make haste to help us" — Ps 70:1
     (:versicles
      ("O Lord, open thou our lips."
       "And our mouth shall shew forth thy praise.")
@@ -290,6 +314,8 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:rubric "Here, all standing up, the Priest shall say,")
     (:text gloria-patri
      :ref bcp-common-prayers-gloria-patri)
+    ;; "Praise ye the Lord" — common Hallelujah incipit (Ps 113:1 et al.);
+    ;; "The Lord's Name be praised" — Ps 113:2 (Coverdale paraphrase).
     (:versicles
      ("Praise ye the Lord."
       "The Lord's Name be praised."))
@@ -337,6 +363,7 @@ Steps are tagged plists; see file commentary for type descriptions.")
     (:rubric "And after that, these Prayers following, all devoutly kneeling: the Minister first pronouncing with a loud voice,")
     ;; TODO: when `office-officiant' is `lay or `deacon (i.e. not a priest),
     (:versicles-preces)
+    ;; Kyrie eleison — ancient liturgical formula, not a scripture quote.
     (:versicles
      ("Lord, have mercy upon us." "Christ, have mercy upon us.")
      ("Lord, have mercy upon us." nil))
@@ -346,10 +373,17 @@ Steps are tagged plists; see file commentary for type descriptions.")
      :ref bcp-common-prayers-lords-prayer)
 
     (:rubric "Then the Priest standing up shall say,")
+    ;; "O Lord, shew thy mercy" / "And grant us thy salvation" — Ps 85:7.
     (:versicles
      ("O Lord, shew thy mercy upon us."
       "And grant us thy salvation."))
     (:state-versicles :tradition 1662)
+    ;; Suffrages (1662 form), all from the Psalter, corporately adapted:
+    ;;   "Endue thy Ministers" / "thy chosen people joyful"      — Ps 132:9 (paraphrase)
+    ;;   "O Lord, save thy people" / "bless thine inheritance"   — Ps 28:9
+    ;;   "Give peace in our time" / "none other that fighteth"   — composition
+    ;;       (Latin "Da pacem"; cf. 2 Chr 14:11, 2 Chr 20:15)
+    ;;   "O God, make clean our hearts" / "take not thy Holy..."  — Ps 51:10-11
     (:versicles
      ("Endue thy Ministers with righteousness."
       "And make thy chosen people joyful.")

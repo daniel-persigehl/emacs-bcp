@@ -31,6 +31,8 @@
 
 (declare-function bcp-roman-render--render-office "bcp-roman-render")
 (declare-function bcp-office-nav-init "bcp-office-nav")
+(declare-function bcp-roman-breviary--vulgate-to-coverdale "bcp-roman-breviary")
+(declare-function bcp-roman-antiphonary--fetch-bungo "bcp-roman-antiphonary")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Compline psalms (Vulgate, embedded)
@@ -941,8 +943,36 @@ local constants."
       (_ (error "Unknown LOBVM data key: %s" key)))))
 
 (defun bcp-roman-lobvm--psalm-verses (vulg-num)
-  "Return the verse list for Vulgate psalm VULG-NUM, or nil."
-  (cdr (assq vulg-num bcp-roman-lobvm--psalms)))
+  "Return the verse list for Vulgate psalm VULG-NUM, or nil.
+When `bcp-roman-office-language' is `bungo', fetch the psalm from the
+bungo-yaku backend (using Hebrew numbering); on a miss for any segment,
+fall back wholesale to the local pointed Latin text — the office's
+original tongue — rather than mixing scripts mid-psalm."
+  (or (and (eq bcp-roman-office-language 'bungo)
+           (progn (require 'bcp-roman-breviary nil t)
+                  (require 'bcp-roman-antiphonary nil t)
+                  (and (fboundp 'bcp-roman-breviary--vulgate-to-coverdale)
+                       (fboundp 'bcp-roman-antiphonary--fetch-bungo)))
+           (let* ((lookups (bcp-roman-breviary--vulgate-to-coverdale vulg-num))
+                  (result nil)
+                  (miss nil))
+             (cl-loop for lookup in lookups
+                      until miss
+                      for hebrew-num = (nth 0 lookup)
+                      for start = (nth 1 lookup)
+                      for end   = (nth 2 lookup)
+                      for text  = (bcp-roman-antiphonary--fetch-bungo
+                                   (format "Psalm %d" hebrew-num))
+                      do (if (not text)
+                             (setq miss t)
+                           (let* ((verses (split-string text "\n" t "[ \t]+"))
+                                  (len (length verses))
+                                  (from (1- (or start 1)))
+                                  (to (if end (min end len) len)))
+                             (setq result
+                                   (nconc result (seq-subseq verses from to))))))
+             (and (not miss) result)))
+      (cdr (assq vulg-num bcp-roman-lobvm--psalms))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Entry point
@@ -991,8 +1021,10 @@ HOUR is a symbol: `matins', `lauds', `prime', `terce', `sext',
              :data-fn (lambda (key)
                         (bcp-roman-lobvm--resolve key season))
              :psalm-fn #'bcp-roman-lobvm--psalm-verses
-             :gloria-patri (plist-get bcp-common-prayers-gloria-patri
-                                      (intern (format ":%s" lang)))
+             :gloria-patri (or (plist-get bcp-common-prayers-gloria-patri
+                                          (intern (format ":%s" lang)))
+                               (plist-get bcp-common-prayers-gloria-patri
+                                          :latin))
              :buffer-name buffer-name
              :office-label label)))
     ;; Init navigation mode for refresh/day-navigation

@@ -28,11 +28,13 @@
 
 (require 'cl-lib)
 (require 'calendar)
+(require 'bcp-fetcher)
 (require 'bcp-render)
 (require 'bcp-liturgy-render)
 (require 'bcp-common-canticles)
 (require 'bcp-common-prayers)
 (require 'bcp-common-anglican)
+(require 'bcp-anglican-versicles)
 (require 'bcp-hymnal)
 
 ;;;; ══════════════════════════════════════════════════════════════════════════
@@ -104,6 +106,19 @@
       (setq pos (next-single-property-change pos 'bcp-verse text len)))
     last))
 
+(defun bcp-anglican-render--sentence-parts (sent)
+  "Return a (TEXT REF INEXACT) triple for opening-sentence SENT.
+Accepts the plist form (:text TEXT :ref REF [:inexact t]) or the legacy
+2-tuple form (TEXT REF).  Returns (TEXT nil nil) for a bare string SENT."
+  (cond
+   ((stringp sent) (list sent nil nil))
+   ((and (listp sent) (keywordp (car sent)))
+    (list (plist-get sent :text)
+          (plist-get sent :ref)
+          (plist-get sent :inexact)))
+   ((listp sent) (list (car sent) (cadr sent) nil))
+   (t (list nil nil nil))))
+
 (defun bcp-anglican-render--ref-label-with-text (ref text ref-label-fn)
   "Return a display label for REF, appending the actual last verse when known.
 REF-LABEL-FN is the tradition-specific ref formatter.
@@ -117,6 +132,36 @@ highest `bcp-verse' property and appends it as the range end."
               (format "%s-%d" (funcall ref-label-fn ref) last)
             (funcall ref-label-fn ref)))
       (funcall ref-label-fn ref))))
+
+(defun bcp-anglican-render--easter-anthems-text
+    (symbol stanzas-fn collect-text-fn ref-label-fn)
+  "Return Easter-Anthems text for SYMBOL with optional scripture substitution.
+When STANZAS-FN returns a structured stanza list and substitution is
+enabled, fetch each stanza from the user's Bible translation, append
+the citation label, and dagger inexact stanzas (or stanzas whose fetch
+failed and fell back to printed text).  Otherwise return the printed
+COLLECT-TEXT-FN string verbatim."
+  (let ((stanzas (and stanzas-fn
+                      bcp-scripture-substitution-enable
+                      (funcall stanzas-fn symbol))))
+    (if (not stanzas)
+        (funcall collect-text-fn symbol)
+      (mapconcat
+       (lambda (st)
+         (cond
+          ((plist-get st :gloria)
+           (bcp-liturgy-canticle-gloria-text))
+          (t
+           (let* ((printed (plist-get st :text))
+                  (ref     (plist-get st :ref))
+                  (inexact (plist-get st :inexact))
+                  (fetched (and ref (bcp-fetcher-fetch-citation ref)))
+                  (body    (or fetched printed))
+                  (lbl     (and ref (funcall ref-label-fn ref)))
+                  (mark    (if (or inexact (and ref (not fetched))) "†" "")))
+             (if lbl (concat body " — " lbl mark) body)))))
+       stanzas
+       "\n"))))
 
 (defun bcp-anglican-render--psalm-label (psalm-ref)
   "Format PSALM-REF as a short heading label (e.g. \"Ps 23\" or \"Ps 119:1-32\")."
@@ -140,6 +185,7 @@ CTX is the tradition context plist."
   (let* ((type             (car step))
          (rubric-face-fn   (plist-get ctx :rubric-face-fn))
          (collect-text-fn  (plist-get ctx :collect-text-fn))
+         (collect-stanzas-fn (plist-get ctx :collect-stanzas-fn))
          (ref-label-fn     (plist-get ctx :ref-label-fn))
          (ref-str-fn       (plist-get ctx :ref-to-string-fn))
          (psalm-label-fn   (plist-get ctx :psalm-label-fn))
@@ -155,7 +201,8 @@ CTX is the tradition context plist."
          (heading!  (lvl text)
            (bcp-liturgy-render--insert-heading lvl text))
          (versicles! (pairs)
-           (bcp-liturgy-render--insert-versicles pairs))
+           (bcp-liturgy-render--insert-versicles
+            (bcp-anglican-versicles-localize-pairs pairs)))
          (text!     (text)
            (bcp-liturgy-render--insert-text-block text))
          (canticle! (text)
@@ -177,15 +224,23 @@ CTX is the tradition context plist."
                                (plist-get propers :date)
                                (plist-get propers :office))))
            (dolist (sent sents)
-             (if (stringp sent)
-                 (text! sent)
-               (let* ((t1  (car sent))
-                      (cit (cadr sent))
-                      (lbl (if (and (listp cit) (listp (car cit)))
-                               (mapconcat (lambda (c) (funcall ref-label-fn c))
-                                          cit " / ")
-                             (funcall ref-label-fn cit))))
-                 (text! (concat t1 " — " lbl)))))))
+             (let* ((parts   (bcp-anglican-render--sentence-parts sent))
+                    (printed (nth 0 parts))
+                    (cit     (nth 1 parts))
+                    (inexact (nth 2 parts)))
+               (cond
+                ((null cit) (text! printed))
+                (t
+                 (let* ((multi-p (and (listp cit) (listp (car cit))))
+                        (lbl     (if multi-p
+                                     (mapconcat (lambda (c) (funcall ref-label-fn c))
+                                                cit " / ")
+                                   (funcall ref-label-fn cit)))
+                        (mark    (if (or inexact multi-p) "†" ""))
+                        (fetched (and bcp-scripture-substitution-enable
+                                      (bcp-fetcher-fetch-citation cit)))
+                        (body    (or fetched printed)))
+                   (text! (concat body " — " lbl mark)))))))))
 
         ;; ── Fixed text ───────────────────────────────────────────────────
         (:text
@@ -216,9 +271,11 @@ CTX is the tradition context plist."
         ;; Lay/deacon:    "Hear my prayer, O Lord." / "And let my cry…"
         (:versicles-preces
          (bcp-liturgy-render--insert-dominus-vobiscum
-          bcp-common-anglican-preces-lord-be-with-you
-          bcp-common-anglican-preces-lay)
-         (bcp-liturgy-render--insert-oremus 'english))
+          (bcp-anglican-versicles-localize-pairs
+           bcp-common-anglican-preces-lord-be-with-you)
+          (bcp-anglican-versicles-localize-pairs
+           bcp-common-anglican-preces-lay))
+         (bcp-liturgy-render--insert-oremus bcp-common-prayers-language))
 
         ;; ── Canticle ─────────────────────────────────────────────────────
         (:canticle
@@ -235,7 +292,9 @@ CTX is the tradition context plist."
            (cond
             (is-easter
              (heading! 3 "Easter Anthems")
-             (when-let* ((txt (funcall collect-text-fn 'easter-anthems)))
+             (when-let* ((txt (bcp-anglican-render--easter-anthems-text
+                               'easter-anthems collect-stanzas-fn
+                               collect-text-fn ref-label-fn)))
                (canticle! txt)))
             (dom-except nil)
             (t
@@ -297,7 +356,9 @@ CTX is the tradition context plist."
                                     raw-text)))
                  (cond
                   (is-easter
-                   (when-let* ((at (funcall collect-text-fn 'easter-anthems)))
+                   (when-let* ((at (bcp-anglican-render--easter-anthems-text
+                                    'easter-anthems collect-stanzas-fn
+                                    collect-text-fn ref-label-fn)))
                      (canticle! at)))
                   (dom-except nil)
                   (txt

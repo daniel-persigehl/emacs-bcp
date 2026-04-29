@@ -1222,6 +1222,50 @@ texts second (collects, canticles, offices).
 - Sources to check: NDL (dl.ndl.go.jp), HathiTrust, Internet Archive,
   Project Canterbury (anglicanhistory.org).
 
+*** TODO Tetragrammaton in liturgical surfacing of bungo-yaku
+The bungo-yaku Bible (1887 Meiji Protestant committee) renders YHWH as
+ヱホバ everywhere — same convention as the KJV's =Jehovah= used as a
+default lexical equivalent.  This is the source we surface for psalms,
+capitula, lessons, and scripture-eligible antiphons in the JAP Roman
+Office path (and, in future, on the BCP side).
+
+The Anglican convention is more nuanced.  Coverdale's psalter and the
+1611 KJV both substitute "the LORD" for YHWH almost everywhere, but
+preserve the proper name where the verse's whole point /is/ the Name
+— most famously Ps 83:18 ("thy Name is JEHOVAH alone"), Exodus 6:3, and
+a small handful of siblings.  BCP /collects, suffrages, and prayers/
+uniformly substitute; only the Coverdale psalter draws the finer line.
+
+Catholic norm (CDW 2008) goes further: never vocalise the Tetragrammaton
+in liturgy at all — substitute Dominus / 主 / equivalent throughout, no
+exceptions for "name" verses.
+
+Current status (2026-04-28): leave bungo-yaku as is.  ヱホバ surfaces in
+the JAP Roman Office because we draw bungo scripture from the only
+extant classical Japanese Bible, which is Protestant.  The Latin frame
+of the office is doing the liturgical work; the Bungo verses function
+as a vernacular gloss for understanding (analogous to the Anglican
+Breviary's English psalter alongside the Vulgate), so this is
+defensible for private recitation.
+
+Future option (no work scheduled):
+- A render-time post-process in =bcp-fetcher--bungo-yaku-fetch= or a
+  wrapper layer could substitute ヱホバ → 主 (and ヤハ → 主) before
+  insertion, with an exemption list for "name" verses (Ps 83:18 in
+  Vulgate numbering = Ps 83:19 in Hebrew, etc.) when serving an
+  Anglican-tradition consumer.  Catholic-tradition consumers would
+  substitute unconditionally.
+- Toggle by tradition (Roman vs Anglican) rather than language.  A
+  defcustom =bcp-fetcher-bungo-yaku-tetragrammaton-policy= with values
+  =as-is= / =anglican= / =catholic= would let the user pick.
+- The hand-pointed bungo-yaku psalter (under development in this org
+  file) is the natural place to bake in the Anglican convention if we
+  ever ship it as a liturgical psalter rather than a study text.
+
+The 1928/29 NSKK 祈祷書 psalter, if we ever obtain a clean digitisation,
+would carry the BCP convention natively (translated from Coverdale,
+not from the Meiji Bible) — that's the principled long-term answer.
+
 *** Japanese Anglican psalm chanting — research notes
 Source: NSKK 聖歌集改訂委員会 newsletters №2 (1999), №5 (2000), №7 (2001),
 at =www.nskk.org/hymn/pdf/002.pdf=, =005.pdf=, =007.pdf=.

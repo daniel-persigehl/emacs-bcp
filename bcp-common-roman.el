@@ -72,16 +72,20 @@ Normally set by the language profile (see `bcp-language-profile') via
 the :roman-language setting.
 
 When \\='latin, all texts render in Latin (the default).
-Any other value (e.g. \\='english) activates the vernacular path:
+
+When \\='english, the vernacular path activates:
   - Hymnal translations for hymns (`bcp-roman-hymnal')
   - The configured Bible fetcher for scripture (capitula, lessons, psalms)
   - Bute 1908 prose translations for structural texts, antiphons, collects
   - Latin fallback when no vernacular text is available
 
-Scripture and psalms are fetched via the active `bcp-fetcher-backend',
-so the JAP profile (backend = bungo-yaku) yields Japanese scripture
-with English structural texts."
-  :type  '(choice (const latin) (const english))
+When \\='bungo, the office stays in Latin form but scripture content
+is fetched via the active `bcp-fetcher-backend' (bungo-yaku in the
+JAP profile, yielding 文語訳 classical Japanese with furigana).
+Antiphons, hymns, collects, responsories, and structural texts have
+no Bungo equivalents and fall back to Latin — the office's original
+tongue surrounds vernacular scripture readings."
+  :type  '(choice (const latin) (const english) (const bungo))
   :group 'bcp-roman)
 
 ;;;;──────────────────────────────────────────────────────────────────────────

@@ -261,7 +261,7 @@ local psalter; any other name lets the Bible backend serve them."
     (bcp--profile-desc :roman-language "Roman Office: %s"))
   :transient t
   (interactive)
-  (bcp--cycle-override 'bcp-profile-roman-language '(latin english)))
+  (bcp--cycle-override 'bcp-profile-roman-language '(latin english bungo)))
 
 (transient-define-suffix bcp--override-canticle-language ()
   "Override canticle language or inherit from profile."
@@ -270,6 +270,17 @@ local psalter; any other name lets the Bible backend serve them."
   :transient t
   (interactive)
   (bcp--cycle-override 'bcp-profile-canticle-language '(english latin)))
+
+(transient-define-suffix bcp--override-prayer-language ()
+  "Override common-prayer text language or inherit from profile.
+Governs the language of the Lord's Prayer, Apostles' Creed, Gloria
+Patri, the Grace, the Oremus bidding, and the BCP versicle/preces
+inventory."
+  :description (lambda ()
+    (bcp--profile-desc :prayer-language "Prayers: %s"))
+  :transient t
+  (interactive)
+  (bcp--cycle-override 'bcp-profile-prayer-language '(english latin bungo)))
 
 (transient-define-suffix bcp--override-canticle-gloria ()
   "Override Gloria Patri after canticles or inherit from profile."
@@ -308,6 +319,7 @@ explicitly set.  Use Reset to clear all overrides."
    ["Language"
     ("r" bcp--override-roman-language)
     ("c" bcp--override-canticle-language)
+    ("p" bcp--override-prayer-language)
     ("g" bcp--override-canticle-gloria)]
    ["Display"
     ("f" bcp--override-furigana)
@@ -1004,13 +1016,16 @@ its current value into your Custom file so it survives Emacs restarts."
 ;;;; Roman Office suffixes
 
 (transient-define-suffix bcp--set-roman-language ()
-  "Toggle the Roman Office language between Latin and English."
+  "Cycle the Roman Office language: Latin → English → Bungo."
   :description (lambda ()
     (format "Language: %s"
-      (if (eq bcp-roman-office-language 'english) "English" "Latin")))
+      (pcase bcp-roman-office-language
+        ('english "English")
+        ('bungo   "Bungo (文語)")
+        (_        "Latin"))))
   :transient t
   (interactive)
-  (bcp--cycle 'bcp-roman-office-language '(latin english)))
+  (bcp--cycle 'bcp-roman-office-language '(latin english bungo)))
 
 (transient-define-suffix bcp--set-roman-hymn-translator ()
   "Cycle the preferred hymn translator (head of the order list)."

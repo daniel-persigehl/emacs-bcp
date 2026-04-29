@@ -860,54 +860,57 @@ These are appended after the Prayer of St Chrysostom and before the Grace."
 ;;── Seasonal sentences (extended corpus) ────────────────────────────────────
 
 (defcustom bcp-1662-seasonal-sentences
-  '((advent      . ("Prepare ye the way of the Lord, make straight in the desert a highway for our God."
-                    ("Isa" 40 3)))
-    (christmas   . ("Behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord."
-                    ("Luke" 2 10 11)))
-    (epiphany    . ("From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
-                    ("Mal" 1 11)))
-    (pre-lent    . ("Seek ye the Lord while he may be found, call ye upon him while he is near: let the wicked forsake his way, and the unrighteous man his thoughts: and let him return unto the Lord, and he will have mercy upon him; and to our God, for he will abundantly pardon."
-                    ("Isa" 55 6 7)))
-    (lent        . ("Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
-                    ("Joel" 2 13)))
-    (passiontide . ("Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
-                    ("Lam" 1 12)))
-    (eastertide  . ("He is risen. The Lord is risen indeed."
-                    (("Mark" 16 6) ("Luke" 24 34))))
-    (trinity     . ("Holy, holy, holy, Lord God Almighty, which was, and is, and is to come."
-                    ("Rev" 4 8))))
+  '((advent      . (:text "Prepare ye the way of the Lord, make straight in the desert a highway for our God."
+                    :ref ("Isa" 40 3)))
+    (christmas   . (:text "Behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord."
+                    :ref ("Luke" 2 10 11)))
+    (epiphany    . (:text "From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
+                    :ref ("Mal" 1 11)))
+    (pre-lent    . (:text "Seek ye the Lord while he may be found, call ye upon him while he is near: let the wicked forsake his way, and the unrighteous man his thoughts: and let him return unto the Lord, and he will have mercy upon him; and to our God, for he will abundantly pardon."
+                    :ref ("Isa" 55 6 7)))
+    (lent        . (:text "Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
+                    :ref ("Joel" 2 13)))
+    (passiontide . (:text "Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
+                    :ref ("Lam" 1 12)))
+    ;; Stitched paraphrase ("He is risen" ≈ Mk 16:6; "The Lord is risen indeed"
+    ;; = Lk 24:34).  Multi-ref ⇒ auto-dagger; we also flag :inexact for clarity.
+    (eastertide  . (:text "He is risen. The Lord is risen indeed."
+                    :ref (("Mark" 16 6) ("Luke" 24 34)) :inexact t))
+    (trinity     . (:text "Holy, holy, holy, Lord God Almighty, which was, and is, and is to come."
+                    :ref ("Rev" 4 8))))
   "Alist of (SEASON . ENTRY) for seasonal opening sentences.
 Used when `bcp-1662-opening-sentence-corpus' is `extended'.
 Each ENTRY is either nil (no seasonal sentence for that season),
-a plain string, or a (TEXT CITATION) pair as in `bcp-1662-opening-sentences'.
+a plain string, or a plist (:text TEXT :ref REF [:inexact t]).
 Default texts are drawn from the 1928 American BCP Morning Prayer."
   :type  '(alist :key-type symbol
-                 :value-type (choice (const nil) string (list string sexp)))
+                 :value-type (choice (const nil) string sexp))
   :group 'bcp-1662)
 
 (defcustom bcp-1662-seasonal-sentences-evensong
-  '((advent      . ("Watch ye, for ye know not when the master of the house cometh, at even, or at midnight, or at the cock-crowing, or in the morning: lest coming suddenly he find you sleeping."
-                    ("Mark" 13 35 36)))
-    (christmas   . ("Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God."
-                    ("Rev" 21 3)))
-    (epiphany    . ("And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
-                    ("Isa" 60 3)))
-    (pre-lent    . ("To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
-                    ("Dan" 9 9 10)))
-    (lent        . ("I acknowledge my transgressions: and my sin is ever before me."
-                    ("Ps" 51 3)))
-    (passiontide . ("All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."
-                    ("Isa" 53 6)))
-    (eastertide  . ("Thanks be to God, which giveth us the victory through our Lord Jesus Christ."
-                    ("1 Cor" 15 57)))
-    (trinity     . ("Holy, holy, holy, is the Lord of hosts: the whole earth is full of his glory."
-                    ("Isa" 6 3))))
+  '((advent      . (:text "Watch ye, for ye know not when the master of the house cometh, at even, or at midnight, or at the cock-crowing, or in the morning: lest coming suddenly he find you sleeping."
+                    :ref ("Mark" 13 35 36)))
+    (christmas   . (:text "Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God."
+                    :ref ("Rev" 21 3)))
+    (epiphany    . (:text "And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
+                    :ref ("Isa" 60 3)))
+    (pre-lent    . (:text "To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
+                    :ref ("Dan" 9 9 10)))
+    (lent        . (:text "I acknowledge my transgressions: and my sin is ever before me."
+                    :ref ("Ps" 51 3)))
+    (passiontide . (:text "All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."
+                    :ref ("Isa" 53 6)))
+    (eastertide  . (:text "Thanks be to God, which giveth us the victory through our Lord Jesus Christ."
+                    :ref ("1 Cor" 15 57)))
+    (trinity     . (:text "Holy, holy, holy, is the Lord of hosts: the whole earth is full of his glory."
+                    :ref ("Isa" 6 3))))
   "Alist of (SEASON . ENTRY) for seasonal opening sentences at Evening Prayer.
 Used when `bcp-1662-opening-sentence-corpus' is `extended'.
-Each ENTRY is either nil, a plain string, or a (TEXT CITATION) pair.
+Each ENTRY is either nil, a plain string, or a plist
+\(:text TEXT :ref REF [:inexact t]).
 Default texts are drawn from the 1928 American BCP Evening Prayer."
   :type  '(alist :key-type symbol
-                 :value-type (choice (const nil) string (list string sexp)))
+                 :value-type (choice (const nil) string sexp))
   :group 'bcp-1662)
 
 (defconst bcp-1662-bidding-brief bcp-common-anglican-exhortation-brief
@@ -916,8 +919,8 @@ Alias for `bcp-common-anglican-exhortation-brief'; the text originates in the
 1928 American BCP.")
 
 (defconst bcp-1662--fallback-sentence
-  '("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
-    ("1 John" 1 8 9))
+  '(:text "If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
+    :ref ("1 John" 1 8 9) :inexact t)
   "Fallback opening sentence used when normal sentence selection yields nothing.
 This is the last of the 1662 sentences (1 John 1:8-9), chosen for its
 direct relevance to the penitential introduction that follows.")

@@ -208,121 +208,127 @@ honour of our Advocate and Mediator, Jesus Christ. Amen.")
 
 (defconst bcp-common-anglican-opening-sentences-1928
   '(;; General — suitable at any time
-    ("The Lord is in his holy temple: let all the earth keep silence before him."
-     ("Hab" 2 20))
-    ("I was glad when they said unto me, We will go into the house of the Lord."
-     ("Ps" 122 1))
-    ("Let the words of my mouth, and the meditation of my heart, be alway acceptable in thy sight, O Lord, my strength and my redeemer."
-     ("Ps" 19 14))
-    ("O send out thy light and thy truth, that they may lead me, and bring me unto thy holy hill, and to thy dwelling."
-     ("Ps" 43 3))
-    ("Thus saith the high and lofty One that inhabiteth eternity, whose name is Holy; I dwell in the high and holy place, with him also that is of a contrite and humble spirit, to revive the spirit of the humble, and to revive the heart of the contrite ones."
-     ("Isa" 57 15))
-    ("The hour cometh, and now is, when the true worshippers shall worship the Father in spirit and in truth: for the Father seeketh such to worship him."
-     ("John" 4 23))
-    ("Grace be unto you, and peace, from God our Father, and from the Lord Jesus Christ."
-     ("Phil" 1 2))
+    (:text "The Lord is in his holy temple: let all the earth keep silence before him."
+     :ref ("Hab" 2 20))
+    (:text "I was glad when they said unto me, We will go into the house of the Lord."
+     :ref ("Ps" 122 1))
+    (:text "Let the words of my mouth, and the meditation of my heart, be alway acceptable in thy sight, O Lord, my strength and my redeemer."
+     :ref ("Ps" 19 14))
+    (:text "O send out thy light and thy truth, that they may lead me, and bring me unto thy holy hill, and to thy dwelling."
+     :ref ("Ps" 43 3))
+    (:text "Thus saith the high and lofty One that inhabiteth eternity, whose name is Holy; I dwell in the high and holy place, with him also that is of a contrite and humble spirit, to revive the spirit of the humble, and to revive the heart of the contrite ones."
+     :ref ("Isa" 57 15))
+    (:text "The hour cometh, and now is, when the true worshippers shall worship the Father in spirit and in truth: for the Father seeketh such to worship him."
+     :ref ("John" 4 23))
+    (:text "Grace be unto you, and peace, from God our Father, and from the Lord Jesus Christ."
+     :ref ("Phil" 1 2))
     ;; Advent
-    ("Repent ye, for the Kingdom of heaven is at hand."
-     ("Matt" 3 2))
-    ("Prepare ye the way of the Lord, make straight in the desert a highway for our God."
-     ("Isa" 40 3))
+    (:text "Repent ye, for the Kingdom of heaven is at hand."
+     :ref ("Matt" 3 2))
+    (:text "Prepare ye the way of the Lord, make straight in the desert a highway for our God."
+     :ref ("Isa" 40 3))
     ;; Christmas
-    ("Behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord."
-     ("Luke" 2 10 11))
+    (:text "Behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord."
+     :ref ("Luke" 2 10 11))
     ;; Epiphany
-    ("From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
-     ("Mal" 1 11))
-    ("Awake, awake; put on thy strength, O Zion; put on thy beautiful garments, O Jerusalem."
-     ("Isa" 52 1))
+    (:text "From the rising of the sun even unto the going down of the same my Name shall be great among the Gentiles; and in every place incense shall be offered unto my Name, and a pure offering: for my Name shall be great among the heathen, saith the Lord of hosts."
+     :ref ("Mal" 1 11))
+    (:text "Awake, awake; put on thy strength, O Zion; put on thy beautiful garments, O Jerusalem."
+     :ref ("Isa" 52 1))
     ;; Lent
-    ("Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
-     ("Joel" 2 13))
-    ("The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise."
-     ("Ps" 51 17))
-    ("I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, and am no more worthy to be called thy son."
-     ("Luke" 15 18 19))
+    (:text "Rend your heart, and not your garments, and turn unto the Lord your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil."
+     :ref ("Joel" 2 13))
+    (:text "The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise."
+     :ref ("Ps" 51 17))
+    ;; Printed text ends mid-v.19; strict partial verse.
+    (:text "I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, and am no more worthy to be called thy son."
+     :ref ("Luke" 15 18 19) :inexact t)
     ;; Passiontide
-    ("Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
-     ("Lam" 1 12))
-    ("In whom we have redemption through his blood, the forgiveness of sins, according to the riches of his grace."
-     ("Eph" 1 7))
-    ;; Easter
-    ("He is risen. The Lord is risen indeed."
-     (("Mark" 16 6) ("Luke" 24 34)))
-    ("This is the day which the Lord hath made; we will rejoice and be glad in it."
-     ("Ps" 118 24))
+    (:text "Is it nothing to you, all ye that pass by? behold, and see if there be any sorrow like unto my sorrow which is done unto me, wherewith the Lord hath afflicted me."
+     :ref ("Lam" 1 12))
+    (:text "In whom we have redemption through his blood, the forgiveness of sins, according to the riches of his grace."
+     :ref ("Eph" 1 7))
+    ;; Easter — stitched paraphrase of Mk 16:6 + Lk 24:34; multi-ref auto-daggered.
+    (:text "He is risen. The Lord is risen indeed."
+     :ref (("Mark" 16 6) ("Luke" 24 34)) :inexact t)
+    (:text "This is the day which the Lord hath made; we will rejoice and be glad in it."
+     :ref ("Ps" 118 24))
     ;; Ascension (within Eastertide)
-    ("Seeing that we have a great High Priest, that is passed into the heavens, Jesus the Son of God, let us come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need."
-     ("Heb" 4 14 16))
+    (:text "Seeing that we have a great High Priest, that is passed into the heavens, Jesus the Son of God, let us come boldly unto the throne of grace, that we may obtain mercy, and find grace to help in time of need."
+     :ref ("Heb" 4 14 16))
     ;; Whitsunday (within Eastertide)
-    ("Ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth."
-     ("Acts" 1 8))
-    ("Because ye are sons, God hath sent forth the Spirit of his Son into your hearts, crying, Abba, Father."
-     ("Gal" 4 6))
+    (:text "Ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth."
+     :ref ("Acts" 1 8))
+    (:text "Because ye are sons, God hath sent forth the Spirit of his Son into your hearts, crying, Abba, Father."
+     :ref ("Gal" 4 6))
     ;; Trinity
-    ("Holy, holy, holy, Lord God Almighty, which was, and is, and is to come."
-     ("Rev" 4 8))
+    (:text "Holy, holy, holy, Lord God Almighty, which was, and is, and is to come."
+     :ref ("Rev" 4 8))
     ;; Thanksgiving Day (occasion, not a liturgical season)
-    ("Honour the Lord with thy substance, and with the first-fruits of all thine increase: so shall thy barns be filled with plenty, and thy presses shall burst out with new wine."
-     ("Prov" 3 9 10))
-    ("The Lord by wisdom hath founded the earth; by understanding hath he established the heavens. By his knowledge the depths are broken up, and the clouds drop down the dew."
-     ("Prov" 3 19 20)))
+    (:text "Honour the Lord with thy substance, and with the first-fruits of all thine increase: so shall thy barns be filled with plenty, and thy presses shall burst out with new wine."
+     :ref ("Prov" 3 9 10))
+    (:text "The Lord by wisdom hath founded the earth; by understanding hath he established the heavens. By his knowledge the depths are broken up, and the clouds drop down the dew."
+     :ref ("Prov" 3 19 20)))
   "Opening sentences from the 1928 American BCP Morning Prayer.
-Each entry: (TEXT CITATION) where CITATION is a lesson ref or list of refs.")
+Each entry is a plist (:text TEXT :ref REF [:inexact t]).
+:inexact t marks entries whose printed text covers only part of the
+cited verse(s) — the renderer appends a † to the citation label.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; 1928 opening sentences — Evening Prayer
 
 (defconst bcp-common-anglican-opening-sentences-1928-evensong
   '(;; General — suitable at any time
-    ("The Lord is in his holy temple: let all the earth keep silence before him."
-     ("Hab" 2 20))
-    ("Lord, I have loved the habitation of thy house, and the place where thine honour dwelleth."
-     ("Ps" 26 8))
-    ("Let my prayer be set forth in thy sight as the incense; and let the lifting up of my hands be an evening sacrifice."
-     ("Ps" 141 2))
-    ("O worship the Lord in the beauty of holiness; let the whole earth stand in awe of him."
-     ("Ps" 96 9))
-    ("Let the words of my mouth, and the meditation of my heart, be alway acceptable in thy sight, O Lord, my strength and my redeemer."
-     ("Ps" 19 14 15))
+    (:text "The Lord is in his holy temple: let all the earth keep silence before him."
+     :ref ("Hab" 2 20))
+    (:text "Lord, I have loved the habitation of thy house, and the place where thine honour dwelleth."
+     :ref ("Ps" 26 8))
+    (:text "Let my prayer be set forth in thy sight as the incense; and let the lifting up of my hands be an evening sacrifice."
+     :ref ("Ps" 141 2))
+    (:text "O worship the Lord in the beauty of holiness; let the whole earth stand in awe of him."
+     :ref ("Ps" 96 9))
+    (:text "Let the words of my mouth, and the meditation of my heart, be alway acceptable in thy sight, O Lord, my strength and my redeemer."
+     :ref ("Ps" 19 14 15))
     ;; Advent
-    ("Watch ye, for ye know not when the master of the house cometh, at even, or at midnight, or at the cock-crowing, or in the morning: lest coming suddenly he find you sleeping."
-     ("Mark" 13 35 36))
+    (:text "Watch ye, for ye know not when the master of the house cometh, at even, or at midnight, or at the cock-crowing, or in the morning: lest coming suddenly he find you sleeping."
+     :ref ("Mark" 13 35 36))
     ;; Christmas
-    ("Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God."
-     ("Rev" 21 3))
+    (:text "Behold, the tabernacle of God is with men, and he will dwell with them, and they shall be his people, and God himself shall be with them, and be their God."
+     :ref ("Rev" 21 3))
     ;; Epiphany
-    ("And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
-     ("Isa" 60 3))
+    (:text "And the Gentiles shall come to thy light, and kings to the brightness of thy rising."
+     :ref ("Isa" 60 3))
     ;; Lent
-    ("I acknowledge my transgressions: and my sin is ever before me."
-     ("Ps" 51 3))
-    ("To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
-     (("Dan" 9 9) ("Dan" 9 10)))
-    ("If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
-     ("1 John" 1 8 9))
+    (:text "I acknowledge my transgressions: and my sin is ever before me."
+     :ref ("Ps" 51 3))
+    (:text "To the Lord our God belong mercies and forgivenesses, though we have rebelled against him; neither have we obeyed the voice of the Lord our God, to walk in his laws which he set before us."
+     :ref (("Dan" 9 9) ("Dan" 9 10)))
+    ;; Conjoined paraphrase of vv.8-9 — see 1662 sentence note.
+    (:text "If we say that we have no sin, we deceive ourselves, and the truth is not in us; but if we confess our sins, God is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."
+     :ref ("1 John" 1 8 9) :inexact t)
     ;; Passiontide
-    ("All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."
-     ("Isa" 53 6))
+    (:text "All we like sheep have gone astray; we have turned every one to his own way; and the Lord hath laid on him the iniquity of us all."
+     :ref ("Isa" 53 6))
     ;; Easter
-    ("Thanks be to God, which giveth us the victory through our Lord Jesus Christ."
-     ("1 Cor" 15 57))
-    ("If ye then be risen with Christ, seek those things which are above, where Christ sitteth on the right hand of God."
-     ("Col" 3 1))
+    (:text "Thanks be to God, which giveth us the victory through our Lord Jesus Christ."
+     :ref ("1 Cor" 15 57))
+    (:text "If ye then be risen with Christ, seek those things which are above, where Christ sitteth on the right hand of God."
+     :ref ("Col" 3 1))
     ;; Ascension (within Eastertide)
-    ("Christ is not entered into the holy places made with hands, which are the figures of the true; but into heaven itself, now to appear in the presence of God for us."
-     ("Heb" 9 24))
+    (:text "Christ is not entered into the holy places made with hands, which are the figures of the true; but into heaven itself, now to appear in the presence of God for us."
+     :ref ("Heb" 9 24))
     ;; Whitsunday (within Eastertide)
-    ("There is a river, the streams whereof shall make glad the city of God, the holy place of the tabernacles of the Most High."
-     ("Ps" 46 4))
-    ("The Spirit and the bride say, Come. And let him that heareth say, Come. And let him that is athirst come. And whosoever will, let him take the water of life freely."
-     ("Rev" 22 17))
+    (:text "There is a river, the streams whereof shall make glad the city of God, the holy place of the tabernacles of the Most High."
+     :ref ("Ps" 46 4))
+    (:text "The Spirit and the bride say, Come. And let him that heareth say, Come. And let him that is athirst come. And whosoever will, let him take the water of life freely."
+     :ref ("Rev" 22 17))
     ;; Trinity
-    ("Holy, holy, holy, is the Lord of hosts: the whole earth is full of his glory."
-     ("Isa" 6 3)))
+    (:text "Holy, holy, holy, is the Lord of hosts: the whole earth is full of his glory."
+     :ref ("Isa" 6 3)))
   "Opening sentences from the 1928 American BCP Evening Prayer.
-Each entry: (TEXT CITATION) where CITATION is a lesson ref or list of refs.")
+Each entry is a plist (:text TEXT :ref REF [:inexact t]).
+:inexact t marks entries whose printed text covers only part of the
+cited verse(s) — the renderer appends a † to the citation label.")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; General prayers  (shared across 1662 and 1928)
@@ -488,12 +494,21 @@ Each returned plist has at least :title and :text (or :english) keys."
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Preces versicles
 
+;; Scripture provenance:
+;;   "The Lord be with you" — Ruth 2:4 (Boaz' greeting), 2 Thess 3:16
+;;       (composite/composition); a primitive liturgical exchange,
+;;       not a substitutable verse.
+;;   "And with thy spirit" — 2 Tim 4:22 ("the Lord Jesus Christ
+;;       be with thy spirit"), but the liturgical form pre-dates and
+;;       echoes that verse rather than quoting it.
 (defconst bcp-common-anglican-preces-lord-be-with-you
   '(("The Lord be with you." "And with thy spirit."))
   "Greeting versicle pair for a priest or bishop officiant.
 The bidding \"Let us pray.\" follows on its own line and is emitted
 by the caller via `bcp-liturgy-render--insert-oremus'.")
 
+;; Scripture provenance: Ps 102:1 (Coverdale, verbatim).  Substituted for
+;; the dominus-vobiscum greeting when the officiant lacks priestly orders.
 (defconst bcp-common-anglican-preces-lay
   '(("Hear my prayer, O Lord." "And let my cry come unto thee."))
   "Greeting versicle pair substituted when the officiant is a layperson or deacon.

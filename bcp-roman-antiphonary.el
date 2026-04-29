@@ -100,6 +100,30 @@ Uses `bcp-fetcher' with the render layer's reference normalizer."
             result)))
     (error nil)))
 
+(defun bcp-roman-antiphonary--fetch-bungo (ref)
+  "Fetch Bungo-yaku text for breviary REF synchronously, or nil.
+Calls the bungo-yaku backend directly instead of going through
+`bcp-fetcher-fetch', so a missing passage returns nil rather than
+falling back to a non-Japanese backend (which would surface English
+under a Bungo header)."
+  (condition-case nil
+      (progn
+        (require 'bcp-roman-render nil t)
+        (require 'bcp-fetcher nil t)
+        (when (and (fboundp 'bcp-roman-render--normalize-ref)
+                   (fboundp 'bcp-fetcher--bungo-yaku-fetch))
+          (let* ((normalized (bcp-roman-render--normalize-ref ref))
+                 (done nil)
+                 (result nil))
+            (bcp-fetcher--bungo-yaku-fetch
+             normalized nil
+             (lambda (text) (setq result text done t)))
+            (let ((deadline (+ (float-time) 5)))
+              (while (and (not done) (< (float-time) deadline))
+                (accept-process-output nil 0.1)))
+            result)))
+    (error nil)))
+
 (defun bcp-roman-antiphonary-english (incipit)
   "Return the English text for antiphon INCIPIT.
 Walks `bcp-roman-antiphonary-translators' fallback chain.
@@ -112,31 +136,40 @@ source type is in `bcp-roman-antiphonary-scripture-sources'."
      for translator in bcp-roman-antiphonary-translators
      thereis
      (if (eq translator 'scripture)
-         ;; Dynamic scripture fetch
-         (let ((cached (alist-get 'scripture translations)))
-           (or cached
-               (let* ((source (plist-get entry :source))
-                      (ref    (plist-get entry :ref)))
-                 (when (and ref
-                            (memq source bcp-roman-antiphonary-scripture-sources))
-                   (let ((text (bcp-roman-antiphonary--fetch-scripture ref)))
-                     (when text
-                       ;; Cache in the translations alist for subsequent calls
-                       (setf (alist-get 'scripture
-                                        (plist-get (alist-get incipit
-                                                              bcp-roman-antiphonary--entries)
-                                                   :translations))
-                             text)
-                       text))))))
+         ;; Dynamic scripture fetch — fetcher's own cache handles repeats
+         ;; per (passage . translation), so don't cache here.
+         (let* ((source (plist-get entry :source))
+                (ref    (plist-get entry :ref)))
+           (when (and ref
+                      (memq source bcp-roman-antiphonary-scripture-sources))
+             (bcp-roman-antiphonary--fetch-scripture ref)))
        ;; Normal static translator lookup
        (alist-get translator translations)))))
 
+(defun bcp-roman-antiphonary-bungo (incipit)
+  "Return Bungo-yaku scripture text for antiphon INCIPIT, or nil.
+Only scripture-eligible antiphons (`:source' in
+`bcp-roman-antiphonary-scripture-sources') are fetched.  Calls the
+bungo-yaku backend directly (not via `bcp-fetcher-fetch') so a missing
+passage cleanly returns nil — letting the caller fall back to Latin
+rather than to whatever language the active fallback backend serves."
+  (let* ((entry  (alist-get incipit bcp-roman-antiphonary--entries))
+         (source (plist-get entry :source))
+         (ref    (plist-get entry :ref)))
+    (when (and ref
+               (memq source bcp-roman-antiphonary-scripture-sources))
+      (bcp-roman-antiphonary--fetch-bungo ref))))
+
 (defun bcp-roman-antiphonary-get (incipit language)
   "Return antiphon INCIPIT text for LANGUAGE.
-LANGUAGE is \\='latin or \\='english."
+LANGUAGE is \\='latin, \\='english, or \\='bungo.  Bungo fetches
+scripture-eligible antiphons via the active fetcher backend; non-
+scripture antiphons (compositions, hymn refrains) fall back to Latin."
   (pcase language
     ('latin   (bcp-roman-antiphonary-latin incipit))
     ('english (or (bcp-roman-antiphonary-english incipit)
+                  (bcp-roman-antiphonary-latin incipit)))
+    ('bungo   (or (bcp-roman-antiphonary-bungo incipit)
                   (bcp-roman-antiphonary-latin incipit)))
     (_        (bcp-roman-antiphonary-latin incipit))))
 

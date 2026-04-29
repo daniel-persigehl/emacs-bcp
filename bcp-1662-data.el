@@ -2833,7 +2833,15 @@ Source: The Lectionary of 1662, Adapted and Supplemented
      :text "CHRIST our passover is sacrificed for us : therefore let us keep the feast; Not with the old leaven, nor with the leaven of malice and wickedness : but with the unleavened bread of sincerity and truth. [1 Cor. 5:7]
 Christ being raised from the dead dieth no more : death hath no more dominion over him. For in that he died, he died unto sin once : but in that he liveth, he liveth unto God. Likewise reckon ye also yourselves to be dead indeed unto sin : but alive unto God through Jesus Christ our Lord. [Rom. 6:9]
 Christ is risen from the dead : and become the first-fruits of them that slept. For since by man came death : by man came also the resurrection of the dead. For as in Adam all die : even so in Christ shall all be made alive. [1 Cor. 15:20]
-Glory be to the Father, and to the Son : and to the Holy Ghost; As it was in the beginning, is now, and ever shall be : world without end. Amen.")
+Glory be to the Father, and to the Son : and to the Holy Ghost; As it was in the beginning, is now, and ever shall be : world without end. Amen."
+     :stanzas ((:text "CHRIST our passover is sacrificed for us : therefore let us keep the feast; Not with the old leaven, nor with the leaven of malice and wickedness : but with the unleavened bread of sincerity and truth."
+                :ref ("1 Cor" 5 7 8)
+                :inexact t)
+               (:text "Christ being raised from the dead dieth no more : death hath no more dominion over him. For in that he died, he died unto sin once : but in that he liveth, he liveth unto God. Likewise reckon ye also yourselves to be dead indeed unto sin : but alive unto God through Jesus Christ our Lord."
+                :ref ("Rom" 6 9 11))
+               (:text "Christ is risen from the dead : and become the first-fruits of them that slept. For since by man came death : by man came also the resurrection of the dead. For as in Adam all die : even so in Christ shall all be made alive."
+                :ref ("1 Cor" 15 20 22))
+               (:gloria t)))
 
     ;;;; ── Easter Season Collects ───────────────────────────────────────────
 
@@ -3053,6 +3061,13 @@ Returns (:name STRING :text STRING).
 (defun bcp-1662-collect-text (symbol)
   "Return the collect text string for SYMBOL, or nil."
   (plist-get (bcp-1662-collect symbol) :text))
+
+(defun bcp-1662-collect-stanzas (symbol)
+  "Return the structured `:stanzas' list for SYMBOL, or nil.
+Used by composite scripture-bearing entries (e.g. `easter-anthems') so
+the renderer can substitute each stanza from the user's Bible translation.
+Each stanza is a plist: (:text TEXT :ref REF [:inexact t]) or (:gloria t)."
+  (plist-get (bcp-1662-collect symbol) :stanzas))
 
 
 (provide 'bcp-1662-data)

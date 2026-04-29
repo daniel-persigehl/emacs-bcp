@@ -28,6 +28,7 @@
 (require 'bcp-common-prayers)
 (require 'bcp-common-canticles)
 (require 'bcp-roman-hymnal)
+(require 'bcp-roman-antiphonary)  ; for bcp-roman-antiphonary--fetch-bungo
 (require 'bcp-roman-psalterium)
 
 (declare-function bcp-fetcher--convert-psalm-ref "bcp-fetcher"
@@ -190,41 +191,55 @@ LANGUAGE is \\='latin or \\='english."
   "Insert capitulum from DATA plist (:ref REF :text TEXT).
 When LANGUAGE is \\='english, fetch scripture text via `bcp-fetcher'
 using the :ref slot; fall back to the embedded Latin :text if
-fetching is unavailable."
+fetching is unavailable.
+When LANGUAGE is \\='bungo, fetch via the active (bungo-yaku) backend
+and fall back to the embedded Latin :text on failure; the office's
+℟ stays in Latin since no Bungo equivalent of \"Deo gratias\" exists
+for the Roman Office in this corpus."
   (insert "\n")
   (bcp-liturgy-render--insert-heading
    3 (if (eq language 'english) "Chapter" "Capitulum"))
   (let ((ref (plist-get data :ref)))
     (bcp-liturgy-render--insert-rubric
      ref #'bcp-roman-render--rubric-face)
-    (if (eq language 'english)
-        (let ((text-en (plist-get data :text-en)))
-          (if text-en
-              (insert text-en "\n")
-            (let ((fetched (bcp-roman-render--fetch-scripture ref)))
-              (if fetched
-                  (insert fetched "\n")
-                (bcp-liturgy-render--insert-rubric
-                 "(Scripture text from user's configured Bible translation)"
-                 #'bcp-roman-render--rubric-face)))))
-      (insert (plist-get data :text) "\n")))
+    (pcase language
+      ('english
+       (let ((text-en (plist-get data :text-en)))
+         (if text-en
+             (insert text-en "\n")
+           (let ((fetched (bcp-roman-render--fetch-scripture ref)))
+             (if fetched
+                 (insert fetched "\n")
+               (bcp-liturgy-render--insert-rubric
+                "(Scripture text from user's configured Bible translation)"
+                #'bcp-roman-render--rubric-face))))))
+      ('bungo
+       ;; Direct bungo-yaku fetch (no fallback chain) so a missing
+       ;; passage falls back to Latin rather than to English.
+       (let ((fetched (and ref (bcp-roman-antiphonary--fetch-bungo ref))))
+         (insert (or fetched (plist-get data :text)) "\n")))
+      (_ (insert (plist-get data :text) "\n"))))
   (insert (if (eq language 'english)
               "℟. Thanks be to God.\n"
             "℟. Deo grátias.\n")))
 
 (defun bcp-roman-render--insert-canticle (data antiphon gloria-patri &optional language)
   "Insert canticle from DATA plist with ANTIPHON and GLORIA-PATRI.
-LANGUAGE is \\='latin or \\='english.
+LANGUAGE is \\='latin, \\='english, or \\='bungo.
 Gloria Patri is suppressed when DATA contains :no-gloria t.
 When LANGUAGE is \\='english and DATA has a :canticle-key, fetches the
 English text from the canticle registry and uses the BCP-pointed
-Gloria Patri (colon mediants) to match."
+Gloria Patri (colon mediants) to match.
+When LANGUAGE is \\='bungo, fetches the canticle via the active
+bungo-yaku backend using :ref, falling back to the embedded Latin :text."
   (let* ((ckey (plist-get data :canticle-key))
          (name (plist-get data :name))
          (ref  (plist-get data :ref))
          (from-registry (when (and (eq language 'english) ckey)
                           (bcp-liturgy-canticle-get ckey 'english)))
-         (text (or from-registry (plist-get data :text)))
+         (from-fetcher (when (and (eq language 'bungo) ref)
+                         (bcp-roman-antiphonary--fetch-bungo ref)))
+         (text (or from-registry from-fetcher (plist-get data :text)))
          (gp (if from-registry
                  ;; Canticle registry text uses BCP colon pointing;
                  ;; match with the canticle-registry Gloria Patri.
@@ -396,13 +411,17 @@ Scripture refs have chapter:verse numbers (e.g. \"Sir 31:8-11\").
 Patristic refs like \"In Orat. de S. Philogonio\" are not scripture."
   (and ref (string-match "[0-9]+:[0-9]\\|[0-9]+-[0-9]" ref)))
 
-(defun bcp-roman-render--fetch-multi-ref (ref)
+(defun bcp-roman-render--fetch-multi-ref (ref &optional fetch-fn)
   "Fetch scripture for REF, which may contain semicolon-separated ranges.
 E.g. \"Sir 32:18-20; 32:28; 33:1-3\" is split into separate fetches
-with the book name carried forward, then results are concatenated."
+with the book name carried forward, then results are concatenated.
+FETCH-FN defaults to `bcp-roman-render--fetch-scripture'; pass a
+backend-specific fetcher (e.g. `bcp-roman-antiphonary--fetch-bungo')
+to bypass the fallback chain."
+  (let ((fetch-fn (or fetch-fn #'bcp-roman-render--fetch-scripture)))
   (if (not (string-match ";" ref))
       ;; Simple single reference
-      (bcp-roman-render--fetch-scripture ref)
+      (funcall fetch-fn ref)
     ;; Multi-range: split on semicolons
     (let* ((parts (split-string ref ";" t "[ \t]+"))
            (book nil)
@@ -417,11 +436,11 @@ with the book name carried forward, then results are concatenated."
                     (concat book " " part)
                   ;; Already has book name
                   part))
-               (fetched (bcp-roman-render--fetch-scripture full-ref)))
+               (fetched (funcall fetch-fn full-ref)))
           (when fetched
             (push fetched results))))
       (when results
-        (mapconcat #'identity (nreverse results) "\n")))))
+        (mapconcat #'identity (nreverse results) "\n"))))))
 
 (defun bcp-roman-render--insert-lesson (data n &optional language)
   "Insert a Matins lesson from DATA plist, lesson number N (1-based).
@@ -449,17 +468,26 @@ When LANGUAGE is \\='english, scripture lessons are fetched via `bcp-fetcher'."
       (insert incipit "\n"))
     ;; Lesson body
     (cond
-     ;; English: try to fetch scripture when ref is a scripture citation
-     ;; (has chapter:verse numbers) and not a patristic/homily source
-     ((and (eq language 'english)
+     ;; Vernacular (english/bungo): try to fetch scripture when ref is
+     ;; a scripture citation (has chapter:verse numbers) and not a
+     ;; patristic/homily source.  Bungo only fetches when the bungo-yaku
+     ;; backend is active and falls back to Latin on miss; English
+     ;; emits a placeholder rubric on miss.
+     ((and (memq language '(english bungo))
            (bcp-roman-render--scripture-ref-p ref)
            (not source))
-      (let ((fetched (bcp-roman-render--fetch-multi-ref ref)))
-        (if fetched
-            (insert fetched "\n")
+      (let* ((fetch-fn (if (eq language 'bungo)
+                           #'bcp-roman-antiphonary--fetch-bungo
+                         #'bcp-roman-render--fetch-scripture))
+             (fetched (bcp-roman-render--fetch-multi-ref ref fetch-fn)))
+        (cond
+         (fetched (insert fetched "\n"))
+         ((eq language 'bungo)
+          (when text (insert text "\n")))
+         (t
           (bcp-liturgy-render--insert-rubric
            "(Scripture text from user's configured Bible translation)"
-           #'bcp-roman-render--rubric-face))))
+           #'bcp-roman-render--rubric-face)))))
      ;; Otherwise: insert embedded Latin text
      (text
       (insert text "\n"))))))

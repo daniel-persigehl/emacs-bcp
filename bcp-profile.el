@@ -20,12 +20,14 @@
 ;;   `bcp-profile-fallback-backend'
 ;;   `bcp-profile-roman-language'
 ;;   `bcp-profile-canticle-language'
+;;   `bcp-profile-prayer-language'
 ;;   `bcp-profile-canticle-gloria'
 ;;   `bcp-profile-furigana'
 
 ;;; Code:
 
 (require 'cl-lib)
+(require 'bcp-common-prayers)  ; for bcp-common-prayers-language
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Profile definitions
@@ -41,6 +43,7 @@
             :fallback-backend         oremus
             :roman-language           english
             :canticle-language        english
+            :prayer-language          english
             :canticle-gloria          nil
             :furigana                 hidden))
     (ENG-TB . (:lesson-translation    "KJVA"
@@ -49,6 +52,7 @@
                :fallback-backend      oremus
                :roman-language        english
                :canticle-language     english
+               :prayer-language       english
                :canticle-gloria       nil
                :furigana              hidden))
     (LAT . (:lesson-translation       "Vulgate"
@@ -57,14 +61,26 @@
             :fallback-backend         oremus
             :roman-language           latin
             :canticle-language        latin
+            :prayer-language          latin
             :canticle-gloria          t
             :furigana                 hidden))
     (JAP . (:lesson-translation       "Bungo-yaku"
             :psalm-translation        "Bungo-yaku"
             :backend                  bungo-yaku
             :fallback-backend         oremus
-            :roman-language           english
+            ;; Roman office: bungo activates the fetcher path for scripture
+            ;; content (capitula, lessons, psalms, scripture-eligible
+            ;; antiphons, NT canticles via :ref) while leaving structural
+            ;; texts (hymns, collects, responsories, Marian antiphons,
+            ;; headers) in Latin — the office's original tongue surrounds
+            ;; vernacular scripture readings.  No Bute-equivalent Bungo
+            ;; corpus exists, so non-scripture texts stay Latin.
+            ;; BCP side: canticle-language stays English (the BCP's own
+            ;; tradition); prayer-language is bungo where the versicle
+            ;; registry supplies it.
+            :roman-language           bungo
             :canticle-language        english
+            :prayer-language          bungo
             :canticle-gloria          nil
             :furigana                 rubi)))
   "Built-in language profile definitions.
@@ -78,6 +94,7 @@ The active psalter is derived from `:psalm-translation' at apply time.")
     (:fallback-backend    . bcp-fetcher-fallback-backend)
     (:roman-language      . bcp-roman-office-language)
     (:canticle-language   . bcp-liturgy-canticle-language)
+    (:prayer-language     . bcp-common-prayers-language)
     (:canticle-gloria     . bcp-liturgy-canticle-append-gloria)
     (:furigana            . bcp-fetcher-furigana-display))
   "Mapping from profile setting keywords to the real variables they govern.
@@ -90,6 +107,7 @@ The active psalter is derived from `:psalm-translation' at apply time.")
     (:fallback-backend    . bcp-profile-fallback-backend)
     (:roman-language      . bcp-profile-roman-language)
     (:canticle-language   . bcp-profile-canticle-language)
+    (:prayer-language     . bcp-profile-prayer-language)
     (:canticle-gloria     . bcp-profile-canticle-gloria)
     (:furigana            . bcp-profile-furigana))
   "Mapping from profile setting keywords to override variable symbols.")
@@ -139,13 +157,22 @@ Psalters are selected separately via `bcp-profile-psalter'."
 (defcustom bcp-profile-roman-language 'default
   "Override for Roman Office language, or `default'."
   :type '(choice (const :tag "Profile default" default)
-                 (const latin) (const english))
+                 (const latin) (const english) (const bungo))
   :group 'bcp-profile)
 
 (defcustom bcp-profile-canticle-language 'default
   "Override for canticle language, or `default'."
   :type '(choice (const :tag "Profile default" default)
                  (const english) (const latin))
+  :group 'bcp-profile)
+
+(defcustom bcp-profile-prayer-language 'default
+  "Override for the language of fixed common-prayer texts, or `default'.
+Governs `bcp-common-prayers-language', which controls the language used
+for the Lord's Prayer, Apostles' Creed, Gloria Patri, the Grace, the
+Oremus bidding, and the BCP versicle/preces inventory."
+  :type '(choice (const :tag "Profile default" default)
+                 (const english) (const latin) (const bungo))
   :group 'bcp-profile)
 
 (defcustom bcp-profile-canticle-gloria 'default
