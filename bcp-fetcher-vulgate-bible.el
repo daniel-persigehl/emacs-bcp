@@ -41,9 +41,20 @@ Populated lazily by `bcp-fetcher--vulgate-bible-load'.")
 
 (defun bcp-fetcher--vulgate-bible-resolve-book (name)
   "Resolve book NAME to its canonical SWORD form.
-Returns NAME unchanged if it is already canonical or unrecognized."
+Tries the alias table first; if that misses, normalizes Arabic-numeral
+prefixes to Roman (\"1 Samuel\" → \"I Samuel\", \"2 Kings\" → \"II Kings\")
+so that lectionary-expanded full names resolve correctly.  Wraps the
+regex in `save-match-data' to avoid disturbing caller match data."
   (or (cdr (assoc name bcp-fetcher--book-name-aliases))
-      name))
+      (save-match-data
+        (cond
+         ((string-match "\\`1 \\(.+\\)\\'" name)
+          (concat "I "   (match-string 1 name)))
+         ((string-match "\\`2 \\(.+\\)\\'" name)
+          (concat "II "  (match-string 1 name)))
+         ((string-match "\\`3 \\(.+\\)\\'" name)
+          (concat "III " (match-string 1 name)))
+         (t name)))))
 
 (defun bcp-fetcher--vulgate-bible-load ()
   "Parse `bcp-fetcher-vulgate-bible-file' into `bcp-fetcher--vulgate-bible'.
@@ -141,12 +152,15 @@ Returns a propertized string or nil."
            (verses (when ch-tbl (gethash ch ch-tbl))))
       (when verses
         (bcp-fetcher--vulgate-bible-render-verses book ch verses 1 nil))))
-   ((string-match "^Psalms? \\([0-9]+\\)-\\([0-9]+\\)$" passage)
-    (let* ((book "Psalms")
-           (n1   (string-to-number (match-string 1 passage)))
-           (n2   (string-to-number (match-string 2 passage)))
+   ;; "Book N-M" — chapter range for any book (Psalms case is a special
+   ;; instance; works for "1 Samuel 24-25", "2 Kings 18-19" etc. too).
+   ((string-match "^\\(.+\\) \\([0-9]+\\)-\\([0-9]+\\)$" passage)
+    (let* ((book   (bcp-fetcher--vulgate-bible-resolve-book
+                    (match-string 1 passage)))
+           (n1     (string-to-number (match-string 2 passage)))
+           (n2     (string-to-number (match-string 3 passage)))
            (ch-tbl (gethash book bible))
-           (parts nil))
+           (parts  nil))
       (when ch-tbl
         (cl-loop for n from n1 to n2
                  for verses = (gethash n ch-tbl)

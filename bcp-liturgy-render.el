@@ -30,6 +30,7 @@
 (require 'bcp-common-prayers)
 
 (declare-function bcp-fetcher--rubi-apply-svg "bcp-fetcher")
+(declare-function bcp-fetcher--propertize-furigana "bcp-fetcher")
 (declare-function bcp-fetcher-fetch-passage "bcp-fetcher")
 (declare-function bcp-hymnal-select "bcp-hymnal")
 (declare-function bcp-shinjitai-maybe-enable "bcp-shinjitai")
@@ -326,22 +327,48 @@ Uses an overlay so the face survives any fontification."
 
 (defun bcp-liturgy-render--insert-versicles (pairs)
   "Insert versicle PAIRS as minister/response lines.
-Uses ℣ (U+2123, versiculum) and ℟ (U+211F, responsorium)."
+Uses ℣ (U+2123, versiculum) and ℟ (U+211F, responsorium).
+Any inline \\=《reading》 markup is propertized at buffer-finalize
+time; this function just inserts the raw V/R strings."
   (dolist (pair pairs)
     (let ((v (car pair))
           (r (cadr pair)))
       (insert (format "℣. %s\n" v))
       (when r (insert (format "℟. %s\n" r))))))
 
-(defun bcp-liturgy-render--insert-lords-prayer ()
-  "Insert the Lord's Prayer as a bold placeholder line."
-  (let ((start (point)))
-    (insert "OUR FATHER...\n")
-    (overlay-put (make-overlay start (1- (point)))
-                 'face '(:weight bold))))
+(defun bcp-liturgy-render--insert-lords-prayer (&optional ref)
+  "Insert the Lord's Prayer.
+For English and Latin — where the prayer is liturgically fixed and
+universally known by heart — inserts a bold \"OUR FATHER…\" placeholder
+as a memory cue.
+
+For other languages (Japanese, etc.), where the prayer is less fixed
+in lay memory, inserts the full text by resolving REF (a symbol naming
+the Lord's Prayer variant defconst, e.g. `bcp-common-prayers-lords-prayer'
+for the 1662 form or `bcp-common-prayers-lords-prayer-1928' for the 1928).
+Defaults to the 1662 form when REF is nil."
+  (if (memq (and (boundp 'bcp-common-prayers-language)
+                 bcp-common-prayers-language)
+            '(english latin))
+      (let ((start (point)))
+        (insert "OUR FATHER...\n")
+        (overlay-put (make-overlay start (1- (point)))
+                     'face '(:weight bold)))
+    (let* ((sym  (or ref 'bcp-common-prayers-lords-prayer))
+           (data (and (boundp sym) (symbol-value sym)))
+           (text (and data (bcp-common-prayers-text data))))
+      (if text
+          (insert text "\n")
+        ;; Fallback to placeholder if lookup fails
+        (let ((start (point)))
+          (insert "OUR FATHER...\n")
+          (overlay-put (make-overlay start (1- (point)))
+                       'face '(:weight bold)))))))
 
 (defun bcp-liturgy-render--insert-fixed-text (_name text)
-  "Insert fixed TEXT.  NAME is for identification only and is not displayed."
+  "Insert fixed TEXT.  NAME is for identification only and is not displayed.
+Any inline \\=《reading》 markup is propertized at buffer-finalize
+time by `bcp-fetcher--rubi-propertize-buffer', not here."
   (insert text "\n"))
 
 (defun bcp-liturgy-render--insert-text-block (text)
@@ -496,6 +523,13 @@ through to showing 《…》 markers inline as a graceful fallback."
   (goto-char (point-min))
   (bcp-liturgy-render--normalise-spacing)
   (when (boundp 'bcp-fetcher-furigana-display)
+    ;; Single source of truth for rubi: scan the whole buffer once and
+    ;; stamp every 《reading》 span — regardless of which insertion path
+    ;; produced it (fetcher output, encoded defconst, versicle pair,
+    ;; oremus bidding, future paths).  Idempotent; spans already
+    ;; propertized by the fetcher are skipped.
+    (when (fboundp 'bcp-fetcher--rubi-propertize-buffer)
+      (bcp-fetcher--rubi-propertize-buffer))
     (pcase bcp-fetcher-furigana-display
       ('hidden
        (add-to-invisibility-spec 'bcp-furigana))
@@ -643,7 +677,9 @@ Callers are responsible for emitting any following bidding
   "Insert the bidding \"Let us pray.\" / \"Orémus.\" as its own paragraph.
 LANGUAGE is a symbol (\\='english, \\='latin, ...); defaults to English.
 Languages with no defined translation fall back to Latin (the canonical
-liturgical form of the bidding)."
+liturgical form of the bidding).
+Any inline \\=《reading》 markup is propertized at buffer-finalize
+time, not here."
   (let* ((lang (or language 'english))
          (key  (intern (format ":%s" lang)))
          (text (or (plist-get bcp-common-prayers-oremus key)

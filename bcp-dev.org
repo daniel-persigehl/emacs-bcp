@@ -1102,6 +1102,139 @@ Completed:
   36 responsories. Palm Sunday data extends =bcp-roman-season-lent.el=
   (entry 6). See DONE entry below for details.
 
+** DONE State-set abstraction with per-language override
+Each ordo (1662, 1928, future NSKK) declares a rubric default state-set
+in its =build-ctx=; the =:state-versicles= and =:state-prayers= ordo
+step handlers in =bcp-anglican-render.el= consult
+=bcp-state-set-active= which walks =bcp-state-set-override-by-language=
+(user override, per language) → ordo's rubric default → none.
+
+State-sets are named bundles in =bcp-state-sets= (in
+=bcp-common-anglican.el=): =uk-monarchy-1662=, =uk-monarchy-1928=,
+=us-1928=, =us-civil-authority=, =japan-imperial-1895=, =none=.  Each
+declares a =:versicle= key (into =bcp-anglican-versicles--entries=) and
+a =:prayers= list (symbols, either functions returning a prayer plist
+for name-substituting forms or defconsts for fixed forms).
+
+Transient: =bcp-settings-state-prayers= now has a per-language override
+section (e/l/b/n keystrokes per language) plus a clear-all key (R).
+
+Net effect: a JAP-profile user running 1662 sees the UK Royal Family
+by default (since 1662's rubric specifies it) but can set
+=(bungo . japan-imperial-1895)= as a per-language override and get the
+Imperial Family prayer + imperial-bungo save-the-king versicle
+instead.  The override is liturgically faithful — the rubric default is
+followed unless the user explicitly chooses otherwise.
+
+** DONE NSKK 1959 BCP — Daily Office texts wired into the shared pools
+Encoded the 1959 Nippon Sei Ko Kai 祈祷書 Daily Office (MP/EP) into
+the project's existing multilingual machinery rather than as a new
+tradition module.  Texts live alongside English/Latin/bungo siblings
+under a new =:nskk-1959= language key, so any Anglican ordo running
+under a JAP-profile family pulls them via the existing language
+fallback chain.
+
+Wired entries:
+- Canticles (=bcp-common-canticles.el=): Te Deum, Benedicite,
+  Benedictus, Magnificat, Nunc Dimittis, Gloria Patri.
+- Prayers (=bcp-common-prayers.el=): Lord's Prayer, Apostles' Creed,
+  Oremus, Gloria Patri, Prayer of St Chrysostom (1895 form filling
+  a gap; 1959 has no Chrysostom in MP/EP).
+- Versicles + suffrages (=bcp-anglican-versicles.el=): all twelve
+  preces pairs (open-our-lips through hear-my-prayer) + the four
+  state versicles (save-the-king/queen/state/them-that-rule).
+- Penitential Order (=bcp-1662-ordo.el=): exhortation, general
+  confession, absolution converted from plain strings to language-keyed
+  plists, picked up automatically by the renderer's existing
+  =(if (stringp txt) txt (bcp-common-prayers-text txt))= branch.
+- Imperial Family prayer (=bcp-common-anglican-prayer-imperial-family=):
+  the 1895 NSKK 「皇室の為」 with imperial-vocabulary kanji choices
+  (疆 for kagiri, 旧字体 天國, 由りて) and full inline rubi.
+
+Profile: =JAP-59= added in =bcp-profile.el= alongside =JAP=.  JAP
+points at =:bungo= (1895-style, with ヱホバ→主 substitution applied
+in liturgical contexts); JAP-59 points at =:nskk-1959=.  Bidirectional
+language fallback chain (=bcp-common-prayers-language-fallback=) lets
+JAP surface 1959 forms where bungo is unencoded, and JAP-59 surface
+1895 forms where 1959 is unencoded.
+
+Source corpus: =sources/nskk-1959/*-clean.txt=, transcribed from the
+Justus Society's PDF transcription, PUA-cleaned.
+
+** DONE Head-of-state title registry + role/gender/name system
+Replaced the legacy free-form =bcp-liturgy-head-of-state-title= string
+with a curated multilingual registry.  =bcp-head-of-state-titles=
+(in =bcp-common-anglican.el=) carries 9 entries — king/queen,
+emperor/empress, president, prime-minister, chancellor, governor,
+governor-general, sovereign — each with =:english=,
+=:english-possessive=, =:latin= (accusative), =:latin-possessive=
+(genitive), =:bungo=, =:nskk-1959=, =:gender=, and optional
+=:name-taboo= for liturgical contexts where the personal name is
+not used (Japanese Emperor in bungo / nskk-1959).
+
+Roles abstract (=bcp-head-of-state-roles=) pair each role with its
+gendered title entries: =monarchy= → king/queen by gender, =imperial=
+→ emperor/empress by gender, others gender-neutral.  Defcustoms:
+=bcp-head-of-state-role=, =bcp-head-of-state-gender=,
+=bcp-head-of-state-name=, =bcp-head-of-state-custom-title=.
+
+Role-driven prayer dispatch in =bcp-liturgy--sovereign-prayer=:
+monarchic roles → =prayer-king= / =-queen= base with title and name
+substitution; civil roles → =bcp-liturgy--head-of-state-prayer=
+(generic 1928 civil-authority template) with title-of-country and
+name substitution.  Coupled to state-sets via state-set's =:role=
+key, dynamically bound during =bcp-state-set-prayers= so helpers see
+the right role automatically.  Royal-family prayer suppressed via
+=bcp-state-set--monarchic-only-prayers= when active role is non-monarchic.
+
+Substitutions are case-sensitive (=case-fold-search= bound nil)
+to prevent the placeholder swap from disturbing body phrases like
+"King of kings".  Name-taboo replaces "KING CHARLES" placeholder with
+"the {Title}" rather than showing a wrong-name fallback.
+
+Transient: legacy controls (=bcp--set-sovereign-title=, =-name=,
+=-royal-family-names=, =-head-of-state-title=, =-president-name=,
+=-region=) commented out; UI is now role/gender/name + state-set
+overrides + versicle form + country name.
+
+** DONE =local= pseudo-backend (default offline-by-translation)
+Added a pseudo-backend in =bcp-fetcher.el= that dispatches by the
+active translation: "Vulgate"/"Latin" → vulgate-bible, "KJVA" →
+kjva, "Bungo-yaku"/"文語訳"/"Japanese" → bungo-yaku.  Returns nil for
+unknown translations, letting the configured fallback take over.
+
+All five language profiles updated to default =:backend local
+:fallback-backend oremus= — out of the box every profile serves
+scripture from its bundled offline file, falling back to Oremus
+network only when the local backend can't satisfy the translation.
+
+Two real bugs fixed alongside this:
+1. =bcp-fetcher--bungo-yaku-resolve-book= and
+   =bcp-fetcher--vulgate-bible-resolve-book= didn't normalize Arabic
+   numeral book prefixes ("1 Samuel" → "I Samuel"); both now do, with
+   =save-match-data= around the regex matching.
+2. =bcp-fetcher--bungo-yaku-render=, =bcp-fetcher--vulgate-bible-render=,
+   and =bcp-fetcher-ebible--parse-passage= each only handled
+   "Psalms N-M" for chapter ranges; generalized to "Book N-M" for any
+   book.  "1 Samuel 24-25" and similar lectionary refs now resolve.
+
+** DONE Rubi propertize at buffer finalize (single source of truth)
+=bcp-fetcher--rubi-propertize-buffer= scans the office buffer for
+=《reading》= spans at finalize time (called from
+=bcp-liturgy-render--finalise-buffer= immediately before
+=bcp-fetcher--rubi-apply-svg=) and stamps text properties uniformly
+regardless of which insertion path produced the text — fetcher
+output, encoded liturgical defconsts, versicle pairs, oremus
+bidding, future paths.  Idempotent: skips kanji spans whose first
+character already carries =bcp-rubi-reading=, so the bungo-yaku
+fetcher's existing fetch-time propertize (which also stamps
+=bcp-cjk-body= for the shinjitai overlay) coexists without
+double-stamping.
+
+Per-insertion propertize calls in =insert-fixed-text=,
+=insert-versicles=, =insert-oremus=, =insert-lords-prayer= were
+removed.  Single source of truth at finalize.
+
 ** TODO Prayerbook English translations for scripture-derived texts
 Antiphons drawn from scripture (psalms, canticles, gospels) should have
 Coverdale/KJVA renderings alongside the DO modern-English translations.
@@ -1221,6 +1354,26 @@ texts second (collects, canticles, offices).
   keys alongside existing Latin/English.
 - Sources to check: NDL (dl.ndl.go.jp), HathiTrust, Internet Archive,
   Project Canterbury (anglicanhistory.org).
+
+*** TODO NSKK 1959 Compline and Noonday
+The 1959 NSKK 祈祷書 includes 終祷 (Compline) and 午祷 (Noonday) in its
+appendix — Liturgical-Movement-era restorations of the lesser hours,
+absent from 1662 and 1928.  These are searchable text on Justus
+(=shuto.pdf= and =goto.pdf=), already pulled and cleaned to
+=sources/nskk-1959/{shuto,goto}-clean.txt=.
+
+Out of scope for the current shared-pool wiring (which targets MP/EP):
+Compline and Noonday are pure 1959 — they have no 1662/1928 ordo to
+translate into.  Encoding them requires a new NSKK-1959 ordo module
+=bcp-nskk-1959-{ordo,render}.el= mirroring the 1662/1928 pattern, plus
+hour-grouping registration so they slot into the canonical-hours
+framework alongside the Roman Compline/Sext/None.
+
+Prerequisite: =Canonical hours — joined/anticipated hours= and
+=Canonical hours — office grouping protocol= TODOs (already on the
+list).  Worth attempting once those land and a JAP-1959 user actually
+asks for the lesser hours; until then, MP/EP coverage via the shared
+pools is enough for daily use.
 
 *** TODO Tetragrammaton in liturgical surfacing of bungo-yaku
 The bungo-yaku Bible (1887 Meiji Protestant committee) renders YHWH as

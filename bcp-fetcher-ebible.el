@@ -250,6 +250,14 @@ Handles:
                       (string-to-number (match-string 2 ref))
                       v v)
                 segments)))
+       ;; "Book CH1-CH2" — chapter range (whole chapters, no verse anchors)
+       ;; Expands to one segment per chapter.
+       ((string-match "^\\(.*?\\)[ \t]+\\([0-9]+\\)-\\([0-9]+\\)$" ref)
+        (let* ((book (match-string 1 ref))
+               (ch1  (string-to-number (match-string 2 ref)))
+               (ch2  (string-to-number (match-string 3 ref))))
+          (cl-loop for ch from ch1 to ch2 do
+                   (push (list book ch nil nil) segments))))
        ;; "Book CH" — whole chapter
        ((string-match "^\\(.*?\\)[ \t]+\\([0-9]+\\)$" ref)
         (push (list (match-string 1 ref)

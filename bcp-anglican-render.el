@@ -249,7 +249,7 @@ CTX is the tradition context plist."
                (alt-creed (plist-get step :alt-creed)))
            (cond
             ((eq name 'lords-prayer)
-             (bcp-liturgy-render--insert-lords-prayer))
+             (bcp-liturgy-render--insert-lords-prayer ref))
             ((and (eq name 'apostles-creed)
                   alt-creed
                   (eq bcp-liturgy-creed 'nicene))
@@ -565,15 +565,29 @@ CTX is the tradition context plist."
              (fixed! (or (plist-get step :prayer) (intern (symbol-name ref)))
                      txt))))
 
-        ;; ── State versicles (region-resolved) ────────────────────────────
+        ;; ── State versicles (state-set resolved) ─────────────────────────
+        ;; Rubric default comes from ctx :state-set (set by each ordo's
+        ;; build-ctx); user can override per language via
+        ;; `bcp-state-set-override-by-language'.  Versicle key is looked up
+        ;; in `bcp-anglican-versicles--entries' so the localizer chain
+        ;; surfaces the right language form (incl. imperial bungo for
+        ;; save-the-king under JAP profiles).
         (:state-versicles
-         (versicles!
-          (list (bcp-liturgy-state-versicles (plist-get step :tradition)))))
+         (let* ((rubric  (plist-get ctx :state-set))
+                (active  (bcp-state-set-active rubric))
+                (vkey    (bcp-state-set-versicle-key active))
+                (entry   (when vkey
+                           (cdr (assq vkey bcp-anglican-versicles--entries))))
+                (en-pair (when entry (plist-get entry :english))))
+           (when en-pair
+             (versicles! (list en-pair)))))
 
-        ;; ── State prayers (region-resolved) ──────────────────────────────
+        ;; ── State prayers (state-set resolved) ───────────────────────────
         (:state-prayers
-         (let ((first t))
-           (dolist (prayer (bcp-liturgy-state-prayers (plist-get step :tradition)))
+         (let* ((rubric (plist-get ctx :state-set))
+                (active (bcp-state-set-active rubric))
+                (first  t))
+           (dolist (prayer (bcp-state-set-prayers active))
              (unless first (insert "\n"))
              (setq first nil)
              (let* ((title (plist-get prayer :title))

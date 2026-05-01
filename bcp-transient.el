@@ -25,6 +25,7 @@
 (require 'transient)
 (require 'cl-lib)
 (require 'bcp-profile)
+(require 'bcp-common-anglican)  ; bcp-state-sets, override defcustom, helpers
 
 ;; Suppress byte-compiler warnings for variables and functions defined
 ;; in the tradition modules.  bcp-transient is loaded after them.
@@ -238,22 +239,27 @@ local psalter; any other name lets the Bible backend serve them."
     (bcp-profile-apply)))
 
 (transient-define-suffix bcp--override-backend ()
-  "Override primary Bible backend or inherit from profile."
+  "Override primary Bible backend or inherit from profile.
+Cycle includes the network backends (oremus, ebible) and the three
+locally bundled offline-capable backends (kjva, vulgate-bible,
+bungo-yaku)."
   :description (lambda ()
     (bcp--profile-desc :backend "Backend: %s"))
   :transient t
   (interactive)
   (bcp--cycle-override 'bcp-profile-backend
-                       '(oremus ebible bungo-yaku)))
+                       '(local oremus ebible kjva vulgate-bible bungo-yaku)))
 
 (transient-define-suffix bcp--override-fallback-backend ()
-  "Override fallback fetch backend or inherit from profile."
+  "Override fallback fetch backend or inherit from profile.
+Same backend list as the primary, plus nil to suppress fallback."
   :description (lambda ()
     (bcp--profile-desc :fallback-backend "Fallback: %s"
                        (lambda (v) (if v (format "%s" v) "none"))))
   :transient t
   (interactive)
-  (bcp--cycle-override 'bcp-profile-fallback-backend '(oremus ebible nil)))
+  (bcp--cycle-override 'bcp-profile-fallback-backend
+                       '(local oremus ebible kjva vulgate-bible bungo-yaku nil)))
 
 (transient-define-suffix bcp--override-roman-language ()
   "Override Roman Office language or inherit from profile."
@@ -426,21 +432,190 @@ explicitly set.  Use Reset to clear all overrides."
           (if (string-empty-p s) nil s))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Head-of-state role / gender / name (curated, multilingual)
+
+(defun bcp--head-of-state-role-choices ()
+  "Return alist of (display . role-symbol) for role picker."
+  (append
+   '(("(use legacy controls)" . nil))
+   (mapcar (lambda (entry)
+             (let* ((role (car entry))
+                    ;; Show example title for the role's :any or :male variant
+                    (title-key (or (plist-get (cdr entry) :any)
+                                   (plist-get (cdr entry) :male)))
+                    (title-en  (when title-key
+                                 (plist-get (cdr (assq title-key
+                                                       bcp-head-of-state-titles))
+                                            :english))))
+               (cons (format "%s%s" (symbol-name role)
+                             (if title-en (format " — %s" title-en) ""))
+                     role)))
+           bcp-head-of-state-roles)
+   '(("(custom string)" . custom))))
+
+(defun bcp--role-is-gendered-p (role)
+  "Return non-nil if ROLE has both :male and :female variants in the registry."
+  (let ((entry (cdr (assq role bcp-head-of-state-roles))))
+    (and (plist-get entry :male) (plist-get entry :female))))
+
+(transient-define-suffix bcp--set-head-of-state-role ()
+  "Override the head-of-state role.
+By default, role derives from the active state-set; setting an
+explicit role overrides that.  Use this to force `custom' (free-form
+title), or when you want a role different from what the state-set
+declares (rare)."
+  :description (lambda ()
+    (format "Role override: %s"
+            (or bcp-head-of-state-role "(derive from state-set)")))
+  :transient t
+  (interactive)
+  (let* ((choices  (bcp--head-of-state-role-choices))
+         (selected (completing-read "Head-of-state role: "
+                                    (mapcar #'car choices) nil t)))
+    (setq bcp-head-of-state-role (cdr (assoc selected choices)))))
+
+(transient-define-suffix bcp--set-head-of-state-gender ()
+  "Toggle gender (male/female).
+Always settable, even for gender-neutral titles like President or
+Prime Minister.  The personal gender of the head of state matters for
+noun forms in many target languages (Spanish presidente/presidenta,
+German Präsident/Präsidentin, …) and for singular pronouns wherever
+a translation has them, even when the title noun in English is
+gender-neutral."
+  :description (lambda ()
+    (format "Gender: %s" bcp-head-of-state-gender))
+  :transient t
+  (interactive)
+  (bcp--cycle 'bcp-head-of-state-gender '(male female)))
+
+(transient-define-suffix bcp--set-head-of-state-name ()
+  "Set the personal name of the active head of state."
+  :description (lambda ()
+    (format "Name: %s" (or bcp-head-of-state-name "(legacy / defconst)")))
+  :transient t
+  (interactive)
+  (let ((s (read-string "Head-of-state name (RET to clear): "
+                        bcp-head-of-state-name)))
+    (setq bcp-head-of-state-name (if (string-empty-p s) nil s))))
+
+(transient-define-suffix bcp--set-head-of-state-custom-title ()
+  "Set the free-form custom title (used when role is `custom')."
+  :description (lambda ()
+    (format "Custom title: %s"
+            (or bcp-head-of-state-custom-title "(unset)")))
+  :transient t
+  (interactive)
+  (let ((s (read-string "Custom title string (RET to clear): "
+                        bcp-head-of-state-custom-title)))
+    (setq bcp-head-of-state-custom-title (if (string-empty-p s) nil s))))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; State-set override per language
+
+(defun bcp--state-set-choices ()
+  "Return alist of (display-string . state-set-name) for completing-read.
+First entry is the rubric-default sentinel (nil)."
+  (cons (cons "(rubric default)" nil)
+        (mapcar (lambda (entry)
+                  (cons (or (plist-get (cdr entry) :name)
+                            (symbol-name (car entry)))
+                        (car entry)))
+                bcp-state-sets)))
+
+(defun bcp--state-set-status-string (lang)
+  "Render a one-line status for LANG in the state-set transient."
+  (let* ((override (cdr (assq lang bcp-state-set-override-by-language)))
+         (label    (cond
+                    (override
+                     (or (plist-get (bcp-state-set-data override) :name)
+                         (symbol-name override)))
+                    (t "[rubric default]"))))
+    (format "%-10s %s" (symbol-name lang) label)))
+
+(defun bcp--set-state-set-override (lang)
+  "Prompt the user to set the state-set override for LANG.
+Selecting (rubric default) removes the override."
+  (let* ((choices  (bcp--state-set-choices))
+         (selected (completing-read
+                    (format "State-set for %s: " lang)
+                    (mapcar #'car choices) nil t))
+         (value    (cdr (assoc selected choices))))
+    (setq bcp-state-set-override-by-language
+          (let ((cell (assq lang bcp-state-set-override-by-language)))
+            (cond
+             ((and (null value) cell)
+              (assq-delete-all lang bcp-state-set-override-by-language))
+             (cell
+              (setcdr cell value)
+              bcp-state-set-override-by-language)
+             (value
+              (cons (cons lang value) bcp-state-set-override-by-language))
+             (t bcp-state-set-override-by-language))))))
+
+(transient-define-suffix bcp--set-state-set-english ()
+  :description (lambda () (bcp--state-set-status-string 'english))
+  :transient t
+  (interactive) (bcp--set-state-set-override 'english))
+
+(transient-define-suffix bcp--set-state-set-latin ()
+  :description (lambda () (bcp--state-set-status-string 'latin))
+  :transient t
+  (interactive) (bcp--set-state-set-override 'latin))
+
+(transient-define-suffix bcp--set-state-set-bungo ()
+  :description (lambda () (bcp--state-set-status-string 'bungo))
+  :transient t
+  (interactive) (bcp--set-state-set-override 'bungo))
+
+(transient-define-suffix bcp--set-state-set-nskk-1959 ()
+  :description (lambda () (bcp--state-set-status-string 'nskk-1959))
+  :transient t
+  (interactive) (bcp--set-state-set-override 'nskk-1959))
+
+(transient-define-suffix bcp--clear-state-set-overrides ()
+  "Clear all state-set overrides (return all languages to rubric default)."
+  :description "Clear all overrides"
+  :transient t
+  (interactive)
+  (setq bcp-state-set-override-by-language nil)
+  (message "All state-set overrides cleared."))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; State prayers sub-prefix
 
 (transient-define-prefix bcp-settings-state-prayers ()
-  "Settings for the state prayers (versicle and intercessions)."
-  [["Versicle & region"
+  "Settings for the state prayers (versicle and intercessions).
+
+Role drives prayer selection: monarchic roles (king/queen/emperor/empress)
+render the King's Majesty template; civil roles (president/PM/governor
+/etc.) render the generic 1928 Civil Authority template.
+
+Most legacy controls are commented out — superseded by the curated
+role-and-state-set system.  Versicle form and country name are kept
+because they remain useful overrides."
+  [["Head of state (curated, multilingual)"
+    ("o" bcp--set-head-of-state-role)
+    ("G" bcp--set-head-of-state-gender)
+    ("N" bcp--set-head-of-state-name)
+    ("X" bcp--set-head-of-state-custom-title)
+    ("C" bcp--set-country-name)]
+   ["State-set override per language\n(rubric default = active ordo's rubric)"
+    ("e" bcp--set-state-set-english)
+    ("l" bcp--set-state-set-latin)
+    ("b" bcp--set-state-set-bungo)
+    ("n" bcp--set-state-set-nskk-1959)
     ("s" bcp--set-state-versicle-form)
-    ("r" bcp--set-region)]
-   ["Monarchy"
-    ("k" bcp--set-sovereign-title)
-    ("K" bcp--set-sovereign-name)
-    ("F" bcp--set-royal-family-names)]
-   ["Republic"
-    ("T" bcp--set-head-of-state-title)
-    ("C" bcp--set-country-name)
-    ("P" bcp--set-president-name)]
+    ("R" bcp--clear-state-set-overrides)]]
+  [;; Legacy controls — commented out; the role/state-set system supersedes
+   ;; them.  Kept available below if you need to revert.
+   ;;
+   ;; ("r" bcp--set-region)              ; superseded by state-set selection
+   ;; ("k" bcp--set-sovereign-title)     ; superseded by role + gender
+   ;; ("K" bcp--set-sovereign-name)      ; superseded by N (head-of-state-name)
+   ;; ("F" bcp--set-royal-family-names)  ; rare; uncomment if needed for
+   ;;                                    ;   Royal Family prayer customization
+   ;; ("T" bcp--set-head-of-state-title) ; superseded by role registry
+   ;; ("P" bcp--set-president-name)      ; superseded by N (head-of-state-name)
    [""
     ("q" bcp--back-to-settings)]])
 

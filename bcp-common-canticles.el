@@ -35,8 +35,9 @@
   :group 'text)
 
 (defcustom bcp-liturgy-canticle-language 'english
-  "Default language for canticles.  `english' or `latin'."
-  :type  '(choice (const english) (const latin))
+  "Default language for canticles.
+One of `english', `latin', or `nskk-1959' (Nippon Sei Ko Kai 1959 BCP)."
+  :type  '(choice (const english) (const latin) (const nskk-1959))
   :group 'bcp-liturgy-canticles)
 
 (defcustom bcp-liturgy-canticle-overrides nil
@@ -190,7 +191,41 @@ quos pretióso sánguine redemísti.\n\
    Miserére nostri, Dómine, * miserére nostri.\n\
    Fiat misericórdia tua, Dómine, super nos, * \
 quemádmodum sperávimus in te.\n\
-   In te, Dómine, sperávi: * non confúndar in ætérnum.")
+   In te, Dómine, sperávi: * non confúndar in ætérnum."
+     ;; NSKK 1959 賛美の頌.  Note: V13 renders "King of Glory" as 栄光の主
+     ;; (Lord of Glory) rather than 栄光の王; the 1959 form differs from the
+     ;; 1662 English here.  V27/28 also restructure the closing pair —
+     ;; 1959 phrases V27 as "we trust in thee : have mercy upon us"
+     ;; (rather than 1662's "let thy mercy lighten upon us : as our trust
+     ;; is in thee").
+     :nskk-1959 "我ら神をほめまつり 神を主なりと信任す\n\
+   全地はとこしえの父を あがめたてまつる\n\
+   御使いと天のうちの、ちからあるもの みな主にむかいて歌い\n\
+   ケルビムとセラピム 絶え間なく歌いていわく\n\
+   聖なるかな、聖なるかな、聖なるかな 万軍の神なる主\n\
+   主の栄光あるみいつ 天地に満つと\n\
+   栄光ある使徒のくみ みな主をほめまつる\n\
+   誉れある預言者のむれ みな主をほめまつる\n\
+   白き衣の殉教者のたい みな主をほめまつる\n\
+   天下の聖公会 みな主を信任す\n\
+   そは、はかりなき みいつある父\n\
+   まことなるひとりの御子 なぐさめ主なる聖霊なり\n\
+   キリストよ 主は栄光の主なり\n\
+   主は父の とこしえにいます御子なり\n\
+   主は人を救わんため、人となりたもうとき おとめの胎をも厭いたまわざりき\n\
+   主は死の苦しみに勝ちて すべての信徒のため天国の門を開きたまいぬ\n\
+   主は父の栄光のうちにて 神の右に座したまえり\n\
+   またふたたびきたりて 我らをさばきたもうことを信ず\n\
+   ゆえに尊き血にて贖いたまいししもべを 助けたまわんことを祈りたてまつる\n\
+   我らを主の聖徒につらねて 限りなき栄光を得させたまえ\n\
+   主よ、主の民をすくい 主のゆずりをさきわいたまえ\n\
+   彼らをやしないて とこしえに、いだきたすけたまえ\n\
+   我ら日々に 主をあがめまつる\n\
+   我ら世々かぎりなく 御名をほめまつる\n\
+   主よ、きょう我らをまもりて 罪を犯すことなからしめたまえ\n\
+   主よ、我らをあわれみたまえ 我らをあわれみたまえ\n\
+   主よ、我ら主にたよれり 我らをあわれみたまえ\n\
+   主よ、我は主にたよれり 我に限りなく恥なからしめたまえ")
 
     ;;──── Benedicite ─────────────────────────────────────────────────────────
 
@@ -289,7 +324,41 @@ benedícite, servi Dómini, Dómino.\n\
    Benedícite, spíritus, et ánimæ justórum, Dómino: * \
 benedícite, sancti, et húmiles corde, Dómino.\n\
    Benedícite, Ananía, Azaría, Mísaël, Dómino: * \
-laudáte et superexaltáte eum in sǽcula.")
+laudáte et superexaltáte eum in sǽcula."
+     :nskk-1959 "主の万物よ、主を祝い 世々歌いあがめまつれ\n\
+   主の御使いよ、主を祝い 世々歌いあがめまつれ\n\
+   もろもろの天よ、主を祝い 世々歌いあがめまつれ\n\
+   空の上の水よ、主を祝い 世々歌いあがめまつれ\n\
+   主の万軍よ、主を祝い 世々歌いあがめまつれ\n\
+   日と月よ、主を祝い 世々歌いあがめまつれ\n\
+   空の星よ、主を祝い 世々歌いあがめまつれ\n\
+   雨と露よ、主を祝い 世々歌いあがめまつれ\n\
+   風よ、主を祝い 世々歌いあがめまつれ\n\
+   火と熱よ、主を祝い 世々歌いあがめまつれ\n\
+   冬と夏よ、主を祝い 世々歌いあがめまつれ\n\
+   露と霜よ、主を祝い 世々歌いあがめまつれ\n\
+   あられと寒さよ、主を祝い 世々歌いあがめまつれ\n\
+   氷と雪よ、主を祝い 世々歌いあがめまつれ\n\
+   夜と昼よ、主を祝い 世々歌いあがめまつれ\n\
+   明かきと暗きよ、主を祝い 世々歌いあがめまつれ\n\
+   いなずまと雲よ、主を祝い 世々歌いあがめまつれ\n\
+   地よ、主を祝い 世々歌いあがめまつれ\n\
+   山と岡よ、主を祝い 世々歌いあがめまつれ\n\
+   地に生うるすべての草木よ、主を祝い 世々歌いあがめまつれ\n\
+   泉よ、主を祝い 世々歌いあがめまつれ\n\
+   海と川よ、主を祝い 世々歌いあがめまつれ\n\
+   鯨とすべて水に泳ぐものよ、主を祝い 世々歌いあがめまつれ\n\
+   空を飛ぶ鳥よ、主を祝い 世々歌いあがめまつれ\n\
+   野獣と家畜よ、主を祝い 世々歌いあがめまつれ\n\
+   世の人よ、主を祝い 世々歌いあがめまつれ\n\
+   イスラエルよ、主を祝い 世々歌いあがめまつれ\n\
+   主の祭司よ、主を祝い 世々歌いあがめまつれ\n\
+   主のしもべよ、主を祝い 世々歌いあがめまつれ\n\
+   義人と魂よ、主を祝い 世々歌いあがめまつれ\n\
+   心きよく、へりくだる者よ、主を祝い 世々歌いあがめまつれ\n\
+   ハナニヤとザリヤとミサエルよ、主を祝い 世々歌いあがめまつれ\n\
+   父と子と聖霊を祝い 世々歌いあがめまつれ\n\
+   天の大空にまします主を祝い 世々歌いあがめまつれ")
 
     ;;──── Benedictus ─────────────────────────────────────────────────────────
 
@@ -340,7 +409,21 @@ in remissiónem peccatórum eórum:\n\
    Per víscera misericórdiæ Dei nostri: * \
 in quibus visitávit nos, óriens ex alto:\n\
    Illumináre his, qui in ténebris, et in umbra mortis sedent: * \
-ad dirigéndos pedes nostros in viam pacis.")
+ad dirigéndos pedes nostros in viam pacis."
+     :nskk-1959 "ほむべきかな しゅイスラエルの神 \
+その民をかえりみて、あがないをなし\n\
+   我らのために救いのつのを そのしもべダビデの家に立てたまえり\n\
+   これぞ、いにしより聖預言者の口をもて言いたまいしごとく\n\
+   我らをあだより、すべて我らを憎む者の手より取りいだしたもう救いなる\n\
+   我らの先祖にあわれみをたれて その聖なる契約をおぼし\n\
+   我らの先祖アブラハムに立てたまいし御誓いを忘れずして 我らをあだの手より救い\n\
+   生涯主のみまえに聖と義とをもて おそれなく仕えしめたもうなり\n\
+   幼な子よ、なんじはいと高き者の預言者ととなえられん\n\
+   これ主の御前にさきだち行きて、その道をそなえ\n\
+   主の民に罪のゆるしによる救いを 知らしむればなり\n\
+   これ我らの神の深きあわれみによるなり\n\
+   このあわれみによりて、あしたの光うえよりのぞみ\n\
+   暗きと死の陰に座する者をてらし 我らの足を平和の道にみちびかん")
 
     ;;──── Jubilate Deo ───────────────────────────────────────────────────────
 
@@ -396,7 +479,16 @@ ecce enim ex hoc beátam me dicent omnes generatiónes.\n\
    Esuriéntes implévit bonis: * et dívites dimísit inánes.\n\
    Suscépit Israël púerum suum: * recordátus misericórdiæ suæ.\n\
    Sicut locútus est ad patres nostros: * \
-Ábraham, et sémini ejus in sǽcula.")
+Ábraham, et sémini ejus in sǽcula."
+     :nskk-1959 "わが心、主をあがめ、わが霊は、わが救い主なる神を喜びまつる\n\
+   そのはしための卑しきをも顧みたまえばなり\n\
+   見よ今よりのち、よろず代の人われを幸いとせん 全能者われに大いなることをなしたまえばなり\n\
+   その御名は聖なり そのあわれみは世々かしこみ恐るる者に臨むなり\n\
+   神は御腕にて力をあらわし 心のおもいのおごれる者をちらし\n\
+   勢いある者を位よりおろし 卑しきものを高うし\n\
+   飢えたるものをよき物に飽かせ 富める者をむなしく去らせたもう\n\
+   また我らの先祖に告げたまいしごとく、アブラハムとそのすえとに対するあわれみを\
+ とこしえに忘れじと、しもべイスラエルを助けたまえり")
 
     ;;──── Cantate Domino ─────────────────────────────────────────────────────
 
@@ -451,7 +543,11 @@ and to be the glory of thy people Israel."
      :latin   "NUNC dimíttis servum tuum, Dómine, * secúndum verbum tuum in pace:\n\
    Quia vidérunt óculi mei * salutáre tuum,\n\
    Quod parásti * ante fáciem ómnium populórum,\n\
-   Lumen ad revelatiónem géntium, * et glóriam plebis tuæ Israël.")
+   Lumen ad revelatiónem géntium, * et glóriam plebis tuæ Israël."
+     :nskk-1959 "主よ、今こそ御言葉にしたがってしもべをやすらかに行かしめたもうなれ\n\
+   我が目は、はや主の救いを見たり\n\
+   これ、もろもろの民の前に備えたまいしもの\n\
+   異邦人を照らす光 御民イスラエルの栄光なり")
 
     ;;──── Deus Misereatur ────────────────────────────────────────────────────
 
@@ -523,7 +619,9 @@ et laudábilis, et gloriósus in sǽcula.")
 world without end.  Amen."
      :latin   "Glória Patri, et Fílio, * et Spirítui Sancto.\n\
    Sicut erat in princípio, et nunc, et semper, * \
-et in sǽcula sæculórum. Amen."))
+et in sǽcula sæculórum. Amen."
+     :nskk-1959 "父と子と聖霊に栄光あれ\n\
+   始めにあり、今あり、世々限りなくあるなり アーメン"))
 
   "Alist of canticle data keyed by canonical symbol.
 Each entry: (SYMBOL :title STRING :source STRING :gloria BOOL
@@ -551,16 +649,16 @@ Checks `bcp-liturgy-canticle-overrides' first, then `bcp-liturgy-canticle-langua
 (defun bcp-liturgy-canticle-get (symbol &optional language)
   "Return the text for canticle SYMBOL in LANGUAGE.
 LANGUAGE defaults to the effective language for SYMBOL.
-Falls back to English if the requested language text is nil.
-Returns a string or nil."
-  (let* ((data (bcp-liturgy-canticle-data symbol))
-         (lang (or language (bcp-liturgy-canticle-effective-language symbol)))
-         ;; plist keys are keywords (:english, :latin) — convert symbol
-         (key  (intern (format ":%s" lang)))
-         (val  (plist-get data key)))
-    (if (and (null val) (eq lang 'latin))
-        (plist-get data :english)
-      val)))
+Walks `bcp-common-prayers-language-fallback' (e.g. nskk-1959 → bungo)
+before defaulting to English.  Returns a string or nil."
+  (let* ((data  (bcp-liturgy-canticle-data symbol))
+         (lang  (or language (bcp-liturgy-canticle-effective-language symbol)))
+         (chain (bcp-common-prayers--language-chain lang))
+         (val   (cl-some (lambda (l) (plist-get data (intern (format ":%s" l))))
+                         chain)))
+    (or val
+        (and (not (eq lang 'english))
+             (plist-get data :english)))))
 
 (defun bcp-liturgy-canticle-title (symbol)
   "Return the display title for canticle SYMBOL."

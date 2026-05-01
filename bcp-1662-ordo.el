@@ -103,13 +103,53 @@ The minister reads one or more of these at the opening of the service.")
 ;;;; Fixed Texts
 
 (defconst bcp-1662-text-exhortation
-  "Dearly beloved brethren, the Scripture moveth us, in sundry places, to acknowledge and confess our manifold sins and wickedness; and that we should not dissemble nor cloak them before the face of Almighty God our heavenly Father; but confess them with an humble, lowly, penitent, and obedient heart; to the end that we may obtain forgiveness of the same, by his infinite goodness and mercy. And although we ought, at all times, humbly to acknowledge our sins before God; yet ought we chiefly so to do, when we assemble and meet together to render thanks for the great benefits that we have received at his hands, to set forth his most worthy praise, to hear his most holy Word, and to ask those things which are requisite and necessary, as well for the body as the soul. Wherefore I pray and beseech you, as many as are here present, to accompany me with a pure heart, and humble voice, unto the throne of the heavenly grace, saying after me;")
+  '(:english
+    "Dearly beloved brethren, the Scripture moveth us, in sundry places, to acknowledge and confess our manifold sins and wickedness; and that we should not dissemble nor cloak them before the face of Almighty God our heavenly Father; but confess them with an humble, lowly, penitent, and obedient heart; to the end that we may obtain forgiveness of the same, by his infinite goodness and mercy. And although we ought, at all times, humbly to acknowledge our sins before God; yet ought we chiefly so to do, when we assemble and meet together to render thanks for the great benefits that we have received at his hands, to set forth his most worthy praise, to hear his most holy Word, and to ask those things which are requisite and necessary, as well for the body as the soul. Wherefore I pray and beseech you, as many as are here present, to accompany me with a pure heart, and humble voice, unto the throne of the heavenly grace, saying after me;"
+    ;; NSKK 1959 序式: 勧告.  The print encloses the long middle clause
+    ;; in 『…』 to mark it omittable per the rubric "かっこの中は省いて
+    ;; もよい" — without the bracketed text the exhortation collapses
+    ;; to "愛する兄弟よ、恵みの御座にむかい、きよき心と静かなる声を
+    ;; もって懴悔し奉るべし".  In the 1959 print these are vertical-
+    ;; form ﹃…﹄ (small corner marks in the side margin); encoded here
+    ;; as horizontal-form 『…』 so they display correctly in any layout.
+    ;; Renderer-side stripping of bracketed content can be added as a
+    ;; `bcp-1662-bidding-form' value (e.g. 'short') in future.
+    :nskk-1959
+    "愛する兄弟よ、『聖書にしばしば、しるせるごとく、天の父・全能の神は罪を懴悔すべきことを勧めたもう。\
+我ら多くの罪を犯したれば、包みかくすことなく、まことに謙そんなる心にてこれを言いあらわし、\
+父の深きあわれみによりて赦しを求むべし。\
+これはいつにてもなすべきことなり。\
+しかれども相ともに集まりて、父の御手より受けし大いなる恵みを謝し、\
+御名をほめ、御言葉をきき、からだと魂とに必要なるものを願う時には、格別になすべきことなり。\
+ゆえに』恵みの御座にむかい、きよき心と静かなる声をもって懴悔し奉るべし"))
 
 (defconst bcp-1662-text-general-confession
-  "Almighty and most merciful Father; We have erred, and strayed from thy ways like lost sheep. We have followed too much the devices and desires of our own hearts. We have offended against thy holy laws. We have left undone those things which we ought to have done; And we have done those things which we ought not to have done; And there is no health in us. But thou, O Lord, have mercy upon us, miserable offenders. Spare thou them, O God, which confess their faults. Restore thou them that are penitent; According to thy promises declared unto mankind in Christ Jesu our Lord. And grant, O most merciful Father, for his sake; That we may hereafter live a godly, righteous, and sober life, To the glory of thy holy Name. Amen.")
+  '(:english
+    "Almighty and most merciful Father; We have erred, and strayed from thy ways like lost sheep. We have followed too much the devices and desires of our own hearts. We have offended against thy holy laws. We have left undone those things which we ought to have done; And we have done those things which we ought not to have done; And there is no health in us. But thou, O Lord, have mercy upon us, miserable offenders. Spare thou them, O God, which confess their faults. Restore thou them that are penitent; According to thy promises declared unto mankind in Christ Jesu our Lord. And grant, O most merciful Father, for his sake; That we may hereafter live a godly, righteous, and sober life, To the glory of thy holy Name. Amen."
+    ;; NSKK 1959 序式: 懴悔.
+    :nskk-1959
+    "あわれみ深き全能の父よ、我らは迷える羊のごとく父の道を離れ、\
+多くおのれの工夫と欲に従い、主の聖なる律法をおかし、\
+なすべきことをなさずなすべからず事をなし、全きところあることなし。\
+しかれども父よ、主イエス＝キリストをもって世の人に約したまえるごとく、\
+罪に悩める者をあわれみたまえ。\
+とがを懴悔するものを赦したまえ。\
+悔やめる者をかえしたまえ。\
+あわれみ深き父よ、願わくは今よりのち神を敬い、正しきを行ない、\
+御を修めて、御名の栄光をあらわすことを、\
+イエス＝キリストのいさおによりて得させたまえ アーメン"))
 
 (defconst bcp-1662-text-absolution
-  "Almighty God, the Father of our Lord Jesus Christ, who desireth not the death of a sinner, but rather that he may turn from his wickedness, and live; and hath given power, and commandment, to his Ministers, to declare and pronounce to his people, being penitent, the Absolution and Remission of their sins: He pardoneth and absolveth all them that truly repent, and unfeignedly believe his holy Gospel. Wherefore let us beseech him to grant us true repentance, and his Holy Spirit, that those things may please him, which we do at this present; and that the rest of our life hereafter may be pure, and holy; so that at the last we may come to his eternal joy; through Jesus Christ our Lord.")
+  '(:english
+    "Almighty God, the Father of our Lord Jesus Christ, who desireth not the death of a sinner, but rather that he may turn from his wickedness, and live; and hath given power, and commandment, to his Ministers, to declare and pronounce to his people, being penitent, the Absolution and Remission of their sins: He pardoneth and absolveth all them that truly repent, and unfeignedly believe his holy Gospel. Wherefore let us beseech him to grant us true repentance, and his Holy Spirit, that those things may please him, which we do at this present; and that the rest of our life hereafter may be pure, and holy; so that at the last we may come to his eternal joy; through Jesus Christ our Lord."
+    ;; NSKK 1959 序式: 赦罪.  Pronounced by the priest standing.
+    :nskk-1959
+    "我らの主イエス＝キリストの父・全能の神は、\
+罪びとの死ぬることをお好まず、悪より帰りて生くることを望み、\
+又その仕えびとに権威をあたえて、主の民に罪の赦しを告ぐることを命じたまえり。\
+神は、まことに悔い改めて福音を信ずる者をことごとく赦したもう。\
+願わくはあわれみ深き全能の神、なんじらの罪を赦し、恵みと力を与え、\
+悔い改めにかのう新たなる生涯を送らしめたまわんことを。アーメン"))
 
 ;; Lord's Prayer, Gloria Patri, Apostles' Creed — now in bcp-liturgy-common-prayers.el
 

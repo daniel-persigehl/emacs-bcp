@@ -39,7 +39,7 @@
 (defconst bcp-profile--definitions
   '((ENG . (:lesson-translation       "KJVA"
             :psalm-translation        "Coverdale"
-            :backend                  oremus
+            :backend                  local
             :fallback-backend         oremus
             :roman-language           english
             :canticle-language        english
@@ -48,7 +48,7 @@
             :furigana                 hidden))
     (ENG-TB . (:lesson-translation    "KJVA"
                :psalm-translation     "Tate & Brady"
-               :backend               oremus
+               :backend               local
                :fallback-backend      oremus
                :roman-language        english
                :canticle-language     english
@@ -57,7 +57,7 @@
                :furigana              hidden))
     (LAT . (:lesson-translation       "Vulgate"
             :psalm-translation        "Vulgate"
-            :backend                  oremus
+            :backend                  local
             :fallback-backend         oremus
             :roman-language           latin
             :canticle-language        latin
@@ -66,7 +66,7 @@
             :furigana                 hidden))
     (JAP . (:lesson-translation       "Bungo-yaku"
             :psalm-translation        "Bungo-yaku"
-            :backend                  bungo-yaku
+            :backend                  local
             :fallback-backend         oremus
             ;; Roman office: bungo activates the fetcher path for scripture
             ;; content (capitula, lessons, psalms, scripture-eligible
@@ -75,14 +75,33 @@
             ;; headers) in Latin — the office's original tongue surrounds
             ;; vernacular scripture readings.  No Bute-equivalent Bungo
             ;; corpus exists, so non-scripture texts stay Latin.
-            ;; BCP side: canticle-language stays English (the BCP's own
-            ;; tradition); prayer-language is bungo where the versicle
-            ;; registry supplies it.
+            ;; BCP side: prayer-language and canticle-language are bungo
+            ;; (1895-style, 旧仮名遣 with ヱホバ→主 substitution applied
+            ;; in liturgical contexts).  When :bungo entries are missing,
+            ;; the bidirectional language fallback chain surfaces the
+            ;; :nskk-1959 forms automatically — preferable to English
+            ;; fallback for a Japanese-profile user.
             :roman-language           bungo
-            :canticle-language        english
+            :canticle-language        bungo
             :prayer-language          bungo
             :canticle-gloria          nil
-            :furigana                 rubi)))
+            :furigana                 rubi))
+    (JAP-59 . (:lesson-translation    "Bungo-yaku"
+               :psalm-translation     "Bungo-yaku"
+               :backend               local
+               :fallback-backend      oremus
+               ;; NSKK 1959 BCP register: classical-Japanese canticles
+               ;; and prayers from the postwar 祈祷書 with modern kana
+               ;; orthography.  Falls back to :bungo (1895-style) where
+               ;; 1959 lacks an entry, then to English; chain defined in
+               ;; `bcp-common-prayers-language-fallback'.
+               ;; Lessons/psalms still come from the bungo-yaku Bible —
+               ;; the dedicated NSKK 1959 Psalter is not yet encoded.
+               :roman-language        bungo
+               :canticle-language     nskk-1959
+               :prayer-language       nskk-1959
+               :canticle-gloria       nil
+               :furigana              rubi)))
   "Built-in language profile definitions.
 Each profile maps setting keywords to their default values.
 The active psalter is derived from `:psalm-translation' at apply time.")

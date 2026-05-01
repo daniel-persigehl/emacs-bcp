@@ -288,9 +288,19 @@ A language profile sets all scripture and liturgical language defaults at once. 
 ;; Latin: Vulgate psalms, Vulgate lessons, Latin office texts
 (setq bcp-language-profile 'LAT)
 
-;; Japanese: Bungo-yaku psalms and lessons, English structural texts
+;; Japanese (1895-style bungo register, with imperial-Japan vocabulary):
+;; Bungo-yaku psalms and lessons; classical Japanese liturgical texts.
 (setq bcp-language-profile 'JAP)
+
+;; Japanese (postwar NSKK 1959 register, classical Japanese in modern kana):
+;; canticles, prayers, versicles, and Penitential Order from the 1959 BCP
+;; of the Nippon Sei Ko Kai.  Same Bungo-yaku scripture backend.
+(setq bcp-language-profile 'JAP-59)
 ```
+
+All five profiles default to `:backend local`, which auto-routes by
+translation to the appropriate bundled offline file (KJVA, Vulgate
+Bible, or Bungo-yaku Bible).  Network fallback is `oremus` by default.
 
 Individual settings can be overridden while keeping the profile as a base:
 
@@ -310,34 +320,43 @@ Individual settings can be overridden while keeping the profile as a base:
 
 ### Fetch backend and psalter
 
-Normally set by the language profile. The Bible backend and the
+Normally set by the language profile.  The Bible backend and the
 fallback backend are independent; the active psalter is **derived**
 from the psalm translation — pick a translation name served by a
 registered psalter (Coverdale, Tate & Brady, Vulgate) and psalms
-will route through that psalter automatically. Any other name (NRSV,
+will route through that psalter automatically.  Any other name (NRSV,
 KJVA, Bungo-yaku, …) leaves the Bible backend to serve psalms.
 
+The `local` backend is a pseudo-backend that auto-routes by the
+active lesson translation to the appropriate bundled offline source
+— "Vulgate"/"Latin" → vulgate-bible, "KJVA" → kjva,
+"Bungo-yaku"/"文語訳"/"Japanese" → bungo-yaku.  All language profiles
+default to `local` for primary and `oremus` for fallback, so out of
+the box scripture is served from the bundled file matching the
+profile, with network fallback only when the local file can't satisfy
+the translation.
+
 ```elisp
-;; Default: Oremus for lessons, Coverdale for psalms
-;; (psalter is derived from the "Coverdale" psalm translation)
-(setq bcp-fetcher-backend 'oremus
+;; Default for ENG profile: local routes to KJVA, Coverdale psalter,
+;; Oremus fallback (only used if local can't serve a translation)
+(setq bcp-fetcher-backend 'local
       bible-commentary-psalm-translation "Coverdale"
       bcp-fetcher-fallback-backend 'oremus)
 
-;; Tate & Brady metrical psalms, Oremus for lessons
-(setq bcp-fetcher-backend 'oremus
+;; Tate & Brady metrical psalms, local lessons
+(setq bcp-fetcher-backend 'local
       bible-commentary-psalm-translation "Tate & Brady")
 
-;; Latin Vulgate psalms, Oremus for lessons
-(setq bcp-fetcher-backend 'oremus
+;; Latin: local routes to vulgate-bible, Vulgate psalter
+(setq bcp-fetcher-backend 'local
       bible-commentary-psalm-translation "Vulgate")
 
-;; Japanese: Bungo-yaku for everything including psalms (no psalter layer)
-(setq bcp-fetcher-backend 'bungo-yaku
+;; Japanese: local routes to bungo-yaku, which also serves psalms
+(setq bcp-fetcher-backend 'local
       bible-commentary-psalm-translation "Bungo-yaku"
       bcp-fetcher-fallback-backend 'oremus)
 
-;; Fully online (Oremus only, NRSV psalms from Oremus)
+;; Fully online with a non-bundled translation (e.g. NRSV)
 (setq bcp-fetcher-backend 'oremus
       bible-commentary-psalm-translation "NRSV"
       bcp-fetcher-fallback-backend nil)
@@ -357,35 +376,70 @@ Affects the form of the Absolution (priest says it; lay or deacon receives a sub
 
 ### State prayers
 
-The civil-authority versicle in the Preces and the state prayers said after the Office are controlled independently.
+The state-prayer slot has two layers: **which prayers are said**
+(state-set, defaulting to whatever the active ordo's rubric specifies)
+and **which head of state the prayers name** (role + gender + name,
+with country for civil contexts).  Both are accessible via
+`M-x bcp-settings` → State prayers, or directly:
+
+#### Head of state (role + gender + name)
 
 ```elisp
-;; Versicle form — choose on theological grounds, not merely geographic ones.
-;; 'monarchy       — "O Lord, save the King." (or Queen)
-;; 'state          — "O Lord, save the State."  (1928 American republican form)
-;; 'them-that-rule — "O Lord, save them that rule."  (1662 international form)
-(setq bcp-liturgy-state-versicle-form 'state)
+;; Role drives the prayer dispatch.  Monarchic roles (monarchy, imperial)
+;; render the King's/Queen's Majesty template; civil roles (presidency,
+;; premiership, chancellorship, governorship, governor-generalship,
+;; sovereignty) render the generic 1928 civil-authority template.
+(setq bcp-head-of-state-role 'presidency)
+;;   Or: monarchy, imperial, presidency, premiership, chancellorship,
+;;       governor-generalship, sovereignty, custom, nil (legacy)
 
-;; Region — controls which state prayers are said after the Office.
-;; 'monarchy  — sovereign, royal family, clergy
-;; 'us        — President of the United States, clergy (1928 American wording)
-;; 'republic  — civil authority, clergy (generic)
-(setq bcp-liturgy-region 'us)
+;; Gender — always settable, even for gender-neutral titles.  In English
+;; this only matters for monarchy/imperial; in target languages with
+;; gendered noun forms (Spanish, German, ...) it determines the title
+;; noun for any role.
+(setq bcp-head-of-state-gender 'female)   ; 'male or 'female
 
-;; Sovereign (when bcp-liturgy-state-versicle-form is 'monarchy)
-(setq bcp-liturgy-sovereign-title 'king)   ; 'king or 'queen
-(setq bcp-liturgy-sovereign-name "Charles")  ; inserted as KING CHARLES in the prayer
+;; Personal name — uppercased in the prayer body (BCP convention).
+;; Suppressed by `:name-taboo' for the Japanese Emperor in bungo /
+;; nskk-1959 contexts; the slot renders as "the Emperor" instead.
+(setq bcp-head-of-state-name "Naruhito")
 
-;; Royal family members named in the prayer (before "and all the Royal Family")
-(setq bcp-liturgy-royal-family-names
-      "Queen Camilla, William Prince of Wales, the Princess of Wales")
+;; Country — inserted in republic-form prayers ("the President of X").
+(setq bcp-liturgy-country-name "the United States")
 
-;; President's name, inserted per the 1928 N. rubric (rendered in ALL-CAPS)
-;; nil omits the name: "Grant to the President of the United States..."
-(setq bcp-liturgy-president-name "Donald")
+;; Custom title — used when role is `custom'; literal English string.
+(setq bcp-head-of-state-custom-title "Lord Protector")
 ```
 
-Names rendered in ALL-CAPS in the office buffer serve as a visual reminder to update them when the officeholder changes.
+The title registry (`bcp-head-of-state-titles`) carries English /
+Latin (accusative) / bungo / nskk-1959 forms plus possessive
+variants for each entry, so the same role+gender selection produces
+the right form regardless of the active prayer language.
+
+#### State-set (which prayers play)
+
+Each ordo declares a rubric default state-set in its build-ctx —
+1662 → `uk-monarchy-1662`, 1928 → `us-1928`.  The user can override
+per language:
+
+```elisp
+;; A Japanese Anglican praying 1662: override bungo to use the 1895
+;; Imperial Family prayer instead of the UK Royal Family.
+(setq bcp-state-set-override-by-language
+      '((bungo     . japan-imperial-1895)
+        (nskk-1959 . none)))
+;;   nil for any language entry  — follow the ordo's rubric
+;;   none                         — suppress the state-prayer slot entirely
+```
+
+Available state-sets: `uk-monarchy-1662`, `uk-monarchy-1928`,
+`us-1928`, `us-civil-authority`, `japan-imperial-1895`, `none`.
+Each bundles a state-versicle key and a list of prayer helpers; the
+state-set's `:role` field couples to the head-of-state role
+automatically, so picking `japan-imperial-1895` implies role=imperial.
+
+Names rendered in ALL-CAPS in the office buffer serve as a visual
+reminder to update them when the officeholder changes.
 
 ### BCP 1662 rubrical options
 

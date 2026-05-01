@@ -21,6 +21,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; User configuration
 
@@ -32,25 +34,50 @@
 (defcustom bcp-common-prayers-language 'english
   "Active language for common prayer texts.
 Language symbols correspond to keyword keys in each text entry plist,
-e.g. \\='english → :english, \\='latin → :latin, \\='bungo → :bungo."
-  :type  '(choice (const english) (const latin) (const bungo))
+e.g. \\='english → :english, \\='latin → :latin, \\='bungo → :bungo,
+\\='nskk-1959 → :nskk-1959 (Nippon Sei Ko Kai 1959 BCP)."
+  :type  '(choice (const english) (const latin) (const bungo) (const nskk-1959))
   :group 'bcp-common-prayers)
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Lookup
 
+(defconst bcp-common-prayers-language-fallback
+  '((nskk-1959 . (bungo))
+    (bungo     . (nskk-1959)))
+  "Per-language fallback chain consulted before defaulting to English.
+When a text plist has no key for the requested language, each fallback
+language is tried in order; the first non-nil hit wins.  English is
+always the final fallback.
+
+This is consulted by `bcp-common-prayers-text' and
+`bcp-liturgy-canticle-get'.  Japanese editions chain to each other in
+both directions: a JAP-59 user gets bungo (1895-style) where 1959 is
+unencoded, and a JAP user gets 1959 where bungo is unencoded — better
+to mix Japanese registers than fall straight to English.")
+
+(defun bcp-common-prayers--language-chain (language)
+  "Return the lookup chain (LANGUAGE then any fallbacks) for LANGUAGE.
+Does not include English; callers append :english as the final fallback."
+  (cons language
+        (cdr (assq language bcp-common-prayers-language-fallback))))
+
 (defun bcp-common-prayers-text (entry)
   "Return the text string from ENTRY for the current prayer language.
 ENTRY is a plist whose language keys are keywords (:english, :latin, …).
-Falls back to :english when the current language has no text.
+Walks `bcp-common-prayers-language-fallback' before defaulting to English.
 Falls back to :text for backward compatibility with tradition-specific
 prayer plists that have not yet adopted the language-keyed format."
-  (let* ((key (intern (format ":%s" bcp-common-prayers-language)))
-         (val (plist-get entry key)))
-    (if (and (null val) (not (eq bcp-common-prayers-language 'english)))
-        (or (plist-get entry :english)
-            (plist-get entry :text))
-      (or val (plist-get entry :text)))))
+  (let* ((lang  bcp-common-prayers-language)
+         (chain (bcp-common-prayers--language-chain lang))
+         (val   (cl-some (lambda (l) (plist-get entry (intern (format ":%s" l))))
+                         chain)))
+    (cond
+     (val val)
+     ((eq lang 'english) (or (plist-get entry :english)
+                             (plist-get entry :text)))
+     (t (or (plist-get entry :english)
+            (plist-get entry :text))))))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Fixed texts
@@ -65,7 +92,12 @@ And lead us not into temptation, But deliver us from evil."
     "Pater noster, qui es in cælis, sanctificétur nomen tuum: advéniat regnum tuum: \
 fiat volúntas tua, sicut in cælo et in terra. Panem nostrum cotidiánum da nobis hódie: \
 et dimítte nobis débita nostra, sicut et nos dimíttimus debitóribus nostris: \
-et ne nos indúcas in tentatiónem: sed líbera nos a malo. Amen.")
+et ne nos indúcas in tentatiónem: sed líbera nos a malo. Amen."
+    :nskk-1959
+    "天にします我らの父よ、願わくは御名を聖となさしめたまえ。御国をきたらしめたまえ。\
+御心を天におけるごとく、地にも行わしめたまえ。我らの日用の糧を今日も与えたまえ。\
+我らに罪を犯すものを我ら赦すごとく、我らの罪をも赦したまえ。\
+我らを試みにあわせず、悪より救いいだしたまえ。アーメン")
   "The Lord's Prayer body without doxology (1662 form: \"which\"/\"them that\").
 Use with `bcp-common-prayers-lords-prayer-doxology' when the doxology is required.")
 
@@ -100,9 +132,10 @@ Use with `bcp-common-prayers-lords-prayer-doxology-1928' when the doxology is re
 Append to `bcp-common-prayers-lords-prayer-1928' via the ordo step's :doxology key.")
 
 (defconst bcp-common-prayers-oremus
-  '(:english "Let us pray."
-    :latin   "Orémus."
-    :bungo   "祈らん。")
+  '(:english   "Let us pray."
+    :latin     "Orémus."
+    :bungo     "我《われ》ら祈《いの》るべし。"
+    :nskk-1959 "我ら祈るべし")
   "The bidding before a collect.")
 
 (defconst bcp-common-prayers-gloria-patri
@@ -111,7 +144,10 @@ Append to `bcp-common-prayers-lords-prayer-1928' via the ordo step's :doxology k
 As it was in the beginning, is now, and ever shall be, * world without end. Amen."
     :latin
     "Glória Patri, et Fílio, * et Spirítui Sancto.\n\
-Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen.")
+Sicut erat in princípio, et nunc, et semper, * et in sǽcula sæculórum. Amen."
+    :nskk-1959
+    "父と子と聖霊に栄光あれ\n\
+始めにあり、今あり、世々限りなくあるなり アーメン")
   "The Gloria Patri (Lesser Doxology).
 Pointed with * mediants for psalmody and responsories.
 For BCP canticle contexts (colon mediants), rendering functions
@@ -137,7 +173,18 @@ ascéndit ad cælos; sedet ad déxteram Dei Patris omnipoténtis: \
 inde ventúrus est judicáre vivos et mórtuos. \
 Credo in Spíritum Sanctum, sanctam Ecclésiam cathólicam, \
 Sanctórum communiónem, remissiónem peccatórum, \
-carnis resurrectiónem, vitam ætérnam. Amen.")
+carnis resurrectiónem, vitam ætérnam. Amen."
+    :nskk-1959
+    "我は天地の造り主・全能の父なる神を信ず\n\
+我はそのひとり子、我らの主イエス＝キリストを信ず。\
+主は聖霊によりてやどり、おとめマリヤより生まれ、\
+ポンテオ＝ピラトのとき苦しみを受け、十字架につけられ、死にて葬られ、\
+よみにくだり、三日目に死にし者のうちよりよみがえり、天に昇り、\
+全能の父なる神の右に座したまえり。\
+かしこよりきたりて生ける人と死ねる人をさばきたまわん\n\
+我らは聖霊を信ず。\
+また聖公会、聖徒の交わり、罪の赦し、からだのよみがえり、\
+限りなきいのちを信ず アーメン")
   "The Apostles' Creed.")
 
 (defconst bcp-common-prayers-nicene-creed
@@ -199,7 +246,19 @@ gathered together in thy Name thou wilt grant their requests; Fulfil now, O Lord
 the desires and petitions of thy servants, as may be most expedient for them; \
 granting us in this world knowledge of thy truth, and in the world to come life \
 everlasting. Amen."
-    :latin nil)
+    :latin nil
+    ;; 1895 NSKK 聖キリソストムの祈り (旧仮名遣).  The 1959 NSKK does not
+    ;; carry this collect; under a JAP-1959 profile it resolves here via
+    ;; the language fallback chain (nskk-1959 → bungo → english).
+    :bungo
+    "今《いま》、心《こころ》を合《あ》はせて主《しゆ》に祈《いの》る恵《めぐ》みを\
+与《あた》へたまへる全能《ぜんのう》の神《かみ》よ、\
+御名《みな》によりて両三人《りやうさんにん》集《あつ》まる時《とき》は、\
+その願《ねが》ひを許《ゆる》さんと約《やく》したまへり。\
+願《ねが》はくは我《われ》らの益《えき》を図《はか》りて、\
+望《のぞ》みと願《ねが》ひを遂《と》げしめ、\
+この世《よ》においては主《しゆ》の道《みち》を悟《さと》り、\
+後《のち》の世《よ》においては限《かぎ》りなき命《いのち》に至《いた》るとを得《え》させたまへ。アーメン")
   "The Prayer of St. Chrysostom.")
 
 (defconst bcp-common-prayers-grace-2cor
@@ -213,7 +272,10 @@ of the Holy Ghost, be with us all evermore. Amen."
     "Grátia Dómini nostri Jesu Christi, et cáritas Dei, et communicátio \
 Sancti Spíritus sit cum ómnibus nobis. Amen."
     :bungo
-    "願くは主イエス・キリストの恩惠、神の愛、聖霊の交感、われら凡ての者と偕に永遠にあらんことを。アァメン。")
+    "願くは主イエス・キリストの恩惠、神の愛、聖霊の交感、われら凡ての者と偕に永遠にあらんことを。アァメン。"
+    :nskk-1959
+    "願わくは主イエス＝キリストの恵み、神のいつくしみ、聖霊のまじわり、\
+我らとともに限りなくあらんことを。アーメン")
   "The Grace (2 Corinthians 13:14).")
 
 ;;;; ──────────────────────────────────────────────────────────────────────────

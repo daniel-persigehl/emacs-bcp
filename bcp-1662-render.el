@@ -388,7 +388,10 @@ Resolves current defcustom values and registers all tradition callbacks."
      :office-order                  '(mattins evensong)
      :propers-fn                    #'bcp-1662--propers-fn
      :ordo-for-office               #'bcp-1662--ordo-for-office
-     :buffer-name                   bcp-1662-office-buffer-name)))
+     :buffer-name                   bcp-1662-office-buffer-name
+     ;; Rubric default for the state-prayer slot.  Users override per
+     ;; language via `bcp-state-set-override-by-language'.
+     :state-set                     'uk-monarchy-1662)))
 
 (defun bcp-1662--propers-fn (date office)
   "Return propers for DATE (M D Y) at OFFICE — used by prior-office simulation."

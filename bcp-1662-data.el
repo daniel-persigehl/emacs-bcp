@@ -2992,7 +2992,16 @@ Glory be to the Father, and to the Son : and to the Holy Ghost; As it was in the
 
     (trinity-21
      :name "Twenty-first Sunday after Trinity"
-     :text "GRANT, we beseech thee, merciful Lord, to thy faithful people pardon and peace, that they may be cleansed from all their sins, and serve thee with a quiet mind; through Jesus Christ our Lord. Amen.")
+     :text "GRANT, we beseech thee, merciful Lord, to thy faithful people pardon and peace, that they may be cleansed from all their sins, and serve thee with a quiet mind; through Jesus Christ our Lord. Amen."
+     ;; Trinity 21 collect is also used as the lay-absolution substitute
+     ;; in the Penitential Order (per 1662 rubric "If no priest be present
+     ;; the person saying the service shall read the Collect for the
+     ;; Twenty-First Sunday after Trinity").  Multilingual slots below
+     ;; carry the same collect for each language profile.  Awaiting print
+     ;; sources for the 1959 NSKK and 1895 NSKK forms — fall back to
+     ;; :text (English) via the resolver until supplied.
+     :nskk-1959 nil
+     :bungo     nil)
 
     (trinity-22
      :name "Twenty-second Sunday after Trinity"
@@ -3059,8 +3068,20 @@ Returns (:name STRING :text STRING).
     (cdr (assq sym bcp-1662-collects))))
 
 (defun bcp-1662-collect-text (symbol)
-  "Return the collect text string for SYMBOL, or nil."
-  (plist-get (bcp-1662-collect symbol) :text))
+  "Return the collect text string for SYMBOL, or nil.
+Honours `bcp-common-prayers-language' with the fallback chain in
+`bcp-common-prayers-language-fallback' (e.g. nskk-1959 → bungo).
+Falls back to :text (the English BCP form) when no language-specific
+text is supplied for the active language or its fallback chain."
+  (let* ((data  (bcp-1662-collect symbol))
+         (lang  (and (boundp 'bcp-common-prayers-language)
+                     bcp-common-prayers-language))
+         (chain (and lang (fboundp 'bcp-common-prayers--language-chain)
+                     (bcp-common-prayers--language-chain lang))))
+    (or (and chain
+             (cl-some (lambda (l) (plist-get data (intern (format ":%s" l))))
+                      chain))
+        (plist-get data :text))))
 
 (defun bcp-1662-collect-stanzas (symbol)
   "Return the structured `:stanzas' list for SYMBOL, or nil.

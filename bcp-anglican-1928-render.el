@@ -626,7 +626,11 @@ Resolves current defcustom values and registers all tradition callbacks."
      :office-order                  '(mattins evensong)
      :propers-fn                    #'bcp-1928--propers-fn
      :ordo-for-office               #'bcp-1928--ordo-for-office
-     :buffer-name                   bcp-1928-office-buffer-name)))
+     :buffer-name                   bcp-1928-office-buffer-name
+     ;; Rubric default for the state-prayer slot.  US 1928 BCP defaults
+     ;; to the President-and-Civil-Authority form; users override per
+     ;; language via `bcp-state-set-override-by-language'.
+     :state-set                     'us-1928)))
 
 (defun bcp-1928--propers-fn (date office)
   "Return propers for DATE (M D Y) at OFFICE — used by prior-office simulation."

@@ -1285,6 +1285,50 @@ rubi renderer can locate and align spans at finalise time."
         (setq start end)))
     result))
 
+(defun bcp-fetcher--rubi-kanji-span-start-buffer (end)
+  "Return the buffer position of the kanji-run start ending at END.
+Scans backward from END while preceding characters are CJK ideographs."
+  (let ((i end))
+    (while (and (> i (point-min))
+                (let ((c (char-before i)))
+                  (and c (bcp-fetcher--rubi-kanji-char-p c))))
+      (setq i (1- i)))
+    i))
+
+(defun bcp-fetcher--rubi-propertize-buffer ()
+  "Apply furigana display properties to all 《reading》 spans in the buffer.
+Buffer-mode counterpart to `bcp-fetcher--propertize-furigana' (which
+operates on a string).  Idempotent — skips kanji spans whose first
+character already carries `bcp-rubi-reading'.
+
+Single source of truth for rubi propertization: run at finalize time
+so any 《reading》 markup that arrived in the buffer — from fetcher
+output, encoded liturgical defconsts, versicle pairs, oremus bidding,
+or any future insertion path — gets uniformly stamped with
+`bcp-furigana', `bcp-rubi-reading', and `bcp-rubi-base-width'
+without per-insertion-site discipline."
+  (save-excursion
+    (let ((inhibit-read-only t))
+      (goto-char (point-min))
+      (while (re-search-forward "《\\([^》]+\\)》" nil t)
+        (let* ((beg     (match-beginning 0))
+               (end     (match-end 0))
+               (reading (match-string-no-properties 1))
+               (kbeg    (bcp-fetcher--rubi-kanji-span-start-buffer beg))
+               (already (get-text-property kbeg 'bcp-rubi-reading)))
+          (unless already
+            (put-text-property beg end 'bcp-furigana t)
+            (when (< kbeg beg)
+              (let ((kwidth (string-width
+                             (buffer-substring-no-properties kbeg beg))))
+                (put-text-property kbeg (1+ kbeg) 'bcp-rubi-reading reading)
+                (put-text-property kbeg (1+ kbeg) 'bcp-rubi-base-width kwidth)))
+            (pcase bcp-fetcher-furigana-display
+              ('comment
+               (put-text-property beg end 'face 'bcp-fetcher-furigana))
+              ((or 'hidden 'rubi)
+               (put-text-property beg end 'invisible 'bcp-furigana)))))))))
+
 (defun bcp-fetcher--walk-furigana (prop value)
   "Set PROP to VALUE on all `bcp-furigana' spans in the current buffer."
   (let ((inhibit-read-only t)
@@ -1664,9 +1708,24 @@ Used by `bcp-fetcher--bungo-yaku-resolve-book'.")
 
 (defun bcp-fetcher--bungo-yaku-resolve-book (name)
   "Resolve book NAME to its canonical SWORD form.
-Returns NAME unchanged if it is already canonical or unrecognized."
+Tries the alias table first; if that misses, normalizes Arabic-numeral
+prefixes to Roman (\"1 Samuel\" → \"I Samuel\", \"2 Kings\" → \"II Kings\",
+etc.) so that lectionary-expanded full names resolve correctly.
+Returns NAME unchanged if neither path matches.
+
+Wraps the regex matching in `save-match-data' so callers that have
+their own outstanding match data (e.g. the regex branches in
+`bcp-fetcher--bungo-yaku-render') aren't disturbed."
   (or (cdr (assoc name bcp-fetcher--book-name-aliases))
-      name))
+      (save-match-data
+        (cond
+         ((string-match "\\`1 \\(.+\\)\\'" name)
+          (concat "I "   (match-string 1 name)))
+         ((string-match "\\`2 \\(.+\\)\\'" name)
+          (concat "II "  (match-string 1 name)))
+         ((string-match "\\`3 \\(.+\\)\\'" name)
+          (concat "III " (match-string 1 name)))
+         (t name)))))
 
 (defun bcp-fetcher--bungo-yaku-load ()
   "Parse `bcp-fetcher-bungo-yaku-file' into `bcp-fetcher--bungo-yaku-bible'.
@@ -1774,11 +1833,13 @@ a CJK-body region at finalise time."
            (verses (when ch-tbl (gethash ch ch-tbl))))
       (when verses
         (bcp-fetcher--bungo-yaku-render-verses book ch verses 1 nil))))
-   ;; "Psalms N-M" — range of whole psalms
-   ((string-match "^Psalms? \\([0-9]+\\)-\\([0-9]+\\)$" passage)
-    (let* ((book   "Psalms")
-           (from   (string-to-number (match-string 1 passage)))
-           (to     (string-to-number (match-string 2 passage)))
+   ;; "Book N-M" — range of whole chapters (works for any book, including
+   ;; the Psalter case "Psalms N-M" which is a special instance of this).
+   ((string-match "^\\(.+\\) \\([0-9]+\\)-\\([0-9]+\\)$" passage)
+    (let* ((book   (bcp-fetcher--bungo-yaku-resolve-book
+                    (match-string 1 passage)))
+           (from   (string-to-number (match-string 2 passage)))
+           (to     (string-to-number (match-string 3 passage)))
            (ch-tbl (gethash book bible))
            (parts  nil))
       (when ch-tbl
@@ -1810,6 +1871,53 @@ a CJK-body region at finalise time."
  :fetch-fn        #'bcp-fetcher--bungo-yaku-fetch
  :psalm-numbering 'hebrew
  :translations    '("Bungo-yaku" "文語訳" "Japanese"))
+
+;;;; ──────────────────────────────────────────────────────────────────────────
+;;;; Local pseudo-backend
+;;
+;; Routes a fetch to the appropriate locally-bundled backend
+;; (vulgate-bible / kjva / bungo-yaku) based on the requested
+;; translation.  Lets the user pick one "Local" entry in the menu
+;; instead of having to manually match the specific local backend to
+;; the active language profile's translation — when the profile says
+;; lessons are "Vulgate", `local' routes to vulgate-bible; "KJVA" to
+;; kjva; "Bungo-yaku" to bungo-yaku.  Returns nil for unrecognized
+;; translations, letting the configured fallback backend take over.
+
+(defun bcp-fetcher--local-resolve-backend (translation)
+  "Return the local backend name that serves TRANSLATION, or nil."
+  (cond
+   ((member translation '("Vulgate" "Latin"))               'vulgate-bible)
+   ((member translation '("KJVA" "KJV with Apocrypha"))     'kjva)
+   ((member translation '("Bungo-yaku" "文語訳" "Japanese")) 'bungo-yaku)
+   (t nil)))
+
+(defun bcp-fetcher--local-fetch (passage translation callback)
+  "Pseudo-backend: dispatch to the local backend for TRANSLATION.
+Routes by `bcp-fetcher--local-resolve-backend'.  Returns nil via
+CALLBACK if no local backend serves the requested translation."
+  (let ((target (bcp-fetcher--local-resolve-backend translation)))
+    (if target
+        (let* ((entry    (cdr (assq target bcp-fetcher--backends)))
+               (fetch-fn (and entry (plist-get entry :fetch-fn))))
+          (if fetch-fn
+              (funcall fetch-fn passage translation callback)
+            (progn
+              (message "bcp-fetcher-local: target backend %s not loaded."
+                       target)
+              (funcall callback nil))))
+      (message "bcp-fetcher-local: no local backend for translation %S."
+               translation)
+      (funcall callback nil))))
+
+(bcp-fetcher-register-backend
+ 'local
+ :name         "Local — auto-route by translation"
+ :fetch-fn     #'bcp-fetcher--local-fetch
+ ;; Mirrors the union of local backends' :translations.
+ :translations '("Vulgate" "Latin"
+                 "KJVA" "KJV with Apocrypha"
+                 "Bungo-yaku" "文語訳" "Japanese"))
 
 ;;;; ──────────────────────────────────────────────────────────────────────────
 ;;;; Load default backend
